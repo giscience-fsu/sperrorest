@@ -5,9 +5,7 @@
 #' and spatial block bootstrap methods. To cite `sperrorest' in publications,
 #' reference the paper by Brenning (2012).
 #'
-#' @references Brenning, A. 2012. Spatial cross-validation and bootstrap for the assessment of 
-#' prediction rules in remote sensing: the R package 'sperrorest'. 
-#' IEEE International Symposium on Geoscience and Remote Sensing IGARSS, in press.
+#' @references Brenning, A. 2012. Spatial cross-validation and bootstrap for the assessment of prediction rules in remote sensing: the R package 'sperrorest'. 2012 IEEE International Geoscience and Remote Sensing Symposium (IGARSS), 23-27 July 2012, p. 5372-5375.
 #'
 #' Brenning, A. 2005. Spatial prediction models for landslide hazards: review, comparison and evaluation. Natural Hazards and Earth System Sciences, 5(6): 853-862.
 #'

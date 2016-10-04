@@ -45,6 +45,11 @@
 # 19 June 2012 (0.2-1) - FIRST RELEASE ON CRAN
 # --------------------------------------------
 #
+# 12 May 2015 (0.2-2)
+# -------------------
+# - some edits (including addition of partition.factor.cv) that had been accumulating
+# - passing this code version to Tobias
+#
 ##################################################################
 
 
@@ -52,6 +57,11 @@
 #'
 #' \code{summary.sperroresterror} calculates mean, standard deviation, median etc. of the calculated error measures at the specified level (overall, repetition, or fold).
 #' \code{summary.sperrorestpoolederror} does the same with the pooled error, at the overall or repetition level.
+#' @import rpart
+#' @importFrom stats IQR kmeans mad median predict
+#' rnorm runif sd terms weighted.mean 
+#' @importFrom graphics par plot points
+#' @importFrom ROCR performance prediction
 #' @name summary.sperroresterror
 #' @method summary sperroresterror
 #' @param object \code{sperroresterror} resp. \code{sperrorestcombinederror} error object calculated by \code{\link{sperrorest}}
@@ -252,15 +262,51 @@ resample.uniform = function(data, param = list(n = Inf, replace = FALSE))
 }
 
 
+
+#' Draw uniform random (sub)sample at the group level
+#'
+#' \code{resample.factor} draws a random (sub)sample (with or without replacement) of the groups or clusters identified by the \code{fac} argument.
+#' @param data a \code{data.frame}, rows represent samples
+#' @param param a list with the following components: \code{fac} is a factor variable of length \code{nrow(data)} or the name of a factor variable in \code{data}; \code{n} is a numeric value specifying the size of the subsample (in terms of groups, not observations); \code{replace} determines if resampling of groups is to be done with or without replacement
+#' @return a \code{data.frame} containing a subset of the rows of \code{data}.
+#' @details If \code{param$replace=FALSE}, a subsample of \code{min(param$n,nlevel(data[,fac]))} groups will be drawn from \code{data}. If \code{param$replace=TRUE}, the number of groups to be drawn is \code{param$n}.
+#' @seealso \code{\link{resample.strat.uniform}}, \code{\link{sample}}
+#' @examples
+#' data(ecuador) # Muenchow et al. (2012), see ?ecuador
+#' d = resample.uniform(ecuador, param = list(strat = "slides", n = 200))
+#' nrow(d) # == 200
+#' sum(d$slides == "TRUE")
+#' @export
+resample.factor <- function (data, param = list(fac = "class", n = Inf, replace = FALSE)) 
+{
+  if (is.null(param$fac)) 
+    param$fac = "class"
+  if (is.null(param$replace)) 
+    param$replace = FALSE
+  stopifnot((length(param$fac) == 1) || (length(param$fac) == nrow(data)))
+  if (length(param$fac == 1)) {
+    fac = data[, param$fac]
+  }
+  else fac = param$fac
+  if (!is.factor(fac)) 
+    stop("'fac' must either be a vector of factor type, or the name of a factor variable in 'data'")
+  fac <- factor(fac)
+  if (is.null(param$n) || is.infinite(param$n)) 
+    param$n = nlevels(fac)
+  if (!param$replace) 
+    param$n = min(param$n, nrow(data))
+  sel <- sample(levels(fac), size = param$n, replace = param$replace)
+  sel <- fac %in% sel
+  return(data[sel, ])
+}
+
+
+
+
 #' Perform spatial error estimation and variable importance assessment
 #'
 #' \code{sperrorest} is a flexible interface for multiple types of spatial and non-spatial cross-validation 
 #' and bootstrap error estimation and permutation-based assessment of spatial variable importance.
-#' @import rpart
-#' @importFrom stats IQR kmeans mad median predict
-#' rnorm runif sd terms weighted.mean 
-#' @importFrom graphics par plot points
-#' @importFrom ROCR performance prediction
 #' @inheritParams partition.cv
 #' @param data a \code{data.frame} with predictor and response variables. Training and test samples 
 #' will be drawn from this data set by \code{train.fun} and \code{test.fun}, respectively.
@@ -284,8 +330,8 @@ resample.uniform = function(data, param = list(n = Inf, replace = FALSE))
 #' @param test.fun (optional) Like \code{train.fun} but for the test set.
 #' @param test.param (optional) Arguments to be passed to \code{test.fun}
 #' @param err.fun A function that calculates selected error measures from the known responses in \code{data} and the model predictions delivered by \code{pred.fun}. E.g., \code{\link{err.default}} (the default). See example and details below.
-#' @param err.unpooled logical (default: \code{TRUE}): calculate error measures on each fold within a resampling repetition
-#' @param err.pooled logical (default: \code{FALSE}): calculate error measures based on the pooled predictions of all folds within a resampling repetition
+#' @param err.unpooled logical (default: \code{TRUE} if \code{importance} is \code{TRUE}, otherwise \code{FALSE}): calculate error measures on each fold within a resampling repetition
+#' @param err.pooled logical (default: \code{TRUE}): calculate error measures based on the pooled predictions of all folds within a resampling repetition
 #' @param err.train logical (default: \code{TRUE}): calculate error measures on the training set (in addition to the test set estimation)
 #' @param imp.variables (optional; used if \code{importance=TRUE}) Variables for which permutation-based variable importance assessment is performed. If \code{importance=TRUE} and \code{imp.variables} is \code{NULL}, all variables in \code{formula} will be used.
 #' @param imp.permutations (optional; used if \code{importance=TRUE}) Number of permutations used for variable importance assessment.
@@ -302,9 +348,7 @@ resample.uniform = function(data, param = list(n = Inf, replace = FALSE))
 #' \item{importance}{a \code{sperrorestimportance} object containing permutation-based variable importances at the fold level}
 #' @return An object of class \code{sperrorest}, i.e. a list with components \code{error} (of class \code{sperroresterror}), \code{represampling} (of class \code{represampling}), \code{pooled.error} (of class \code{sperrorestpoolederror}) and \code{importance} (of class \code{sperrorestimportance}).
 #' @note To do: (1) Parallelize the code; (2) Optionally save fitted models, training and test samples in the results object; (3) Optionally save intermediate results in some file, and enable the function to continue an interrupted sperrorest call where it was interrupted. (3) Optionally have sperrorest dump the result of each repetition into a file, and to skip repetitions for which a file already exists. (4) Save sperrorest version number in results object.
-#' @references Brenning, A. 2012. Spatial cross-validation and bootstrap for the assessment of 
-#' prediction rules in remote sensing: the R package 'sperrorest'. 
-#' IEEE International Symposium on Geoscience and Remote Sensing IGARSS, in press.
+#' @references Brenning, A. 2012. Spatial cross-validation and bootstrap for the assessment of prediction rules in remote sensing: the R package 'sperrorest'. 2012 IEEE International Geoscience and Remote Sensing Symposium (IGARSS), 23-27 July 2012, p. 5372-5375.
 #'
 #' Brenning, A. 2005. Spatial prediction models for landslide hazards: review, comparison and evaluation. Natural Hazards and Earth System Sciences, 5(6): 853-862.
 #'
@@ -363,8 +407,8 @@ sperrorest = function(formula, data, coords = c("x", "y"),
     train.fun = NULL, train.param = NULL,
     test.fun = NULL, test.param = NULL,
     err.fun = err.default,
-    err.unpooled = TRUE,
-    err.pooled = FALSE,
+    err.unpooled = importance,
+    err.pooled = TRUE,
     err.train = TRUE,
     imp.variables = NULL,
     imp.permutations = 1000,

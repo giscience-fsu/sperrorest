@@ -139,6 +139,53 @@ partition.factor = function(data, coords = c("x", "y"), fac, return.factor = FAL
     return(represmp)
 }
 
+
+
+
+#' Partition the data for a (non-spatial) k-fold cross-validation at the group level
+#'
+#' \code{partition.factor.cv} creates a \code{\link{represampling}} object, i.e. a set of sample indices defining cross-validation test and training sets,
+#' where partitions are obtained by resampling at the level of groups of observations as defined by a given factor variable.
+#' This can be used, for example, to resample agricultural data that is grouped by fields, at the agricultural field level 
+#' in order to preserve spatial autocorrelation within fields.
+#' @inheritParams partition.cv
+#' @param coords vector of length 2 defining the variables in \code{data} that contain the x and y coordinates of sample locations
+#' @param fac either the name of a variable (column) in \code{data}, or a vector of type factor and length \code{nrow(data)} that defines groups or clusters of observations
+#' @return A \code{\link{represampling}} object, see also \code{\link{partition.cv}} for details.
+#' @note In this partitioning approach, the number of factor levels in \code{fac} must be large enough for this factor-level resampling to make sense.
+#' @seealso \code{\link{sperrorest}}, \code{\link{partition.cv}}, \code{\link{partition.factor}}, \code{\link{as.resampling.factor}}
+#' @export
+partition.factor.cv = function(data, coords = c("x", "y"), fac, nfold = 10, repetition = 1, seed1 = NULL, return.factor = FALSE)
+{
+  if (length(fac) == 1 && is.character(fac)) 
+    fac = data[, fac]
+  fac = factor(fac)
+  if (nfold > nlevels(fac)) {
+    warning("'nfold' should be >=nlevels(fac); using nfold=nlevels(fac)\n")
+    nfold = nlevels(fac)
+  }
+  resampling = list()
+  for (cnt in repetition) {
+    if (!is.null(seed1))
+      set.seed(seed1 + cnt)
+    fac.resampler = sample(rep(sample(nfold), length=nlevels(fac)), size=nlevels(fac))
+    names(fac.resampler) = levels(fac)
+    resampler = factor(fac.resampler[fac])
+    if (!return.factor)
+      resampler = as.resampling(resampler)
+    resampling[[as.character(cnt)]] = resampler
+  }
+  if (!return.factor) 
+    resampling = as.represampling(resampling)
+  return(resampling)
+}
+
+
+
+
+
+
+
 #' Partition the study area into rectangular tiles
 #'
 #' \code{partition.tiles} divides the study area into a specified number of rectangular tiles. Optionally small partitions can be
