@@ -63,7 +63,6 @@ err.default = function(obs, pred) {
             }
         } else { # "soft" classification:
             # Calculate area under the ROC curve:
-            require(ROCR)
             predobj = prediction( pred, obs )
             auroc = performance( predobj, measure="auc" )@y.values[[1]]
             err = list( auroc = auroc )

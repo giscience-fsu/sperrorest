@@ -52,9 +52,9 @@ on which to predict the outcome.}
 
 \item{err.fun}{A function that calculates selected error measures from the known responses in \code{data} and the model predictions delivered by \code{pred.fun}. E.g., \code{\link{err.default}} (the default). See example and details below.}
 
-\item{err.unpooled}{logical (default: \code{TRUE}): calculate error measures on each fold within a resampling repetition}
+\item{err.unpooled}{logical (default: \code{TRUE} if \code{importance} is \code{TRUE}, otherwise \code{FALSE}): calculate error measures on each fold within a resampling repetition}
 
-\item{err.pooled}{logical (default: \code{FALSE}): calculate error measures based on the pooled predictions of all folds within a resampling repetition}
+\item{err.pooled}{logical (default: \code{TRUE}): calculate error measures based on the pooled predictions of all folds within a resampling repetition}
 
 \item{err.train}{logical (default: \code{TRUE}): calculate error measures on the training set (in addition to the test set estimation)}
 
@@ -122,7 +122,7 @@ summary(spres$error)
 summary(spres$represampling)
 plot(spres$represampling, ecuador)
 
- smry = data.frame(
+smry = data.frame(
      nonspat.training = unlist(summary(nspres$error,level=1)$train.auroc),
      nonspat.test     = unlist(summary(nspres$error,level=1)$test.auroc),
      spatial.training = unlist(summary(spres$error,level=1)$train.auroc),
@@ -132,9 +132,7 @@ boxplot(smry, col = c("red","red","red","green"),
      ylab = "Area under the ROC curve")
 }
 \references{
-Brenning, A. 2012. Spatial cross-validation and bootstrap for the assessment of 
-prediction rules in remote sensing: the R package 'sperrorest'. 
-IEEE International Symposium on Geoscience and Remote Sensing IGARSS, in press.
+Brenning, A. 2012. Spatial cross-validation and bootstrap for the assessment of prediction rules in remote sensing: the R package 'sperrorest'. 2012 IEEE International Geoscience and Remote Sensing Symposium (IGARSS), 23-27 July 2012, p. 5372-5375.
 
 Brenning, A. 2005. Spatial prediction models for landslide hazards: review, comparison and evaluation. Natural Hazards and Earth System Sciences, 5(6): 853-862.
 

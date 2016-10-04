@@ -391,7 +391,7 @@ resample.factor <- function (data, param = list(fac = "class", n = Inf, replace 
 #' summary(spres$represampling)
 #' plot(spres$represampling, ecuador)
 #' 
-#'  smry = data.frame(
+#' smry = data.frame(
 #'      nonspat.training = unlist(summary(nspres$error,level=1)$train.auroc),
 #'      nonspat.test     = unlist(summary(nspres$error,level=1)$test.auroc),
 #'      spatial.training = unlist(summary(spres$error,level=1)$train.auroc),
@@ -407,8 +407,8 @@ sperrorest = function(formula, data, coords = c("x", "y"),
     train.fun = NULL, train.param = NULL,
     test.fun = NULL, test.param = NULL,
     err.fun = err.default,
-    err.unpooled = importance,
-    err.pooled = TRUE,
+    err.unpooled = TRUE,
+    err.pooled = FALSE,
     err.train = TRUE,
     imp.variables = NULL,
     imp.permutations = 1000,
