@@ -1,61 +1,3 @@
-################################
-# sperrorest
-# Spatial error estimation and variable importance
-# Alexander Brenning
-# University of Waterloo
-################################
-
-##################################################################
-# History:
-#
-# 2009 - 2011 - general code development
-#
-# Oct-Dec 2011
-# ------------
-# - package project and documentation created
-#
-# 29 Dec 2011
-# -----------
-# - built internal release 0.1-1
-#
-# 29 Jan 2012
-# -----------
-# - internal release 0.1-2
-# - some bug fixes, e.g. in err.* functions
-# - improved support of pooled versus unpooled error estimation
-# - changed some argument names
-# - this version was used for Angie's analyses
-#
-# 15 Feb 2012
-# -----------
-# - updated help pages
-# - supports a variety of block bootstrap types
-# - some minor bug fixes
-#
-# 1 Mar 2012 (0.1-5)
-# ------------------
-# - made training set estimation optional
-# - robustified code using try()
-#
-# 19 June 2012 (0.2-0)
-# --------------------
-# - last pre-release version
-# - replaced Stoyan's data set with Jannes Muenchow's data, adapted examples
-#
-# 19 June 2012 (0.2-1) - FIRST RELEASE ON CRAN
-# --------------------------------------------
-#
-# 12 May 2015 (0.2-2)
-# -------------------
-# - some edits (including addition of partition.factor.cv) that had been accumulating
-# - passing this code version to Tobias
-#
-# 04 Oct 2016 (0.3)
-# -------------------
-# - adding sperrorest.parallel 
-#
-##################################################################
-
 
 #' Summarize error statistics obtained by \code{sperrorest}
 #'
@@ -478,6 +420,8 @@ resample.factor <- function (data, param = list(fac = "class",
 #' @param do.try logical (default: \code{FALSE}): if \code{TRUE} [untested!!], 
 #' use \code{\link{try}} to robustify calls to \code{model.fun} and 
 #' \code{err.fun}; use with caution!
+#' @param silent If \code{TRUE}, show progress on console (in Windows Rgui, 
+#' disable 'Buffered output' in 'Misc' menu)
 #' 
 #' @return A list (object of class \code{sperrorest}) with (up to) four components:
 #' \item{error}{a \code{sperroresterror} object containing predictive 
