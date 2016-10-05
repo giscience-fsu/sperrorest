@@ -6,7 +6,8 @@
 \alias{is.represampling}
 \alias{print.represampling}
 \alias{represampling}
-\title{Resampling objects with repetition, i.e. sets of partitionings or boostrap samples}
+\title{Resampling objects with repetition, i.e. sets of partitionings or boostrap 
+samples}
 \usage{
 as.represampling(object, ...)
 
@@ -17,30 +18,34 @@ as.represampling(object, ...)
 is.represampling(object)
 }
 \arguments{
-\item{object}{object of class \code{represampling}, or a list to be coerced to this class}
+\item{object}{object of class \code{represampling}, or a list to be coerced 
+to this class.}
 
-\item{...}{currently not used}
+\item{...}{currently not used.}
 
-\item{x}{object of class \code{represampling}}
+\item{x}{object of class \code{represampling}.}
 }
 \value{
-\code{as.represampling} methods return an object of class \code{represampling} with the 
-contents of \code{object}.
+\code{as.represampling} methods return an object of class 
+\code{represampling} with the contents of \code{object}.
 }
 \description{
-Functions for handling \code{represampling} objects, i.e. \code{list}s of \code{\link{resampling}} objects.
+Functions for handling \code{represampling} objects, i.e. \code{list}s of 
+\code{\link{resampling}} objects.
 }
 \details{
-\code{represampling} objects are (names) lists of \code{\link{resampling}} objects. Such
-objects are typically created by \code{\link{partition.cv}}, \code{\link{partition.kmeans}},
+\code{represampling} objects are (names) lists of 
+\code{\link{resampling}} objects. Such objects are typically created by 
+\code{\link{partition.cv}}, \code{\link{partition.kmeans}},
 \code{\link{represampling.disc.bootstrap}} and related functions.
 
-In \code{r}-repeated \code{k}-fold cross-validation, for example, the corresponding \code{represampling}
-object has length \code{r}, and each of its \code{r} \code{\link{resampling}} objects has
-length \code{k}.
+In \code{r}-repeated \code{k}-fold cross-validation, for example, the 
+corresponding \code{represampling} object has length \code{r}, and each of 
+its \code{r} \code{\link{resampling}} objects has length \code{k}.
 
-\code{as.resampling.list} coerces \code{object} to class \code{represampling} while coercing its elements 
-to \code{\link{resampling}} objects. Some validity checks are performed.
+\code{as.resampling.list} coerces \code{object} to class \code{represampling} 
+while coercing its elements to \code{\link{resampling}} objects. 
+Some validity checks are performed.
 }
 \examples{
 data(ecuador) # Muenchow et al. (2012), see ?ecuador
@@ -54,6 +59,8 @@ str(parti)
 summary(parti)
 }
 \seealso{
-\code{\link{resampling}}, \code{\link{partition.cv}}, \code{\link{partition.kmeans}}, \code{\link{represampling.disc.bootstrap}}, etc.
+\code{\link{resampling}}, \code{\link{partition.cv}}, 
+\code{\link{partition.kmeans}}, 
+\code{\link{represampling.disc.bootstrap}}, etc.
 }
 

@@ -13,27 +13,32 @@ add.distance(object, ...)
 \method{add.distance}{represampling}(object, ...)
 }
 \arguments{
-\item{object}{\code{\link{resampling}} or \code{\link{represampling}} object}
+\item{object}{\code{\link{resampling}} or \code{\link{represampling}} object.}
 
-\item{...}{Additional arguments to \code{\link{dataset.distance}} and \code{\link{add.distance.resampling}}, respectively}
+\item{...}{Additional arguments to \code{\link{dataset.distance}} and 
+\code{\link{add.distance.resampling}}, respectively.}
 
-\item{data}{\code{data.frame} containing at least the columns specified by \code{coords}}
+\item{data}{\code{data.frame} containing at least the columns specified 
+by \code{coords}}
 
 \item{coords}{(ignored by \code{partition.cv})}
 }
 \value{
-A \code{\link{resampling}} or \code{\link{represampling}} object containing an additional 
-\code{$distance} component in each \code{\link{resampling}} object. The \code{distance} component is a
-single numeric value indicating, for each \code{train} / \code{test} pair,
-the (by default, mean) nearest-neighbour distance between the two sets.
+A \code{\link{resampling}} or \code{\link{represampling}} object 
+containing an additional.
+\code{$distance} component in each \code{\link{resampling}} object. 
+The \code{distance} component is a single numeric value indicating, for 
+each \code{train} / \code{test} pair, the (by default, mean) 
+nearest-neighbour distance between the two sets.
 }
 \description{
 Add distance information to resampling objects
 }
 \details{
-Nearest-neighbour distances are calculated for each sample in the test set. These
-\code{nrow(???$test)} nearest-neighbour distances are then averaged. Aggregation methods other
-than \code{mean} can be chosen using the \code{fun} argument, which will be passed on to
+Nearest-neighbour distances are calculated for each sample in the 
+test set. These \code{nrow(???$test)} nearest-neighbour distances are then 
+averaged. Aggregation methods other than \code{mean} can be chosen using 
+the \code{fun} argument, which will be passed on to 
 \code{\link{dataset.distance}}.
 }
 \examples{
@@ -44,10 +49,13 @@ nsp.parti = add.distance(nsp.parti, ecuador)
 sp.parti = add.distance(sp.parti, ecuador)
 # non-spatial partioning: very small test-training distance:
 nsp.parti[[1]][[1]]$distance
-# spatial partitioning: more substantial distance, depending on number of folds etc.
+# spatial partitioning: more substantial distance, depending on number of 
+# folds etc.
 sp.parti[[1]][[1]]$distance
+
 }
 \seealso{
-\code{\link{dataset.distance}} \code{\link{represampling}} \code{\link{resampling}}
+\code{\link{dataset.distance}} \code{\link{represampling}} 
+\code{\link{resampling}}
 }
 

@@ -26,35 +26,47 @@ is.resampling(x, ...)
 \method{print}{resampling}(x, ...)
 }
 \arguments{
-\item{object}{depending on the function/method, a list or a vector of type factor defining a partitioning 
-of the dataset}
+\item{object}{depending on the function/method, a list or a vector of type 
+factor defining a partitioning of the dataset.}
 
-\item{...}{currently not used}
+\item{...}{currently not used.}
 
-\item{x}{object of class \code{resampling}}
+\item{x}{object of class \code{resampling}.}
 }
 \value{
 \code{as.resampling} methods: An object of class \code{resampling}.
 }
 \description{
-Create/coerce and print resampling objects, e.g., partitionings or boostrap samples derived from a data set.
+Create/coerce and print resampling objects, e.g., partitionings or boostrap 
+samples derived from a data set.
 }
 \details{
-A \code{resampling} object is a list of lists defining a set of training and test samples.
+A \code{resampling} object is a list of lists defining a set of 
+training and test samples.
 
-In the case of \code{k}-fold cross-validation partitioning, for example, the corresponding \code{resampling} object
-would be of length \code{k}, i.e. contain \code{k} lists. Each of these \code{k} lists defines a training
-set of size \code{n(k-1)/k} (where \code{n} is the overall sample size), and a test set of size \code{n/k}.
-The \code{resampling} object does, however, not contain the data itself, but only indices between \code{1} and \code{n}
-identifying the seleciton (see Examples).
+In the case of \code{k}-fold cross-validation partitioning, for example, 
+the corresponding \code{resampling} object would be of length \code{k}, 
+i.e. contain \code{k} lists. Each of these \code{k} lists defines a training
+set of size \code{n(k-1)/k} (where \code{n} is the overall sample size), and 
+a test set of size \code{n/k}.
+The \code{resampling} object does, however, not contain the data itself, but 
+only indices between \code{1} and \code{n} identifying the seleciton 
+(see Examples).
 
-Another example is bootstrap resampling. \code{\link{represampling.bootstrap}} with argument \code{oob=TRUE}
-generates [\code{rep}]\code{resampling} objects with indices of a bootstrap sample in the \code{train} component
-and indices of the out-of-bag sample in the test component (see Examples below).
+Another example is bootstrap resampling. \code{\link{represampling.bootstrap}} 
+with argument \code{oob=TRUE} generates [\code{rep}]\code{resampling} objects 
+with indices of a bootstrap sample in the \code{train} component and indices 
+of the out-of-bag sample in the test component (see Examples below).
 
-\code{as.resampling.factor}: For each factor level of the input variable, \code{as.resampling.factor} determines the indices of samples in this level (= test samples) and outside this level (= training samples). Empty levels of \code{object} are dropped without warning.
+\code{as.resampling.factor}: For each factor level of the input variable, 
+\code{as.resampling.factor} determines the indices of samples in this level 
+(= test samples) and outside this level (= training samples). Empty levels of 
+\code{object} are dropped without warning.
 
-\code{as.resampling.list} checks if the list in \code{object} has a valid \code{resampling} object structure (with components \code{train} and \code{test} etc.) and assigns the class attribute \code{"resampling"} if successful.
+\code{as.resampling.list} checks if the list in \code{object} has a valid 
+\code{resampling} object structure (with components \code{train} and 
+\code{test} etc.) and assigns the class attribute \code{"resampling"} if 
+successful.
 }
 \examples{
 data(ecuador) # Muenchow et al. (2012), see ?ecuador
@@ -81,8 +93,10 @@ parti = parti[[1]] # the first (and only) resampling object in parti
 str( ecuador[ parti[[1]]$test , ] )
 # bootstrap training sample: same size as nrow(ecuador):
 str( ecuador[ parti[[1]]$train , ] )
+
 }
 \seealso{
-\code{\link{represampling}}, \code{\link{partition.cv}}, \code{\link{partition.kmeans}}, \code{\link{represampling.bootstrap}}, etc.
+\code{\link{represampling}}, \code{\link{partition.cv}}, 
+\code{\link{partition.kmeans}}, \code{\link{represampling.bootstrap}}, etc.
 }
 
