@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/hadley/sperrorest.svg?branch=master)](https://travis-ci.org/pat-s/sperrorest)
+[![Build Status](https://travis-ci.org/pat-s/sperrorest.svg?branch=master)](https://travis-ci.org/pat-s/sperrorest)
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/sperrorest)](http://cran.r-project.org/package=sperrorest)
 
 # sperrorest
