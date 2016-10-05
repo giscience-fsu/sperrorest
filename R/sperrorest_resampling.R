@@ -326,7 +326,7 @@ partition.factor.cv = function(data, coords = c("x", "y"), fac, nfold = 10,
 #' plot(parti,ecuador)
 #' summary(parti) # tile A4 has only 55 samples
 #' # same partitioning, but now merge tiles with less than 100 samples to 
-#' adjacent tiles:
+#' # adjacent tiles:
 #' parti2 = partition.tiles(ecuador, nsplit = c(4,3), reassign = TRUE, min.n = 100)
 #' plot(parti2,ecuador)
 #' summary(parti2)
