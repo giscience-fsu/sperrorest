@@ -1,4 +1,3 @@
-
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 [![Build Status](https://travis-ci.org/pat-s/sperrorest.svg?branch=master)](https://travis-ci.org/pat-s/sperrorest) [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/sperrorest)](http://cran.r-project.org/package=sperrorest)
 
@@ -16,31 +15,21 @@ Get the released version from CRAN:
 
 ``` r
 install.packages("sperrorest")
-#> Installing package into '/usr/local/lib/R/3.3/site-library'
-#> (as 'lib' is unspecified)
 ```
 
-Or the development version from github:
+Or the development version from Github:
 
 ``` r
 devtools::install_github("pat-s/sperrorest")
-#> Downloading GitHub repo pat-s/sperrorest@master
-#> from URL https://api.github.com/repos/pat-s/sperrorest/zipball/master
-#> Installing sperrorest
-#> '/usr/local/Cellar/r/3.3.1_3/R.framework/Resources/bin/R' --no-site-file  \
-#>   --no-environ --no-save --no-restore --quiet CMD INSTALL  \
-#>   '/private/var/folders/5j/_1ts10x512sg_5q_3kzc_c1w0000gn/T/Rtmp2oaQA9/devtools8cca3a7a74b9/pat-s-sperrorest-142e633'  \
-#>   --library='/usr/local/lib/R/3.3/site-library' --install-tests
-#> 
 ```
 
 References
 ==========
 
-Brenning, A. 2012. Spatial cross-validation and bootstrap for the assessment of prediction rules in remote sensing: the R package 'sperrorest'. 2012 IEEE International Geoscience and Remote Sensing Symposium (IGARSS), 23-27 July 2012, p. 5372-5375.
+Brenning, A. (2005). Spatial prediction models for landslide hazards: Review, comparison and evaluation. *Natural Hazards and Earth System Science*, *5*(6), 853–862. doi:[10.5194/nhess-5-853-2005](https://doi.org/10.5194/nhess-5-853-2005)
 
-Brenning, A. 2005. Spatial prediction models for landslide hazards: review, comparison and evaluation. Natural Hazards and Earth System Sciences, 5(6): 853-862.
+Brenning, A. (2012). Spatial cross-validation and bootstrap for the assessment of prediction rules in remote sensing: The R package sperrorest. In *2012 IEEE International Geoscience and Remote Sensing Symposium* (pp. 5372–5375). doi:[10.1109/IGARSS.2012.6352393](https://doi.org/10.1109/IGARSS.2012.6352393)
 
-Russ, G. & A. Brenning. 2010a. Data mining in precision agriculture: Management of spatial information. In 13th International Conference on Information Processing and Management of Uncertainty, IPMU 2010; Dortmund; 28 June - 2 July 2010. Lecture Notes in Computer Science, 6178 LNAI: 350-359.
+Russ, G., & Brenning, A. (2010a). Data mining in precision agriculture: Management of spatial information. In E. Hüllermeier, R. Kruse, & F. Hoffmann (Eds.), *Computational Intelligence for Knowledge-Based Systems Design: 13th International Conference on Information Processingand Management of Uncertainty, IPMU 2010, Dortmund, Germany, June 28 - July 2, 2010. Proceedings* (pp. 350–359). Berlin, Heidelberg: Springer Berlin Heidelberg. doi:[10.1007/978-3-642-14049-5\_36](https://doi.org/10.1007/978-3-642-14049-5_36)
 
-Russ, G. & A. Brenning. 2010b. Spatial variable importance assessment for yield prediction in Precision Agriculture. In Advances in Intelligent Data Analysis IX, Proceedings, 9th International Symposium, IDA 2010, Tucson, AZ, USA, 19-21 May 2010. Lecture Notes in Computer Science, 6065 LNCS: 184-195.
+Russ, G., & Brenning, A. (2010b). Spatial variable importance assessment for yield prediction in precision agriculture. In *Lecture notes in computer science* (pp. 184–195). Springer Science + Business Media. doi:[10.1007/978-3-642-13062-5\_18](https://doi.org/10.1007/978-3-642-13062-5_18)
