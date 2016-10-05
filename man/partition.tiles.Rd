@@ -11,64 +11,108 @@ partition.tiles(data, coords = c("x", "y"), dsplit = NULL, nsplit = NULL,
   seed1 = NULL)
 }
 \arguments{
-\item{data}{\code{data.frame} containing at least the columns specified by \code{coords}}
+\item{data}{\code{data.frame} containing at least the columns specified 
+by \code{coords}}
 
-\item{coords}{vector of length 2 defining the variables in \code{data} that contain the x and y coordinates of sample locations}
+\item{coords}{vector of length 2 defining the variables in \code{data} that 
+contain the x and y coordinates of sample locations}
 
-\item{dsplit}{optional vector of length 2: equidistance of splits in (possibly rotated) x direction (\code{dsplit[1]}) and y direction (\code{dsplit[2]}) used to define tiles. If \code{dsplit} is of length 1, its value is recycled. Either \code{dsplit} or \code{nsplit} must be specified.}
+\item{dsplit}{optional vector of length 2: equidistance of splits in 
+(possibly rotated) x direction (\code{dsplit[1]}) and y direction 
+(\code{dsplit[2]}) used to define tiles. If \code{dsplit} is of length 1, 
+its value is recycled. Either \code{dsplit} or \code{nsplit} must be specified.}
 
-\item{nsplit}{optional vector of length 2: number of splits in (possibly rotated) x direction (\code{nsplit[1]}) and y direction (\code{nsplit[2]}) used to define tiles. If \code{nsplit} is of length 1, its value is recycled.}
+\item{nsplit}{optional vector of length 2: number of splits in 
+(possibly rotated) x direction (\code{nsplit[1]}) and y direction 
+(\code{nsplit[2]}) used to define tiles. If \code{nsplit} is of length 1, 
+its value is recycled.}
 
-\item{rotation}{indicates whether and how the rectangular grid should be rotated; random rotation is only between \code{-45} and \code{+45} degrees}
+\item{rotation}{indicates whether and how the rectangular grid should 
+be rotated; random rotation is only between \code{-45} and \code{+45} degrees.}
 
-\item{user.rotation}{if \code{rotation="user"}, angles (in degrees) by which the rectangular grid is to be rotated in each repetition. Either a vector of same length as \code{repetition}, or a single number that will be replicated \code{length(repetition)} times.}
+\item{user.rotation}{if \code{rotation="user"}, angles (in degrees) by which 
+the rectangular grid is to be rotated in each repetition. Either a vector of 
+same length as \code{repetition}, or a single number that will be replicated 
+\code{length(repetition)} times.}
 
-\item{offset}{indicates whether and how the rectangular grid should be shifted by an offset}
+\item{offset}{indicates whether and how the rectangular grid should be 
+shifted by an offset.}
 
-\item{user.offset}{if \code{offset="user"}, a list (or vector) of two components specifying a shift of the rectangular grid in (possibly rotated) x and y direction. The offset values are relative values, a value of \code{0.5} resulting in a one-half tile shift towards the left, or upward. If this is a list, its first (second) component refers to the rotated x (y) direction, and both components must have same length as \code{repetition} (or length 1). If a vector of length 2 (or list components have length 1), the two values will be interpreted as relative shifts in (rotated) x and y direction, respectively, and will therefore be recycled as needed (\code{length(repetition)} times each).}
+\item{user.offset}{if \code{offset="user"}, a list (or vector) of two 
+components specifying a shift of the rectangular grid in (possibly rotated) x 
+and y direction. The offset values are relative values, a value of \code{0.5} 
+resulting in a one-half tile shift towards the left, or upward. 
+If this is a list, its first (second) component refers to the rotated x (y) 
+direction, and both components must have same length as \code{repetition} 
+(or length 1). If a vector of length 2 (or list components have length 1), 
+the two values will be interpreted as relative shifts in (rotated) x and y 
+direction, respectively, and will therefore be recycled as needed 
+(\code{length(repetition)} times each).}
 
-\item{reassign}{logical (default \code{TRUE}): if \code{TRUE}, 'small' tiles (as per \code{min.frac} and \code{min.n} arguments and \code{\link{get.small.tiles}}) are merged with (smallest) adjacent tiles. If \code{FALSE}, small tiles are 'eliminated', i.e. set to \code{NA}.}
+\item{reassign}{logical (default \code{TRUE}): if \code{TRUE}, 'small' tiles 
+(as per \code{min.frac} and \code{min.n} arguments and 
+\code{\link{get.small.tiles}}) are merged with (smallest) adjacent tiles. 
+If \code{FALSE}, small tiles are 'eliminated', i.e. set to \code{NA}.}
 
-\item{min.frac}{numeric >=0, <1: minimum relative size of partition as percentage of sample; argument passed to \code{\link{get.small.tiles}}. Will be ignored if \code{NULL}.}
+\item{min.frac}{numeric >=0, <1: minimum relative size of partition as 
+percentage of sample; argument passed to \code{\link{get.small.tiles}}. 
+Will be ignored if \code{NULL}.}
 
-\item{min.n}{integer >=0: minimum number of samples per partition; argument passed to \code{\link{get.small.tiles}}. Will be ignored if \code{NULL}.}
+\item{min.n}{integer >=0: minimum number of samples per partition; 
+argument passed to \code{\link{get.small.tiles}}. 
+Will be ignored if \code{NULL}.}
 
 \item{iterate}{argument to be passed to \code{\link{tile.neighbors}}}
 
-\item{return.factor}{if \code{FALSE} (default), return a \code{\link{represampling}} object; if \code{TRUE} (used internally by other \code{sperrorest} functions), return a \code{list} containing factor vectors (see Value)}
+\item{return.factor}{if \code{FALSE} (default), return a 
+\code{\link{represampling}} object; if \code{TRUE} (used internally by 
+other \code{sperrorest} functions), return a \code{list} containing factor 
+vectors (see Value)}
 
-\item{repetition}{numeric vector: cross-validation repetitions to be generated. Note that this is 
-not the number of repetitions, but the indices of these repetitions. E.g., use 
-\code{repetition=c(1:100)} to obtain (the 'first') 100 repetitions, and 
-\code{repetition=c(101:200)} to obtain a different set of 100 repetitions.}
+\item{repetition}{numeric vector: cross-validation repetitions 
+to be generated. Note that this is not the number of repetitions, 
+but the indices of these repetitions. E.g., use \code{repetition=c(1:100)} 
+to obtain (the 'first') 100 repetitions, and \code{repetition=c(101:200)} 
+to obtain a different set of 100 repetitions.}
 
-\item{seed1}{\code{seed1+i} is the random seed that will be used by \code{\link{set.seed}} 
-in repetition \code{i} (\code{i} in \code{repetition}) to initialize the random number 
-generator before sampling from the data set.}
+\item{seed1}{\code{seed1+i} is the random seed that will be used by 
+\code{\link{set.seed}} in repetition \code{i} (\code{i} in \code{repetition}) 
+to initialize the random number generator before sampling from the data set.}
 }
 \value{
-A \code{\link{represampling}} object. Contains \code{length(repetition)} \code{\link{resampling}} 
-objects as repetitions. The exact number of folds / test-set tiles within each \code{\link{resampling}} 
-objects depends on the spatial configuration of the data set and possible cleaning steps
+A \code{\link{represampling}} object. 
+Contains \code{length(repetition)} \code{\link{resampling}} objects as 
+repetitions. The exact number of folds / test-set tiles within each 
+\code{\link{resampling}} objects depends on the spatial configuration of 
+the data set and possible cleaning steps (see \code{min.frac}, \code{min.n}).
 }
 \description{
-\code{partition.tiles} divides the study area into a specified number of rectangular tiles. Optionally small partitions can be
-merged with adjacent tiles to achieve a minimum number or percentage of samples in each tile.
+\code{partition.tiles} divides the study area into a specified number of 
+rectangular tiles. Optionally small partitions can be merged with adjacent 
+tiles to achieve a minimum number or percentage of samples in each tile.
 }
 \note{
-Default parameter settings may change in future releases. This function, especially the rotation and shifting part of it and the algorithm for cleaning up small tiles is still a bit experimental. Use with caution.
-For non-zero offsets (\code{offset!="none")}), the number of tiles may actually be greater than \code{nsplit[1]*nsplit[2]} because of fractional tiles lurking into the study region. \code{reassign=TRUE} with suitable thresholds is therefore recommended for non-zero (including random) offsets.
+Default parameter settings may change in future releases. 
+This function, especially the rotation and shifting part of it and the 
+algorithm for cleaning up small tiles is still a bit experimental. 
+Use with caution.
+For non-zero offsets (\code{offset!="none")}), the number of tiles may 
+actually be greater than \code{nsplit[1]*nsplit[2]} because of fractional 
+tiles lurking into the study region. \code{reassign=TRUE} with suitable 
+thresholds is therefore recommended for non-zero (including random) offsets.
 }
 \examples{
 data(ecuador)
 parti = partition.tiles(ecuador, nsplit = c(4,3), reassign = FALSE)
 plot(parti,ecuador)
 summary(parti) # tile A4 has only 55 samples
-# same partitioning, but now merge tiles with less than 100 samples to adjacent tiles:
+# same partitioning, but now merge tiles with less than 100 samples to 
+# adjacent tiles:
 parti2 = partition.tiles(ecuador, nsplit = c(4,3), reassign = TRUE, min.n = 100)
 plot(parti2,ecuador)
 summary(parti2)
-# tile B4 (in 'parti') was smaller than A3, therefore A4 was merged with B4, not with A3
+# tile B4 (in 'parti') was smaller than A3, therefore A4 was merged with B4, 
+# not with A3
 # now with random rotation and offset, and tiles of 2000 m length:
 parti3 = partition.tiles(ecuador, dsplit = 2000, offset = "random", 
 rotation = "random", reassign = TRUE, min.n = 100)
@@ -76,6 +120,7 @@ plot(parti3,ecuador)
 summary(parti3)
 }
 \seealso{
-\code{\link{sperrorest}}, \code{\link{as.resampling.factor}}, \code{\link{get.small.tiles}}, \code{\link{tile.neighbors}}
+\code{\link{sperrorest}}, \code{\link{as.resampling.factor}}, 
+\code{\link{get.small.tiles}}, \code{\link{tile.neighbors}}
 }
 

@@ -23,16 +23,19 @@ as.tilename(x, ...)
 \method{print}{tilename}(x, ...)
 }
 \arguments{
-\item{x}{object of class \code{tilename}, \code{character}, or \code{numeric} (of length 2)}
+\item{x}{object of class \code{tilename}, \code{character}, or 
+\code{numeric} (of length 2).}
 
-\item{...}{additional arguments (currently ignored)}
+\item{...}{additional arguments (currently ignored).}
 }
 \value{
-object of class \code{tilename}, \code{character}, or numeric vector of length 2
+object of class \code{tilename}, \code{character}, or numeric 
+vector of length 2
 }
 \description{
-Functions for generating and handling alphanumeric tile names of the form \code{"X2:Y7"} as used by 
-\code{\link{partition.tiles}} and \code{\link{represampling.tile.bootstrap}}.
+Functions for generating and handling alphanumeric tile names of the 
+form \code{"X2:Y7"} as used by \code{\link{partition.tiles}} and 
+\code{\link{represampling.tile.bootstrap}}.
 }
 \examples{
 tnm = as.tilename(c(2,3))
@@ -40,6 +43,7 @@ tnm # "X2:Y3"
 as.numeric(tnm) # c(2,3)
 }
 \seealso{
-\code{\link{partition.tiles}}, \code{\link{represampling}}, \code{\link{represampling.tile.bootstrap}}
+\code{\link{partition.tiles}}, \code{\link{represampling}}, 
+\code{\link{represampling.tile.bootstrap}}
 }
 

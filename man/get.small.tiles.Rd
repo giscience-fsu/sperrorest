@@ -7,19 +7,25 @@
 get.small.tiles(tile, min.n = NULL, min.frac = 0, ignore = c())
 }
 \arguments{
-\item{tile}{factor: tile/partition names for all samples; names must be coercible to class \code{\link{tilename}}, i.e. of the form \code{"X4:Y2"} etc.}
+\item{tile}{factor: tile/partition names for all samples; names must be 
+coercible to class \code{\link{tilename}}, i.e. of the form \code{"X4:Y2"} etc.}
 
-\item{min.n}{integer (optional): minimum number of samples per partition}
+\item{min.n}{integer (optional): minimum number of samples per partition.}
 
-\item{min.frac}{numeric >0, <1: minimum relative size of partition as percentage of sample}
+\item{min.frac}{numeric >0, <1: minimum relative size of partition as 
+percentage of sample.}
 
-\item{ignore}{character vector: names of tiles to be ignored, i.e. to be retained even if the inclusion criteria are not met.}
+\item{ignore}{character vector: names of tiles to be ignored, i.e. to be 
+retained even if the inclusion criteria are not met.}
 }
 \value{
-character vector: names of tiles that are considered 'small' according to these criteria
+character vector: names of tiles that are considered 'small' 
+according to these criteria
 }
 \description{
-\code{get.small.tiles} identifies partitions (tiles) that are too small according to some defined criterion / criteria (minimum number of samples in tile and/or minimum fraction of entire dataset).
+\code{get.small.tiles} identifies partitions (tiles) that are too small 
+according to some defined criterion / criteria (minimum number of samples in 
+tile and/or minimum fraction of entire dataset).
 }
 \examples{
 data(ecuador) # Muenchow et al. (2012), see ?ecuador
@@ -28,7 +34,8 @@ parti = partition.tiles(ecuador, nsplit = c(10,10), reassign = FALSE)
 summary(parti)
 length(parti[[1]])
 # Same in factor format for the application of get.small.tiles:
-parti.fac = partition.tiles(ecuador, nsplit = c(10,10), reassign = FALSE, return.factor = TRUE)
+parti.fac = partition.tiles(ecuador, nsplit = c(10,10), reassign = FALSE, 
+                            return.factor = TRUE)
 get.small.tiles(parti.fac[[1]], min.n = 20) # tiles with less than 20 samples
 parti2 = partition.tiles(ecuador, nsplit = c(10,10), reassign = TRUE, 
     min.n = 20, min.frac = 0)

@@ -12,12 +12,14 @@
 \arguments{
 \item{object}{A \code{resampling} or \code{represampling} object.}
 
-\item{...}{currently ignored}
+\item{...}{currently ignored.}
 }
 \value{
-A list of \code{data.frame}s summarizing the sample sizes of training and test sets in each fold of each repetition
+A list of \code{data.frame}s summarizing the sample sizes of training 
+and test sets in each fold of each repetition.
 }
 \description{
-Calculates sample sizes of training and test sets within repetitions and folds of a \code{resampling} or \code{represampling} object.
+Calculates sample sizes of training and test sets within repetitions and 
+folds of a \code{resampling} or \code{represampling} object.
 }
 
