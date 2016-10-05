@@ -1,4 +1,4 @@
-# sperrorest '0.3' (04 Oct 2016)
+# sperrorest 0.3 (04 Oct 2016)
 
 * add `sperrorest.par`: This function lets you exexute `sperrorest` in parallel. 
 It uses a `doParallel` and `foreach` setup and works on all major platforms with
@@ -14,23 +14,27 @@ in order to preserve spatial autocorrelation within fields.
 * create github repo of `sperrorest` at 
 [https://github.com/pat-s/sperrorest/](https://github.com/pat-s/sperrorest/)
 
-# sperrorest '0.2-1' (19 June 2012)
+* add package NEWS
+
+* add package vignette
+
+# sperrorest 0.2-1 (19 June 2012)
 
 * First release on CRAN
 
-# sperrorest '0.2-0' (19 June 2012)
+# sperrorest 0.2-0 (19 June 2012)
 
 * last pre-release version
 * replaced Stoyan's data set with Jannes Muenchow's data, adapted examples
 
 
-# sperrorest '0.1-5 (1 Mar 2012)
+# sperrorest 0.1-5 (1 Mar 2012)
 
 * made training set estimation optional
 * robustified code using try()
 
 
-# sperrorest '0.1-2' (29 Jan 2012)
+# sperrorest 0.1-2 (29 Jan 2012)
 
 * internal release 0.1-2
 * some bug fixes, e.g. in err.* functions
@@ -38,15 +42,11 @@ in order to preserve spatial autocorrelation within fields.
 * changed some argument names
 * this version was used for Angie's analyses
 
-# sperrorest '0.1-1' (29 Dec 2011)
+# sperrorest 0.1-1 (29 Dec 2011)
 
 * built internal release 0.1-1
 
-# Oct-Dec 2011
+# sperrorest 0.1
 
-* package project and documentation created
-
-
-# 2009 - 2011
-
-* general code development
+* general code development (2009 - 2011)
+* package project and documentation created (Oct-Dec 2011)
