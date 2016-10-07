@@ -1,12 +1,16 @@
+
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-[![Build Status](https://travis-ci.org/pat-s/sperrorest.svg?branch=master)](https://travis-ci.org/pat-s/sperrorest) [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/sperrorest)](http://cran.r-project.org/package=sperrorest)
+[![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/sperrorest)](http://cran.r-project.org/package=sperrorest)
+[![Build Status](https://travis-ci.org/pat-s/sperrorest.svg?branch=master)](https://travis-ci.org/pat-s/sperrorest) (master)
+[![Build Status](https://travis-ci.org/pat-s/sperrorest.svg?branch=dev)](https://travis-ci.org/pat-s/sperrorest) (dev)
+[![Downloads](http://cranlogs.r-pkg.org/badges/sperrorest?color=brightgreen)](http://www.r-pkg.org/pkg/sperrorest)
 
 sperrorest
 ==========
 
 Spatial Error Estimation and Variable Importance
 
-This package implements spatial error estimation and permutation-based spatial variable importance using different spatial cross-validation and spatial block bootstrap methods. To cite `sperrorest` in publications, reference the paper by Brenning (2012).
+This package implements spatial error estimation and permutation-based spatial variable importance using different spatial cross-validation and spatial block bootstrap methods. To cite `sperrorest` in publications, reference the paper by A. Brenning (2012).
 
 Installation
 ------------
@@ -20,7 +24,7 @@ install.packages("sperrorest")
 Or the development version from Github:
 
 ``` r
-devtools::install_github("pat-s/sperrorest")
+devtools::install_github("pat-s/sperrorest", build_vignettes = TRUE)
 ```
 
 References
