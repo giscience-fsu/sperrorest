@@ -315,7 +315,7 @@ resample.uniform = function(data, param = list(n = Inf, replace = FALSE))
 #' sum(d$slides == "TRUE")
 #' 
 #' @export
-resample.factor <- function (data, param = list(fac = "class", 
+resample.factor <- function(data, param = list(fac = "class", 
                                                 n = Inf, replace = FALSE)) 
 {
   if (is.null(param$fac)) 
@@ -339,9 +339,6 @@ resample.factor <- function (data, param = list(fac = "class",
   sel <- fac %in% sel
   return(data[sel, ])
 }
-
-
-
 
 #' Perform spatial error estimation and variable importance assessment
 #'
