@@ -6,9 +6,10 @@
 #' 
 #' @import foreach
 #' @import doParallel
+#' @import rpart
 #' @importFrom utils packageVersion
+#' @importFrom parallel detectCores 
 #' @import ggplot2 
-#' @import parallel
 #' 
 #' @inheritParams partition.cv
 #' 

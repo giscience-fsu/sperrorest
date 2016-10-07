@@ -7,8 +7,9 @@
 #' 
 #' @inheritParams partition.cv
 #' 
-#' @import parallel
 #' @import snow
+#' @import rpart
+#' @importFrom parallel detectCores mc.reset.stream clusterSetRNGStream mclapply
 #' 
 #' @param data a \code{data.frame} with predictor and response variables. 
 #' Training and test samples will be drawn from this data set by \code{train.fun} 
@@ -198,6 +199,7 @@
 #' boxplot(smry, col = c("red","red","red","green"), 
 #'     main = "Training vs. test, nonspatial vs. spatial",
 #'     ylab = "Area under the ROC curve")
+#'     
 #' @export
 parsperrorest = function(formula, data, coords = c("x", "y"),
                          model.fun, model.args = list(),

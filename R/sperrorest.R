@@ -350,6 +350,7 @@ resample.factor <- function (data, param = list(fac = "class",
 #' permutation-based assessment of spatial variable importance.
 #' 
 #' @importFrom utils packageVersion
+#' @import rpart
 #' 
 #' @inheritParams partition.cv
 #' 
