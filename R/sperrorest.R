@@ -1039,7 +1039,7 @@ sperrorest = function(formula, data, coords = c("x", "y"),
 #'                                                         angle = -0, 
 #'                                                         size = 12))) +
 #'   ylab("AUROC") + xlab("")
-sperrorest.parallel <- function(formula, data, coords = c("x", "y"), 
+sperrorest.par <- function(formula, data, coords = c("x", "y"), 
                                 model.fun, model.args = list(), 
                                 pred.fun = NULL, pred.args = list(), 
                                 smp.fun = partition.loo, 
