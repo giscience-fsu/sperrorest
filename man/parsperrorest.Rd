@@ -212,6 +212,7 @@ smry = data.frame(
 boxplot(smry, col = c("red","red","red","green"), 
     main = "Training vs. test, nonspatial vs. spatial",
     ylab = "Area under the ROC curve")
+    
 }
 \references{
 Brenning, A. 2012. Spatial cross-validation and bootstrap for 
