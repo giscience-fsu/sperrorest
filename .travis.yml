@@ -1,12 +1,13 @@
 ## See https://github.com/metacran/r-builder for details.
 
-language: c		 
+language: R		 
 sudo: required
 cache: packages	
 
 env:
   global:
-    - R_CHECK_ARGS="--no-examples"
+    - R_CHECK_ARGS = "--no-examples"
+    - R_CHECK_ARGS =  "--no-build-vignettes"
 
 before_install:
   - curl -OL https://raw.githubusercontent.com/metacran/r-builder/master/pkg-build.sh
