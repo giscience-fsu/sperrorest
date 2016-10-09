@@ -35,3 +35,15 @@
 #' plot(fit, compress = TRUE, main = "Muenchow's landslide data set")
 #' text(fit, use.n = TRUE)
 NULL
+
+#' Maipo dataset from Marco Pena
+#' 
+#' @name Maipo
+#' @docType data
+#'
+#'
+#'
+#'
+#'
+#'
+NULL
