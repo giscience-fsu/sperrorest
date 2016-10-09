@@ -13,7 +13,7 @@ sperrorest(formula, data, coords = c("x", "y"), model.fun,
   err.fun = err.default, err.unpooled = TRUE, err.pooled = FALSE,
   err.train = TRUE, imp.variables = NULL, imp.permutations = 1000,
   importance = !is.null(imp.variables), distance = FALSE, do.gc = 1,
-  do.try = FALSE, silent = FALSE, ...)
+  do.try = FALSE, silent = FALSE, benchmark = FALSE, ...)
 }
 \arguments{
 \item{formula}{A formula specifying the variables used by the \code{model}. 
@@ -104,7 +104,7 @@ if \code{>=2}, after each fold}
 use \code{\link{try}} to robustify calls to \code{model.fun} and 
 \code{err.fun}; use with caution!}
 
-\item{silent}{If \code{TRUE}, show progress on console (in Windows Rgui, 
+\item{silent}{If \code{FALSE}, show progress on console (in Windows Rgui, 
 disable 'Buffered output' in 'Misc' menu)}
 
 \item{...}{currently not used}
@@ -118,6 +118,12 @@ performances at the fold level}
 predictive performances at the repetition level}
 \item{importance}{a \code{sperrorestimportance} object containing 
 permutation-based variable importances at the fold level}
+\item{benchmarks}{a \code{sperrorestbenchmarks} object containing 
+information on the system the code is running on, starting and 
+finishing times, number of available CPU cores, parallelization mode, 
+number of parallel units, and runtime performance}
+\item{package.version} Information about the \code{sperrorest} package
+version.
 
 An object of class \code{sperrorest}, i.e. a list with components 
 \code{error} (of class \code{sperroresterror}), 

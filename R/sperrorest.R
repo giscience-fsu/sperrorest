@@ -417,7 +417,7 @@ resample.factor <- function(data, param = list(fac = "class",
 #' @param do.try logical (default: \code{FALSE}): if \code{TRUE} [untested!!], 
 #' use \code{\link{try}} to robustify calls to \code{model.fun} and 
 #' \code{err.fun}; use with caution!
-#' @param silent If \code{TRUE}, show progress on console (in Windows Rgui, 
+#' @param silent If \code{FALSE}, show progress on console (in Windows Rgui, 
 #' disable 'Buffered output' in 'Misc' menu)
 #' 
 #' @return A list (object of class \code{sperrorest}) with (up to) four components:
@@ -428,6 +428,13 @@ resample.factor <- function(data, param = list(fac = "class",
 #' predictive performances at the repetition level}
 #' \item{importance}{a \code{sperrorestimportance} object containing 
 #' permutation-based variable importances at the fold level}
+#' \item{benchmarks}{a \code{sperrorestbenchmarks} object containing 
+#' information on the system the code is running on, starting and 
+#' finishing times, number of available CPU cores, parallelization mode, 
+#' number of parallel units, and runtime performance}
+#' \item{package.version} Information about the \code{sperrorest} package
+#' version.
+#' 
 #' @return An object of class \code{sperrorest}, i.e. a list with components 
 #' \code{error} (of class \code{sperroresterror}), 
 #' \code{represampling} (of class \code{represampling}), 
@@ -510,23 +517,28 @@ resample.factor <- function(data, param = list(fac = "class",
 #'      main = "Training vs. test, nonspatial vs. spatial",
 #'      ylab = "Area under the ROC curve")
 sperrorest = function(formula, data, coords = c("x", "y"),
-    model.fun, model.args = list(),
-    pred.fun = NULL, pred.args = list(),
-    smp.fun = partition.loo, smp.args = list(),
-    train.fun = NULL, train.param = NULL,
-    test.fun = NULL, test.param = NULL,
-    err.fun = err.default,
-    err.unpooled = TRUE,
-    err.pooled = FALSE,
-    err.train = TRUE,
-    imp.variables = NULL,
-    imp.permutations = 1000,
-    importance = !is.null(imp.variables),
-    distance = FALSE,
-    do.gc = 1,
-    do.try = FALSE,
-    silent = FALSE, ...)
+                      model.fun, model.args = list(),
+                      pred.fun = NULL, pred.args = list(),
+                      smp.fun = partition.loo, smp.args = list(),
+                      train.fun = NULL, train.param = NULL,
+                      test.fun = NULL, test.param = NULL,
+                      err.fun = err.default,
+                      err.unpooled = TRUE,
+                      err.pooled = FALSE,
+                      err.train = TRUE,
+                      imp.variables = NULL,
+                      imp.permutations = 1000,
+                      importance = !is.null(imp.variables),
+                      distance = FALSE,
+                      do.gc = 1,
+                      do.try = FALSE,
+                      silent = FALSE, 
+                      benchmark = FALSE, ...)
 {
+  
+  #if benchmark = TRUE, start clock
+  if (benchmark) start.time = Sys.time()
+  
     # Some checks:
     if (missing(model.fun)) stop("'model.fun' is a required argument")
     if (as.character(attr(terms(formula),"variables"))[3] == "...")
@@ -840,12 +852,26 @@ sperrorest = function(formula, data, coords = c("x", "y"),
 
     if (importance) class(impo) = "sperrorestimportance"
     
+    if (benchmark) {
+      end.time = Sys.time()
+      my.bench = list(system.info = Sys.info(),
+                      t.start = start.time,
+                      t.end = end.time,
+                      cpu.cores = detectCores(),
+                      par.mode = NA,
+                      par.units = NA,
+                      runtime.performance = end.time - start.time)
+      class(my.bench) = "sperrorestbenchmarks"
+    }
+    else my.bench = NULL
+    
     RES = list(
         error = res, 
         represampling = resamp, 
         pooled.error = pooled.err,
         importance = impo,
-        packageVersion = packageVersion("sperrorest"))
+        benchmarks = my.bench, 
+        package.version = packageVersion("sperrorest"))
     class(RES) = "sperrorest"
     
     return( RES )
