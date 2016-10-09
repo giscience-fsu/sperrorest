@@ -118,8 +118,8 @@
 #' information on the system the code is running on, starting and 
 #' finishing times, number of available CPU cores, parallelization mode, 
 #' number of parallel units, and runtime performance}
-#' \item{package.version} Information about the \code{sperrorest} package
-#' version.
+#' \item{package.version}{Information about the \code{sperrorest} package
+#' version}
 #' 
 #' 
 #' @return An object of class \code{sperrorest}, i.e. a list with components 
@@ -149,7 +149,7 @@
 #' Russ, G. & A. Brenning. 2010a. Data mining in precision agriculture: 
 #' Management of spatial information. In 13th International Conference on 
 #' Information Processing and Management of Uncertainty, IPMU 2010; Dortmund; 
-#' 28 June - 2 July 2010.  Lecture Notes in Computer Science, 6178 LNAI: 350-359.
+#' 28 June - 2 July 2010. Lecture Notes in Computer Science, 6178 LNAI: 350-359.
 #'
 #' Russ, G. & A. Brenning. 2010b. Spatial variable importance assessment for 
 #' yield prediction in Precision Agriculture. In Advances in Intelligent 
