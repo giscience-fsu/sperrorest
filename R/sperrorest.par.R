@@ -95,6 +95,13 @@
 #' predictive performances at the repetition level}
 #' \item{importance}{a \code{sperrorestimportance} object containing 
 #' permutation-based variable importances at the fold level}
+#' \item{benchmarks}{a \code{sperrorestbenchmarks} object containing 
+#' information on the system the code is running on, starting and 
+#' finishing times, number of available CPU cores, parallelization mode, 
+#' number of parallel units, and runtime performance}
+#' \item{package.version} Information about the \code{sperrorest} package
+#' version.
+#' 
 #' @return An object of class \code{sperrorest}, i.e. a list with components 
 #' \code{error} (of class \code{sperroresterror}), 
 #' \code{represampling} (of class \code{represampling}), 
@@ -201,9 +208,13 @@ sperrorest.par <- function(formula, data, coords = c("x", "y"),
                            importance = !is.null(imp.variables),
                            distance = FALSE, do.gc = 1, do.try = FALSE, 
                            silent = 1, cores = detectCores()/2, 
-                           progress = "",
+                           progress = "", benchmark = FALSE,
                            ...) 
 {
+  
+  #if benchmark = TRUE, start clock
+  if (benchmark) start.time = Sys.time()
+  
   if (missing(model.fun)) 
     stop("'model.fun' is a required argument")
   if (as.character(attr(terms(formula), "variables"))[3] == 
@@ -601,27 +612,48 @@ sperrorest.par <- function(formula, data, coords = c("x", "y"),
     class(impo) <- "sperrorestimportance"
   }
   
+  if (benchmark) {
+    end.time = Sys.time()
+    my.bench = list(system.info = Sys.info(),
+                    t.start = start.time,
+                    t.end = end.time,
+                    cpu.cores = detectCores(),
+                    par.mode = par.args$par.mode,
+                    par.units = par.args$par.units,
+                    runtime.performance = end.time - start.time)
+    class(my.bench) = "sperrorestbenchmarks"
+  }
+  else my.bench = NULL
+  
   if (err.pooled & err.unpooled) {
     res <- foreach.out
     res[[1]] <- NULL
     RES <- list(error = res[[1]], 
-                represampling = resamp, pooled.error = foreach.out[[1]], 
+                represampling = resamp, 
+                pooled.error = foreach.out[[1]], 
                 importance = impo, 
-                packageVersion = packageVersion("sperrorest"))
+                benchmarks = my.bench,
+                package.version = packageVersion("sperrorest"))
     class(RES) <- "sperrorest"
     return(RES)
   }
   if (err.pooled & !err.unpooled) {
-    RES <- list(error = NULL, represampling = resamp, 
-                pooled.error = pooled.err, importance = impo, 
-                packageVersion = packageVersion("sperrorest"))
+    RES <- list(error = NULL, 
+                represampling = resamp, 
+                pooled.error = pooled.err, 
+                importance = impo, 
+                benchmarks = my.bench, 
+                package.version = packageVersion("sperrorest"))
     class(RES) <- "sperrorest"
     return(RES)
   }
   if (!err.pooled & err.unpooled) {
-    RES <- list(error = foreach.out, represampling = resamp, 
-                pooled.error = NULL, importance = impo, 
-                packageVersion = packageVersion("sperrorest"))
+    RES <- list(error = foreach.out, 
+                represampling = resamp, 
+                pooled.error = NULL, 
+                importance = impo, 
+                benchmarks = my.bench, 
+                package.version = packageVersion("sperrorest"))
     class(RES) <- "sperrorest"
     return(RES)
   }

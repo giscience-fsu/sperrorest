@@ -12,7 +12,7 @@ sperrorest.par(formula, data, coords = c("x", "y"), model.fun,
   err.train = TRUE, imp.variables = NULL, imp.permutations = 1000,
   importance = !is.null(imp.variables), distance = FALSE, do.gc = 1,
   do.try = FALSE, silent = 1, cores = detectCores()/2, progress = "",
-  ...)
+  benchmark = FALSE, ...)
 }
 \arguments{
 \item{formula}{A formula specifying the variables used by the \code{model}. 
@@ -124,6 +124,12 @@ performances at the fold level}
 predictive performances at the repetition level}
 \item{importance}{a \code{sperrorestimportance} object containing 
 permutation-based variable importances at the fold level}
+\item{benchmarks}{a \code{sperrorestbenchmarks} object containing 
+information on the system the code is running on, starting and 
+finishing times, number of available CPU cores, parallelization mode, 
+number of parallel units, and runtime performance}
+\item{package.version} Information about the \code{sperrorest} package
+version.
 
 An object of class \code{sperrorest}, i.e. a list with components 
 \code{error} (of class \code{sperroresterror}), 
