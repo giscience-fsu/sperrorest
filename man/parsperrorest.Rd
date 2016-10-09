@@ -103,7 +103,7 @@ if \code{>=2}, after each fold}
 use \code{\link{try}} to robustify calls to \code{model.fun} and 
 \code{err.fun}; use with caution!}
 
-\item{silent}{If \code{TRUE}, show progress on console (in Windows Rgui, 
+\item{silent}{If \code{FALSE}, show progress on console (in Windows Rgui, 
 disable 'Buffered output' in 'Misc' menu)}
 
 \item{par.args}{Contains parallelization parameters \code{par.mode} 
@@ -149,6 +149,8 @@ permutation-based variable importances at the fold level}
 information on the system the code is running on, starting and 
 finishing times, number of available CPU cores, parallelization mode, 
 number of parallel units, and runtime performance}
+\item{package.version} Information about the \code{sperrorest} package
+version.
 
 An object of class \code{sperrorest}, i.e. a list with components 
 \code{error} (of class \code{sperroresterror}), \code{represampling} 
@@ -188,7 +190,7 @@ parnspres = parsperrorest(data = ecuador, formula = fo,
     model.fun = rpart, model.args = list(control = ctrl),
     pred.fun = mypred.rpart,
     smp.fun = partition.cv, smp.args = list(repetition=1:5, nfold=10), 
-              par.args = list(par.mode = 2, par.units=2, lb=FALSE, high=TRUE))
+    par.args = list(par.mode = 2, par.units=2, lb=FALSE, high=TRUE))
 summary(parnspres$error)
 summary(parnspres$represampling)
 plot(parnspres$represampling, ecuador)
@@ -198,7 +200,7 @@ parspres = parsperrorest(data = ecuador, formula = fo,
     model.fun = rpart, model.args = list(control = ctrl),
     pred.fun = mypred.rpart,
     smp.fun = partition.kmeans, smp.args = list(repetition=1:5, nfold=10), 
-              par.args = list(par.mode = 2, par.units=2, lb=FALSE, high=TRUE))
+    par.args = list(par.mode = 2, par.units=2, lb=FALSE, high=TRUE))
 summary(parspres$error)
 summary(parspres$represampling)
 plot(parspres$represampling, ecuador)

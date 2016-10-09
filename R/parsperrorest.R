@@ -77,7 +77,7 @@
 #' @param do.try logical (default: \code{FALSE}): if \code{TRUE} [untested!!], 
 #' use \code{\link{try}} to robustify calls to \code{model.fun} and 
 #' \code{err.fun}; use with caution!
-#' @param silent If \code{TRUE}, show progress on console (in Windows Rgui, 
+#' @param silent If \code{FALSE}, show progress on console (in Windows Rgui, 
 #' disable 'Buffered output' in 'Misc' menu)
 #' @param par.args Contains parallelization parameters \code{par.mode} 
 #' (the method used for parallelization), \code{par.units} 
@@ -118,6 +118,9 @@
 #' information on the system the code is running on, starting and 
 #' finishing times, number of available CPU cores, parallelization mode, 
 #' number of parallel units, and runtime performance}
+#' \item{package.version} Information about the \code{sperrorest} package
+#' version.
+#' 
 #' 
 #' @return An object of class \code{sperrorest}, i.e. a list with components 
 #' \code{error} (of class \code{sperroresterror}), \code{represampling} 
@@ -175,7 +178,7 @@
 #'     model.fun = rpart, model.args = list(control = ctrl),
 #'     pred.fun = mypred.rpart,
 #'     smp.fun = partition.cv, smp.args = list(repetition=1:5, nfold=10), 
-#'               par.args = list(par.mode = 2, par.units=2, lb=FALSE, high=TRUE))
+#'     par.args = list(par.mode = 2, par.units=2, lb=FALSE, high=TRUE))
 #' summary(parnspres$error)
 #' summary(parnspres$represampling)
 #' plot(parnspres$represampling, ecuador)
@@ -185,7 +188,7 @@
 #'     model.fun = rpart, model.args = list(control = ctrl),
 #'     pred.fun = mypred.rpart,
 #'     smp.fun = partition.kmeans, smp.args = list(repetition=1:5, nfold=10), 
-#'               par.args = list(par.mode = 2, par.units=2, lb=FALSE, high=TRUE))
+#'     par.args = list(par.mode = 2, par.units=2, lb=FALSE, high=TRUE))
 #' summary(parspres$error)
 #' summary(parspres$represampling)
 #' plot(parspres$represampling, ecuador)
@@ -358,9 +361,15 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
         if (class(fit) == "try-error") {
           fit = NULL
           if (err.unpooled) {
-            if (err.train) currentRes[[j]]$train = NULL #res[[i]][[j]]$train = NULL
-            currentRes[[j]]$test = NULL #res[[i]][[j]]$test = 
-            if (importance) currentImpo[[j]] = c()
+            if (err.train) {
+              currentRes[[j]]$train = NULL 
+              #res[[i]][[j]]$train = NULL
+              currentRes[[j]]$test = NULL 
+              #res[[i]][[j]]$test = 
+            }
+            if (importance) {
+              currentImpo[[j]] = c()
+            }
           }
           if (do.gc >= 2) gc()
           next # skip this fold
@@ -402,7 +411,7 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
       if (!is.null(test.fun))
         nd = test.fun(data = nd, param = test.param)
       # Create a 'backup' copy for variable importance assessment:
-      if (importance) nd.bak = nd
+      if (importance) {nd.bak = nd}
       # Apply model to test sample:
       pargs = c( list(object = fit, newdata = nd), pred.args )
       if (is.null(pred.fun)) {
@@ -432,7 +441,7 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
       if (importance & err.unpooled) {
         
         #if (is.null(res[[i]][[j]]$test)) {
-        if(is.null(currentRes[[j]]$test)){
+        if (is.null(currentRes[[j]]$test)) {
           currentImpo[[j]] = c()
           if (!silent) cat(date(), "-- skipping variable importance\n")
         } else {
@@ -443,9 +452,11 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
           # Parallelize this: ???
           for (cnt in 1:imp.permutations) {
             # Some output on screen:
-            if (!silent & (cnt>1))
-              if (log10(cnt)==floor(log10(cnt))) 
+            if (!silent & (cnt>1)) {
+              if (log10(cnt) == floor(log10(cnt))) {
                 cat(date(), "   ", cnt, "\n")
+              }
+            }
             
             # Permutation indices:
             permut = sample(1:nrow(nd), replace = FALSE)
@@ -532,11 +543,13 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
     RNGkind("L'Ecuyer-CMRG")
     set.seed(1234567)
     mc.reset.stream() #set up RNG stream to obtain reproducible results
-    if (par.args$lb == FALSE)
+    if (par.args$lb == FALSE) {
       myRes = mclapply(resamp, FUN = runreps, mc.cores = par.args$par.units)
-    else
+    }
+    else {
       myRes = mclapply(resamp, FUN = runreps, mc.cores = par.args$par.units, 
                        mc.preschedule = FALSE)
+    }
   }
   if (par.args$par.mode == 2) {
     par.cl = makeCluster(par.args$par.units, type = "SOCK")
@@ -545,10 +558,12 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
     force(pred.fun) #force evaluation of pred.fun, so it is serialized and 
     # provided to all cluster workers
     clusterExport(par.cl, "par.args", envir = environment())
-    clusterEvalQ(par.cl, {library(sperrorest)
-                          lapply(X = par.args$par.libs, 
-                                 FUN = function(n) {do.call("library", 
-                                                            list(n))}); NULL})
+    clusterEvalQ(par.cl, { 
+      library(sperrorest) 
+      lapply(X = par.args$par.libs, FUN = function(n) {
+        do.call("library", list(n))}); 
+      NULL}
+    )
     if (par.args$lb == FALSE) {
       if (par.args$high == TRUE)
         myRes = parLapply(cl = par.cl, X = resamp, fun = runreps)
@@ -603,7 +618,7 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
     pooled.error = pooled.err,
     importance = impo,
     benchmarks = my.bench,
-    packageVersion = packageVersion("sperrorest"))
+    package.version = packageVersion("sperrorest"))
   class(RES) = "sperrorest"
   
   return( RES )
