@@ -84,7 +84,7 @@
 #' @param progress character. Where to write the output. The default results 
 #' in console output for Unix-Systems. For Windows, the default is to write to 
 #' "sperrorest.progress.txt" located in the current working directory.
-#' @param cores numeric. How many cores should be used. 
+#' @param par.units numeric. How many cores should be used. 
 #' Default to 1/2 of available cores.
 #' 
 #' @return A list (object of class \code{sperrorest}) with (up to) four components:
@@ -99,8 +99,8 @@
 #' information on the system the code is running on, starting and 
 #' finishing times, number of available CPU cores, parallelization mode, 
 #' number of parallel units, and runtime performance}
-#' \item{package.version} Information about the \code{sperrorest} package
-#' version.
+#' \item{package.version}{Information about the \code{sperrorest} package
+#' version}
 #' 
 #' @return An object of class \code{sperrorest}, i.e. a list with components 
 #' \code{error} (of class \code{sperroresterror}), 
@@ -129,7 +129,7 @@
 #' Russ, G. & A. Brenning. 2010a. Data mining in precision agriculture: 
 #' Management of spatial information. In 13th International Conference on 
 #' Information Processing and Management of Uncertainty, IPMU 2010; Dortmund; 
-#' 28 June - 2 July 2010.  Lecture Notes in Computer Science, 6178 LNAI: 350-359.
+#' 28 June - 2 July 2010. Lecture Notes in Computer Science, 6178 LNAI: 350-359.
 #'
 #' Russ, G. & A. Brenning. 2010b. Spatial variable importance assessment for 
 #' yield prediction in Precision Agriculture. In Advances in Intelligent 
@@ -160,7 +160,7 @@
 #'     pred.fun = mypred.rpart,
 #'     smp.fun = partition.cv, 
 #'     smp.args = list(repetition = 1:50, nfold = 5),
-#'     cores = 2, silent = 1,
+#'     par.units = 2, silent = 1,
 #'     err.pooled = TRUE, err.unpooled = TRUE)
 #' summary(nspres$pooled.error$train.auroc)     
 #' summary(nspres$represampling)
@@ -171,7 +171,7 @@
 #'     pred.fun = mypred.rpart,
 #'     smp.fun = partition.cv, 
 #'     smp.args = list(repetition = 1:50, nfold = 5),
-#'     cores = 2, silent = 1,
+#'     par.units = 2, silent = 1,
 #'     err.pooled = TRUE, err.unpooled = TRUE)
 #' summary(nspres$pooled.error$test.auroc)       
 #' summary(spres$represampling)
@@ -207,7 +207,7 @@ sperrorest.par <- function(formula, data, coords = c("x", "y"),
                            imp.permutations = 1000, 
                            importance = !is.null(imp.variables),
                            distance = FALSE, do.gc = 1, do.try = FALSE, 
-                           silent = 1, cores = detectCores()/2, 
+                           silent = 1, par.units = detectCores()/2, 
                            progress = "", benchmark = FALSE,
                            ...) 
 {
@@ -271,9 +271,11 @@ sperrorest.par <- function(formula, data, coords = c("x", "y"),
             use 'model.args' to pass list of additional 
             arguments to 'model.fun'")
   }
-  if (cores > parallel::detectCores())
-    stop("More cores specificied than available. 
-         Check number of available cores with 'detectCores()'.")
+  if (par.units > parallel::detectCores()) {
+    cat("More cores specificied than available. 
+         Setting par.units to 1/2 of available cores.")
+    par.units <- 0.5 * detectCores()
+  }
   response <- as.character(attr(terms(formula), "variables"))[2]
   smp.args$data <- data
   smp.args$coords <- coords
@@ -310,8 +312,8 @@ sperrorest.par <- function(formula, data, coords = c("x", "y"),
   if (progress == "" & Sys.info()["sysname"] == "Windows")
     progress <- paste0(getwd(), "/sperrorest.progress.txt")
   
-  cl <- makeCluster(cores, outfile = progress)
-  registerDoParallel(cl, cores = cores)
+  cl <- makeCluster(par.units, outfile = progress)
+  registerDoParallel(cl, cores = par.units)
   
   foreach.out <- foreach(i = 1:length(resamp), 
                          .packages = (.packages()), 
@@ -576,7 +578,8 @@ sperrorest.par <- function(formula, data, coords = c("x", "y"),
                              }
                              for (i in 2:length(resamp)) {
                                foreach.out[[1]] <- merge.data.frame(foreach.out[[1]], 
-                                                                    foreach.out[[i]], all = TRUE)
+                                                                    foreach.out[[i]], 
+                                                                    all = TRUE)
                              }
                              i <- 2
                              while (i <= length(resamp)) {
@@ -618,8 +621,8 @@ sperrorest.par <- function(formula, data, coords = c("x", "y"),
                     t.start = start.time,
                     t.end = end.time,
                     cpu.cores = detectCores(),
-                    par.mode = par.args$par.mode,
-                    par.units = par.args$par.units,
+                    par.mode = NA,
+                    par.units = par.units,
                     runtime.performance = end.time - start.time)
     class(my.bench) = "sperrorestbenchmarks"
   }
