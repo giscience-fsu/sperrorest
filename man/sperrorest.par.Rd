@@ -11,8 +11,8 @@ sperrorest.par(formula, data, coords = c("x", "y"), model.fun,
   err.fun = err.default, err.unpooled = TRUE, err.pooled = FALSE,
   err.train = TRUE, imp.variables = NULL, imp.permutations = 1000,
   importance = !is.null(imp.variables), distance = FALSE, do.gc = 1,
-  do.try = FALSE, silent = 1, cores = detectCores()/2, progress = "",
-  benchmark = FALSE, ...)
+  do.try = FALSE, silent = 1, par.units = detectCores()/2,
+  progress = "", benchmark = FALSE, ...)
 }
 \arguments{
 \item{formula}{A formula specifying the variables used by the \code{model}. 
@@ -106,7 +106,7 @@ use \code{\link{try}} to robustify calls to \code{model.fun} and
 If 2, information on repetitions and folds are reported. Default to 1. 
 Set to FALSE for no progress output.}
 
-\item{cores}{numeric. How many cores should be used. 
+\item{par.units}{numeric. How many cores should be used. 
 Default to 1/2 of available cores.}
 
 \item{progress}{character. Where to write the output. The default results 
@@ -128,8 +128,8 @@ permutation-based variable importances at the fold level}
 information on the system the code is running on, starting and 
 finishing times, number of available CPU cores, parallelization mode, 
 number of parallel units, and runtime performance}
-\item{package.version} Information about the \code{sperrorest} package
-version.
+\item{package.version}{Information about the \code{sperrorest} package
+version}
 
 An object of class \code{sperrorest}, i.e. a list with components 
 \code{error} (of class \code{sperroresterror}), 
@@ -169,7 +169,7 @@ nspres = sperrorest.parallel(data = ecuador, formula = fo,
     pred.fun = mypred.rpart,
     smp.fun = partition.cv, 
     smp.args = list(repetition = 1:50, nfold = 5),
-    cores = 2, silent = 1,
+    par.units = 2, silent = 1,
     err.pooled = TRUE, err.unpooled = TRUE)
 summary(nspres$pooled.error$train.auroc)     
 summary(nspres$represampling)
@@ -180,7 +180,7 @@ spres = sperrorest.parallel(data = ecuador, formula = fo,
     pred.fun = mypred.rpart,
     smp.fun = partition.cv, 
     smp.args = list(repetition = 1:50, nfold = 5),
-    cores = 2, silent = 1,
+    par.units = 2, silent = 1,
     err.pooled = TRUE, err.unpooled = TRUE)
 summary(nspres$pooled.error$test.auroc)       
 summary(spres$represampling)
@@ -221,7 +221,7 @@ Submitted to Remote Sensing of Environment.
 Russ, G. & A. Brenning. 2010a. Data mining in precision agriculture: 
 Management of spatial information. In 13th International Conference on 
 Information Processing and Management of Uncertainty, IPMU 2010; Dortmund; 
-28 June - 2 July 2010.  Lecture Notes in Computer Science, 6178 LNAI: 350-359.
+28 June - 2 July 2010. Lecture Notes in Computer Science, 6178 LNAI: 350-359.
 
 Russ, G. & A. Brenning. 2010b. Spatial variable importance assessment for 
 yield prediction in Precision Agriculture. In Advances in Intelligent 
