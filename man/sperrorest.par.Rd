@@ -113,6 +113,9 @@ Default to 1/2 of available cores.}
 in console output for Unix-Systems. For Windows, the default is to write to 
 "sperrorest.progress.txt" located in the current working directory.}
 
+\item{benchmark}{logical (default: \code{FALSE}): if \code{TRUE}, 
+perform benchmarking and return \code{sperrorestbenchmarks} object}
+
 \item{...}{currently not used}
 }
 \value{

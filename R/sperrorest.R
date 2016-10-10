@@ -419,6 +419,8 @@ resample.factor <- function(data, param = list(fac = "class",
 #' \code{err.fun}; use with caution!
 #' @param silent If \code{FALSE}, show progress on console (in Windows Rgui, 
 #' disable 'Buffered output' in 'Misc' menu)
+#' @param benchmark logical (default: \code{FALSE}): if \code{TRUE}, 
+#' perform benchmarking and return \code{sperrorestbenchmarks} object
 #' 
 #' @return A list (object of class \code{sperrorest}) with (up to) four components:
 #' \item{error}{a \code{sperroresterror} object containing predictive 

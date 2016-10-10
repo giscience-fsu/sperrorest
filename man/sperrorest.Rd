@@ -107,6 +107,9 @@ use \code{\link{try}} to robustify calls to \code{model.fun} and
 \item{silent}{If \code{FALSE}, show progress on console (in Windows Rgui, 
 disable 'Buffered output' in 'Misc' menu)}
 
+\item{benchmark}{logical (default: \code{FALSE}): if \code{TRUE}, 
+perform benchmarking and return \code{sperrorestbenchmarks} object}
+
 \item{...}{currently not used}
 }
 \value{

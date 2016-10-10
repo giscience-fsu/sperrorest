@@ -86,6 +86,8 @@
 #' "sperrorest.progress.txt" located in the current working directory.
 #' @param par.units numeric. How many cores should be used. 
 #' Default to 1/2 of available cores.
+#' @param benchmark logical (default: \code{FALSE}): if \code{TRUE}, 
+#' perform benchmarking and return \code{sperrorestbenchmarks} object
 #' 
 #' @return A list (object of class \code{sperrorest}) with (up to) four components:
 #' \item{error}{a \code{sperroresterror} object containing predictive 
