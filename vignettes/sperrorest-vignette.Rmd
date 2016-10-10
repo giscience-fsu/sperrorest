@@ -14,7 +14,7 @@ opts_chunk$set(cache = TRUE,
                fig.align = "center",
                collapse = TRUE,
                fig.width = 7,
-               fig.height = 7)
+               fig.height = 5)
 opts_knit$set(width = 125)
 ```
 
@@ -27,9 +27,11 @@ library(randomForest)
 library(sperrorest)
 ```
 
-The `Maipo` data set from Marco Pena is used. 
+The `maipo` data set from Marco Pena is used. 
 ```{r}
-data("Maipo", package = "sperrorest")
+data("maipo", package = "sperrorest")
+
+data("ecuador", package = "sperrorest")
 ```
 
 Variable description:
@@ -51,14 +53,14 @@ Variable description:
 Transform some of the predictor variables:
 
 ```{r}
-predictors <- colnames(d)[5:ncol(d)]
+predictors <- colnames(maipo)[5:ncol(maipo)]
 # Construct a formula:
 fo <- as.formula(paste("croptype ~", paste(predictors, collapse = "+")))
 ```
 
 Take a quick look at (some) correlations among the predictors:
 ```{r}
-co <- abs(cor(d[,predictors])*100)
+co <- abs(cor(maipo[, predictors]) * 100)
 co[co < 70] <- 0 # mask out weak/moderate correlations
 head(round(co))
 ```
@@ -70,18 +72,18 @@ head(round(co))
 
 Fit a model with all predictors:
 ```{r}
-fit <- MASS::lda(fo, data = d)
+fit <- MASS::lda(fo, data = maipo)
 ```
 
 Predict the croptype with the fitted model and calculate the average misclassification error rate (MER):
 ```{r}
-pred <- predict(fit, newdata = d)$class
-mean(pred != d$croptype)
+pred <- predict(fit, newdata = maipo)$class
+mean(pred != maipo$croptype)
 ```
 
 Take a look at the confusion matrix:
 ```{r}
-table(pred = pred, obs = d$croptype)
+table(pred = pred, obs = maipo$croptype)
 ```
 
 
@@ -90,7 +92,7 @@ table(pred = pred, obs = d$croptype)
 Fit a model with all predictors:
 
 ```{r}
-fit <- rpart(fo, data = d)
+fit <- rpart(fo, data = maipo)
 #            control = rpart.control(cp=0.01))
 
 ## optional: view the classiciation tree
@@ -101,27 +103,27 @@ fit <- rpart(fo, data = d)
 
 Again, predict the croptype with the fitted model and calculate the average MER:
 ```{r}
-pred <- predict(fit, newdata = d, type = "class")
-mean(pred != d$croptype)
+pred <- predict(fit, newdata = maipo, type = "class")
+mean(pred != maipo$croptype)
 ```
 
 And take a look at the confusion matrix:
 ```{r}
-table(pred = pred, obs = d$croptype)
+table(pred = pred, obs = maipo$croptype)
 ```
 
 Note that some classes may be over-/underpredicted, i.e. remotely-sensed crop areas can be biased even if accuracy is high!:
 
 ```{r}
 summary(pred)
-summary(d$croptype)
+summary(maipo$croptype)
 ```
 
 ## Random Forest
 
 (This will take some time...)
 ```{r}
-fit <- randomForest(fo, data = d, importance = TRUE)
+fit <- randomForest(fo, data = maipo, importance = TRUE)
 fit
 ```
 
@@ -133,19 +135,19 @@ varImpPlot(fit, type = 1, pch = 19, col = "blue",
 
 Variable importance plots for specific crop types
 ```{r}
-partialPlot(fit, d, x.var = "ndvi01", which.class = "crop1")
-partialPlot(fit, d, x.var = "ndvi01", which.class = "crop3")
+partialPlot(fit, maipo, x.var = "ndvi01", which.class = "crop1")
+partialPlot(fit, maipo, x.var = "ndvi01", which.class = "crop3")
 ```
 
 Training-set misclassification error rate (MER) 
 ```{r}
-pred <- predict(fit, newdata = d, type = "class")
-mean(pred != d$croptype)
+pred <- predict(fit, newdata = maipo, type = "class")
+mean(pred != maipo$croptype)
 ```
 
 Confusion matrix:
 ```{r}
-table(pred = pred, obs = d$croptype)
+table(pred = pred, obs = maipo$croptype)
 ```
 
 - No misclassification at all!
@@ -186,27 +188,27 @@ lda.predfun <- function(object, newdata, fac = NULL) {
 Finally, we can run `sperrorest` with a non-spatial sampling setup (`partition.cv`):
 
 ```{r}
-res.lda.nsp <- res <- sperrorest(fo, data = d, coords = c("utmx","utmy"), 
+res.lda.nsp <- res <- sperrorest(fo, data = maipo, coords = c("utmx","utmy"), 
                                  model.fun = lda,
                                  pred.fun = lda.predfun, 
                                  pred.args = list(fac = "field"),
                                  smp.fun = partition.cv, 
                                  smp.args = list(repetition = 1:4, nfold = 5),
-                                 err.pooled = TRUE, err.unpooled = FALSE)
-round(summary(res.lda.nsp$pooled.error), 3)
+                                 err.rep = TRUE, err.fold = FALSE)
+round(summary(res.lda.nsp$err.rep), 3)
 ```
 
 To run a spatial cross-validation at the field level, we can use `partition.factor.cv` as the sampling function. Subsequently, we have to specify the location of the fields. We can do so using the `field` variable of our data set and put in `smp.args`: 
 
 ```{r}
-res.lda.sp <- sperrorest(fo, data = d, coords = c("utmx","utmy"), 
+res.lda.sp <- sperrorest(fo, data = maipo, coords = c("utmx","utmy"), 
                          model.fun = lda,
                          pred.fun = lda.predfun, 
                          pred.args = list(fac = "field"),
                          smp.fun = partition.factor.cv, 
                          smp.args = list(fac = "field", repetition = 1:4, nfold = 5),
-                         err.pooled = TRUE, err.unpooled = FALSE)
-round(summary(res.lda.sp$pooled.error), 3)
+                         err.rep = TRUE, err.fold = FALSE)
+round(summary(res.lda.sp$err.rep), 3)
 ```
 
 # RF
@@ -224,21 +226,21 @@ Perform spatial cross-validation at the field level. Executing every repetition 
 
 The advantage of `sperrorest.par` is that you can the progress of your current run. For Unix-Systems, the progress is directly reported to the console. For Windows, it is written to a textfile named "sperrorest.txt" in your current working directory.
 ```{r}
-res.rf.sp <- sperrorest(fo, data = d, coords = c("utmx","utmy"), 
+res.rf.sp <- sperrorest(fo, data = maipo, coords = c("utmx","utmy"), 
                         model.fun = randomForest,
                         pred.fun = rf.predfun, 
                         pred.args = list(fac = "field"),
                         smp.fun = partition.factor.cv,
                         smp.args = list(fac = "field", 
                                         repetition = 1:4, nfold = 5),
-                        err.pooled = TRUE, err.unpooled = FALSE,
-                        benchmark = TRUE)
+                        err.rep = TRUE, err.fold = FALSE,
+                        benchmark = TRUE, silent = FALSE)
 res.rf.sp$benchmark
 ```
 
 Läuft mit par.mode = 1
 ```{r}
-res.rf.sp.par <- parsperrorest(fo, data = d, coords = c("utmx","utmy"), 
+res.rf.sp.par <- parsperrorest(fo, data = maipo, coords = c("utmx","utmy"), 
                                model.fun = randomForest,
                                pred.fun = rf.predfun, 
                                pred.args = list(fac = "field"),
@@ -247,22 +249,23 @@ res.rf.sp.par <- parsperrorest(fo, data = d, coords = c("utmx","utmy"),
                                                repetition = 1:4, nfold = 5),
                                par.args = list(par.mode = 1, par.units = 2, 
                                                lb = T, high = TRUE),
-                               err.pooled = TRUE, err.unpooled = FALSE,
-                               benchmark = TRUE)
+                               err.rep = TRUE, err.fold = FALSE,
+                               benchmark = TRUE, silent = FALSE)
 res.rf.sp.par$benchmark
 ```
 
 
-Läuft (partition.factor.cv sorgt dafür dass folds nicht geprintet werden) 
-```{r}
-res.rf.sp.par1 <- sperrorest.par(fo, data = d, coords = c("utmx","utmy"), 
+Läuft nicht (accumulate errors in foreach .combine) 
+```{r, eval = FALSE}
+res.rf.sp.par1 <- sperrorest.par(fo, data = maipo, coords = c("utmx","utmy"), 
                                  model.fun = randomForest,
                                  pred.fun = rf.predfun, 
                                  pred.args = list(fac = "field"),
-                                 smp.fun = partition.factor.cv, silent = 2, 
+                                 smp.fun = partition.factor.cv,
                                  smp.args = list(fac = "field", 
                                                  repetition = 1:4, nfold = 5),
-                                 err.pooled = TRUE, err.unpooled = FALSE,
+                                 par.units = 2, silent = 2,
+                                 err.fold = T, err.rep = T,
                                  benchmark = TRUE)
 res.rf.sp.par1$benchmark
 ```

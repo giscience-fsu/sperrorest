@@ -3,18 +3,27 @@ library(knitr)
 opts_chunk$set(cache = TRUE,
                fig.align = "center",
                collapse = TRUE,
-               fig.width = 10,
-               fig.height = 10)
+               fig.width = 7,
+               fig.height = 5)
 opts_knit$set(width = 125)
 
 ## ------------------------------------------------------------------------
-res.rf.sp.par1 <- sperrorest.par(fo, data = d, coords = c("utmx","utmy"), 
-                               model.fun = randomForest,
-                               pred.fun = rf.predfun, 
-                               pred.args = list(fac = "field"),
-                               smp.fun = partition.factor.cv, silent = 2, 
-                               smp.args = list(fac = "field", repetition = 1:4, nfold = 5),
-                               err.pooled = TRUE, err.unpooled = FALSE,
-                               benchmark = TRUE)
-res.rf.sp.par1$benchmark
+res.lda.nsp <- res <- sperrorest(fo, data = maipo, coords = c("utmx","utmy"), 
+                                 model.fun = lda,
+                                 pred.fun = lda.predfun, 
+                                 pred.args = list(fac = "field"),
+                                 smp.fun = partition.cv, 
+                                 smp.args = list(repetition = 1:4, nfold = 5),
+                                 err.rep = TRUE, err.fold = FALSE)
+round(summary(res.lda.nsp$err.rep), 3)
+
+## ------------------------------------------------------------------------
+res.lda.sp <- sperrorest(fo, data = maipo, coords = c("utmx","utmy"), 
+                         model.fun = lda,
+                         pred.fun = lda.predfun, 
+                         pred.args = list(fac = "field"),
+                         smp.fun = partition.factor.cv, 
+                         smp.args = list(fac = "field", repetition = 1:4, nfold = 5),
+                         err.rep = TRUE, err.fold = FALSE)
+round(summary(res.lda.sp$err.rep), 3)
 
