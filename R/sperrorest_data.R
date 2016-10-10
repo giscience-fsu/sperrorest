@@ -38,7 +38,7 @@ NULL
 
 #' Maipo dataset from Marco Pena
 #' 
-#' @name Maipo
+#' @name maipo
 #' @docType data
 #'
 #'
@@ -46,4 +46,3 @@ NULL
 #'
 #'
 #'
-NULL
