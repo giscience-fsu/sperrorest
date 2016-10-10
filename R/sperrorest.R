@@ -43,7 +43,7 @@
 #' standard deviation of the error. \code{pooled=FALSE} is not recommended, 
 #' it is mainly for testing purposes; when the test sets are small 
 #' (as in leave-one-out cross-validation, in the extreme case), 
-#' consider running \code{\link{sperrorest}} with \code{err.pooled=TRUE} and 
+#' consider running \code{\link{sperrorest}} with \code{err.rep=TRUE} and 
 #' examine only the \code{pooled.error} component of its result.
 #' 
 #' @seealso \code{\link{sperrorest}}
@@ -391,10 +391,10 @@ resample.factor <- function(data, param = list(fac = "class",
 #' known responses in \code{data} and the model predictions delivered 
 #' by \code{pred.fun}. E.g., \code{\link{err.default}} (the default). 
 #' See example and details below.
-#' @param err.unpooled logical (default: \code{TRUE} if \code{importance} is 
+#' @param err.fold logical (default: \code{TRUE} if \code{importance} is 
 #' \code{TRUE}, otherwise \code{FALSE}): calculate error measures on each fold 
 #' within a resampling repetition.
-#' @param err.pooled logical (default: \code{TRUE}): calculate error measures 
+#' @param err.rep logical (default: \code{TRUE}): calculate error measures 
 #' based on the pooled predictions of all folds within a resampling repetition.
 #' @param err.train logical (default: \code{TRUE}): calculate error measures on 
 #' the training set (in addition to the test set estimation).
@@ -422,12 +422,12 @@ resample.factor <- function(data, param = list(fac = "class",
 #' @param benchmark logical (default: \code{FALSE}): if \code{TRUE}, 
 #' perform benchmarking and return \code{sperrorestbenchmarks} object
 #' 
-#' @return A list (object of class \code{sperrorest}) with (up to) four components:
-#' \item{error}{a \code{sperroresterror} object containing predictive 
+#' @return A list (object of class \code{sperrorest}) with (up to) six components:
+#' \item{error.rep}{a \code{sperrorestpoolederror} object containing 
+#' predictive performances at the repetition level}
+#' \item{error.fold}{a \code{sperroresterror} object containing predictive 
 #' performances at the fold level}
 #' \item{represampling}{a \code{\link{represampling}} object}
-#' \item{pooled.error}{a \code{sperrorestpoolederror} object containing 
-#' predictive performances at the repetition level}
 #' \item{importance}{a \code{sperrorestimportance} object containing 
 #' permutation-based variable importances at the fold level}
 #' \item{benchmarks}{a \code{sperrorestbenchmarks} object containing 
@@ -525,8 +525,8 @@ sperrorest = function(formula, data, coords = c("x", "y"),
                       train.fun = NULL, train.param = NULL,
                       test.fun = NULL, test.param = NULL,
                       err.fun = err.default,
-                      err.unpooled = TRUE,
-                      err.pooled = FALSE,
+                      err.fold = TRUE,
+                      err.rep = FALSE,
                       err.train = TRUE,
                       imp.variables = NULL,
                       imp.permutations = 1000,
@@ -552,9 +552,9 @@ sperrorest = function(formula, data, coords = c("x", "y"),
     if (!is.null(test.fun)) stopifnot(is.function(test.fun))
     stopifnot(is.function(err.fun))
     if (importance) {
-        if (!err.unpooled) {
+        if (!err.fold) {
             warning("'importance=TRUE' currently only supported with 
-                    'err.unpooled=TRUE'.\nUsing 'importance=FALSE'")
+                    'err.fold=TRUE'.\nUsing 'importance=FALSE'")
             importance = FALSE
         }
         stopifnot(is.numeric(imp.permutations))
@@ -562,7 +562,7 @@ sperrorest = function(formula, data, coords = c("x", "y"),
     }
     stopifnot(is.character(coords))
     stopifnot(length(coords) == 2)
-    if (importance & !err.unpooled)
+    if (importance & !err.fold)
         stop("variable importance assessment currently only supported 
              at the unpooled level")
 
@@ -588,10 +588,10 @@ sperrorest = function(formula, data, coords = c("x", "y"),
           stop("sorry: argument names have changed; 'model' is now 'model.fun'")
         if (any(names(dots.args) == "err.combined")) 
           stop("sorry: argument names have changed; 
-               'err.combined' is now 'err.pooled'")
+               'err.combined' is now 'err.rep'")
         if (any(names(dots.args) == "err.uncombined")) 
           stop("sorry: argument names have changed; 
-               'err.uncombined' is now 'err.unpooled'")
+               'err.uncombined' is now 'err.fold'")
         warning("'...' arguments currently not supported:\n
                 use 'model.args' to pass list of additional 
                 arguments to 'model.fun'")
@@ -608,7 +608,7 @@ sperrorest = function(formula, data, coords = c("x", "y"),
         # Parallelize this function???
         resamp = add.distance(resamp, data, coords = coords, fun = mean)
 
-    if (err.unpooled) {
+    if (err.fold) {
         res = lapply(resamp, unclass)
         class(res) = "sperroresterror"
     } else res = NULL
@@ -663,7 +663,7 @@ sperrorest = function(formula, data, coords = c("x", "y"),
                 # Error handling:
                 if (class(fit) == "try-error") {
                     fit = NULL
-                    if (err.unpooled) {
+                    if (err.fold) {
                         if (err.train) res[[i]][[j]]$train = NULL
                         res[[i]][[j]]$test = NULL
                         if (importance) impo[[i]][[j]] = c() # ???
@@ -687,7 +687,7 @@ sperrorest = function(formula, data, coords = c("x", "y"),
                 rm(pargs)
             
                 # Calculate error measures on training sample:
-                if (err.unpooled)
+                if (err.fold)
                     if (do.try) {
                         err.try = try(err.fun(nd[,response], pred.train), 
                                       silent = silent)
@@ -696,12 +696,12 @@ sperrorest = function(formula, data, coords = c("x", "y"),
                     } else {
                         res[[i]][[j]]$train = err.fun(nd[,response], pred.train)
                     }
-                if (err.pooled) {
+                if (err.rep) {
                     pooled.obs.train = c( pooled.obs.train, nd[,response] )
                     pooled.pred.train = c( pooled.pred.train, pred.train )
                 }
             } else {
-                if (err.unpooled) res[[i]][[j]]$train = NULL
+                if (err.fold) res[[i]][[j]]$train = NULL
             }
             
             # Create test sample:
@@ -720,7 +720,7 @@ sperrorest = function(formula, data, coords = c("x", "y"),
             rm(pargs)
             
             # Calculate error measures on test sample:
-            if (err.unpooled) {
+            if (err.fold) {
                 if (do.try) {
                     err.try = try(err.fun(nd[,response], pred.test), silent = silent)
                     if (class(err.try) == "try-error") err.try = NULL # ???
@@ -729,14 +729,14 @@ sperrorest = function(formula, data, coords = c("x", "y"),
                     res[[i]][[j]]$test  = err.fun(nd[,response], pred.test)
                 }
             }
-            if (err.pooled) {
+            if (err.rep) {
                 pooled.obs.test = c( pooled.obs.test, nd[,response] )
                 pooled.pred.test = c( pooled.pred.test, pred.test )
                 is.factor.prediction = is.factor(pred.test)
             }
             
             ### Permutation-based variable importance assessment:
-            if (importance & err.unpooled) {
+            if (importance & err.fold) {
             
                 if (is.null(res[[i]][[j]]$test)) {
                     impo[[i]][[j]] = c()
@@ -809,7 +809,7 @@ sperrorest = function(formula, data, coords = c("x", "y"),
         }
         
         # Put the results from the pooled estimation into the pooled.err data structure:
-        if (err.pooled) {
+        if (err.rep) {
             if (is.factor(data[,response])) {
                 lev = levels(data[,response])
                 if (err.train) pooled.obs.train = factor(lev[pooled.obs.train], 
@@ -844,7 +844,7 @@ sperrorest = function(formula, data, coords = c("x", "y"),
     } # end for each repetition
 
     # convert matrix(?) to data.frame:
-    if (err.pooled) {
+    if (err.rep) {
         pooled.err = as.data.frame(pooled.err)
         rownames(pooled.err) = NULL
         class(pooled.err) = "sperrorestpoolederror"
