@@ -104,12 +104,6 @@
 #' \item{package.version}{Information about the \code{sperrorest} package
 #' version}
 #' 
-#' @return An object of class \code{sperrorest}, i.e. a list with components 
-#' \code{error} (of class \code{sperroresterror}), 
-#' \code{represampling} (of class \code{represampling}), 
-#' \code{rep.error} (of class \code{sperrorestpoolederror}) and 
-#' \code{importance} (of class \code{sperrorestimportance}).
-#' 
 #' @note (1) Optionally save fitted models, training and test samples in the 
 #' results object; (2) Optionally save intermediate results in some file, and 
 #' enable the function to continue an interrupted sperrorest call where it 
@@ -320,7 +314,7 @@ sperrorest.par <- function(formula, data, coords = c("x", "y"),
   foreach.out <- foreach(i = 1:length(resamp), 
                          .packages = (.packages()), 
                          .errorhandling = "remove", 
-                         .combine = rbind, .verbose = T) %dopar% {
+                         .combine = rbind, .verbose = F) %dopar% {
                            
                            # reset rep.err otherwise 
                            # duplicates are introduced
@@ -574,8 +568,6 @@ sperrorest.par <- function(formula, data, coords = c("x", "y"),
                          }
   stopCluster(cl)
   
-  return(foreach.out)
-  
   if (err.rep & !err.fold) {
     rep.err <- as.data.frame(foreach.out)
   }
@@ -617,6 +609,8 @@ sperrorest.par <- function(formula, data, coords = c("x", "y"),
   if (err.rep & err.fold) {
     res <- foreach.out
     res[[1]] <- NULL
+    class(res[[1]]) = "sperroresterror"
+    class(foreach.out[[1]]) = "sperrorestpoolederror"
     RES <- list(error.rep = foreach.out[[1]],
                 error.fold = res[[1]], 
                 represampling = resamp, 
@@ -627,6 +621,7 @@ sperrorest.par <- function(formula, data, coords = c("x", "y"),
     return(RES)
   }
   if (err.rep & !err.fold) {
+    class(rep.err) = "sperrorestpoolederror"
     RES <- list(error.rep = rep.err,
                 error.fold = NULL, 
                 represampling = resamp, 
@@ -637,6 +632,7 @@ sperrorest.par <- function(formula, data, coords = c("x", "y"),
     return(RES)
   }
   if (!err.rep & err.fold) {
+    class(foreach.out) = "sperroresterror"
     RES <- list(error.rep = NULL,
                 error.fold = foreach.out, 
                 represampling = resamp, 

@@ -150,12 +150,6 @@ finishing times, number of available CPU cores, parallelization mode,
 number of parallel units, and runtime performance}
 \item{package.version}{Information about the \code{sperrorest} package
 version}
-
-An object of class \code{sperrorest}, i.e. a list with components 
-\code{error} (of class \code{sperroresterror}), \code{represampling} 
-(of class \code{represampling}), \code{pooled.error} 
-(of class \code{sperrorestpoolederror}) and \code{importance} 
-(of class \code{sperrorestimportance}).
 }
 \description{
 \code{parsperrorest} is a flexible interface for multiple types of 

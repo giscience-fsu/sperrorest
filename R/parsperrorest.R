@@ -120,13 +120,6 @@
 #' \item{package.version}{Information about the \code{sperrorest} package
 #' version}
 #' 
-#' 
-#' @return An object of class \code{sperrorest}, i.e. a list with components 
-#' \code{error} (of class \code{sperroresterror}), \code{represampling} 
-#' (of class \code{represampling}), \code{pooled.error} 
-#' (of class \code{sperrorestpoolederror}) and \code{importance} 
-#' (of class \code{sperrorestimportance}).
-#' 
 #' @note (1) Optionally save fitted models, training and test samples in the 
 #' results object; (2) Optionally save intermediate results in some file, and 
 #' enable the function to continue an interrupted sperrorest call where it 
@@ -612,11 +605,11 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
   else my.bench = NULL
   
   RES = list(
-    error = res, 
+    err.rep = pooled.err,
+    error.fold = res, 
     represampling = resamp, 
-    pooled.error = pooled.err,
     importance = impo,
-    benchmarks = my.bench,
+    benchmarks = my.bench, 
     package.version = packageVersion("sperrorest"))
   class(RES) = "sperrorest"
   
