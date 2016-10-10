@@ -49,7 +49,7 @@ This will essentially not affect the mean value but of course the
 standard deviation of the error. \code{pooled=FALSE} is not recommended, 
 it is mainly for testing purposes; when the test sets are small 
 (as in leave-one-out cross-validation, in the extreme case), 
-consider running \code{\link{sperrorest}} with \code{err.pooled=TRUE} and 
+consider running \code{\link{sperrorest}} with \code{err.rep=TRUE} and 
 examine only the \code{pooled.error} component of its result.
 }
 \seealso{

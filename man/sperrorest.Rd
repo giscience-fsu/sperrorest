@@ -10,7 +10,7 @@ sperrorest(formula, data, coords = c("x", "y"), model.fun,
   model.args = list(), pred.fun = NULL, pred.args = list(),
   smp.fun = partition.loo, smp.args = list(), train.fun = NULL,
   train.param = NULL, test.fun = NULL, test.param = NULL,
-  err.fun = err.default, err.unpooled = TRUE, err.pooled = FALSE,
+  err.fun = err.default, err.fold = TRUE, err.rep = FALSE,
   err.train = TRUE, imp.variables = NULL, imp.permutations = 1000,
   importance = !is.null(imp.variables), distance = FALSE, do.gc = 1,
   do.try = FALSE, silent = FALSE, benchmark = FALSE, ...)
@@ -70,11 +70,11 @@ known responses in \code{data} and the model predictions delivered
 by \code{pred.fun}. E.g., \code{\link{err.default}} (the default). 
 See example and details below.}
 
-\item{err.unpooled}{logical (default: \code{TRUE} if \code{importance} is 
+\item{err.fold}{logical (default: \code{TRUE} if \code{importance} is 
 \code{TRUE}, otherwise \code{FALSE}): calculate error measures on each fold 
 within a resampling repetition.}
 
-\item{err.pooled}{logical (default: \code{TRUE}): calculate error measures 
+\item{err.rep}{logical (default: \code{TRUE}): calculate error measures 
 based on the pooled predictions of all folds within a resampling repetition.}
 
 \item{err.train}{logical (default: \code{TRUE}): calculate error measures on 
@@ -113,12 +113,12 @@ perform benchmarking and return \code{sperrorestbenchmarks} object}
 \item{...}{currently not used}
 }
 \value{
-A list (object of class \code{sperrorest}) with (up to) four components:
-\item{error}{a \code{sperroresterror} object containing predictive 
+A list (object of class \code{sperrorest}) with (up to) six components:
+\item{error.rep}{a \code{sperrorestpoolederror} object containing 
+predictive performances at the repetition level}
+\item{error.fold}{a \code{sperroresterror} object containing predictive 
 performances at the fold level}
 \item{represampling}{a \code{\link{represampling}} object}
-\item{pooled.error}{a \code{sperrorestpoolederror} object containing 
-predictive performances at the repetition level}
 \item{importance}{a \code{sperrorestimportance} object containing 
 permutation-based variable importances at the fold level}
 \item{benchmarks}{a \code{sperrorestbenchmarks} object containing 
