@@ -53,10 +53,10 @@
 #' known responses in \code{data} and the model predictions delivered 
 #' by \code{pred.fun}. E.g., \code{\link{err.default}} (the default). 
 #' See example and details below.
-#' @param err.unpooled logical (default: \code{TRUE} if \code{importance} is 
+#' @param err.fold logical (default: \code{TRUE} if \code{importance} is 
 #' \code{TRUE}, otherwise \code{FALSE}): calculate error measures on each fold 
 #' within a resampling repetition.
-#' @param err.pooled logical (default: \code{TRUE}): calculate error measures 
+#' @param err.rep logical (default: \code{TRUE}): calculate error measures 
 #' based on the pooled predictions of all folds within a resampling repetition.
 #' @param err.train logical (default: \code{TRUE}): calculate error measures on 
 #' the training set (in addition to the test set estimation).
@@ -89,12 +89,12 @@
 #' @param benchmark logical (default: \code{FALSE}): if \code{TRUE}, 
 #' perform benchmarking and return \code{sperrorestbenchmarks} object
 #' 
-#' @return A list (object of class \code{sperrorest}) with (up to) four components:
-#' \item{error}{a \code{sperroresterror} object containing predictive 
+#' @return A list (object of class \code{sperrorest}) with (up to) six components:
+#' \item{error.rep}{a \code{sperrorestpoolederror} object containing 
+#' predictive performances at the repetition level}
+#' \item{error.fold}{a \code{sperroresterror} object containing predictive 
 #' performances at the fold level}
 #' \item{represampling}{a \code{\link{represampling}} object}
-#' \item{pooled.error}{a \code{sperrorestpoolederror} object containing 
-#' predictive performances at the repetition level}
 #' \item{importance}{a \code{sperrorestimportance} object containing 
 #' permutation-based variable importances at the fold level}
 #' \item{benchmarks}{a \code{sperrorestbenchmarks} object containing 
@@ -107,7 +107,7 @@
 #' @return An object of class \code{sperrorest}, i.e. a list with components 
 #' \code{error} (of class \code{sperroresterror}), 
 #' \code{represampling} (of class \code{represampling}), 
-#' \code{pooled.error} (of class \code{sperrorestpoolederror}) and 
+#' \code{rep.error} (of class \code{sperrorestpoolederror}) and 
 #' \code{importance} (of class \code{sperrorestimportance}).
 #' 
 #' @note (1) Optionally save fitted models, training and test samples in the 
@@ -163,8 +163,8 @@
 #'     smp.fun = partition.cv, 
 #'     smp.args = list(repetition = 1:50, nfold = 5),
 #'     par.units = 2, silent = 1,
-#'     err.pooled = TRUE, err.unpooled = TRUE)
-#' summary(nspres$pooled.error$train.auroc)     
+#'     err.rep = TRUE, err.fold = TRUE)
+#' summary(nspres$rep.error$train.auroc)     
 #' summary(nspres$represampling)
 #'
 #' # Spatial 50-repeated 10-fold spatial cross-validation:
@@ -174,12 +174,12 @@
 #'     smp.fun = partition.cv, 
 #'     smp.args = list(repetition = 1:50, nfold = 5),
 #'     par.units = 2, silent = 1,
-#'     err.pooled = TRUE, err.unpooled = TRUE)
-#' summary(nspres$pooled.error$test.auroc)       
+#'     err.rep = TRUE, err.fold = TRUE)
+#' summary(nspres$rep.error$test.auroc)       
 #' summary(spres$represampling)
 #' 
-#' Value <- c(nspres$pooled.error$train.auroc, nspres$pooled.error$test.auroc,
-#'            spres$pooled.error$train.auroc, spres$pooled.error$test.auroc)
+#' Value <- c(nspres$rep.error$train.auroc, nspres$rep.error$test.auroc,
+#'            spres$rep.error$train.auroc, spres$rep.error$test.auroc)
 #' Model <- c(rep("nspres (train)", 50), rep("nspres (test)", 50), 
 #'            rep("spres (train)", 50), rep("spres (test)", 50))
 #' Type <- c(rep("Non-Spatial", 100), rep("Spatial", 100))
@@ -204,7 +204,7 @@ sperrorest.par <- function(formula, data, coords = c("x", "y"),
                            smp.args = list(), train.fun = NULL, 
                            train.param = NULL, test.fun = NULL, 
                            test.param = NULL, err.fun = err.default, 
-                           err.unpooled = TRUE, err.pooled = FALSE, 
+                           err.fold = TRUE, err.rep = FALSE, 
                            err.train = TRUE, imp.variables = NULL, 
                            imp.permutations = 1000, 
                            importance = !is.null(imp.variables),
@@ -231,9 +231,9 @@ sperrorest.par <- function(formula, data, coords = c("x", "y"),
     stopifnot(is.function(test.fun))
   stopifnot(is.function(err.fun))
   if (importance) {
-    if (!err.unpooled) {
+    if (!err.fold) {
       warning("'importance=TRUE' currently only supported 
-              with 'err.unpooled=TRUE'.\nUsing 'importance=FALSE'")
+              with 'err.fold=TRUE'.\nUsing 'importance=FALSE'")
       importance = FALSE
     }
     stopifnot(is.numeric(imp.permutations))
@@ -242,7 +242,7 @@ sperrorest.par <- function(formula, data, coords = c("x", "y"),
   }
   stopifnot(is.character(coords))
   stopifnot(length(coords) == 2)
-  if (importance & !err.unpooled) 
+  if (importance & !err.fold) 
     stop("variable importance assessment currently only supported 
          at the unpooled level")
   if (any(names(model.args) == "formula")) 
@@ -265,10 +265,10 @@ sperrorest.par <- function(formula, data, coords = c("x", "y"),
            'model' is now 'model.fun'")
     if (any(names(dots.args) == "err.combined")) 
       stop("sorry: argument names have changed; 
-           'err.combined' is now 'err.pooled'")
+           'err.combined' is now 'err.rep'")
     if (any(names(dots.args) == "err.uncombined")) 
       stop("sorry: argument names have changed; 
-           'err.uncombined' is now 'err.unpooled'")
+           'err.uncombined' is now 'err.fold'")
     warning("'...' arguments currently not supported:\n
             use 'model.args' to pass list of additional 
             arguments to 'model.fun'")
@@ -285,14 +285,14 @@ sperrorest.par <- function(formula, data, coords = c("x", "y"),
   if (distance) 
     resamp <- add.distance(resamp, data, coords = coords, 
                            fun = mean)
-  if (err.unpooled) {
+  if (err.fold) {
     res <- lapply(resamp, unclass)
     class(res) <- "sperroresterror"
   }
   else {
     res <- NULL
   }
-  pooled.err <- NULL
+  rep.err <- NULL
   is.factor.prediction <- NULL
   impo <- NULL
   if (importance) {
@@ -320,11 +320,11 @@ sperrorest.par <- function(formula, data, coords = c("x", "y"),
   foreach.out <- foreach(i = 1:length(resamp), 
                          .packages = (.packages()), 
                          .errorhandling = "remove", 
-                         .combine = rbind, .verbose = FALSE) %dopar% {
+                         .combine = rbind, .verbose = T) %dopar% {
                            
-                           # reset pooled.err otherwise 
+                           # reset rep.err otherwise 
                            # duplicates are introduced
-                           pooled.err <- NULL
+                           rep.err <- NULL
                            
                            if (silent == 1) {
                              cat(date(), "Repetition", 
@@ -350,7 +350,7 @@ sperrorest.par <- function(formula, data, coords = c("x", "y"),
                                           silent = silent)
                                if (class(fit) == "try-error") {
                                  fit <- NULL
-                                 if (err.unpooled) {
+                                 if (err.fold) {
                                    if (err.train) {
                                      res[[i]][[j]]$train <- NULL
                                    }
@@ -379,7 +379,7 @@ sperrorest.par <- function(formula, data, coords = c("x", "y"),
                                                        args = pargs)
                                }
                                rm(pargs)
-                               if (err.unpooled) 
+                               if (err.fold) 
                                  if (do.try) {
                                    err.try <- try(err.fun(nd[, response],
                                                           pred.train), 
@@ -392,7 +392,7 @@ sperrorest.par <- function(formula, data, coords = c("x", "y"),
                                  res[[i]][[j]]$train <- err.fun(
                                    nd[, response], pred.train)
                                }
-                               if (err.pooled) {
+                               if (err.rep) {
                                  pooled.obs.train <- c(pooled.obs.train, 
                                                        nd[, response])
                                  pooled.pred.train <- c(pooled.pred.train,
@@ -400,7 +400,7 @@ sperrorest.par <- function(formula, data, coords = c("x", "y"),
                                }
                              }
                              else {
-                               if (err.unpooled) {
+                               if (err.fold) {
                                  res[[i]][[j]]$train <- NULL
                                }
                              }
@@ -420,7 +420,7 @@ sperrorest.par <- function(formula, data, coords = c("x", "y"),
                                pred.test <- do.call(pred.fun, args = pargs)
                              }
                              rm(pargs)
-                             if (err.unpooled) {
+                             if (err.fold) {
                                if (do.try) {
                                  err.try <- try(err.fun(
                                    nd[, response],pred.test), silent = silent)
@@ -433,14 +433,14 @@ sperrorest.par <- function(formula, data, coords = c("x", "y"),
                                    nd[, response], pred.test)
                                }
                              }
-                             if (err.pooled) {
+                             if (err.rep) {
                                pooled.obs.test <- c(pooled.obs.test, 
                                                     nd[, response])
                                pooled.pred.test <- c(pooled.pred.test,
                                                      pred.test)
                                is.factor.prediction <- is.factor(pred.test)
                              }
-                             if (importance & err.unpooled) {
+                             if (importance & err.fold) {
                                if (is.null(res[[i]][[j]]$test)) {
                                  impo[[i]][[j]] <- c()
                                  if (silent == 1 | silent == 2) 
@@ -507,8 +507,8 @@ sperrorest.par <- function(formula, data, coords = c("x", "y"),
                                  rm(nd.bak, nd)
                                }
                              }
-                           }
-                           if (err.pooled) {
+                           } #end of each fold
+                           if (err.rep) {
                              if (is.factor(data[, response])) {
                                lev <- levels(data[, response])
                                if (err.train) {
@@ -529,23 +529,23 @@ sperrorest.par <- function(formula, data, coords = c("x", "y"),
                                             levels = lev)
                                  }
                                }
-                               pooled.err.train <- NULL
+                               rep.err.train <- NULL
                                if (err.train) {
-                                 pooled.err.train <-
+                                 rep.err.train <-
                                    err.fun(pooled.obs.train, 
                                            pooled.pred.train)
                                }
                                if (i == 1) {
-                                 pooled.err <- t(unlist(list(
-                                   train = pooled.err.train, 
+                                 rep.err <- t(unlist(list(
+                                   train = rep.err.train, 
                                    test = err.fun(pooled.obs.test,
                                                   pooled.pred.test))))
                                }
                                else {
-                                 pooled.err <- rbind(pooled.err,
+                                 rep.err <- rbind(rep.err,
                                                      unlist(list(
                                                        train =
-                                                         pooled.err.train, 
+                                                         rep.err.train, 
                                                        test = err.fun(
                                                          pooled.obs.test,
                                                          pooled.pred.test))))
@@ -557,45 +557,29 @@ sperrorest.par <- function(formula, data, coords = c("x", "y"),
                              if ((do.gc >= 1) & (do.gc < 2)) {
                                gc()
                              }
-                             if (err.unpooled & err.pooled) {
-                               foreach.out <- list(pooled.err, res)
+                           }
+                           
+                           if (err.rep & err.fold) {
+                               foreach.out <- list(rep.err, res)
                                return(foreach.out)
                              }
-                             if (err.pooled & !err.unpooled) {
-                               return(pooled.err)
+                           if (err.rep & !err.fold) {
+                               foreach.out <- rep.err
+                               return(foreach.out)
                              }
-                             if (!err.pooled & err.unpooled) {
-                               return(res)
+                           if (!err.rep & err.fold) {
+                               foreach.out <- res
+                               return(foreach.out)
                              }
-                           }
-                           stopCluster(cl)
-                           
-                           
-                           if (err.pooled & !err.unpooled) {
-                             pooled.err <- as.data.frame(foreach.out)
-                           }
-                           if (err.pooled & err.unpooled) {
-                             for (i in 1:length(resamp)) {
-                               foreach.out[[i]] <- as.data.frame(foreach.out[[i]])
-                             }
-                             for (i in 2:length(resamp)) {
-                               foreach.out[[1]] <- merge.data.frame(foreach.out[[1]], 
-                                                                    foreach.out[[i]], 
-                                                                    all = TRUE)
-                             }
-                             i <- 2
-                             while (i <= length(resamp)) {
-                               foreach.out[[2]] <- NULL
-                               i <- i + 1
-                             }
-                           }
                          }
   stopCluster(cl)
   
-  if (err.pooled & !err.unpooled) {
-    pooled.err <- as.data.frame(foreach.out)
+  return(foreach.out)
+  
+  if (err.rep & !err.fold) {
+    rep.err <- as.data.frame(foreach.out)
   }
-  if (err.pooled & err.unpooled) {
+  if (err.rep & err.fold) {
     for (i in 1:length(resamp)) {
       foreach.out[[i]] <- as.data.frame(foreach.out[[i]])
     }
@@ -609,7 +593,7 @@ sperrorest.par <- function(formula, data, coords = c("x", "y"),
       i <- i + 1
     }
   }
-  
+
   if (silent == 1 | silent == 2) {
     cat(date(), "Done.\n")
   }
@@ -630,34 +614,34 @@ sperrorest.par <- function(formula, data, coords = c("x", "y"),
   }
   else my.bench = NULL
   
-  if (err.pooled & err.unpooled) {
+  if (err.rep & err.fold) {
     res <- foreach.out
     res[[1]] <- NULL
-    RES <- list(error = res[[1]], 
+    RES <- list(error.rep = foreach.out[[1]],
+                error.fold = res[[1]], 
                 represampling = resamp, 
-                pooled.error = foreach.out[[1]], 
                 importance = impo, 
                 benchmarks = my.bench,
                 package.version = packageVersion("sperrorest"))
     class(RES) <- "sperrorest"
     return(RES)
   }
-  if (err.pooled & !err.unpooled) {
-    RES <- list(error = NULL, 
+  if (err.rep & !err.fold) {
+    RES <- list(error.rep = rep.err,
+                error.fold = NULL, 
                 represampling = resamp, 
-                pooled.error = pooled.err, 
                 importance = impo, 
-                benchmarks = my.bench, 
+                benchmarks = my.bench,
                 package.version = packageVersion("sperrorest"))
     class(RES) <- "sperrorest"
     return(RES)
   }
-  if (!err.pooled & err.unpooled) {
-    RES <- list(error = foreach.out, 
+  if (!err.rep & err.fold) {
+    RES <- list(error.rep = NULL,
+                error.fold = foreach.out, 
                 represampling = resamp, 
-                pooled.error = NULL, 
                 importance = impo, 
-                benchmarks = my.bench, 
+                benchmarks = my.bench,
                 package.version = packageVersion("sperrorest"))
     class(RES) <- "sperrorest"
     return(RES)
