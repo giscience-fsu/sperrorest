@@ -1,9 +1,16 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-[![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/sperrorest)](http://cran.r-project.org/package=sperrorest)
-[![Build Status](https://travis-ci.org/pat-s/sperrorest.svg?branch=master)](https://travis-ci.org/pat-s/sperrorest) (master)
-[![Build Status](https://travis-ci.org/pat-s/sperrorest.svg?branch=dev)](https://travis-ci.org/pat-s/sperrorest) (dev)
-[![Downloads](http://cranlogs.r-pkg.org/badges/sperrorest?color=brightgreen)](http://www.r-pkg.org/pkg/sperrorest)
+#### General
+
+[![Build Status](https://travis-ci.org/pat-s/sperrorest.svg?branch=master)](https://travis-ci.org/pat-s/sperrorest) [![Project Status: WIP - Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](http://www.repostatus.org/badges/latest/wip.svg)](http://www.repostatus.org/#wip) [![codecov](https://codecov.io/gh/pat-s/sperrorest/branch/master/graph/badge.svg)](https://codecov.io/gh/pat-s/sperrorest) [![minimal R version](https://img.shields.io/badge/R%3E%3D-2.1.0-6666ff.svg)](https://cran.r-project.org/) [![Last-changedate](https://img.shields.io/badge/last%20change-2016--10--17-yellowgreen.svg)](/commits/master)
+
+#### CRAN
+
+[![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/sperrorest)](http://cran.r-project.org/package=sperrorest) [![Downloads](http://cranlogs.r-pkg.org/badges/sperrorest?color=brightgreen)](http://www.r-pkg.org/pkg/sperrorest) [![Rdoc](http://www.rdocumentation.org/badges/version/sperrorest)](http://www.rdocumentation.org/packages/sperrorest)
+
+#### Github
+
+[![Github Releases](https://img.shields.io/github/downloads/pat-s/sperrorest/latest/total.svg)](https://github.com/pat-s/sperrorest) [![packageversion](https://img.shields.io/badge/Package%20version-0.2.1.9000-orange.svg?style=flat-square)](commits/master)
 
 sperrorest
 ==========

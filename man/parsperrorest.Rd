@@ -2,48 +2,61 @@
 % Please edit documentation in R/parsperrorest.R
 \name{parsperrorest}
 \alias{parsperrorest}
-\alias{sperroresterror}
-\alias{sperrorestimportance}
 \title{Perform parallelized spatial error estimation and variable importance assessment}
 \usage{
 parsperrorest(formula, data, coords = c("x", "y"), model.fun,
   model.args = list(), pred.fun = NULL, pred.args = list(),
   smp.fun = partition.loo, smp.args = list(), train.fun = NULL,
   train.param = NULL, test.fun = NULL, test.param = NULL,
-  err.fun = err.default, err.unpooled = importance, err.pooled = TRUE,
+  err.fun = err.default, err.fold = importance, err.rep = TRUE,
   err.train = TRUE, imp.variables = NULL, imp.permutations = 1000,
   importance = !is.null(imp.variables), distance = FALSE, do.gc = 1,
   do.try = FALSE, silent = FALSE, par.args = list(), benchmark = FALSE,
   ...)
 }
 \arguments{
-\item{formula}{A formula specifying the variables used by the \code{model}. Only simple formulas 
-without interactions or nonlinear terms should be used, e.g. \code{y~x1+x2+x3} but not 
-\code{y~x1*x2+log(x3)}. Formulas involving interaction and nonlinear terms may possibly work 
-for error estimation but not for variable importance assessment, but should be used with caution.}
+\item{formula}{A formula specifying the variables used by the \code{model}. 
+Only simple formulas without interactions or nonlinear terms should 
+be used, e.g. \code{y~x1+x2+x3} but not \code{y~x1*x2+log(x3)}. 
+Formulas involving interaction and nonlinear terms may possibly work 
+for error estimation but not for variable importance assessment, 
+but should be used with caution.}
 
-\item{data}{a \code{data.frame} with predictor and response variables. Training and test samples 
-will be drawn from this data set by \code{train.fun} and \code{test.fun}, respectively.}
+\item{data}{a \code{data.frame} with predictor and response variables. 
+Training and test samples will be drawn from this data set by \code{train.fun} 
+and \code{test.fun}, respectively.}
 
-\item{coords}{vector of length 2 defining the variables in \code{data} that contain the x and y coordinates of sample locations}
+\item{coords}{vector of length 2 defining the variables in \code{data} that 
+contain the x and y coordinates of sample locations.}
 
-\item{model.fun}{Function that fits a predictive model, such as \code{glm} or \code{rpart}. The 
-function must accept at least two arguments, the first one being a formula and the second a 
-data.frame with the learning sample.}
+\item{model.fun}{Function that fits a predictive model, such as \code{glm} 
+or \code{rpart}. The function must accept at least two arguments, the first 
+one being a formula and the second a data.frame with the learning sample.}
 
-\item{model.args}{Arguments to be passed to \code{model.fun} (in addition to the \code{formula} and \code{data} argument, which are provided by \code{sperrorest})}
+\item{model.args}{Arguments to be passed to \code{model.fun} 
+(in addition to the \code{formula} and \code{data} argument, 
+which are provided by \code{sperrorest})}
 
-\item{pred.fun}{Prediction function for a fitted model object created by \code{model}. 
-Must accept at least two arguments: the fitted \code{object} and a \code{data.frame} \code{newdata} with data 
+\item{pred.fun}{Prediction function for a fitted model object created 
+by \code{model}. Must accept at least two arguments: the fitted 
+\code{object} and a \code{data.frame} \code{newdata} with data 
 on which to predict the outcome.}
 
-\item{pred.args}{(optional) Arguments to \code{pred.fun} (in addition to the fitted model object and the \code{newdata} argument, which are provided by \code{sperrorest})}
+\item{pred.args}{(optional) Arguments to \code{pred.fun} (in addition to the 
+fitted model object and the \code{newdata} argument, 
+which are provided by \code{sperrorest})}
 
-\item{smp.fun}{A function for sampling training and test sets from \code{data}. E.g., \code{\link{partition.kmeans}} for spatial cross-validation using spatial \emph{k}-means clustering.}
+\item{smp.fun}{A function for sampling training and test sets from 
+\code{data}. E.g., \code{\link{partition.kmeans}} for 
+spatial cross-validation using spatial \emph{k}-means clustering.}
 
 \item{smp.args}{(optional) Arguments to be passed to \code{est.fun}}
 
-\item{train.fun}{(optional) A function for resampling or subsampling the training sample in order to achieve, e.g., uniform sample sizes on all training sets, or maintaining a certain ratio of positives and negatives in training sets. E.g., \code{\link{resample.uniform}} or \code{\link{resample.strat.uniform}}}
+\item{train.fun}{(optional) A function for resampling or subsampling the 
+training sample in order to achieve, e.g., uniform sample sizes on all 
+training sets, or maintaining a certain ratio of positives and negatives 
+in training sets. 
+E.g., \code{\link{resample.uniform}} or \code{\link{resample.strat.uniform}}}
 
 \item{train.param}{(optional) Arguments to be passed to \code{resample.fun}}
 
@@ -51,57 +64,105 @@ on which to predict the outcome.}
 
 \item{test.param}{(optional) Arguments to be passed to \code{test.fun}}
 
-\item{err.fun}{A function that calculates selected error measures from the known responses in \code{data} and the model predictions delivered by \code{pred.fun}. E.g., \code{\link{err.default}} (the default). See example and details below.}
+\item{err.fun}{A function that calculates selected error measures from the 
+known responses in \code{data} and the model predictions delivered 
+by \code{pred.fun}. E.g., \code{\link{err.default}} (the default). 
+See example and details below.}
 
-\item{err.unpooled}{logical (default: \code{TRUE} if \code{importance} is \code{TRUE}, otherwise \code{FALSE}): calculate error measures on each fold within a resampling repetition}
+\item{err.fold}{logical (default: \code{TRUE} if \code{importance} is 
+\code{TRUE}, otherwise \code{FALSE}): calculate error measures on each fold 
+within a resampling repetition.}
 
-\item{err.pooled}{logical (default: \code{TRUE}): calculate error measures based on the pooled predictions of all folds within a resampling repetition}
+\item{err.rep}{logical (default: \code{TRUE}): calculate error measures 
+based on the pooled predictions of all folds within a resampling repetition.}
 
-\item{err.train}{logical (default: \code{TRUE}): calculate error measures on the training set (in addition to the test set estimation)}
+\item{err.train}{logical (default: \code{TRUE}): calculate error measures on 
+the training set (in addition to the test set estimation).}
 
-\item{imp.variables}{(optional; used if \code{importance=TRUE}) Variables for which permutation-based variable importance assessment is performed. If \code{importance=TRUE} and \code{imp.variables} is \code{NULL}, all variables in \code{formula} will be used.}
+\item{imp.variables}{(optional; used if \code{importance=TRUE}) 
+Variables for which permutation-based variable importance assessment 
+is performed. If \code{importance=TRUE} and \code{imp.variables} is 
+\code{NULL}, all variables in \code{formula} will be used.}
 
-\item{imp.permutations}{(optional; used if \code{importance=TRUE}) Number of permutations used for variable importance assessment.}
+\item{imp.permutations}{(optional; used if \code{importance=TRUE}) 
+Number of permutations used for variable importance assessment.}
 
-\item{importance}{logical: perform permutation-based variable importance assessment?}
+\item{importance}{logical: perform permutation-based variable 
+importance assessment?}
 
-\item{distance}{logical (default: \code{FALSE}): if \code{TRUE}, calculate mean nearest-neighbour distances from test samples to training samples using \code{\link{add.distance.represampling}}}
+\item{distance}{logical (default: \code{FALSE}): if \code{TRUE}, calculate 
+mean nearest-neighbour distances from test samples to training samples using 
+\code{\link{add.distance.represampling}}}
 
-\item{do.gc}{numeric (default: 1): defines frequency of memory garbage collection by calling \code{\link{gc}}; if \code{<1}, no garbage collection; if \code{>=1}, run a \code{gc()} after each repetition; if \code{>=2}, after each fold}
+\item{do.gc}{numeric (default: 1): defines frequency of memory garbage 
+collection by calling \code{\link{gc}}; if \code{<1}, no garbage collection; 
+if \code{>=1}, run a \code{gc()} after each repetition; 
+if \code{>=2}, after each fold}
 
-\item{do.try}{logical (default: \code{FALSE}): if \code{TRUE} [untested!!], use \code{\link{try}} to robustify calls to \code{model.fun} and \code{err.fun}; use with caution!}
+\item{do.try}{logical (default: \code{FALSE}): if \code{TRUE} [untested!!], 
+use \code{\link{try}} to robustify calls to \code{model.fun} and 
+\code{err.fun}; use with caution!}
 
-\item{silent}{If \code{TRUE}, show progress on console (in Windows Rgui, disable 'Buffered output' in 'Misc' menu)}
+\item{silent}{If \code{FALSE}, show progress on console (in Windows Rgui, 
+disable 'Buffered output' in 'Misc' menu)}
 
-\item{par.args}{Contains parallelization parameters \code{par.mode} (the method used for parallelization), \code{par.units} (the number of parallel processing units), \code{par.libs} (libraries to be loaded on cluster workers), \code{lb} (logical, enable load balancing) and \code{high} (logical, use high-level parallelization function). 
-Setting \code{par.mode} to 1 will only work for Linux or Mac OS users, unless \code{par.units} is set to 1. 
-In that case the code will run on Windows machines, too. However, execution will be sequential due to only one CPU core being used. 
-Setting \code{par.mode} to 2 will work on all operating systems, but does not allow for individual workers to print progress to the R console (cf. \code{silent}).
-\code{par.libs} must be a list on characters. This will only have an effect if \code{par.mode} is set to 2.
-Setting \code{lb} to \code{TRUE} will enable load balancing. Instead of pre-scheduling tasks per worker, each worker will be given a new task as soon as it finishes its previous one.
-Setting \code{high} to \code{TRUE} will cause \code{parsperrorest} to use the high-level parallelization function \code{parLapply()} instead of its low-level equivalent \code{clusterApply()}. 
-This will only have an effect if \code{par.mode} is set to 2 and \code{lb} is \code{FALSE}.}
+\item{par.args}{Contains parallelization parameters \code{par.mode} 
+(the method used for parallelization), \code{par.units} 
+(the number of parallel processing units), \code{par.libs} 
+(libraries to be loaded on cluster workers), \code{lb} 
+(logical, enable load balancing) and \code{high} 
+(logical, use high-level parallelization function). 
+Setting \code{par.mode} to 1 will only work for Linux or Mac OS users, 
+unless \code{par.units} is set to 1. 
+In that case the code will run on Windows machines, too. 
+However, execution will be sequential due to only one CPU core being used. 
+Setting \code{par.mode} to 2 will work on all operating systems, but does 
+not allow for individual workers to print progress to the 
+R console (cf. \code{silent}).
+\code{par.libs} must be a list on characters. This will only have an effect 
+if \code{par.mode} is set to 2.
+Setting \code{lb} to \code{TRUE} will enable load balancing. Instead of 
+pre-scheduling tasks per worker, each worker will be given a new task as 
+soon as it finishes its previous one.
+Setting \code{high} to \code{TRUE} will cause \code{parsperrorest} to use 
+the high-level parallelization function \code{parLapply()} instead of its 
+low-level equivalent \code{clusterApply()}. 
+This will only have an effect if \code{par.mode} is set to 2 and 
+\code{lb} is \code{FALSE}.}
 
-\item{benchmark}{logical (default: \code{FALSE}): if \code{TRUE}, perform benchmarking and return \code{sperrorestbenchmarks} object}
+\item{benchmark}{logical (default: \code{FALSE}): if \code{TRUE}, 
+perform benchmarking and return \code{sperrorestbenchmarks} object}
 
 \item{...}{currently not used}
 }
 \value{
-A list (object of class \code{sperrorest}) with (up to) five components:
-\item{error}{a \code{sperroresterror} object containing predictive performances at the fold level}
+A list (object of class \code{sperrorest}) with (up to) six components:
+\item{error.rep}{a \code{sperrorestpoolederror} object containing 
+predictive performances at the repetition level}
+\item{error.fold}{a \code{sperroresterror} object containing predictive 
+performances at the fold level}
 \item{represampling}{a \code{\link{represampling}} object}
-\item{pooled.error}{a \code{sperrorestpoolederror} object containing predictive performances at the repetition level}
-\item{importance}{a \code{sperrorestimportance} object containing permutation-based variable importances at the fold level}
-\item{benchmarks}{a \code{sperrorestbenchmarks} object containing information on the system the code is running on, starting and finishing times, number of available CPU cores, parallelization mode, number of parallel units, and runtime performance}
-
-An object of class \code{sperrorest}, i.e. a list with components \code{error} (of class \code{sperroresterror}), \code{represampling} (of class \code{represampling}), \code{pooled.error} (of class \code{sperrorestpoolederror}) and \code{importance} (of class \code{sperrorestimportance}).
+\item{importance}{a \code{sperrorestimportance} object containing 
+permutation-based variable importances at the fold level}
+\item{benchmarks}{a \code{sperrorestbenchmarks} object containing 
+information on the system the code is running on, starting and 
+finishing times, number of available CPU cores, parallelization mode, 
+number of parallel units, and runtime performance}
+\item{package.version}{Information about the \code{sperrorest} package
+version}
 }
 \description{
-\code{parsperrorest} is a flexible interface for multiple types of parallelized spatial and non-spatial cross-validation 
-and bootstrap error estimation and parallelized permutation-based assessment of spatial variable importance.
+\code{parsperrorest} is a flexible interface for multiple types of 
+parallelized spatial and non-spatial cross-validation 
+and bootstrap error estimation and parallelized permutation-based 
+assessment of spatial variable importance.
 }
 \note{
-To do: (1) Parallelize the code; (2) Optionally save fitted models, training and test samples in the results object; (3) Optionally save intermediate results in some file, and enable the function to continue an interrupted sperrorest call where it was interrupted. (3) Optionally have sperrorest dump the result of each repetition into a file, and to skip repetitions for which a file already exists. (4) Save sperrorest version number in results object.
+(1) Optionally save fitted models, training and test samples in the 
+results object; (2) Optionally save intermediate results in some file, and 
+enable the function to continue an interrupted sperrorest call where it 
+was interrupted. (3) Optionally have sperrorest dump the result of each 
+repetition into a file, and to skip repetitions for which a file already exists.
 }
 \examples{
 data(ecuador) # Muenchow et al. (2012), see ?ecuador
@@ -121,7 +182,8 @@ mypred.rpart = function(object, newdata) predict(object, newdata)[,2]
 parnspres = parsperrorest(data = ecuador, formula = fo,
     model.fun = rpart, model.args = list(control = ctrl),
     pred.fun = mypred.rpart,
-    smp.fun = partition.cv, smp.args = list(repetition=1:5, nfold=10), par.args = list(par.mode = 2, par.units=2, lb=FALSE, high=TRUE))
+    smp.fun = partition.cv, smp.args = list(repetition=1:5, nfold=10), 
+    par.args = list(par.mode = 2, par.units=2, lb=FALSE, high=TRUE))
 summary(parnspres$error)
 summary(parnspres$represampling)
 plot(parnspres$represampling, ecuador)
@@ -130,7 +192,8 @@ plot(parnspres$represampling, ecuador)
 parspres = parsperrorest(data = ecuador, formula = fo,
     model.fun = rpart, model.args = list(control = ctrl),
     pred.fun = mypred.rpart,
-    smp.fun = partition.kmeans, smp.args = list(repetition=1:5, nfold=10), par.args = list(par.mode = 2, par.units=2, lb=FALSE, high=TRUE))
+    smp.fun = partition.kmeans, smp.args = list(repetition=1:5, nfold=10), 
+    par.args = list(par.mode = 2, par.units=2, lb=FALSE, high=TRUE))
 summary(parspres$error)
 summary(parspres$represampling)
 plot(parspres$represampling, ecuador)
@@ -144,17 +207,31 @@ smry = data.frame(
 boxplot(smry, col = c("red","red","red","green"), 
     main = "Training vs. test, nonspatial vs. spatial",
     ylab = "Area under the ROC curve")
+    
 }
 \references{
-Brenning, A. 2012. Spatial cross-validation and bootstrap for the assessment of prediction rules in remote sensing: the R package 'sperrorest'. 2012 IEEE International Geoscience and Remote Sensing Symposium (IGARSS), 23-27 July 2012, p. 5372-5375.
+Brenning, A. 2012. Spatial cross-validation and bootstrap for 
+the assessment of prediction rules in remote sensing: the R package 'sperrorest'. 
+2012 IEEE International Geoscience and Remote Sensing Symposium (IGARSS), 
+23-27 July 2012, p. 5372-5375.
 
-Brenning, A. 2005. Spatial prediction models for landslide hazards: review, comparison and evaluation. Natural Hazards and Earth System Sciences, 5(6): 853-862.
+Brenning, A. 2005. Spatial prediction models for landslide hazards: review, 
+comparison and evaluation. Natural Hazards and Earth System Sciences, 5(6): 853-862.
 
-Brenning, A., S. Long & P. Fieguth. Forthcoming. Detecting rock glacier flow structures using Gabor filters and IKONOS imagery. Submitted to Remote Sensing of Environment.
+Brenning, A., S. Long & P. Fieguth. Forthcoming. Detecting rock glacier flow 
+structures using Gabor filters and IKONOS imagery. 
+Submitted to Remote Sensing of Environment.
 
-Russ, G. & A. Brenning. 2010a. Data mining in precision agriculture: Management of spatial information. In 13th International Conference on Information Processing and Management of Uncertainty, IPMU 2010; Dortmund; 28 June - 2 July 2010.  Lecture Notes in Computer Science, 6178 LNAI: 350-359.
+Russ, G. & A. Brenning. 2010a. Data mining in precision agriculture: 
+Management of spatial information. In 13th International Conference on 
+Information Processing and Management of Uncertainty, IPMU 2010; Dortmund; 
+28 June - 2 July 2010. Lecture Notes in Computer Science, 6178 LNAI: 350-359.
 
-Russ, G. & A. Brenning. 2010b. Spatial variable importance assessment for yield prediction in Precision Agriculture. In Advances in Intelligent Data Analysis IX, Proceedings, 9th International Symposium, IDA 2010, Tucson, AZ, USA, 19-21 May 2010.  Lecture Notes in Computer Science, 6065 LNCS: 184-195.
+Russ, G. & A. Brenning. 2010b. Spatial variable importance assessment for 
+yield prediction in Precision Agriculture. In Advances in Intelligent 
+Data Analysis IX, Proceedings, 9th International Symposium, 
+IDA 2010, Tucson, AZ, USA, 19-21 May 2010.  
+Lecture Notes in Computer Science, 6065 LNCS: 184-195.
 }
 \seealso{
 \pkg{ipred}

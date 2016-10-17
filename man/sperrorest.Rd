@@ -10,10 +10,10 @@ sperrorest(formula, data, coords = c("x", "y"), model.fun,
   model.args = list(), pred.fun = NULL, pred.args = list(),
   smp.fun = partition.loo, smp.args = list(), train.fun = NULL,
   train.param = NULL, test.fun = NULL, test.param = NULL,
-  err.fun = err.default, err.unpooled = TRUE, err.pooled = FALSE,
+  err.fun = err.default, err.fold = TRUE, err.rep = FALSE,
   err.train = TRUE, imp.variables = NULL, imp.permutations = 1000,
   importance = !is.null(imp.variables), distance = FALSE, do.gc = 1,
-  do.try = FALSE, silent = FALSE, ...)
+  do.try = FALSE, silent = FALSE, benchmark = FALSE, ...)
 }
 \arguments{
 \item{formula}{A formula specifying the variables used by the \code{model}. 
@@ -70,11 +70,11 @@ known responses in \code{data} and the model predictions delivered
 by \code{pred.fun}. E.g., \code{\link{err.default}} (the default). 
 See example and details below.}
 
-\item{err.unpooled}{logical (default: \code{TRUE} if \code{importance} is 
+\item{err.fold}{logical (default: \code{TRUE} if \code{importance} is 
 \code{TRUE}, otherwise \code{FALSE}): calculate error measures on each fold 
 within a resampling repetition.}
 
-\item{err.pooled}{logical (default: \code{TRUE}): calculate error measures 
+\item{err.rep}{logical (default: \code{TRUE}): calculate error measures 
 based on the pooled predictions of all folds within a resampling repetition.}
 
 \item{err.train}{logical (default: \code{TRUE}): calculate error measures on 
@@ -104,26 +104,29 @@ if \code{>=2}, after each fold}
 use \code{\link{try}} to robustify calls to \code{model.fun} and 
 \code{err.fun}; use with caution!}
 
-\item{silent}{If \code{TRUE}, show progress on console (in Windows Rgui, 
+\item{silent}{If \code{FALSE}, show progress on console (in Windows Rgui, 
 disable 'Buffered output' in 'Misc' menu)}
+
+\item{benchmark}{logical (default: \code{FALSE}): if \code{TRUE}, 
+perform benchmarking and return \code{sperrorestbenchmarks} object}
 
 \item{...}{currently not used}
 }
 \value{
-A list (object of class \code{sperrorest}) with (up to) four components:
-\item{error}{a \code{sperroresterror} object containing predictive 
+A list (object of class \code{sperrorest}) with (up to) six components:
+\item{error.rep}{a \code{sperrorestpoolederror} object containing 
+predictive performances at the repetition level}
+\item{error.fold}{a \code{sperroresterror} object containing predictive 
 performances at the fold level}
 \item{represampling}{a \code{\link{represampling}} object}
-\item{pooled.error}{a \code{sperrorestpoolederror} object containing 
-predictive performances at the repetition level}
 \item{importance}{a \code{sperrorestimportance} object containing 
 permutation-based variable importances at the fold level}
-
-An object of class \code{sperrorest}, i.e. a list with components 
-\code{error} (of class \code{sperroresterror}), 
-\code{represampling} (of class \code{represampling}), 
-\code{pooled.error} (of class \code{sperrorestpoolederror}) and 
-\code{importance} (of class \code{sperrorestimportance}).
+\item{benchmarks}{a \code{sperrorestbenchmarks} object containing 
+information on the system the code is running on, starting and 
+finishing times, number of available CPU cores, parallelization mode, 
+number of parallel units, and runtime performance}
+\item{package.version}{Information about the \code{sperrorest} package
+version}
 }
 \description{
 \code{sperrorest} is a flexible interface for multiple types of spatial and 
@@ -194,7 +197,7 @@ Submitted to Remote Sensing of Environment.
 Russ, G. & A. Brenning. 2010a. Data mining in precision agriculture: 
 Management of spatial information. In 13th International Conference on 
 Information Processing and Management of Uncertainty, IPMU 2010; Dortmund; 
-28 June - 2 July 2010.  Lecture Notes in Computer Science, 6178 LNAI: 350-359.
+28 June - 2 July 2010. Lecture Notes in Computer Science, 6178 LNAI: 350-359.
 
 Russ, G. & A. Brenning. 2010b. Spatial variable importance assessment for 
 yield prediction in Precision Agriculture. In Advances in Intelligent 

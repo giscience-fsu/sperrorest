@@ -4,6 +4,14 @@ language: R
 sudo: required
 cache: packages	
 
+r_check_args: "--no-examples"
+r_build_args: "-no-build-vignettes"
+
+env:
+  global:
+    - R_CHECK_ARGS = "--no-examples"
+    - R_BUILD_ARGS =  "--no-build-vignettes"
+
 before_install:
   - curl -OL https://raw.githubusercontent.com/metacran/r-builder/master/pkg-build.sh
   - chmod 755 pkg-build.sh
@@ -20,5 +28,5 @@ after_failure:
 
 notifications:
   email:
-    on_success: never
-    on_failure: always
+    on_success: change
+    on_failure: change
