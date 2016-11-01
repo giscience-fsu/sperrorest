@@ -228,15 +228,17 @@ partition.factor.cv = function(data, coords = c("x", "y"), fac, nfold = 10,
     fac = data[, fac]
   fac = factor(fac)
   if (nfold > nlevels(fac)) {
-    warning("'nfold' should be >=nlevels(fac); using nfold=nlevels(fac)\n")
+    warning("'nfold' should be <= nlevels(fac); using nfold=nlevels(fac)\n")
     nfold = nlevels(fac)
   }
   resampling = list()
   for (cnt in repetition) {
     if (!is.null(seed1))
       set.seed(seed1 + cnt)
-    fac.resampler = sample(rep(sample(nfold), length = nlevels(fac)), 
-                           size = nlevels(fac))
+    fac.resampler = sample(
+      rep(sample(nfold), length = nlevels(fac)), 
+      size = nlevels(fac)
+      )
     names(fac.resampler) = levels(fac)
     resampler = factor(fac.resampler[fac])
     if (!return.factor)
