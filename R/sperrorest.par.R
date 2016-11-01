@@ -305,8 +305,9 @@ sperrorest.par <- function(formula, data, coords = c("x", "y"),
     rm(tmp)
   }
   
-  if (progress == "" & Sys.info()["sysname"] == "Windows")
+  if (progress == "" & Sys.info()["sysname"] == "Windows") {
     progress <- paste0(getwd(), "/sperrorest.progress.txt")
+  }
   
   cl <- makeCluster(par.units, outfile = progress)
   registerDoParallel(cl, cores = par.units)
@@ -537,12 +538,12 @@ sperrorest.par <- function(formula, data, coords = c("x", "y"),
                                }
                                else {
                                  rep.err <- rbind(rep.err,
-                                                     unlist(list(
-                                                       train =
-                                                         rep.err.train, 
-                                                       test = err.fun(
-                                                         pooled.obs.test,
-                                                         pooled.pred.test))))
+                                                  unlist(list(
+                                                    train =
+                                                      rep.err.train, 
+                                                    test = err.fun(
+                                                      pooled.obs.test,
+                                                      pooled.pred.test))))
                                }
                                if (do.gc >= 2) {
                                  gc()
@@ -554,17 +555,17 @@ sperrorest.par <- function(formula, data, coords = c("x", "y"),
                            }
                            
                            if (err.rep & err.fold) {
-                               foreach.out <- list(rep.err, res)
-                               return(foreach.out)
-                             }
+                             foreach.out <- list(rep.err, res)
+                             return(foreach.out)
+                           }
                            if (err.rep & !err.fold) {
-                               foreach.out <- rep.err
-                               return(foreach.out)
-                             }
+                             foreach.out <- rep.err
+                             return(foreach.out)
+                           }
                            if (!err.rep & err.fold) {
-                               foreach.out <- res
-                               return(foreach.out)
-                             }
+                             foreach.out <- res
+                             return(foreach.out)
+                           }
                          }
   stopCluster(cl)
   
@@ -585,7 +586,7 @@ sperrorest.par <- function(formula, data, coords = c("x", "y"),
       i <- i + 1
     }
   }
-
+  
   if (silent == 1 | silent == 2) {
     cat(date(), "Done.\n")
   }
@@ -642,4 +643,6 @@ sperrorest.par <- function(formula, data, coords = c("x", "y"),
     class(RES) <- "sperrorest"
     return(RES)
   }
-  }
+}
+
+

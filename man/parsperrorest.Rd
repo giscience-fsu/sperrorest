@@ -11,8 +11,8 @@ parsperrorest(formula, data, coords = c("x", "y"), model.fun,
   err.fun = err.default, err.fold = importance, err.rep = TRUE,
   err.train = TRUE, imp.variables = NULL, imp.permutations = 1000,
   importance = !is.null(imp.variables), distance = FALSE, do.gc = 1,
-  do.try = FALSE, silent = FALSE, par.args = list(), benchmark = FALSE,
-  ...)
+  do.try = FALSE, silent = "quiet", par.args = list(),
+  benchmark = FALSE, ...)
 }
 \arguments{
 \item{formula}{A formula specifying the variables used by the \code{model}. 
@@ -103,8 +103,8 @@ if \code{>=2}, after each fold}
 use \code{\link{try}} to robustify calls to \code{model.fun} and 
 \code{err.fun}; use with caution!}
 
-\item{silent}{If \code{FALSE}, show progress on console (in Windows Rgui, 
-disable 'Buffered output' in 'Misc' menu)}
+\item{silent}{If \code{silent == "verbose"}, show progress on console (in Windows Rgui, 
+disable 'Buffered output' in 'Misc' menu). Default to \code{"quiet"}.}
 
 \item{par.args}{Contains parallelization parameters \code{par.mode} 
 (the method used for parallelization), \code{par.units} 
@@ -112,22 +112,24 @@ disable 'Buffered output' in 'Misc' menu)}
 (libraries to be loaded on cluster workers), \code{lb} 
 (logical, enable load balancing) and \code{high} 
 (logical, use high-level parallelization function). 
-Setting \code{par.mode} to 1 will only work for Linux or Mac OS users, 
+Setting \code{par.mode = 1} will only work for Linux or Mac OS users, 
 unless \code{par.units} is set to 1. 
 In that case the code will run on Windows machines, too. 
 However, execution will be sequential due to only one CPU core being used. 
-Setting \code{par.mode} to 2 will work on all operating systems, but does 
+Setting \code{par.mode = 2} will work on all operating systems, but does 
 not allow for individual workers to print progress to the 
-R console (cf. \code{silent}).
+R console (cf. \code{silent}). If \code{par.mode = 3} is chosen, the parallelization
+is performed utilizing \code{\link[foreach]{foreach}} instead of
+\code{\link[parallel]{mclapply}}. See details for more information. 
 \code{par.libs} must be a list on characters. This will only have an effect 
-if \code{par.mode} is set to 2.
+if \code{par.mode = 2}.
 Setting \code{lb} to \code{TRUE} will enable load balancing. Instead of 
 pre-scheduling tasks per worker, each worker will be given a new task as 
 soon as it finishes its previous one.
 Setting \code{high} to \code{TRUE} will cause \code{parsperrorest} to use 
 the high-level parallelization function \code{parLapply()} instead of its 
 low-level equivalent \code{clusterApply()}. 
-This will only have an effect if \code{par.mode} is set to 2 and 
+This will only have an effect if \code{par.mode = 2} and 
 \code{lb} is \code{FALSE}.}
 
 \item{benchmark}{logical (default: \code{FALSE}): if \code{TRUE}, 
