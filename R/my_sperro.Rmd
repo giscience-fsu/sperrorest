@@ -661,72 +661,72 @@ data(ecuador, package = "sperrorest")
 ```
 
 # Examples
-## `mysperrorest` example (`parallel = TRUE`).  
-- 100 repetitions
-- 2 folds
-- 2 cores 
+
+## sperrorest.par 
 
 ```{r}
-print(Sys.time())
 fo <- slides ~ dem + slope + hcurv + vcurv +
   log.carea + cslope
 mypred.rpart <- function(object, newdata) predict(object, newdata)[, 2]
 ctrl <- rpart.control(cp = 0.005)
 
-time <- Sys.time()
-foreach.out <- sperrorest.par(fo, data = ecuador,
-                              model.fun = rpart, model.args = list(control = ctrl),
-                              pred.fun = mypred.rpart,
-                              smp.fun = partition.cv, 
-                              smp.args = list(repetition = 1:5, nfold = 5),
-                              par.units = 2, silent = 2,
-                              err.fold = T, err.rep = T)
-print(Sys.time() - time)
+sperro.par.out <- sperrorest.par(fo, data = ecuador,
+                                 model.fun = rpart, model.args = list(control = ctrl),
+                                 pred.fun = mypred.rpart,
+                                 smp.fun = partition.cv, 
+                                 smp.args = list(repetition = 1:50, nfold = 5),
+                                 par.units = 2, silent = 2, benchmark = TRUE, 
+                                 err.fold = T, err.rep = T)
+sperro.par.out$benchmark
 ```
 
-## `mysperrorest` example (`parallel = FALSE`).  
-- 100 repetitions
-- 2 folds
-- 2 cores  
+## sperrorest sequential
 
 Note the time difference compared with Example #1
 ```{r}
-print(Sys.time())
 fo <- slides ~ dem + slope + hcurv + vcurv +
   log.carea + cslope
 mypred.rpart <- function(object, newdata) predict(object, newdata)[, 2]
 ctrl <- rpart.control(cp = 0.005)
 
-time <- Sys.time()
-CV_nopar <- mysperro(fo, data = ecuador,
-                model.fun = rpart, model.args = list(control = ctrl),
-                pred.fun = mypred.rpart,
-                smp.fun = partition.cv, 
-                smp.args = list(repetition = 1:100, nfold = 10),
-                parallel = FALSE, silent = FALSE,
-                err.pooled = TRUE, err.unpooled = TRUE)
-print(Sys.time() - time)
+sperrorest.seq <- sperrorest(fo, data = ecuador,
+                             model.fun = rpart, model.args = list(control = ctrl),
+                             pred.fun = mypred.rpart,
+                             smp.fun = partition.cv, 
+                             smp.args = list(repetition = 1:50, nfold = 5), 
+                             silent = FALSE, benchmark = TRUE, 
+                             err.fold = T, err.rep = T)
+sperrorest.seq$benchmark
 ```
 
 ## Code von Tobias Herrmann
 
 ```{r}
-print(Sys.time())
 fo <- slides ~ dem + slope + hcurv + vcurv +
   log.carea + cslope
 mypred.rpart <- function(object, newdata) predict(object, newdata)[, 2]
 ctrl <- rpart.control(cp = 0.005)
 
-time <- Sys.time()
-CV_TH <- parsperrorest(fo, data = ecuador,
+parsperro.out <- parsperrorest(fo, data = ecuador,
                 model.fun = rpart, model.args = list(control = ctrl),
                 pred.fun = mypred.rpart,
                 smp.fun = partition.cv, 
-                smp.args = list(repetition = 1:20, nfold = 10), 
+                smp.args = list(repetition = 1:50, nfold = 5), 
                 silent = F,
-                par.args = list(par.mode = 1, par.units=2, lb = F, high=F), 
+                par.args = list(par.mode = 1, par.units = 2, lb = F, high = F), 
                 benchmark = TRUE,
-                err.pooled = TRUE, err.unpooled = TRUE)
-print(Sys.time() - time)
+                err.fold = T, err.rep = T)
+parsperro.out$benchmark
+```
+
+
+
+
+```{r}
+
+ecuador$field <- as.factor(1:nrow(ecuador))
+
+rep1 <- partition.factor.cv(ecuador, c("x", "y"), fac = "field", seed1 = 1234, nfold = 5, repetition = 1:4)
+rep2 <- partition.cv(ecuador, c("x", "y"), seed1 = 1234, nfold = 5, repetition = 1:4)
 ```
 
