@@ -482,41 +482,42 @@ resample.factor <- function(data, param = list(fac = "class",
 #' 
 #' @examples
 #' data(ecuador) # Muenchow et al. (2012), see ?ecuador
-#' fo = slides ~ dem + slope + hcurv + vcurv + 
-#'      log.carea + cslope
+#' fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
 #' 
 #' # Example of a classification tree fitted to this data:
 #' library(rpart)
-#' ctrl = rpart.control(cp = 0.005) # show the effects of overfitting
-#' fit = rpart(fo, data = ecuador, control = ctrl)
+#' ctrl <- rpart.control(cp = 0.005) # show the effects of overfitting
+#' fit <- rpart(fo, data = ecuador, control = ctrl)
 #' par(xpd = TRUE)
 #' plot(fit, compress = TRUE, main = "Stoyan's landslide data set")
 #' text(fit, use.n = TRUE)
 #'
 #' # Non-spatial 5-repeated 10-fold cross-validation:
-#' mypred.rpart = function(object, newdata) predict(object, newdata)[,2]
-#' nspres = sperrorest(data = ecuador, formula = fo,
-#'                     model.fun = rpart, model.args = list(control = ctrl),
-#'                     pred.fun = mypred.rpart,
-#'                     smp.fun = partition.cv, smp.args = list(repetition=1:5, nfold=10))
-#' summary(nspres$error)
+#' mypred.rpart <- function(object, newdata) predict(object, newdata)[,2]
+#' nspres <- sperrorest(data = ecuador, formula = fo,
+#'                      model.fun = rpart, model.args = list(control = ctrl),
+#'                      pred.fun = mypred.rpart,
+#'                      smp.fun = partition.cv, 
+#'                          smp.args = list(repetition = 1:5, nfold = 10))
+#' summary(nspres$error.fold)
 #' summary(nspres$represampling)
 #' plot(nspres$represampling, ecuador)
 #'
 #' # Spatial 5-repeated 10-fold spatial cross-validation:
-#' spres = sperrorest(data = ecuador, formula = fo,
-#'                    model.fun = rpart, model.args = list(control = ctrl),
-#'                    pred.fun = mypred.rpart,
-#'                    smp.fun = partition.kmeans, smp.args = list(repetition=1:5, nfold=10))
+#' spres <- sperrorest(data = ecuador, formula = fo,
+#'                     model.fun = rpart, model.args = list(control = ctrl),
+#'                     pred.fun = mypred.rpart,
+#'                     smp.fun = partition.kmeans, 
+#'                         smp.args = list(repetition = 1:5, nfold = 10))
 #' summary(spres$error.rep)
 #' summary(spres$represampling)
 #' plot(spres$represampling, ecuador)
 #' 
-#' smry = data.frame(
-#'      nonspat.training = unlist(summary(nspres$error.rep,level=1)$train.auroc),
-#'      nonspat.test     = unlist(summary(nspres$error.rep,level=1)$test.auroc),
-#'      spatial.training = unlist(summary(spres$error.rep,level=1)$train.auroc),
-#'      spatial.test     = unlist(summary(spres$error.rep,level=1)$test.auroc))
+#' smry <- data.frame(
+#'      nonspat.training = unlist(summary(nspres$error.rep, level = 1)$train.auroc),
+#'      nonspat.test     = unlist(summary(nspres$error.rep, level = 1)$test.auroc),
+#'      spatial.training = unlist(summary(spres$error.rep, level = 1)$train.auroc),
+#'      spatial.test     = unlist(summary(spres$error.rep, level = 1)$test.auroc))
 #' boxplot(smry, col = c("red","red","red","green"), 
 #'         main = "Training vs. test, nonspatial vs. spatial",
 #'         ylab = "Area under the ROC curve")
@@ -528,7 +529,7 @@ sperrorest = function(formula, data, coords = c("x", "y"),
                       test.fun = NULL, test.param = NULL,
                       err.fun = err.default,
                       err.fold = TRUE,
-                      err.rep = FALSE,
+                      err.rep = TRUE,
                       err.train = TRUE,
                       imp.variables = NULL,
                       imp.permutations = 1000,
@@ -757,12 +758,12 @@ sperrorest = function(formula, data, coords = c("x", "y"),
             
             if (is.null(res[[i]][[j]]$test)) {
               impo[[i]][[j]] = c()
-              if (verbose == "all" | verbose = "rep") {
+              if (verbose == "all" | verbose == "rep") {
                 cat(date(), "-- skipping variable importance\n")
               }
             } else {
               
-              if (verbose == "all" | verbose = "rep") {
+              if (verbose == "all" | verbose == "rep") {
                 cat(date(), "-- Variable importance\n")
               }
               imp.temp = imp.one.rep
@@ -770,7 +771,7 @@ sperrorest = function(formula, data, coords = c("x", "y"),
               # Parallelize this: ???
               for (cnt in 1:imp.permutations) {
                 # Some output on screen:
-                if (verbose == "all" | verbose = "rep" & (cnt > 1)) {
+                if (verbose == "all" | verbose == "rep" & (cnt > 1)) {
                   if (log10(cnt) == floor(log10(cnt))) {
                     cat(date(), "   ", cnt, "\n")
                   }
@@ -875,10 +876,10 @@ sperrorest = function(formula, data, coords = c("x", "y"),
     if (err.rep) {
       pooled.err = as.data.frame(pooled.err)
       rownames(pooled.err) = NULL
-      class(pooled.err) = "sperrorestpoolederror"
+      class(pooled.err) = "sperrorestreperror"
     }
     
-    if (verbose == "all" | verbose = "rep") {
+    if (verbose == "all" | verbose == "rep") {
       cat(date(), "Done.\n")
     }
 

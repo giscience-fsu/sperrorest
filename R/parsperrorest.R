@@ -70,16 +70,20 @@
 #' @param distance logical (default: \code{FALSE}): if \code{TRUE}, calculate 
 #' mean nearest-neighbour distances from test samples to training samples using 
 #' \code{\link{add.distance.represampling}}
+#' 
 #' @param do.gc numeric (default: 1): defines frequency of memory garbage 
 #' collection by calling \code{\link{gc}}; if \code{<1}, no garbage collection; 
 #' if \code{>=1}, run a \code{gc()} after each repetition; 
 #' if \code{>=2}, after each fold
+#' 
 #' @param do.try logical (default: \code{FALSE}): if \code{TRUE} [untested!!], 
 #' use \code{\link{try}} to robustify calls to \code{model.fun} and 
 #' \code{err.fun}; use with caution!
-#' @param verbose if \code{verbose == "all"}, repetition and fold progress is shown in console (in Windows Rgui, 
-#' disable 'Buffered output' in 'Misc' menu). If \code{verbose == "rep"}, only repetitions
-#' are shown. Set to \code{FALSE} for no progress information. 
+#' 
+#' @param verbose if \code{verbose == "all"}, repetition and fold progress is 
+#' shown in console (in Windows Rgui, disable 'Buffered output' in 'Misc' menu). 
+#' If \code{verbose == "rep"}, only repetitions are shown. 
+#' Set to \code{FALSE} for no progress information. 
 #' 
 #' @param progress character. Where to write the output. The default results 
 #' in console output for Unix-Systems. For Windows, the default is to write to 
@@ -606,7 +610,7 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
     if (err.rep) {
       pooled.err = as.data.frame(pooled.err)
       rownames(pooled.err) = NULL
-      class(pooled.err) = "sperrorestpoolederror"
+      class(pooled.err) = "sperrorestreperror"
     }
     
     if (verbose == "all" | verbose == "rep") cat(date(), "Done.\n")
