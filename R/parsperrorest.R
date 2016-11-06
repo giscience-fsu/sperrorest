@@ -332,9 +332,6 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
     rm(tmp)
   }
   
-  #message to make sure parallel function is used
-  print("This is the parallel sperrorest code.")
-  
   if (par.args$par.mode == 1 | par.args$par.mode == 2) {
     #runreps function for lapply()
     runreps = function(currentSample){
