@@ -640,8 +640,12 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
   
   if (par.args$par.mode == 3) {
     
-    if (verbose == FALSE){
-      progress = FALSE
+    # suppress any progress output of workes if verbose = FALSE
+    if (verbose == FALSE) {
+      progress <- "/dev/null"
+      if (Sys.info()["sysname"] == "Windows") {
+        progress <- "nul:"
+      } 
     }
     # special settings for Windows
     if (progress == "" & Sys.info()["sysname"] == "Windows")
