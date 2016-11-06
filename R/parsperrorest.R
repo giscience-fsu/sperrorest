@@ -79,11 +79,12 @@
 #' \code{err.fun}; use with caution!
 #' @param verbose if \code{verbose == "all"}, repetition and fold progress is shown in console (in Windows Rgui, 
 #' disable 'Buffered output' in 'Misc' menu). If \code{verbose == "rep"}, only repetitions
-#' are shown. Default to \code{"all"}.
+#' are shown. Set to \code{FALSE} for no progress information. 
 #' 
 #' @param progress character. Where to write the output. The default results 
 #' in console output for Unix-Systems. For Windows, the default is to write to 
-#' "sperrorest.progress.txt" located in the current working directory.
+#' "sperrorest.progress.txt" located in the current working directory. 
+#' If \code{verbose = FALSE}, \code{progress} is also set to \code{FALSE}.
 #' 
 #' @param par.args Contains parallelization parameters \code{par.mode} 
 #' (the method used for parallelization), \code{par.units} 
@@ -254,7 +255,7 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
          at the unpooled level")
   
   # 'silent' setting of try() calls
-  if (verbose == "all" | verbose = "rep") {
+  if (verbose == "all" | verbose == "rep") {
     silent <- FALSE
   } else (silent <- TRUE)
   
@@ -636,6 +637,11 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
   }
   
   if (par.args$par.mode == 3) {
+    
+    if (verbose == FALSE){
+      progress = FALSE
+    }
+    # special settings for Windows
     if (progress == "" & Sys.info()["sysname"] == "Windows")
       progress <- paste0(getwd(), "/sperrorest.progress.txt")
     
