@@ -77,8 +77,13 @@
 #' @param do.try logical (default: \code{FALSE}): if \code{TRUE} [untested!!], 
 #' use \code{\link{try}} to robustify calls to \code{model.fun} and 
 #' \code{err.fun}; use with caution!
-#' @param silent If \code{silent == "verbose"}, show progress on console (in Windows Rgui, 
-#' disable 'Buffered output' in 'Misc' menu). Default to \code{"quiet"}.
+#' @param verbose if \code{verbose == "all"}, repetition and fold progress is shown in console (in Windows Rgui, 
+#' disable 'Buffered output' in 'Misc' menu). If \code{verbose == "rep"}, only repetitions
+#' are shown. Default to \code{"all"}.
+#' 
+#' @param progress character. Where to write the output. The default results 
+#' in console output for Unix-Systems. For Windows, the default is to write to 
+#' "sperrorest.progress.txt" located in the current working directory.
 #' 
 #' @param par.args Contains parallelization parameters \code{par.mode} 
 #' (the method used for parallelization), \code{par.units} 
@@ -92,7 +97,7 @@
 #' However, execution will be sequential due to only one CPU core being used. 
 #' Setting \code{par.mode = 2} will work on all operating systems, but does 
 #' not allow for individual workers to print progress to the 
-#' R console (cf. \code{silent}). If \code{par.mode = 3} is chosen, the parallelization
+#' R console (cf. \code{verbose}). If \code{par.mode = 3} is chosen, the parallelization
 #' is performed utilizing \code{\link[foreach]{foreach}} instead of
 #' \code{\link[parallel]{mclapply}}. See details for more information. 
 #' \code{par.libs} must be a list on characters. This will only have an effect 
@@ -216,7 +221,7 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
                          distance = FALSE,
                          do.gc = 1,
                          do.try = FALSE,
-                         silent = "quiet",
+                         verbose = "all", progress = "",
                          par.args = list(),
                          benchmark = FALSE, ...)
 { 
@@ -322,7 +327,7 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
   if (par.args$par.mode == 1 | par.args$par.mode == 2) {
     #runreps function for lapply()
     runreps = function(currentSample){
-      #if (silent == "verbose") cat(date(), "Repetition", names(resamp)[i], "\n")
+      #if (verbose == "verbose") cat(date(), "Repetition", names(resamp)[i], "\n")
       #output data structures
       currentRes = NULL
       currentImpo = currentSample
@@ -341,7 +346,7 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
       # For each fold:
       for (j in 1:length(currentSample))
       {
-        if (silent == "verbose") cat(date(), "- Fold", j, "\n")
+        if (verbose == "all") cat(date(), "- Fold", j, "\n")
         
         # Create training sample:
         nd = data[ currentSample[[j]]$train , ]
@@ -352,7 +357,7 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
         margs = c( list(formula = formula, data = nd), model.args )
         
         if (do.try) {
-          fit = try(do.call(model.fun, args = margs), silent = silent)
+          fit = try(do.call(model.fun, args = margs), verbose = verbose)
           
           # Error handling:
           if (class(fit) == "try-error") {
@@ -389,7 +394,7 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
           # Calculate error measures on training sample:
           if (err.fold)
             if (do.try) {
-              err.try = try(err.fun(nd[,response], pred.train), silent = silent)
+              err.try = try(err.fun(nd[,response], pred.train), verbose = verbose)
               if (class(err.try) == "try-error") err.try = NULL
               currentRes[[j]]$train = err.try #res[[i]][[j]]$train = err.try
             } else {
@@ -421,7 +426,7 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
         # Calculate error measures on test sample:
         if (err.fold) {
           if (do.try) {
-            err.try = try(err.fun(nd[,response], pred.test), silent = silent)
+            err.try = try(err.fun(nd[,response], pred.test), verbose = verbose)
             if (class(err.try) == "try-error") err.try = NULL
             currentRes[[j]]$test = err.try #res[[i]][[j]]$test = err.try
           } else {
@@ -440,16 +445,16 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
           #if (is.null(res[[i]][[j]]$test)) {
           if (is.null(currentRes[[j]]$test)) {
             currentImpo[[j]] = c()
-            if (silent == "verbose") cat(date(), "-- skipping variable importance\n")
+            if (verbose == "all" | verbose == "rep") cat(date(), "-- skipping variable importance\n")
           } else {
             
-            if (silent == "verbose") cat(date(), "-- Variable importance\n")
+            if (verbose == "all" | verbose == "rep") cat(date(), "-- Variable importance\n")
             imp.temp = imp.one.rep
             
             # Parallelize this: ???
             for (cnt in 1:imp.permutations) {
               # Some output on screen:
-              if (silent == "verbose" & (cnt>1)) {
+              if (verbose == "all" | verbose == "rep" & (cnt > 1)) {
                 if (log10(cnt) == floor(log10(cnt))) {
                   cat(date(), "   ", cnt, "\n")
                 }
@@ -475,7 +480,7 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
                 
                 # Calculate variable importance:
                 if (do.try) {
-                  permut.err = try(err.fun(nd[,response], pred.test), silent = silent)
+                  permut.err = try(err.fun(nd[,response], pred.test), verbose = verbose)
                   if (class(permut.err) == "try-error") {
                     imp.temp[[vnm]][[cnt]] = c() # ???
                   } else {
@@ -596,7 +601,7 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
       class(pooled.err) = "sperrorestpoolederror"
     }
     
-    if (silent == "verbose") cat(date(), "Done.\n")
+    if (verbose == "all" | verbose == "rep") cat(date(), "Done.\n")
     
     if (importance) class(impo) = "sperrorestimportance"
     
@@ -635,13 +640,13 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
     foreach.out <- foreach(i = 1:length(resamp), 
                            .packages = (.packages()), 
                            .errorhandling = "remove", 
-                           .combine = rbind, .verbose = F) %dopar% {
+                           .combine = rbind, .verbose = FALSE) %dopar% {
                              
                              # reset rep.err otherwise 
                              # duplicates are introduced
                              rep.err <- NULL
                              
-                             if (silent == 1) {
+                             if (verbose == "rep") {
                                cat(date(), "Repetition", 
                                    names(resamp)[i], "\n") 
                              }
@@ -650,7 +655,7 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
                                pooled.obs.test = pooled.pred.test = c()
                              }
                              for (j in 1:length(resamp[[i]])) {
-                               if (silent == 2) {
+                               if (verbose == "all") {
                                  cat(date(), "Repetition", 
                                      names(resamp)[i], "- Fold", j, "\n") 
                                }
@@ -662,7 +667,7 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
                                           model.args)
                                if (do.try) {
                                  fit <- try(do.call(model.fun, args = margs),
-                                            silent = silent)
+                                            verbose = verbose)
                                  if (class(fit) == "try-error") {
                                    fit <- NULL
                                    if (err.fold) {
@@ -698,7 +703,7 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
                                    if (do.try) {
                                      err.try <- try(err.fun(nd[, response],
                                                             pred.train), 
-                                                    silent = silent)
+                                                    verbose = verbose)
                                      if (class(err.try) == "try-error") 
                                        err.try <- NULL
                                      res[[i]][[j]]$train <- err.try
@@ -738,7 +743,7 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
                                if (err.fold) {
                                  if (do.try) {
                                    err.try <- try(err.fun(
-                                     nd[, response],pred.test), silent = silent)
+                                     nd[, response],pred.test), verbose = verbose)
                                    if (class(err.try) == "try-error") 
                                      err.try <- NULL
                                    res[[i]][[j]]$test <- err.try
@@ -758,17 +763,17 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
                                if (importance & err.fold) {
                                  if (is.null(res[[i]][[j]]$test)) {
                                    impo[[i]][[j]] <- c()
-                                   if (silent == 1 | silent == 2) 
+                                   if (verbose == "all" | verbose == "rep") 
                                      cat(date(), 
                                          "-- skipping variable importance\n")
                                  }
                                  else {
-                                   if (silent == 1 | silent == 2) {
+                                   if (verbose == "all" | verbose == "rep") {
                                      cat(date(), "-- Variable importance\n")
                                    }
                                    imp.temp <- imp.one.rep
                                    for (cnt in 1:imp.permutations) {
-                                     if (silent == 1 | silent == 2 & 
+                                     if (verbose == "all" | verbose == "rep" & 
                                          (cnt > 1)) 
                                        if (log10(cnt) == floor(log10(cnt))) 
                                          cat(date(), "   ", cnt, "\n")
@@ -792,7 +797,7 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
                                        if (do.try) {
                                          permut.err <- try(err.fun(
                                            nd[, response], 
-                                           pred.test), silent = silent)
+                                           pred.test), verbose = verbose)
                                          if (class(permut.err) == "try-error") {
                                            imp.temp[[vnm]][[cnt]] = c()
                                          }
@@ -907,7 +912,7 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
       }
     }
     
-    if (silent == 1 | silent == 2) {
+    if (verbose == "all" | verbose == "rep") {
       cat(date(), "Done.\n")
     }
     if (importance) {
