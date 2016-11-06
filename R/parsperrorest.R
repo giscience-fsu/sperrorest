@@ -631,7 +631,7 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
     else my.bench = NULL
     
     RES = list(
-      err.rep = pooled.err,
+      error.rep = pooled.err,
       error.fold = res, 
       represampling = resamp, 
       importance = impo,

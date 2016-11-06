@@ -901,7 +901,7 @@ sperrorest = function(formula, data, coords = c("x", "y"),
     else my.bench = NULL
     
     RES = list(
-        err.rep = pooled.err,
+        error.rep = pooled.err,
         error.fold = res, 
         represampling = resamp, 
         importance = impo,
@@ -935,7 +935,7 @@ sperrorest = function(formula, data, coords = c("x", "y"),
 #' @export
 summary.sperrorest = function(object, ...) {
     list(
-        err.rep = summary(object$err.rep, ...),
+        error.rep = summary(object$error.rep, ...),
         error.fold = summary(object$error.fold, ...),
         represampling = summary(object$represampling, ...),
         importance = summary(object$importance, ...) )
