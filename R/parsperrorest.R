@@ -275,19 +275,24 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
   # Some checks related to recent changes in argument names:
   dots.args = list(...)
   if (length(dots.args) > 0) {
-    if (any(names(dots.args) == "predfun")) 
+    if (any(names(dots.args) == "predfun")) {
       stop("sorry: argument names have changed; 'predfun' is now 'pred.fun'")
-    if (any(names(dots.args) == "model")) 
+    }
+    if (any(names(dots.args) == "model")) {
       stop("sorry: argument names have changed; 'model' is now 'model.fun'")
-    if (any(names(dots.args) == "err.combined")) 
-      stop("sorry: argument names have changed; 
-           'err.combined' is now 'err.rep'")
-    if (any(names(dots.args) == "err.uncombined")) 
-      stop("sorry: argument names have changed; 
-           'err.uncombined' is now 'err.fold'")
+    }
     warning("'...' arguments currently not supported:\n
             use 'model.args' to pass list of additional 
             arguments to 'model.fun'")
+    if (any(names(dots.args) == "silent")) {
+      stop("sorry: argument names have changed; 'silent' is now 'verbose'")
+    }
+    if (any(names(dots.args) == "err.pooled")) {
+      stop("sorry: argument names have changed; 'err.pooled' is now 'err.rep'")
+    }
+    if (any(names(dots.args) == "err.unpooled")) {
+      stop("sorry: argument names have changed; 'err.unpooled' is now 'err.fold'")
+    }
   }
   
   # Name of response variable:
