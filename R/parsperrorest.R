@@ -253,6 +253,11 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
     stop("variable importance assessment currently only supported 
          at the unpooled level")
   
+  # 'silent' setting of try() calls
+  if (verbose == "all" | verbose = "rep") {
+    silent <- FALSE
+  } else (silent <- TRUE)
+  
   # Check if user is trying to bypass the normal mechanism for generating 
   # training and test data sets and for passing formulas:
   if (any(names(model.args) == "formula")) 
@@ -357,7 +362,7 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
         margs = c( list(formula = formula, data = nd), model.args )
         
         if (do.try) {
-          fit = try(do.call(model.fun, args = margs), verbose = verbose)
+          fit = try(do.call(model.fun, args = margs), silent = silent)
           
           # Error handling:
           if (class(fit) == "try-error") {
@@ -394,7 +399,7 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
           # Calculate error measures on training sample:
           if (err.fold)
             if (do.try) {
-              err.try = try(err.fun(nd[,response], pred.train), verbose = verbose)
+              err.try = try(err.fun(nd[,response], pred.train), silent = silent)
               if (class(err.try) == "try-error") err.try = NULL
               currentRes[[j]]$train = err.try #res[[i]][[j]]$train = err.try
             } else {
@@ -426,7 +431,7 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
         # Calculate error measures on test sample:
         if (err.fold) {
           if (do.try) {
-            err.try = try(err.fun(nd[,response], pred.test), verbose = verbose)
+            err.try = try(err.fun(nd[,response], pred.test), silent = silent)
             if (class(err.try) == "try-error") err.try = NULL
             currentRes[[j]]$test = err.try #res[[i]][[j]]$test = err.try
           } else {
@@ -480,7 +485,7 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
                 
                 # Calculate variable importance:
                 if (do.try) {
-                  permut.err = try(err.fun(nd[,response], pred.test), verbose = verbose)
+                  permut.err = try(err.fun(nd[,response], pred.test), silent = silent)
                   if (class(permut.err) == "try-error") {
                     imp.temp[[vnm]][[cnt]] = c() # ???
                   } else {
@@ -634,8 +639,8 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
     if (progress == "" & Sys.info()["sysname"] == "Windows")
       progress <- paste0(getwd(), "/sperrorest.progress.txt")
     
-    cl <- makeCluster(par.units, outfile = progress)
-    registerDoParallel(cl, cores = par.units)
+    cl <- makeCluster(par.args$par.units, outfile = progress)
+    registerDoParallel(cl, cores = par.args$par.units)
     
     foreach.out <- foreach(i = 1:length(resamp), 
                            .packages = (.packages()), 
@@ -667,7 +672,7 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
                                           model.args)
                                if (do.try) {
                                  fit <- try(do.call(model.fun, args = margs),
-                                            verbose = verbose)
+                                            silent = silent)
                                  if (class(fit) == "try-error") {
                                    fit <- NULL
                                    if (err.fold) {
@@ -703,7 +708,7 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
                                    if (do.try) {
                                      err.try <- try(err.fun(nd[, response],
                                                             pred.train), 
-                                                    verbose = verbose)
+                                                    silent = silent)
                                      if (class(err.try) == "try-error") 
                                        err.try <- NULL
                                      res[[i]][[j]]$train <- err.try
@@ -743,7 +748,7 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
                                if (err.fold) {
                                  if (do.try) {
                                    err.try <- try(err.fun(
-                                     nd[, response],pred.test), verbose = verbose)
+                                     nd[, response],pred.test), silent = silent)
                                    if (class(err.try) == "try-error") 
                                      err.try <- NULL
                                    res[[i]][[j]]$test <- err.try
@@ -797,7 +802,7 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
                                        if (do.try) {
                                          permut.err <- try(err.fun(
                                            nd[, response], 
-                                           pred.test), verbose = verbose)
+                                           pred.test), silent = silent)
                                          if (class(permut.err) == "try-error") {
                                            imp.temp[[vnm]][[cnt]] = c()
                                          }
@@ -925,8 +930,8 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
                       t.start = start.time,
                       t.end = end.time,
                       cpu.cores = detectCores(),
-                      par.mode = NA,
-                      par.units = par.units,
+                      par.mode = par.args$par.mode,
+                      par.units = par.args$par.units,
                       runtime.performance = end.time - start.time)
       class(my.bench) = "sperrorestbenchmarks"
     }
