@@ -116,9 +116,9 @@
 #' perform benchmarking and return \code{sperrorestbenchmarks} object
 #' 
 #' @return A list (object of class \code{sperrorest}) with (up to) six components:
-#' \item{error.rep}{a \code{sperrorestpoolederror} object containing 
+#' \item{error.rep}{a \code{sperrorestreperror} object containing 
 #' predictive performances at the repetition level}
-#' \item{error.fold}{a \code{sperroresterror} object containing predictive 
+#' \item{error.fold}{a \code{sperrorestfolderror} object containing predictive 
 #' performances at the fold level}
 #' \item{represampling}{a \code{\link{represampling}} object}
 #' \item{importance}{a \code{sperrorestimportance} object containing 
@@ -127,8 +127,8 @@
 #' information on the system the code is running on, starting and 
 #' finishing times, number of available CPU cores, parallelization mode, 
 #' number of parallel units, and runtime performance}
-#' \item{package.version}{Information about the \code{sperrorest} package
-#' version}
+#' \item{package.version}{a \code{sperrorestpackageversion} object containing 
+#' information about the \code{sperrorest} package version}
 #' 
 #' @note (1) Optionally save fitted models, training and test samples in the 
 #' results object; (2) Optionally save intermediate results in some file, and 
@@ -951,8 +951,8 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
     if (err.rep & err.fold) {
       res <- foreach.out
       res[[1]] <- NULL
-      class(res[[1]]) = "sperroresterror"
-      class(foreach.out[[1]]) = "sperrorestpoolederror"
+      class(res[[1]]) = "sperrorestfolderror"
+      class(foreach.out[[1]]) = "sperrorestreperror"
       RES <- list(error.rep = foreach.out[[1]],
                   error.fold = res[[1]], 
                   represampling = resamp, 
@@ -963,7 +963,7 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
       return(RES)
     }
     if (err.rep & !err.fold) {
-      class(rep.err) = "sperrorestpoolederror"
+      class(rep.err) = "sperrorestreperror"
       RES <- list(error.rep = rep.err,
                   error.fold = NULL, 
                   represampling = resamp, 
@@ -974,7 +974,7 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
       return(RES)
     }
     if (!err.rep & err.fold) {
-      class(foreach.out) = "sperroresterror"
+      class(foreach.out) = "sperrorestfolderror"
       RES <- list(error.rep = NULL,
                   error.fold = foreach.out, 
                   represampling = resamp, 
