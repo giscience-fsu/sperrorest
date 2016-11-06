@@ -4,7 +4,7 @@
 #' \code{summary.sperroresterror} calculates mean, standard deviation, 
 #' median etc. of the calculated error measures at the specified level 
 #' (overall, repetition, or fold).
-#' \code{summary.sperrorestpoolederror} does the same with the pooled error, 
+#' \code{summary.sperrorestreperror} does the same with the pooled error, 
 #' at the overall or repetition level.
 #' 
 #' @import rpart
@@ -57,7 +57,7 @@ summary.sperroresterror = function(object, level = 0,
         if (level <= 2)
             err = lapply(err, function(x) t(sapply(x, function(y) 
               data.frame(train = y$train, test = y$test, 
-                distance = ifelse(any(names(y)=="distance"),y$distance,-1)))) )
+                distance = ifelse(any(names(y) == "distance"),y$distance,-1)))) )
         if (level <= 1) {
             errdf = err[[1]]
             if (length(err) > 1) {
@@ -106,10 +106,10 @@ summary.sperroresterror = function(object, level = 0,
 
 #' @rdname summary.sperrorest
 #' @inheritParams summary.sperroresterror
-#' @name summary.sperrorestpoolederror
-#' @method summary sperrorestpoolederror
+#' @name summary.sperrorestreperror
+#' @method summary sperrorestreperror
 #' @export
-summary.sperrorestpoolederror = function(object, level = 0, na.rm = TRUE, ...)
+summary.sperrorestreperror = function(object, level = 0, na.rm = TRUE, ...)
 {
     class(object) = NULL
     object = as.data.frame(object)
@@ -406,26 +406,34 @@ resample.factor <- function(data, param = list(fac = "class",
 #' Number of permutations used for variable importance assessment.
 #' @param importance logical: perform permutation-based variable 
 #' importance assessment?
+#' 
 #' @param ... currently not used
+#' 
 #' @param distance logical (default: \code{FALSE}): if \code{TRUE}, calculate 
 #' mean nearest-neighbour distances from test samples to training samples using 
 #' \code{\link{add.distance.represampling}}
+#' 
 #' @param do.gc numeric (default: 1): defines frequency of memory garbage 
 #' collection by calling \code{\link{gc}}; if \code{<1}, no garbage collection; 
 #' if \code{>=1}, run a \code{gc()} after each repetition; 
 #' if \code{>=2}, after each fold
+#' 
 #' @param do.try logical (default: \code{FALSE}): if \code{TRUE} [untested!!], 
 #' use \code{\link{try}} to robustify calls to \code{model.fun} and 
 #' \code{err.fun}; use with caution!
-#' @param silent If \code{FALSE}, show progress on console (in Windows Rgui, 
-#' disable 'Buffered output' in 'Misc' menu)
+#' 
+#' @param verbose if \code{verbose == "all"}, repetition and fold progress is 
+#' shown in console (in Windows Rgui, disable 'Buffered output' in 'Misc' menu). 
+#' If \code{verbose == "rep"}, only repetitions are shown. 
+#' Set to \code{FALSE} for no progress information. 
+#' 
 #' @param benchmark logical (default: \code{FALSE}): if \code{TRUE}, 
 #' perform benchmarking and return \code{sperrorestbenchmarks} object
 #' 
 #' @return A list (object of class \code{sperrorest}) with (up to) six components:
-#' \item{error.rep}{a \code{sperrorestpoolederror} object containing 
+#' \item{error.rep}{a \code{sperrorestreperror} object containing 
 #' predictive performances at the repetition level}
-#' \item{error.fold}{a \code{sperroresterror} object containing predictive 
+#' \item{error.fold}{a \code{sperrorestfolderror} object containing predictive 
 #' performances at the fold level}
 #' \item{represampling}{a \code{\link{represampling}} object}
 #' \item{importance}{a \code{sperrorestimportance} object containing 
@@ -434,8 +442,8 @@ resample.factor <- function(data, param = list(fac = "class",
 #' information on the system the code is running on, starting and 
 #' finishing times, number of available CPU cores, parallelization mode, 
 #' number of parallel units, and runtime performance}
-#' \item{package.version}{Information about the \code{sperrorest} package
-#' version}
+#' \item{package.version}{a \code{sperrorestpackageversion} object containing 
+#' information about the \code{sperrorest} package version}
 #' 
 #' @note (1) Optionally save fitted models, training and test samples in the 
 #' results object; (2) Optionally save intermediate results in some file, and 
@@ -488,30 +496,30 @@ resample.factor <- function(data, param = list(fac = "class",
 #' # Non-spatial 5-repeated 10-fold cross-validation:
 #' mypred.rpart = function(object, newdata) predict(object, newdata)[,2]
 #' nspres = sperrorest(data = ecuador, formula = fo,
-#'     model.fun = rpart, model.args = list(control = ctrl),
-#'     pred.fun = mypred.rpart,
-#'     smp.fun = partition.cv, smp.args = list(repetition=1:5, nfold=10))
+#'                     model.fun = rpart, model.args = list(control = ctrl),
+#'                     pred.fun = mypred.rpart,
+#'                     smp.fun = partition.cv, smp.args = list(repetition=1:5, nfold=10))
 #' summary(nspres$error)
 #' summary(nspres$represampling)
 #' plot(nspres$represampling, ecuador)
 #'
 #' # Spatial 5-repeated 10-fold spatial cross-validation:
 #' spres = sperrorest(data = ecuador, formula = fo,
-#'     model.fun = rpart, model.args = list(control = ctrl),
-#'     pred.fun = mypred.rpart,
-#'     smp.fun = partition.kmeans, smp.args = list(repetition=1:5, nfold=10))
-#' summary(spres$error)
+#'                    model.fun = rpart, model.args = list(control = ctrl),
+#'                    pred.fun = mypred.rpart,
+#'                    smp.fun = partition.kmeans, smp.args = list(repetition=1:5, nfold=10))
+#' summary(spres$error.rep)
 #' summary(spres$represampling)
 #' plot(spres$represampling, ecuador)
 #' 
 #' smry = data.frame(
-#'      nonspat.training = unlist(summary(nspres$error,level=1)$train.auroc),
-#'      nonspat.test     = unlist(summary(nspres$error,level=1)$test.auroc),
-#'      spatial.training = unlist(summary(spres$error,level=1)$train.auroc),
-#'      spatial.test     = unlist(summary(spres$error,level=1)$test.auroc))
+#'      nonspat.training = unlist(summary(nspres$error.rep,level=1)$train.auroc),
+#'      nonspat.test     = unlist(summary(nspres$error.rep,level=1)$test.auroc),
+#'      spatial.training = unlist(summary(spres$error.rep,level=1)$train.auroc),
+#'      spatial.test     = unlist(summary(spres$error.rep,level=1)$test.auroc))
 #' boxplot(smry, col = c("red","red","red","green"), 
-#'      main = "Training vs. test, nonspatial vs. spatial",
-#'      ylab = "Area under the ROC curve")
+#'         main = "Training vs. test, nonspatial vs. spatial",
+#'         ylab = "Area under the ROC curve")
 sperrorest = function(formula, data, coords = c("x", "y"),
                       model.fun, model.args = list(),
                       pred.fun = NULL, pred.args = list(),
@@ -528,7 +536,7 @@ sperrorest = function(formula, data, coords = c("x", "y"),
                       distance = FALSE,
                       do.gc = 1,
                       do.try = FALSE,
-                      silent = FALSE, 
+                      verbose = "all", 
                       benchmark = FALSE, ...)
 {
   
