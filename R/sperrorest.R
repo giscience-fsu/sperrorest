@@ -896,9 +896,9 @@ sperrorest = function(formula, data, coords = c("x", "y"),
 #' @export
 summary.sperrorest = function(object, ...) {
     list(
-        error = summary(object$error, ...),
+        err.rep = summary(object$err.rep, ...),
+        error.fold = summary(object$error.fold, ...),
         represampling = summary(object$represampling, ...),
-        pooled.error = summary(object$pooled.error, ...),
         importance = summary(object$importance, ...) )
 }
 
@@ -910,17 +910,17 @@ print.sperrorestimportance = function(x, ...)
   print(unclass(summary(x, level = Inf, ...)))
 
 #' @rdname summary.sperrorest
-#' @name print.sperroresterror
-#' @method print sperroresterror
+#' @name print.sperrorestfolderror
+#' @method print sperrorestfolderror
 #' @export
-print.sperroresterror = function(x, ...) 
+print.sperrorestfolderror = function(x, ...) 
   print(unclass(summary(x, level = Inf, ...)))
 
 #' @rdname summary.sperrorest
-#' @name print.sperrorestpoolederror
-#' @method print sperrorestpoolederror
+#' @name print.sperrorestreperror
+#' @method print sperrorestreperror
 #' @export
-print.sperrorestpoolederror = function(x, ...) 
+print.sperrorestreperror = function(x, ...) 
   print(unclass(summary(x, level = Inf, ...)))
 
 #' @rdname summary.sperrorest
