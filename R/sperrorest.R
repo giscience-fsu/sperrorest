@@ -639,222 +639,252 @@ sperrorest = function(formula, data, coords = c("x", "y"),
 
     # For each repetition:
     for (i in 1:length(resamp)) {
-        if (!silent) cat(date(), "Repetition", names(resamp)[i], "\n")
+      if (verbose == "all" | verbose == "rep") {
+        cat(date(), "Repetition", names(resamp)[i], "\n")
+      }
 
-        # Collect pooled results in these data structures:
-        if (err.train) pooled.obs.train = pooled.pred.train = c()
+      # Collect pooled results in these data structures:
+      if (err.train) {
+        pooled.obs.train = pooled.pred.train = c()
         pooled.obs.test = pooled.pred.test = c()
+      }
 
         # Parallelize this???
         # For each fold:
-        for (j in 1:length(resamp[[i]]))
-        {
-            if (!silent) cat(date(), "- Fold", j, "\n")
+        for (j in 1:length(resamp[[i]])) {
+          
+          if (verbose == "all") {
+            cat(date(), "- Fold", j, "\n")
+          }
+          
+          # 'silent' setting of try() calls
+          if (verbose == "all" | verbose == "rep") {
+            silent <- FALSE
+          } else (silent <- TRUE)
             
-            # Create training sample:
-            nd = data[ resamp[[i]][[j]]$train , ]
-            if (!is.null(train.fun))
-                nd = train.fun(data = nd, param = train.param)
-
-            # Train model on training sample:
-            margs = c( list(formula = formula, data = nd), model.args )
+          # Create training sample:
+          nd = data[ resamp[[i]][[j]]$train , ]
+          if (!is.null(train.fun)) {
+            nd = train.fun(data = nd, param = train.param)
+          }
+          # Train model on training sample:
+          margs = c( list(formula = formula, data = nd), model.args )
             
-            if (do.try) {
-                fit = try(do.call(model.fun, args = margs), silent = silent)
+          if (do.try) {
+            fit = try(do.call(model.fun, args = margs), silent = silent)
             
-                # Error handling:
-                if (class(fit) == "try-error") {
-                    fit = NULL
-                    if (err.fold) {
-                        if (err.train) res[[i]][[j]]$train = NULL
-                        res[[i]][[j]]$test = NULL
-                        if (importance) impo[[i]][[j]] = c() # ???
-                    }
-                    if (do.gc >= 2) gc()
-                    next # skip this fold
-                }
-                
-            } else {
-                fit = do.call(model.fun, args = margs)
-            }
-
-            if (err.train) {
-                # Apply model to training sample:
-                pargs = c( list(object = fit, newdata = nd), pred.args )
-                if (is.null(pred.fun)) {
-                    pred.train = do.call(predict, args = pargs)
-                } else {
-                    pred.train = do.call(pred.fun, args = pargs)
-                }
-                rm(pargs)
-            
-                # Calculate error measures on training sample:
-                if (err.fold)
-                    if (do.try) {
-                        err.try = try(err.fun(nd[,response], pred.train), 
-                                      silent = silent)
-                        if (class(err.try) == "try-error") err.try = NULL # ???
-                        res[[i]][[j]]$train = err.try
-                    } else {
-                        res[[i]][[j]]$train = err.fun(nd[,response], pred.train)
-                    }
-                if (err.rep) {
-                    pooled.obs.train = c( pooled.obs.train, nd[,response] )
-                    pooled.pred.train = c( pooled.pred.train, pred.train )
-                }
-            } else {
-                if (err.fold) res[[i]][[j]]$train = NULL
+            # Error handling:
+            if (class(fit) == "try-error") {
+              fit = NULL
+              if (err.fold) {
+                if (err.train) res[[i]][[j]]$train = NULL
+                res[[i]][[j]]$test = NULL
+                if (importance) impo[[i]][[j]] = c() # ???
+              }
+              if (do.gc >= 2) gc()
+              next # skip this fold
             }
             
-            # Create test sample:
-            nd = data[ resamp[[i]][[j]]$test , ]
-            if (!is.null(test.fun))
-                nd = test.fun(data = nd, param = test.param)
-            # Create a 'backup' copy for variable importance assessment:
-            if (importance) nd.bak = nd
-            # Apply model to test sample:
+          } else {
+            fit = do.call(model.fun, args = margs)
+          }
+          
+          if (err.train) {
+            # Apply model to training sample:
             pargs = c( list(object = fit, newdata = nd), pred.args )
             if (is.null(pred.fun)) {
-                pred.test  = do.call(predict, args = pargs)
+              pred.train = do.call(predict, args = pargs)
             } else {
-                pred.test  = do.call(pred.fun, args = pargs)
+              pred.train = do.call(pred.fun, args = pargs)
             }
             rm(pargs)
             
-            # Calculate error measures on test sample:
+            # Calculate error measures on training sample:
             if (err.fold) {
-                if (do.try) {
-                    err.try = try(err.fun(nd[,response], pred.test), silent = silent)
-                    if (class(err.try) == "try-error") err.try = NULL # ???
-                    res[[i]][[j]]$test = err.try
-                } else {
-                    res[[i]][[j]]$test  = err.fun(nd[,response], pred.test)
-                }
+              if (do.try) {
+                err.try = try(err.fun(nd[,response], pred.train), 
+                              silent = silent)
+                if (class(err.try) == "try-error") err.try = NULL # ???
+                res[[i]][[j]]$train = err.try
+              } else {
+                res[[i]][[j]]$train = err.fun(nd[,response], pred.train)
+              }
             }
             if (err.rep) {
-                pooled.obs.test = c( pooled.obs.test, nd[,response] )
-                pooled.pred.test = c( pooled.pred.test, pred.test )
-                is.factor.prediction = is.factor(pred.test)
+              pooled.obs.train = c( pooled.obs.train, nd[,response] )
+              pooled.pred.train = c( pooled.pred.train, pred.train )
             }
+          } else {
+            if (err.fold) {
+              res[[i]][[j]]$train = NULL
+            }
+          }
+          
+          # Create test sample:
+          nd = data[ resamp[[i]][[j]]$test , ]
+          if (!is.null(test.fun))
+            nd = test.fun(data = nd, param = test.param)
+          # Create a 'backup' copy for variable importance assessment:
+          if (importance) nd.bak = nd
+          # Apply model to test sample:
+          pargs = c( list(object = fit, newdata = nd), pred.args )
+          if (is.null(pred.fun)) {
+            pred.test  = do.call(predict, args = pargs)
+          } else {
+            pred.test  = do.call(pred.fun, args = pargs)
+          }
+          rm(pargs)
+          
+          # Calculate error measures on test sample:
+          if (err.fold) {
+            if (do.try) {
+              err.try = try(err.fun(nd[,response], pred.test), silent = silent)
+              if (class(err.try) == "try-error") {
+                err.try = NULL # ???
+              }
+              res[[i]][[j]]$test = err.try
+            } else {
+              res[[i]][[j]]$test  = err.fun(nd[,response], pred.test)
+            }
+          }
+          if (err.rep) {
+            pooled.obs.test = c( pooled.obs.test, nd[,response] )
+            pooled.pred.test = c( pooled.pred.test, pred.test )
+            is.factor.prediction = is.factor(pred.test)
+          }
+          ### Permutation-based variable importance assessment:
+          if (importance & err.fold) {
             
-            ### Permutation-based variable importance assessment:
-            if (importance & err.fold) {
-            
-                if (is.null(res[[i]][[j]]$test)) {
-                    impo[[i]][[j]] = c()
-                    if (!silent) cat(date(), "-- skipping variable importance\n")
-                } else {
-
-                    if (!silent) cat(date(), "-- Variable importance\n")
-                    imp.temp = imp.one.rep
-    
-                    # Parallelize this: ???
-                    for (cnt in 1:imp.permutations) {
-                        # Some output on screen:
-                        if (!silent & (cnt>1))
-                            if (log10(cnt)==floor(log10(cnt))) 
-                                cat(date(), "   ", cnt, "\n")
-    
-                        # Permutation indices:
-                        permut = sample(1:nrow(nd), replace = FALSE)
-    
-                        # For each variable:
-                        for (vnm in imp.variables) {
-                            # Get undisturbed backup copy of test sample:
-                            nd = nd.bak
-                            # Permute variable vnm:
-                            nd[,vnm] = nd[,vnm][permut]
-                            # Apply model to perturbed test sample:
-                            pargs = c( list(object = fit, newdata = nd), pred.args )
-                            if (is.null(pred.fun)) {
-                                pred.test  = do.call(predict, args = pargs)
-                            } else {
-                                pred.test  = do.call(pred.fun, args = pargs)
-                            }
-                            rm(pargs)
-                            
-                            # Calculate variable importance:
-                            if (do.try) {
-                                permut.err = try(err.fun(nd[,response], 
-                                                         pred.test), 
-                                                 silent = silent)
-                                if (class(permut.err) == "try-error") {
-                                    imp.temp[[vnm]][[cnt]] = c() # ???
-                                } else {
-                                    imp.temp[[vnm]][[cnt]] = 
-                                        as.list( unlist(res[[i]][[j]]$test) - 
-                                                   unlist(permut.err) )
-                                        # (apply '-' to corresponding list elements; 
-                                        # only works if all list elements 
-                                        # are scalars)
-                                }
-                            } else {
-                                permut.err = err.fun(nd[,response], pred.test)
-                                imp.temp[[vnm]][[cnt]] = 
-                                    as.list( unlist(res[[i]][[j]]$test) - 
-                                               unlist(permut.err) )
-                                    # (apply '-' to corresponding list elements; 
-                                    # only works if all list elements are scalars)
-                            }
-                        }
+            if (is.null(res[[i]][[j]]$test)) {
+              impo[[i]][[j]] = c()
+              if (verbose == "all" | verbose = "rep") {
+                cat(date(), "-- skipping variable importance\n")
+              }
+            } else {
+              
+              if (verbose == "all" | verbose = "rep") {
+                cat(date(), "-- Variable importance\n")
+              }
+              imp.temp = imp.one.rep
+              
+              # Parallelize this: ???
+              for (cnt in 1:imp.permutations) {
+                # Some output on screen:
+                if (verbose == "all" | verbose = "rep" & (cnt > 1)) {
+                  if (log10(cnt) == floor(log10(cnt))) {
+                    cat(date(), "   ", cnt, "\n")
+                  }
+                }
+                
+                # Permutation indices:
+                permut = sample(1:nrow(nd), replace = FALSE)
+                
+                # For each variable:
+                for (vnm in imp.variables) {
+                  # Get undisturbed backup copy of test sample:
+                  nd = nd.bak
+                  # Permute variable vnm:
+                  nd[,vnm] = nd[,vnm][permut]
+                  # Apply model to perturbed test sample:
+                  pargs = c( list(object = fit, newdata = nd), pred.args )
+                  if (is.null(pred.fun)) {
+                    pred.test  = do.call(predict, args = pargs)
+                  } else {
+                    pred.test  = do.call(pred.fun, args = pargs)
+                  }
+                  rm(pargs)
+                  
+                  # Calculate variable importance:
+                  if (do.try) {
+                    permut.err = try(err.fun(nd[,response], 
+                                             pred.test), 
+                                     silent = silent)
+                    if (class(permut.err) == "try-error") {
+                      imp.temp[[vnm]][[cnt]] = c() # ???
+                    } else {
+                      imp.temp[[vnm]][[cnt]] = 
+                        as.list( unlist(res[[i]][[j]]$test) - 
+                                   unlist(permut.err) )
+                      # (apply '-' to corresponding list elements; 
+                      # only works if all list elements 
+                      # are scalars)
                     }
-                    # average the results obtained in each permutation:
-                    impo[[i]][[j]] = as.data.frame(
-                        t(sapply(imp.temp, 
-                            function(y) sapply(as.data.frame(t(
-                                sapply( y, as.data.frame ))), 
-                                    function(x) mean(unlist(x)) ))))
-                    rm(nd.bak, nd) # better safe than sorry...
-                } # end of else if (!is.null(res[[i]][[j]]$test))
-            }
-            
+                  } else {
+                    permut.err = err.fun(nd[,response], pred.test)
+                    imp.temp[[vnm]][[cnt]] = 
+                      as.list( unlist(res[[i]][[j]]$test) - 
+                                 unlist(permut.err) )
+                    # (apply '-' to corresponding list elements; 
+                    # only works if all list elements are scalars)
+                  }
+                }
+              }
+              # average the results obtained in each permutation:
+              impo[[i]][[j]] = as.data.frame(
+                t(sapply(imp.temp, 
+                         function(y) sapply(as.data.frame(t(
+                           sapply( y, as.data.frame ))), 
+                           function(x) mean(unlist(x)) ))))
+              rm(nd.bak, nd) # better safe than sorry...
+            } # end of else if (!is.null(res[[i]][[j]]$test))
+          }
+          
+        }
+      
+      # Put the results from the pooled estimation into the pooled.err data structure:
+      if (err.rep) {
+        if (is.factor(data[,response])) {
+          lev = levels(data[,response])
+          if (err.train) pooled.obs.train = factor(lev[pooled.obs.train], 
+                                                   levels = lev)
+          pooled.obs.test = factor(lev[pooled.obs.test], levels = lev)
+          if (is.factor.prediction) {
+            if (err.train) pooled.pred.train = factor(lev[pooled.pred.train], 
+                                                      levels = lev)
+            pooled.pred.test = factor(lev[pooled.pred.test], levels = lev)
+          }
+        }
+        pooled.err.train = NULL
+        if (err.train) {
+          pooled.err.train = err.fun( pooled.obs.train, pooled.pred.train )
+        }
+        if (i == 1) {
+          pooled.err = t(unlist( list( train = pooled.err.train,
+                                       test  = err.fun( pooled.obs.test, 
+                                                        pooled.pred.test ) ) )
+          )
+        } else {
+          pooled.err = rbind( pooled.err, 
+                              unlist( list( train = pooled.err.train,
+                                            test  = err.fun( pooled.obs.test, 
+                                                             pooled.pred.test ) ) ) 
+          )
         }
         
-        # Put the results from the pooled estimation into the pooled.err data structure:
-        if (err.rep) {
-            if (is.factor(data[,response])) {
-                lev = levels(data[,response])
-                if (err.train) pooled.obs.train = factor(lev[pooled.obs.train], 
-                                                         levels = lev)
-                pooled.obs.test = factor(lev[pooled.obs.test], levels = lev)
-                if (is.factor.prediction) {
-                    if (err.train) pooled.pred.train = factor(lev[pooled.pred.train], 
-                                                              levels = lev)
-                    pooled.pred.test = factor(lev[pooled.pred.test], levels = lev)
-                }
-            }
-            pooled.err.train = NULL
-            if (err.train)
-                pooled.err.train = err.fun( pooled.obs.train, pooled.pred.train )
-            if (i == 1) {
-                pooled.err = t(unlist( list( train = pooled.err.train,
-                                           test  = err.fun( pooled.obs.test, 
-                                                            pooled.pred.test ) ) )
-                               )
-            } else {
-                pooled.err = rbind( pooled.err, 
-                             unlist( list( train = pooled.err.train,
-                                           test  = err.fun( pooled.obs.test, 
-                                                            pooled.pred.test ) ) ) 
-                             )
-            }
-            
-            if (do.gc >= 2) gc()
-        } # end for each fold
-        
-        if ((do.gc >= 1) & (do.gc < 2)) gc()
+        if (do.gc >= 2) {
+          gc()
+        }
+      } # end for each fold
+      
+      if ((do.gc >= 1) & (do.gc < 2)) {
+        gc()
+      }
     } # end for each repetition
-
+    
     # convert matrix(?) to data.frame:
     if (err.rep) {
-        pooled.err = as.data.frame(pooled.err)
-        rownames(pooled.err) = NULL
-        class(pooled.err) = "sperrorestpoolederror"
+      pooled.err = as.data.frame(pooled.err)
+      rownames(pooled.err) = NULL
+      class(pooled.err) = "sperrorestpoolederror"
     }
     
-    if (!silent) cat(date(), "Done.\n")
+    if (verbose == "all" | verbose = "rep") {
+      cat(date(), "Done.\n")
+    }
 
-    if (importance) class(impo) = "sperrorestimportance"
+    if (importance) {
+      class(impo) = "sperrorestimportance"
+    }
     
     if (benchmark) {
       end.time = Sys.time()
