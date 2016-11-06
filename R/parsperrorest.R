@@ -167,35 +167,40 @@
 #' 
 #' @examples
 #' data(ecuador) # Muenchow et al. (2012), see ?ecuador
-#' fo = slides ~ dem + slope + hcurv + vcurv + 
-#'      log.carea + cslope
+#' fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
 #' 
 #' # Example of a classification tree fitted to this data:
 #' library(rpart)
-#' ctrl = rpart.control(cp = 0.005) # show the effects of overfitting
-#' fit = rpart(fo, data = ecuador, control = ctrl)
-#' par(xpd = TRUE)
-#' plot(fit, compress = TRUE, main = "Stoyan's landslide data set")
-#' text(fit, use.n = TRUE)
+#' mypred.rpart <- function(object, newdata) predict(object, newdata)[, 2]
+#' ctrl <- rpart.control(cp = 0.005) # show the effects of overfitting
+#' fit <- rpart(fo, data = ecuador, control = ctrl)
 #'
 #' # Non-spatial 5-repeated 10-fold cross-validation:
-#' mypred.rpart = function(object, newdata) predict(object, newdata)[,2]
-#' parnspres = parsperrorest(data = ecuador, formula = fo,
-#'     model.fun = rpart, model.args = list(control = ctrl),
-#'     pred.fun = mypred.rpart,
-#'     smp.fun = partition.cv, smp.args = list(repetition=1:5, nfold=10), 
-#'     par.args = list(par.mode = 2, par.units=2, lb=FALSE, high=TRUE))
-#' summary(parnspres$error)
+#' mypred.rpart <- function(object, newdata) predict(object, newdata)[,2]
+#' parnspres <- parsperrorest(data = ecuador, formula = fo,
+#'                            model.fun = rpart, model.args = list(control = ctrl),
+#'                            pred.fun = mypred.rpart,
+#'                            verbose = "all",
+#'                            smp.fun = partition.cv, 
+#'                                smp.args = list(repetition = 1:5, nfold = 10), 
+#'                            par.args = list(par.mode = 2, par.units = 2, 
+#'                                lb = FALSE, high = FALSE))
+#' summary(parnspres$error.rep)
+#' summary(parnspres$error.fold)
 #' summary(parnspres$represampling)
 #' plot(parnspres$represampling, ecuador)
 #'
 #' # Spatial 5-repeated 10-fold spatial cross-validation:
-#' parspres = parsperrorest(data = ecuador, formula = fo,
-#'     model.fun = rpart, model.args = list(control = ctrl),
-#'     pred.fun = mypred.rpart,
-#'     smp.fun = partition.kmeans, smp.args = list(repetition=1:5, nfold=10), 
-#'     par.args = list(par.mode = 2, par.units=2, lb=FALSE, high=TRUE))
-#' summary(parspres$error)
+#' parspres <- parsperrorest(data = ecuador, formula = fo,
+#'                          model.fun = rpart, model.args = list(control = ctrl),
+#'                          pred.fun = mypred.rpart,
+#'                          verbose = "all",
+#'                          smp.fun = partition.kmeans, 
+#'                              smp.args = list(repetition = 1:5, nfold = 10), 
+#'                          par.args = list(par.mode = 3, par.units = 2, 
+#'                              lb = FALSE, high = FALSE))
+#' summary(parspres$error.rep)
+#' summary(parspres$error.fold)
 #' summary(parspres$represampling)
 #' plot(parspres$represampling, ecuador)
 #' 
@@ -217,7 +222,7 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
                          train.fun = NULL, train.param = NULL,
                          test.fun = NULL, test.param = NULL,
                          err.fun = err.default,
-                         err.fold = importance,
+                         err.fold = TRUE,
                          err.rep = TRUE,
                          err.train = TRUE,
                          imp.variables = NULL,
