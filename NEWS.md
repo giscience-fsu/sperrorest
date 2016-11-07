@@ -1,4 +1,4 @@
-# sperrorest 0.3 (04 Oct 2016)
+# sperrorest 1.0.0 (04 Oct 2016)
 
 * add `sperrorest.par`: This function lets you exexute `sperrorest` in parallel. 
 It uses a `doParallel` and `foreach` setup and works on all major platforms with
@@ -26,6 +26,14 @@ used cores and other system details.
 
 * change order and naming of returned list for `sperrorest`, `parsperrorest` and
 `sperrorest.par`
+  - class `sperroresterror` is now `sperrorestfolderror`
+  - class `sperrorestpoolederror` is now `sperrorestreperror`
+  - returned `sperrorest` list is now ordered as follows: 
+    1. error.rep
+    2. error.fold
+    3. importance
+    4. benchmarks
+    5. package.version
 
 * add package NEWS
 
