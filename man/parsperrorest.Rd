@@ -8,10 +8,10 @@ parsperrorest(formula, data, coords = c("x", "y"), model.fun,
   model.args = list(), pred.fun = NULL, pred.args = list(),
   smp.fun = partition.loo, smp.args = list(), train.fun = NULL,
   train.param = NULL, test.fun = NULL, test.param = NULL,
-  err.fun = err.default, err.fold = importance, err.rep = TRUE,
+  err.fun = err.default, err.fold = TRUE, err.rep = TRUE,
   err.train = TRUE, imp.variables = NULL, imp.permutations = 1000,
   importance = !is.null(imp.variables), distance = FALSE, do.gc = 1,
-  do.try = FALSE, silent = "quiet", par.args = list(),
+  do.try = FALSE, verbose = "all", progress = "", par.args = list(),
   benchmark = FALSE, ...)
 }
 \arguments{
@@ -103,8 +103,15 @@ if \code{>=2}, after each fold}
 use \code{\link{try}} to robustify calls to \code{model.fun} and 
 \code{err.fun}; use with caution!}
 
-\item{silent}{If \code{silent == "verbose"}, show progress on console (in Windows Rgui, 
-disable 'Buffered output' in 'Misc' menu). Default to \code{"quiet"}.}
+\item{verbose}{if \code{verbose == "all"}, repetition and fold progress is 
+shown in console (in Windows Rgui, disable 'Buffered output' in 'Misc' menu). 
+If \code{verbose == "rep"}, only repetitions are shown. 
+Set to \code{FALSE} for no progress information.}
+
+\item{progress}{character. Where to write the output. The default results 
+in console output for Unix-Systems. For Windows, the default is to write to 
+"sperrorest.progress.txt" located in the current working directory. 
+If \code{verbose = FALSE}, \code{progress} is also set to \code{FALSE}.}
 
 \item{par.args}{Contains parallelization parameters \code{par.mode} 
 (the method used for parallelization), \code{par.units} 
@@ -118,7 +125,7 @@ In that case the code will run on Windows machines, too.
 However, execution will be sequential due to only one CPU core being used. 
 Setting \code{par.mode = 2} will work on all operating systems, but does 
 not allow for individual workers to print progress to the 
-R console (cf. \code{silent}). If \code{par.mode = 3} is chosen, the parallelization
+R console (cf. \code{verbose}). If \code{par.mode = 3} is chosen, the parallelization
 is performed utilizing \code{\link[foreach]{foreach}} instead of
 \code{\link[parallel]{mclapply}}. See details for more information. 
 \code{par.libs} must be a list on characters. This will only have an effect 
@@ -139,9 +146,9 @@ perform benchmarking and return \code{sperrorestbenchmarks} object}
 }
 \value{
 A list (object of class \code{sperrorest}) with (up to) six components:
-\item{error.rep}{a \code{sperrorestpoolederror} object containing 
+\item{error.rep}{a \code{sperrorestreperror} object containing 
 predictive performances at the repetition level}
-\item{error.fold}{a \code{sperroresterror} object containing predictive 
+\item{error.fold}{a \code{sperrorestfolderror} object containing predictive 
 performances at the fold level}
 \item{represampling}{a \code{\link{represampling}} object}
 \item{importance}{a \code{sperrorestimportance} object containing 
@@ -150,8 +157,8 @@ permutation-based variable importances at the fold level}
 information on the system the code is running on, starting and 
 finishing times, number of available CPU cores, parallelization mode, 
 number of parallel units, and runtime performance}
-\item{package.version}{Information about the \code{sperrorest} package
-version}
+\item{package.version}{a \code{sperrorestpackageversion} object containing 
+information about the \code{sperrorest} package version}
 }
 \description{
 \code{parsperrorest} is a flexible interface for multiple types of 
@@ -168,25 +175,26 @@ repetition into a file, and to skip repetitions for which a file already exists.
 }
 \examples{
 data(ecuador) # Muenchow et al. (2012), see ?ecuador
-fo = slides ~ dem + slope + hcurv + vcurv + 
-     log.carea + cslope
+fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
 
 # Example of a classification tree fitted to this data:
 library(rpart)
-ctrl = rpart.control(cp = 0.005) # show the effects of overfitting
-fit = rpart(fo, data = ecuador, control = ctrl)
-par(xpd = TRUE)
-plot(fit, compress = TRUE, main = "Stoyan's landslide data set")
-text(fit, use.n = TRUE)
+mypred.rpart <- function(object, newdata) predict(object, newdata)[, 2]
+ctrl <- rpart.control(cp = 0.005) # show the effects of overfitting
+fit <- rpart(fo, data = ecuador, control = ctrl)
 
 # Non-spatial 5-repeated 10-fold cross-validation:
-mypred.rpart = function(object, newdata) predict(object, newdata)[,2]
-parnspres = parsperrorest(data = ecuador, formula = fo,
-    model.fun = rpart, model.args = list(control = ctrl),
-    pred.fun = mypred.rpart,
-    smp.fun = partition.cv, smp.args = list(repetition=1:5, nfold=10), 
-    par.args = list(par.mode = 2, par.units=2, lb=FALSE, high=TRUE))
-summary(parnspres$error)
+mypred.rpart <- function(object, newdata) predict(object, newdata)[,2]
+parnspres <- parsperrorest(data = ecuador, formula = fo,
+                           model.fun = rpart, model.args = list(control = ctrl),
+                           pred.fun = mypred.rpart,
+                           verbose = "all",
+                           smp.fun = partition.cv, 
+                               smp.args = list(repetition = 1:5, nfold = 10), 
+                           par.args = list(par.mode = 2, par.units = 2, 
+                               lb = FALSE, high = FALSE))
+summary(parnspres$error.rep)
+summary(parnspres$error.fold)
 summary(parnspres$represampling)
 plot(parnspres$represampling, ecuador)
 

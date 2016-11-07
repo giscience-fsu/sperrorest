@@ -10,10 +10,10 @@ sperrorest(formula, data, coords = c("x", "y"), model.fun,
   model.args = list(), pred.fun = NULL, pred.args = list(),
   smp.fun = partition.loo, smp.args = list(), train.fun = NULL,
   train.param = NULL, test.fun = NULL, test.param = NULL,
-  err.fun = err.default, err.fold = TRUE, err.rep = FALSE,
+  err.fun = err.default, err.fold = TRUE, err.rep = TRUE,
   err.train = TRUE, imp.variables = NULL, imp.permutations = 1000,
   importance = !is.null(imp.variables), distance = FALSE, do.gc = 1,
-  do.try = FALSE, silent = FALSE, benchmark = FALSE, ...)
+  do.try = FALSE, verbose = "all", benchmark = FALSE, ...)
 }
 \arguments{
 \item{formula}{A formula specifying the variables used by the \code{model}. 
@@ -104,8 +104,10 @@ if \code{>=2}, after each fold}
 use \code{\link{try}} to robustify calls to \code{model.fun} and 
 \code{err.fun}; use with caution!}
 
-\item{silent}{If \code{FALSE}, show progress on console (in Windows Rgui, 
-disable 'Buffered output' in 'Misc' menu)}
+\item{verbose}{if \code{verbose == "all"}, repetition and fold progress is 
+shown in console (in Windows Rgui, disable 'Buffered output' in 'Misc' menu). 
+If \code{verbose == "rep"}, only repetitions are shown. 
+Set to \code{FALSE} for no progress information.}
 
 \item{benchmark}{logical (default: \code{FALSE}): if \code{TRUE}, 
 perform benchmarking and return \code{sperrorestbenchmarks} object}
@@ -114,9 +116,9 @@ perform benchmarking and return \code{sperrorestbenchmarks} object}
 }
 \value{
 A list (object of class \code{sperrorest}) with (up to) six components:
-\item{error.rep}{a \code{sperrorestpoolederror} object containing 
+\item{error.rep}{a \code{sperrorestreperror} object containing 
 predictive performances at the repetition level}
-\item{error.fold}{a \code{sperroresterror} object containing predictive 
+\item{error.fold}{a \code{sperrorestfolderror} object containing predictive 
 performances at the fold level}
 \item{represampling}{a \code{\link{represampling}} object}
 \item{importance}{a \code{sperrorestimportance} object containing 
@@ -125,8 +127,8 @@ permutation-based variable importances at the fold level}
 information on the system the code is running on, starting and 
 finishing times, number of available CPU cores, parallelization mode, 
 number of parallel units, and runtime performance}
-\item{package.version}{Information about the \code{sperrorest} package
-version}
+\item{package.version}{a \code{sperrorestpackageversion} object containing 
+information about the \code{sperrorest} package version}
 }
 \description{
 \code{sperrorest} is a flexible interface for multiple types of spatial and 
@@ -142,44 +144,46 @@ repetition into a file, and to skip repetitions for which a file already exists.
 }
 \examples{
 data(ecuador) # Muenchow et al. (2012), see ?ecuador
-fo = slides ~ dem + slope + hcurv + vcurv + 
-     log.carea + cslope
+fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
 
 # Example of a classification tree fitted to this data:
 library(rpart)
-ctrl = rpart.control(cp = 0.005) # show the effects of overfitting
-fit = rpart(fo, data = ecuador, control = ctrl)
+ctrl <- rpart.control(cp = 0.005) # show the effects of overfitting
+fit <- rpart(fo, data = ecuador, control = ctrl)
 par(xpd = TRUE)
 plot(fit, compress = TRUE, main = "Stoyan's landslide data set")
 text(fit, use.n = TRUE)
 
 # Non-spatial 5-repeated 10-fold cross-validation:
-mypred.rpart = function(object, newdata) predict(object, newdata)[,2]
-nspres = sperrorest(data = ecuador, formula = fo,
-    model.fun = rpart, model.args = list(control = ctrl),
-    pred.fun = mypred.rpart,
-    smp.fun = partition.cv, smp.args = list(repetition=1:5, nfold=10))
-summary(nspres$error)
+mypred.rpart <- function(object, newdata) predict(object, newdata)[,2]
+nspres <- sperrorest(data = ecuador, formula = fo,
+                     model.fun = rpart, model.args = list(control = ctrl),
+                     pred.fun = mypred.rpart,
+                     smp.fun = partition.cv, 
+                         smp.args = list(repetition = 1:5, nfold = 10))
+summary(nspres$error.rep)                    
+summary(nspres$error.fold)
 summary(nspres$represampling)
 plot(nspres$represampling, ecuador)
 
 # Spatial 5-repeated 10-fold spatial cross-validation:
-spres = sperrorest(data = ecuador, formula = fo,
-    model.fun = rpart, model.args = list(control = ctrl),
-    pred.fun = mypred.rpart,
-    smp.fun = partition.kmeans, smp.args = list(repetition=1:5, nfold=10))
-summary(spres$error)
+spres <- sperrorest(data = ecuador, formula = fo,
+                    model.fun = rpart, model.args = list(control = ctrl),
+                    pred.fun = mypred.rpart,
+                    smp.fun = partition.kmeans, 
+                        smp.args = list(repetition = 1:5, nfold = 10))
+summary(spres$error.rep)
 summary(spres$represampling)
 plot(spres$represampling, ecuador)
 
-smry = data.frame(
-     nonspat.training = unlist(summary(nspres$error,level=1)$train.auroc),
-     nonspat.test     = unlist(summary(nspres$error,level=1)$test.auroc),
-     spatial.training = unlist(summary(spres$error,level=1)$train.auroc),
-     spatial.test     = unlist(summary(spres$error,level=1)$test.auroc))
+smry <- data.frame(
+     nonspat.training = unlist(summary(nspres$error.rep, level = 1)$train.auroc),
+     nonspat.test     = unlist(summary(nspres$error.rep, level = 1)$test.auroc),
+     spatial.training = unlist(summary(spres$error.rep,  level = 1)$train.auroc),
+     spatial.test     = unlist(summary(spres$error.rep,  level = 1)$test.auroc))
 boxplot(smry, col = c("red","red","red","green"), 
-     main = "Training vs. test, nonspatial vs. spatial",
-     ylab = "Area under the ROC curve")
+        main = "Training vs. test, nonspatial vs. spatial",
+        ylab = "Area under the ROC curve")
 }
 \references{
 Brenning, A. 2012. Spatial cross-validation and bootstrap for 

@@ -32,7 +32,7 @@ median and IQR of the error measures.
 \code{summary.sperroresterror} calculates mean, standard deviation, 
 median etc. of the calculated error measures at the specified level 
 (overall, repetition, or fold).
-\code{summary.sperrorestpoolederror} does the same with the pooled error, 
+\code{summary.sperrorestreperror} does the same with the pooled error, 
 at the overall or repetition level.
 }
 \details{
