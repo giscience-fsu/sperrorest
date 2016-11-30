@@ -163,7 +163,7 @@
 #' IDA 2010, Tucson, AZ, USA, 19-21 May 2010.  
 #' Lecture Notes in Computer Science, 6065 LNCS: 184-195.
 #' 
-#' @seealso \pkg{ipred}
+#' @seealso \code{\link[sperrorest]{sperrorest}}
 #' 
 #' @examples
 #' data(ecuador) # Muenchow et al. (2012), see ?ecuador
