@@ -199,12 +199,16 @@ summary(parnspres$represampling)
 plot(parnspres$represampling, ecuador)
 
 # Spatial 5-repeated 10-fold spatial cross-validation:
-parspres = parsperrorest(data = ecuador, formula = fo,
-    model.fun = rpart, model.args = list(control = ctrl),
-    pred.fun = mypred.rpart,
-    smp.fun = partition.kmeans, smp.args = list(repetition=1:5, nfold=10), 
-    par.args = list(par.mode = 2, par.units=2, lb=FALSE, high=TRUE))
-summary(parspres$error)
+parspres <- parsperrorest(data = ecuador, formula = fo,
+                         model.fun = rpart, model.args = list(control = ctrl),
+                         pred.fun = mypred.rpart,
+                         verbose = "all",
+                         smp.fun = partition.kmeans, 
+                             smp.args = list(repetition = 1:5, nfold = 10), 
+                         par.args = list(par.mode = 3, par.units = 2, 
+                             lb = FALSE, high = FALSE))
+summary(parspres$error.rep)
+summary(parspres$error.fold)
 summary(parspres$represampling)
 plot(parspres$represampling, ecuador)
 

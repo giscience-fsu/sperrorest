@@ -6,6 +6,9 @@
 \title{J. Muenchow's Ecuador landslide data set}
 \format{a \code{data.frame} with point samples of landslide and 
 non-landslide locations in a study area in the Andes of southern Ecuador.}
+\usage{
+ecuador
+}
 \description{
 Data set created by Jannes Muenchow, University of Erlangen-Nuremberg, Germany.
 These data should be cited as Muenchow et al. (2012) (see reference below). 
@@ -35,4 +38,6 @@ Brenning, A., 2005. Spatial prediction models for landslide hazards:
 review, comparison and evaluation. 
 Natural Hazards and Earth System Sciences, 5(6): 853-862.
 }
+\keyword{datasets}
+\keyword{internal}
 
