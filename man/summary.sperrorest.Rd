@@ -2,7 +2,7 @@
 % Please edit documentation in R/sperrorest.R
 \name{summary.sperrorestreperror}
 \alias{print.sperrorest}
-\alias{print.sperrorestfolderror}
+\alias{print.sperroresterror}
 \alias{print.sperrorestimportance}
 \alias{print.sperrorestreperror}
 \alias{summary.sperrorest}
@@ -15,7 +15,7 @@
 
 \method{print}{sperrorestimportance}(x, ...)
 
-\method{print}{sperrorestfolderror}(x, ...)
+\method{print}{sperroresterror}(x, ...)
 
 \method{print}{sperrorestreperror}(x, ...)
 

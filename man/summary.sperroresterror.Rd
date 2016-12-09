@@ -53,6 +53,6 @@ consider running \code{\link{sperrorest}} with \code{err.rep=TRUE} and
 examine only the \code{pooled.error} component of its result.
 }
 \seealso{
-\code{\link{sperrorest}}
+\code{\link[sperrorest]{parsperrorest}}
 }
 

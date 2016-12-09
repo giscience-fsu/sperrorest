@@ -8,7 +8,7 @@ parsperrorest(formula, data, coords = c("x", "y"), model.fun,
   model.args = list(), pred.fun = NULL, pred.args = list(),
   smp.fun = partition.loo, smp.args = list(), train.fun = NULL,
   train.param = NULL, test.fun = NULL, test.param = NULL,
-  err.fun = err.default, err.fold = TRUE, err.rep = TRUE,
+  err.fun = err.default, error.fold = TRUE, error.rep = TRUE,
   err.train = TRUE, imp.variables = NULL, imp.permutations = 1000,
   importance = !is.null(imp.variables), distance = FALSE, do.gc = 1,
   do.try = FALSE, verbose = "all", progress = "", par.args = list(),
@@ -68,13 +68,6 @@ E.g., \code{\link{resample.uniform}} or \code{\link{resample.strat.uniform}}}
 known responses in \code{data} and the model predictions delivered 
 by \code{pred.fun}. E.g., \code{\link{err.default}} (the default). 
 See example and details below.}
-
-\item{err.fold}{logical (default: \code{TRUE} if \code{importance} is 
-\code{TRUE}, otherwise \code{FALSE}): calculate error measures on each fold 
-within a resampling repetition.}
-
-\item{err.rep}{logical (default: \code{TRUE}): calculate error measures 
-based on the pooled predictions of all folds within a resampling repetition.}
 
 \item{err.train}{logical (default: \code{TRUE}): calculate error measures on 
 the training set (in addition to the test set estimation).}
@@ -143,12 +136,19 @@ This will only have an effect if \code{par.mode = 2} and
 perform benchmarking and return \code{sperrorestbenchmarks} object}
 
 \item{...}{currently not used}
+
+\item{err.fold}{logical (default: \code{TRUE} if \code{importance} is 
+\code{TRUE}, otherwise \code{FALSE}): calculate error measures on each fold 
+within a resampling repetition.}
+
+\item{err.rep}{logical (default: \code{TRUE}): calculate error measures 
+based on the pooled predictions of all folds within a resampling repetition.}
 }
 \value{
 A list (object of class \code{sperrorest}) with (up to) six components:
 \item{error.rep}{a \code{sperrorestreperror} object containing 
 predictive performances at the repetition level}
-\item{error.fold}{a \code{sperrorestfolderror} object containing predictive 
+\item{error.fold}{a \code{sperroresterror} object containing predictive 
 performances at the fold level}
 \item{represampling}{a \code{\link{represampling}} object}
 \item{importance}{a \code{sperrorestimportance} object containing 
@@ -185,39 +185,41 @@ fit <- rpart(fo, data = ecuador, control = ctrl)
 
 # Non-spatial 5-repeated 10-fold cross-validation:
 mypred.rpart <- function(object, newdata) predict(object, newdata)[,2]
-parnspres <- parsperrorest(data = ecuador, formula = fo,
+par.nsp.res <- parsperrorest(data = ecuador, formula = fo,
                            model.fun = rpart, model.args = list(control = ctrl),
                            pred.fun = mypred.rpart,
                            verbose = "all",
                            smp.fun = partition.cv, 
-                               smp.args = list(repetition = 1:5, nfold = 10), 
+                           smp.args = list(repetition = 1:3, nfold = 4), 
                            par.args = list(par.mode = 2, par.units = 2, 
-                               lb = FALSE, high = FALSE))
-summary(parnspres$error.rep)
-summary(parnspres$error.fold)
-summary(parnspres$represampling)
-plot(parnspres$represampling, ecuador)
+                               lb = FALSE, high = FALSE),
+                           error.rep = TRUE, error.fold = TRUE)
+summary(par.nsp.res$error.rep)
+summary(par.nsp.res$error.fold)
+summary(par.nsp.res$represampling)
+plot(par.nsp.res$represampling, ecuador)
 
 # Spatial 5-repeated 10-fold spatial cross-validation:
-parspres <- parsperrorest(data = ecuador, formula = fo,
-                         model.fun = rpart, model.args = list(control = ctrl),
-                         pred.fun = mypred.rpart,
-                         verbose = "all",
-                         smp.fun = partition.kmeans, 
-                             smp.args = list(repetition = 1:5, nfold = 10), 
-                         par.args = list(par.mode = 3, par.units = 2, 
-                             lb = FALSE, high = FALSE))
-summary(parspres$error.rep)
-summary(parspres$error.fold)
-summary(parspres$represampling)
+par.sp.res3 <- parsperrorest(data = ecuador, formula = fo,
+                          model.fun = rpart, model.args = list(control = ctrl),
+                          pred.fun = mypred.rpart,
+                          verbose = "all",
+                          smp.fun = partition.kmeans, 
+                          smp.args = list(repetition = 1:3, nfold = 4), 
+                          par.args = list(par.mode = 3, par.units = 2, 
+                              lb = FALSE, high = FALSE),
+                          error.rep = TRUE, error.fold = TRUE)
+summary(par.sp.res3$error.rep)
+summary(par.sp.res3$error.fold)
+summary(par.sp.res3$represampling)
 plot(parspres$represampling, ecuador)
 
 # only run this part of the example if importance = TRUE!
 smry = data.frame(
-    nonspat.training = unlist(summary(parnspres$error,level=1)$train.auroc),
-    nonspat.test     = unlist(summary(parnspres$error,level=1)$test.auroc),
-    spatial.training = unlist(summary(parspres$error,level=1)$train.auroc),
-    spatial.test     = unlist(summary(parspres$error,level=1)$test.auroc))
+    nonspat.training = unlist(summary(parnspres$error.rep,level=1)$train.auroc),
+    nonspat.test     = unlist(summary(parnspres$error.rep,level=1)$test.auroc),
+    spatial.training = unlist(summary(parspres$error.rep,level=1)$train.auroc),
+    spatial.test     = unlist(summary(parspres$error.rep,level=1)$test.auroc))
 boxplot(smry, col = c("red","red","red","green"), 
     main = "Training vs. test, nonspatial vs. spatial",
     ylab = "Area under the ROC curve")
@@ -248,6 +250,6 @@ IDA 2010, Tucson, AZ, USA, 19-21 May 2010.
 Lecture Notes in Computer Science, 6065 LNCS: 184-195.
 }
 \seealso{
-\pkg{ipred}
+\code{\link[sperrorest]{sperrorest}}
 }
 
