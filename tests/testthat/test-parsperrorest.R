@@ -9,22 +9,9 @@ test_that("check list output of rep and folds for par.mode = 3", {
   library(doParallel)
   library(foreach)
   library(sperrorest)
+  library(rpart)
   
-  # create majority
-  library(nnet)
-  majority <- function(x) {
-    levels(x)[which.is.max(table(x))]
-  }
-  
-  # create majority.filter
-  majority.filter <- function(x, fac) {
-    for (lev in levels(fac)) {
-      x[ fac == lev ] <- majority(x[ fac == lev ])
-    }
-    x
-  }
-  
-  formula <- croptype ~ b12 + b13 + b14 + b15 + b16 + b17 + b22 + b23 + b24 + 
+  fo <- croptype ~ b12 + b13 + b14 + b15 + b16 + b17 + b22 + b23 + b24 + 
     b25 + b26 + b27 + b32 + b33 + b34 + b35 + b36 + b37 + b42 + 
     b43 + b44 + b45 + b46 + b47 + b52 + b53 + b54 + b55 + b56 + 
     b57 + b62 + b63 + b64 + b65 + b66 + b67 + b72 + b73 + b74 + 
