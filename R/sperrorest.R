@@ -55,9 +55,9 @@ summary.sperroresterror = function(object, level = 0,
     err = unclass(object)
     if (pooled) {
         if (level <= 2)
-            err = lapply(err, function(x) t(sapply(x, function(y) 
-              data.frame(train = y$train, test = y$test, 
-                distance = ifelse(any(names(y) == "distance"),y$distance,-1)))) )
+          err = lapply(err, function(x) t(sapply(x, function(y) 
+            data.frame(train = y$train, test = y$test, 
+                       distance = ifelse(any(names(y) == "distance"),y$distance,-1)))) )
         if (level <= 1) {
             errdf = err[[1]]
             if (length(err) > 1) {
@@ -433,7 +433,7 @@ resample.factor <- function(data, param = list(fac = "class",
 #' @return A list (object of class \code{sperrorest}) with (up to) six components:
 #' \item{error.rep}{a \code{sperrorestreperror} object containing 
 #' predictive performances at the repetition level}
-#' \item{error.fold}{a \code{sperrorestfolderror} object containing predictive 
+#' \item{error.fold}{a \code{sperroresterror} object containing predictive 
 #' performances at the fold level}
 #' \item{represampling}{a \code{\link{represampling}} object}
 #' \item{importance}{a \code{sperrorestimportance} object containing 
@@ -529,8 +529,8 @@ sperrorest = function(formula, data, coords = c("x", "y"),
                       train.fun = NULL, train.param = NULL,
                       test.fun = NULL, test.param = NULL,
                       err.fun = err.default,
-                      err.fold = TRUE,
-                      err.rep = TRUE,
+                      error.fold = TRUE,
+                      error.rep = TRUE,
                       err.train = TRUE,
                       imp.variables = NULL,
                       imp.permutations = 1000,
@@ -556,7 +556,7 @@ sperrorest = function(formula, data, coords = c("x", "y"),
     if (!is.null(test.fun)) stopifnot(is.function(test.fun))
     stopifnot(is.function(err.fun))
     if (importance) {
-        if (!err.fold) {
+        if (!error.fold) {
             warning("'importance=TRUE' currently only supported with 
                     'err.fold=TRUE'.\nUsing 'importance=FALSE'")
             importance = FALSE
@@ -566,7 +566,7 @@ sperrorest = function(formula, data, coords = c("x", "y"),
     }
     stopifnot(is.character(coords))
     stopifnot(length(coords) == 2)
-    if (importance & !err.fold)
+    if (importance & !error.fold)
         stop("variable importance assessment currently only supported 
              at the unpooled level")
 
@@ -612,7 +612,7 @@ sperrorest = function(formula, data, coords = c("x", "y"),
         # Parallelize this function???
         resamp = add.distance(resamp, data, coords = coords, fun = mean)
 
-    if (err.fold) {
+    if (error.fold) {
         res = lapply(resamp, unclass)
         class(res) = "sperroresterror"
     } else res = NULL
@@ -678,7 +678,7 @@ sperrorest = function(formula, data, coords = c("x", "y"),
             # Error handling:
             if (class(fit) == "try-error") {
               fit = NULL
-              if (err.fold) {
+              if (error.fold) {
                 if (err.train) res[[i]][[j]]$train = NULL
                 res[[i]][[j]]$test = NULL
                 if (importance) impo[[i]][[j]] = c() # ???
@@ -702,7 +702,7 @@ sperrorest = function(formula, data, coords = c("x", "y"),
             rm(pargs)
             
             # Calculate error measures on training sample:
-            if (err.fold) {
+            if (error.fold) {
               if (do.try) {
                 err.try = try(err.fun(nd[,response], pred.train), 
                               silent = silent)
@@ -712,12 +712,12 @@ sperrorest = function(formula, data, coords = c("x", "y"),
                 res[[i]][[j]]$train = err.fun(nd[,response], pred.train)
               }
             }
-            if (err.rep) {
+            if (error.rep) {
               pooled.obs.train = c( pooled.obs.train, nd[,response] )
               pooled.pred.train = c( pooled.pred.train, pred.train )
             }
           } else {
-            if (err.fold) {
+            if (error.fold) {
               res[[i]][[j]]$train = NULL
             }
           }
@@ -738,7 +738,7 @@ sperrorest = function(formula, data, coords = c("x", "y"),
           rm(pargs)
           
           # Calculate error measures on test sample:
-          if (err.fold) {
+          if (error.fold) {
             if (do.try) {
               err.try = try(err.fun(nd[,response], pred.test), silent = silent)
               if (class(err.try) == "try-error") {
@@ -749,13 +749,13 @@ sperrorest = function(formula, data, coords = c("x", "y"),
               res[[i]][[j]]$test  = err.fun(nd[,response], pred.test)
             }
           }
-          if (err.rep) {
+          if (error.rep) {
             pooled.obs.test = c( pooled.obs.test, nd[,response] )
             pooled.pred.test = c( pooled.pred.test, pred.test )
             is.factor.prediction = is.factor(pred.test)
           }
           ### Permutation-based variable importance assessment:
-          if (importance & err.fold) {
+          if (importance & error.fold) {
             
             if (is.null(res[[i]][[j]]$test)) {
               impo[[i]][[j]] = c()
@@ -834,7 +834,7 @@ sperrorest = function(formula, data, coords = c("x", "y"),
         }
       
       # Put the results from the pooled estimation into the pooled.err data structure:
-      if (err.rep) {
+      if (error.rep) {
         if (is.factor(data[,response])) {
           lev = levels(data[,response])
           if (err.train) pooled.obs.train = factor(lev[pooled.obs.train], 
@@ -874,7 +874,7 @@ sperrorest = function(formula, data, coords = c("x", "y"),
     } # end for each repetition
     
     # convert matrix(?) to data.frame:
-    if (err.rep) {
+    if (error.rep) {
       pooled.err = as.data.frame(pooled.err)
       rownames(pooled.err) = NULL
       class(pooled.err) = "sperrorestreperror"
@@ -950,10 +950,10 @@ print.sperrorestimportance = function(x, ...)
   print(unclass(summary(x, level = Inf, ...)))
 
 #' @rdname summary.sperrorest
-#' @name print.sperrorestfolderror
-#' @method print sperrorestfolderror
+#' @name print.sperroresterror
+#' @method print sperroresterror
 #' @export
-print.sperrorestfolderror = function(x, ...) 
+print.sperroresterror = function(x, ...) 
   print(unclass(summary(x, level = Inf, ...)))
 
 #' @rdname summary.sperrorest
