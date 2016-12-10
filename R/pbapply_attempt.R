@@ -14,7 +14,6 @@
 #' @importFrom utils packageVersion
 #' @import snow
 #' @import rpart
-#' @importFrom parallel mc.reset.stream
 #' 
 #' @param data a \code{data.frame} with predictor and response variables. 
 #' Training and test samples will be drawn from this data set by \code{train.fun} 
@@ -570,7 +569,7 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
     if (par.args$par.mode == 1) {
       RNGkind("L'Ecuyer-CMRG")
       set.seed(1234567)
-      mc.reset.stream() #set up RNG stream to obtain reproducible results
+      parallel::mc.reset.stream() #set up RNG stream to obtain reproducible results
       
       
       
