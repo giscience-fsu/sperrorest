@@ -598,12 +598,14 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
         NULL}
       )
       if (par.args$lb == FALSE) {
-        if (par.args$high == TRUE)
+        if (par.args$high == TRUE) {
           pboptions(type = "timer", style = 1)
           myRes = pblapply(cl = par.cl, X = resamp, fun = runreps)
-        else
+        }
+        else {
           pboptions(type = "timer", style = 1)
           myRes = pblapply(cl = par.cl, x = resamp, fun = runreps)
+        }
       }
       else
         myRes = clusterApplyLB(cl = par.cl, x = resamp, fun = runreps)
