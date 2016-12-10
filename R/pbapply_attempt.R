@@ -14,7 +14,7 @@
 #' @importFrom utils packageVersion
 #' @import snow
 #' @import rpart
-#' @import parallel
+#' @importFrom parallel mc.reset.stream
 #' 
 #' @param data a \code{data.frame} with predictor and response variables. 
 #' Training and test samples will be drawn from this data set by \code{train.fun} 
