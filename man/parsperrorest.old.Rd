@@ -205,7 +205,7 @@ par.sp.res <- parsperrorest.old(data = ecuador, formula = fo,
                           pred.fun = mypred.rpart,
                           verbose = "all",
                           smp.fun = partition.kmeans, 
-                          smp.args = list(repetition = 1:3, nfold = 4), 
+                          smp.args = list(repetition = 1:5, nfold = 4), 
                           par.args = list(par.mode = 3, par.units = 2),
                           error.rep = TRUE, error.fold = TRUE)
 summary(par.sp.res$error.rep)

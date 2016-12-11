@@ -198,7 +198,7 @@
 #'                           pred.fun = mypred.rpart,
 #'                           verbose = "all",
 #'                           smp.fun = partition.kmeans, 
-#'                           smp.args = list(repetition = 1:3, nfold = 4), 
+#'                           smp.args = list(repetition = 1:5, nfold = 4), 
 #'                           par.args = list(par.mode = 3, par.units = 2),
 #'                           error.rep = TRUE, error.fold = TRUE)
 #' summary(par.sp.res$error.rep)
@@ -660,7 +660,7 @@ parsperrorest.old = function(formula, data, coords = c("x", "y"),
     if (verbose == FALSE) {
       progress <- "/dev/null"
       if (Sys.info()["sysname"] == "Windows") {
-        progress <- "nul:"
+        progress.out <- "nul:"
       } 
     }
     # special settings for Windows

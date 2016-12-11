@@ -1,14 +1,7 @@
 # sperrorest 1.0.0 (04 Oct 2016)
 
-* add `sperrorest.par`: This function lets you exexute `sperrorest` in parallel. 
-It uses a `doParallel` and `foreach` setup and works on all major platforms with
-some constraints on Windows (no console output). This function is useful for 
-running CV setups with many repetitions and/or models with take quite long to 
-converge. 
-
 * add `parsperrorest`: This function lets you exexute `sperrorest` in parallel. 
-It uses `mclapply` and is faster than `sperrorest.par`. However, no output is 
-printed to the console and it does not work on Windows systems. 
+- More information here - 
 
 * add `partition.factor.cv`: This resampling method enables partitioning based 
 on a given factor variable. This can be used, for example, to resample 
@@ -24,11 +17,9 @@ used cores and other system details.
 
 * change params: `err.unpooled` to `err.fold` and `err.pooled` to `err.rep`
 
-* change order and naming of returned list for `sperrorest`, `parsperrorest` and
-`sperrorest.par`
-  - class `sperroresterror` is now `sperrorestfolderror`
+* change order and naming of returned list for `sperrorest`, and `parsperrorest` 
   - class `sperrorestpoolederror` is now `sperrorestreperror`
-  - returned `sperrorest` list is now ordered as follows: 
+  - returned `sperrorest` object is now ordered as follows: 
     1. error.rep
     2. error.fold
     3. importance

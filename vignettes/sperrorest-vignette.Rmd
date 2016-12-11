@@ -75,7 +75,7 @@ head(round(co))
 
 Fit a model with all predictors:
 ```{r}
-fit <- MASS::lda(fo, data = maipo)
+fit <- lda(fo, data = maipo)
 ```
 
 Predict the croptype with the fitted model and calculate the average misclassification error rate (MER):
@@ -152,22 +152,6 @@ table(pred = pred, obs = maipo$croptype)
 We need to set up some functions to create a wrapper predict function of the LDA model for `sperrorest()`. 
 
 ```{r}
-library(nnet)
-majority <- function(x) {
-  levels(x)[which.is.max(table(x))]
-}
-```
-
-```{r}
-majority.filter <- function(x, fac) {
-  for (lev in levels(fac)) {
-    x[ fac == lev ] <- majority(x[ fac == lev ])
-  }
-  x
-}
-```
-
-```{r}
 lda.predfun <- function(object, newdata, fac = NULL) {
   library(nnet)
   majority <- function(x) {
@@ -195,7 +179,7 @@ res.lda.nsp <- res <- sperrorest(fo, data = maipo, coords = c("utmx","utmy"),
                                  pred.fun = lda.predfun, 
                                  pred.args = list(fac = "field"),
                                  smp.fun = partition.cv, 
-                                 smp.args = list(repetition = 1:4, nfold = 5),
+                                 smp.args = list(repetition = 1:6, nfold = 5),
                                  error.rep = TRUE, error.fold = FALSE)
 round(summary(res.lda.nsp$error.rep), 3)
 ```
@@ -208,40 +192,38 @@ res.lda.sp <- sperrorest(fo, data = maipo, coords = c("utmx","utmy"),
                          pred.fun = lda.predfun, 
                          pred.args = list(fac = "field"),
                          smp.fun = partition.factor.cv,
-                         smp.args = list(fac = "field", repetition = 1:4, nfold = 5),
+                         smp.args = list(fac = "field", repetition = 1:6, nfold = 5),
                          error.rep = TRUE, error.fold = FALSE, 
-                         benchmark = T)
+                         benchmark = TRUE)
 res.lda.sp$benchmark$runtime.performance
 ```
 
 The same can be done faster using `parsperrorest()`. 
 ```{r}
 res.lda.sp.par <- parsperrorest(fo, data = maipo, coords = c("utmx","utmy"), 
-                               model.fun = lda,
-                               pred.fun = lda.predfun, 
-                               pred.args = list(fac = "field"),
-                               smp.fun = partition.factor.cv,
-                               smp.args = list(fac = "field", repetition = 1:3, nfold = 5),
-                               par.args = list(par.units = 2, par.mode = 1, 
-                                               lb = FALSE, high = T),
-                               error.rep = TRUE, error.fold = T,
-                               benchmark = TRUE)
-# res.lda.sp.par$benchmark$runtime.performance
+                                model.fun = lda,
+                                pred.fun = lda.predfun, 
+                                pred.args = list(fac = "field"),
+                                smp.fun = partition.factor.cv,
+                                smp.args = list(fac = "field", repetition = 1:6, nfold = 5),
+                                par.args = list(par.units = 2, par.mode = 2),
+                                error.rep = TRUE, error.fold = TRUE,
+                                benchmark = TRUE)
+res.lda.sp.par$benchmark$runtime.performance
 ```
 
 
 ```{r}
-res.lda.sp.par <- parsperrorest.old(fo, data = maipo, coords = c("utmx","utmy"), 
+res.lda.par <- parsperrorest(fo, data = maipo, coords = c("utmx","utmy"), 
                                model.fun = lda,
                                pred.fun = lda.predfun, 
                                pred.args = list(fac = "field"),
                                smp.fun = partition.cv,
-                               smp.args = list(repetition = 1:4, nfold = 5),
-                               par.args = list(par.units = 2, par.mode = 1, 
-                                               lb = F, high = FALSE),
+                               smp.args = list(repetition = 1:6, nfold = 5),
+                               par.args = list(par.units = 2, par.mode = 2),
                                error.rep = TRUE, error.fold = TRUE,
                                benchmark = TRUE)
-# res.lda.sp.par$benchmark$runtime.performance
+res.lda.sp.par$benchmark$runtime.performance
 ```
 
 ## Bagging
@@ -256,61 +238,38 @@ res.bagg.sp <- sperrorest(fo, data = maipo, coords = c("utmx","utmy"),
                           pred.args = list(fac = "field"),
                           smp.fun = partition.factor.cv,
                           smp.args = list(fac = "field",
-                                          repetition = 1:4, nfold = 5),
+                                          repetition = 1:6, nfold = 5),
                           error.rep = TRUE, error.fold = TRUE,
-                          benchmark = TRUE, verbose = "all")
+                          benchmark = TRUE, verbose = "rep")
 res.bagg.sp$benchmark$runtime.performance
 ```
 
-To speed things up, we can use `parsperrorest()` and see the time difference. Note that we have three parallel modes to choose from!  
-In this example all three modes are presented and their differences are explained.  
+To speed things up, we can use `parsperrorest()` and see the time difference. Note that we have two parallel modes to choose from!  
+In this example we will use `par.mode = 2` because `par.mode = 1` will not work in this example (reason unknown). 
 In this vignette we will always use 2 cores to ensure that this example is working for everybody.  
 You can of course increase the number of cores and also the number of repetitions/folds to your desire! 
 Note that we will not use any console outputs in this vignette to keep it tidy.
-However you can just change this setting to your desire using the `verbose` argument. 
+However you can just change this setting to your desire using the `progress` argument. 
 
 #### Details of par.mode
 
-`par.mode = 1` uses a `mclapply` setup and will not work on Windows systems unless only 1 core is used (which results in no parallelization)! 
+`par.mode = 1` uses either a `parallel::mclapply()` (Unix) or `parallel::parApply()` (Windows), depending on your platform.
 Due to this contraint this mode is not used in this vignette. 
 So if you are reading this and running a Windows machine, jump to `par.mode = 2` or `par.mode = 3` example!
-The advantage of using `par.mode = 1` compared to `par.mode = 2` is that (in theory) console output is given here.
-However this is currently not working and the reason is still unknown.
-So whether you rely on progress tracking or not, `par.mode = 1` is not efficently working right now and `par.mode = 2` or `par.mode = 3` should be used! 
+The advantage of using `par.mode = 1` compared to `par.mode = 2` is its speed. However `par.mode = 1` lacks in stability. 
 
-`par.mode = 2` also uses `mclapply` in the background but works for all operating systems. 
-However the drawback is that no console output can be printed to the console. 
-On the other hand, this mode is the fastest one among all three.
 
 ```{r}
-res.bagg.sp.par2 <- parsperrorest(fo, data = maipo, coords = c("utmx","utmy"), 
-                                   model.fun = bagging,
-                                   pred.args = list(fac = "field"),
-                                   smp.fun = partition.factor.cv,
-                                   smp.args = list(fac = "field", 
-                                                   repetition = 1:3, nfold = 4),
-                                   par.args = list(par.units = 2, par.mode = 2,
-                                                   lb = F, high = T),
-                                   error.rep = TRUE, error.fold = TRUE,
-                                   benchmark = TRUE)
-#res.bagg.sp.par2$benchmarks$runtime.performance
-```
-
-`par.mode = 3` is different from `par.mode = 1` and `par.mode = 2` as it uses `foreach()` to perform the parallelization. 
-While this ensures progress tracking and works on all platforms, it less efficient than `mclapply` approaches which are used within `par.mode = 1` and `par.mode = 2`. 
-Also `par.args` `lb` and `high` are not needed in this mode. 
-
-```{r}
-res.bagg.sp.par3 <- parsperrorest.old(fo, data = maipo, coords = c("utmx","utmy"), 
-                                   model.fun = bagging,
-                                   pred.args = list(fac = "field"),
-                                   smp.fun = partition.factor.cv,
-                                   smp.args = list(fac = "field", repetition = 1:5, nfold = 5),
-                                   par.args = list(par.units = 2, par.mode = 2,
-                                                   lb = FALSE, high = T),
-                                   error.rep = TRUE, error.fold = TRUE,
-                                   benchmark = TRUE)
-#res.bagg.sp.par3$benchmarks$runtime.performance
+res.bagg.sp.par <- parsperrorest(fo, data = maipo, coords = c("utmx","utmy"), 
+                                 model.fun = bagging,
+                                 pred.args = list(fac = "field"),
+                                 smp.fun = partition.factor.cv,
+                                 smp.args = list(fac = "field", 
+                                                 repetition = 1:6, nfold = 5),
+                                 par.args = list(par.units = 2, par.mode = 2),
+                                 error.rep = TRUE, error.fold = TRUE,
+                                 benchmark = TRUE)
+res.bagg.sp.par$benchmarks$runtime.performance
 ```
 
 # References

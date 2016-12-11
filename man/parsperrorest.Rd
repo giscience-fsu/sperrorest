@@ -11,7 +11,7 @@ parsperrorest(formula, data, coords = c("x", "y"), model.fun,
   err.fun = err.default, error.fold = TRUE, error.rep = TRUE,
   err.train = TRUE, imp.variables = NULL, imp.permutations = 1000,
   importance = !is.null(imp.variables), distance = FALSE, do.gc = 1,
-  silent = FALSE, do.try = FALSE, progress = TRUE, par.args = list(),
+  do.try = FALSE, progress = TRUE, progress.out = "", par.args = list(),
   benchmark = FALSE, ...)
 }
 \arguments{
@@ -99,19 +99,28 @@ collection by calling \code{\link{gc}}; if \code{<1}, no garbage collection;
 if \code{>=1}, run a \code{gc()} after each repetition; 
 if \code{>=2}, after each fold}
 
-\item{silent}{not used. will be removed before package release!}
-
 \item{do.try}{logical (default: \code{FALSE}): if \code{TRUE} [untested!!], 
 use \code{\link{try}} to robustify calls to \code{model.fun} and 
 \code{err.fun}; use with caution!}
 
 \item{progress}{logical (default: \code{TRUE}): Whether to show a progress 
 bar including information about elapsed time, estimated time remaining and a 
-percentage indicator (0\% - 100\%)}
+percentage indicator (0\% - 100\%). Applies to \code{par.mode = 1}. For
+\code{par.mode = 2} the default is \code{"all"} which prints repetition and 
+fold information.
+Other possible values are \code{"rep"} (repitition only) or \code{FALSE} 
+for no output.}
 
-\item{par.args}{Contains parallelization parameters:
+\item{progress.out}{only used if \code{par.mode = 2}: Directory of progress 
+output. Default is "" which results in console output for Unix-Systems and
+file output ("sperrorest.progress.txt") in the current working directory 
+for Windows-Systems.}
+
+\item{par.args}{list of parallelization parameters:
+\code{par.mode} (the parallelization mode),
 \code{par.units} (the number of parallel processing units), 
-\code{par.libs} (libraries to be loaded on cluster workers, character list)}
+\code{par.libs} (libraries to be loaded on cluster workers, character list).
+See Details for more information.}
 
 \item{benchmark}{logical (default: \code{FALSE}): if \code{TRUE}, 
 perform benchmarking and return \code{sperrorestbenchmarks} object}
@@ -140,6 +149,28 @@ parallelized spatial and non-spatial cross-validation
 and bootstrap error estimation and parallelized permutation-based 
 assessment of spatial variable importance.
 }
+\details{
+Two \code{par.mode} options are availabe. The default mode is 
+\code{par.mode = 1}. Here, \code{\link[pbapply]{pblapply}} is used which 
+either calls \code{\link[parallel]{mclapply}} (on Unix-Systems) or 
+\code{\link[parallel]{parApply}} (on Windows-Systems). \code{par.mode = 2}
+uses \code{\link[foreach]{foreach}}. While this approach is not as efficient
+as \code{par.mode = 1}, it may work in cases in which \code{par.mode = 1} fails.
+
+\code{par.libs} only applies to \code{par.mode = 1} on Windows-Systems.
+
+This parallelized version of \code{\link{sperrorest}} may highly 
+decrease computation time. However, please note that problems
+may occur depending on which function is used for cross-validation. 
+While the \code{\link[rpart]{rpart}} example (see Examples) here works fine, you may 
+encounter problems with other functions.
+
+For {par.mode = 2}, you may encounter missing repetitions in the results
+if repetitions finish to quickly. In this case, consider using 
+\code{\link[sperrorest]{sperrorest}}
+
+Known problems when being parallized: \code{\link[randomForest]{randomForest}}
+}
 \note{
 (1) Optionally save fitted models, training and test samples in the 
 results object; (2) Optionally save intermediate results in some file, and 
@@ -164,8 +195,8 @@ par.nsp.res <- parsperrorest(data = ecuador, formula = fo,
                              pred.fun = mypred.rpart,
                              progress = TRUE,
                              smp.fun = partition.cv, 
-                             smp.args = list(repetition = 1:5, nfold = 4), 
-                             par.args = list(par.units = 2, par.mode = 2),
+                             smp.args = list(repetition = 1:10, nfold = 4), 
+                             par.args = list(par.units = 2, par.mode = 1),
                              error.rep = TRUE, error.fold = TRUE)
 summary(par.nsp.res$error.rep)
 summary(par.nsp.res$error.fold)
@@ -174,13 +205,13 @@ plot(par.nsp.res$represampling, ecuador)
 
 # Spatial 5-repeated 10-fold spatial cross-validation:
 par.sp.res <- parsperrorest(data = ecuador, formula = fo,
-                          model.fun = rpart, model.args = list(control = ctrl),
-                          pred.fun = mypred.rpart,
-                          progress = TRUE,
-                          smp.fun = partition.kmeans, 
-                          smp.args = list(repetition = 1:5, nfold = 4), 
-                          par.args = list(par.units = 2, par.mode = 1),
-                          error.rep = TRUE, error.fold = TRUE)
+                            model.fun = rpart, model.args = list(control = ctrl),
+                            pred.fun = mypred.rpart,
+                            progress = TRUE,
+                            smp.fun = partition.kmeans, 
+                            smp.args = list(repetition = 1:5, nfold = 15), 
+                            par.args = list(par.units = 2, par.mode = 2),
+                            error.rep = TRUE, error.fold = TRUE)
 summary(par.sp.res$error.rep)
 summary(par.sp.res$error.fold)
 summary(par.sp.res$represampling)

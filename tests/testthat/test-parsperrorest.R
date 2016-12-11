@@ -27,10 +27,9 @@ test_that("check list output of rep and folds for par.mode = 3", {
                        pred.fun = lda.predfun,
                        smp.fun = partition.cv,
                        smp.args = list(repetition = 1:2, nfold = 5),
-                       par.args = list(par.mode = 3, par.units = 2, 
-                                       lb = F, high = F),
+                       par.args = list(par.mode = 2, par.units = 2),
                        error.rep = TRUE, error.fold = TRUE,
-                       benchmark = TRUE, verbose = FALSE)
+                       benchmark = TRUE, progress = FALSE)
   
   expect_equal(typeof(out$error.rep), "list")
   expect_equal(typeof(out$error.fold), "list")
@@ -41,10 +40,9 @@ test_that("check list output of rep and folds for par.mode = 3", {
                        pred.fun = lda.predfun,
                        smp.fun = partition.cv,
                        smp.args = list(repetition = 1:2, nfold = 5),
-                       par.args = list(par.mode = 3, par.units = 2, 
-                                       lb = F, high = F),
+                       par.args = list(par.mode = 2, par.units = 2),
                        error.rep = TRUE, error.fold = FALSE,
-                       benchmark = TRUE, verbose = FALSE)
+                       benchmark = TRUE, progress = FALSE)
   
   expect_equal(typeof(out$error.rep), "list")
   expect_equal(typeof(out$error.fold), "NULL")
@@ -55,10 +53,9 @@ test_that("check list output of rep and folds for par.mode = 3", {
                        pred.fun = lda.predfun,
                        smp.fun = partition.cv,
                        smp.args = list(repetition = 1:2, nfold = 5),
-                       par.args = list(par.mode = 3, par.units = 2, 
-                                       lb = F, high = F),
+                       par.args = list(par.mode = 2, par.units = 2),
                        error.rep = FALSE, error.fold = TRUE,
-                       benchmark = TRUE, verbose = FALSE)
+                       benchmark = TRUE, progress = FALSE)
   
   expect_equal(typeof(out$error.rep), "NULL")
   expect_equal(typeof(out$error.fold), "list")
@@ -81,11 +78,10 @@ mypred.rpart <- function(object, newdata) predict(object, newdata)[,2]
 par.nsp.res <- parsperrorest(data = ecuador, formula = fo,
                            model.fun = rpart, model.args = list(control = ctrl),
                            pred.fun = mypred.rpart,
-                           verbose = "all",
+                           progress = FALSE,
                            smp.fun = partition.cv,
                            smp.args = list(repetition = 1:2, nfold = 4),
-                           par.args = list(par.mode = 3, par.units = 2,
-                               lb = FALSE, high = FALSE),
+                           par.args = list(par.mode = 2, par.units = 2),
                            error.rep = TRUE, error.fold = TRUE)
 
 expect_equal(length(par.nsp.res$error.fold[[1]]), 4)
