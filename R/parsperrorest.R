@@ -92,6 +92,7 @@
 #' 
 #' @param benchmark logical (default: \code{FALSE}): if \code{TRUE}, 
 #' perform benchmarking and return \code{sperrorestbenchmarks} object
+#' @param silent not used. will be removed before package release!
 #' 
 #' @return A list (object of class \code{sperrorest}) with (up to) six components:
 #' \item{error.rep}{a \code{sperrorestreperror} object containing 
@@ -156,7 +157,7 @@
 #'                              pred.fun = mypred.rpart,
 #'                              progress = TRUE,
 #'                              smp.fun = partition.cv, 
-#'                              smp.args = list(repetition = 1:40, nfold = 4), 
+#'                              smp.args = list(repetition = 1:5, nfold = 4), 
 #'                              par.args = list(par.units = 2, par.mode = 2),
 #'                              error.rep = TRUE, error.fold = TRUE)
 #' summary(par.nsp.res$error.rep)
@@ -170,7 +171,7 @@
 #'                           pred.fun = mypred.rpart,
 #'                           progress = TRUE,
 #'                           smp.fun = partition.kmeans, 
-#'                           smp.args = list(repetition = 1:40, nfold = 4), 
+#'                           smp.args = list(repetition = 1:5, nfold = 4), 
 #'                           par.args = list(par.units = 2, par.mode = 1),
 #'                           error.rep = TRUE, error.fold = TRUE)
 #' summary(par.sp.res$error.rep)
@@ -204,6 +205,7 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
                          importance = !is.null(imp.variables),
                          distance = FALSE,
                          do.gc = 1,
+                         silent = FALSE,
                          do.try = FALSE,
                          progress = TRUE,
                          par.args = list(),

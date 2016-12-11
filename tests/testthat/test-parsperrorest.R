@@ -10,6 +10,7 @@ test_that("check list output of rep and folds for par.mode = 3", {
   library(foreach)
   library(sperrorest)
   library(rpart)
+  library(MASS)
   
   fo <- croptype ~ b12 + b13 + b14 + b15 + b16 + b17 + b22 + b23 + b24 + 
     b25 + b26 + b27 + b32 + b33 + b34 + b35 + b36 + b37 + b42 + 
@@ -28,7 +29,7 @@ test_that("check list output of rep and folds for par.mode = 3", {
                        smp.args = list(repetition = 1:2, nfold = 5),
                        par.args = list(par.mode = 3, par.units = 2, 
                                        lb = F, high = F),
-                       err.rep = TRUE, err.fold = TRUE,
+                       error.rep = TRUE, error.fold = TRUE,
                        benchmark = TRUE, verbose = FALSE)
   
   expect_equal(typeof(out$error.rep), "list")
@@ -42,7 +43,7 @@ test_that("check list output of rep and folds for par.mode = 3", {
                        smp.args = list(repetition = 1:2, nfold = 5),
                        par.args = list(par.mode = 3, par.units = 2, 
                                        lb = F, high = F),
-                       err.rep = TRUE, err.fold = FALSE,
+                       error.rep = TRUE, error.fold = FALSE,
                        benchmark = TRUE, verbose = FALSE)
   
   expect_equal(typeof(out$error.rep), "list")
@@ -56,9 +57,37 @@ test_that("check list output of rep and folds for par.mode = 3", {
                        smp.args = list(repetition = 1:2, nfold = 5),
                        par.args = list(par.mode = 3, par.units = 2, 
                                        lb = F, high = F),
-                       err.rep = FALSE, err.fold = TRUE,
+                       error.rep = FALSE, error.fold = TRUE,
                        benchmark = TRUE, verbose = FALSE)
   
   expect_equal(typeof(out$error.rep), "NULL")
   expect_equal(typeof(out$error.fold), "list")
 }) 
+
+
+test_that("check if length of list (error.fold) equals folds for par.mode = 3", {
+  
+data(ecuador) 
+fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
+
+# Example of a classification tree fitted to this data:
+library(rpart)
+mypred.rpart <- function(object, newdata) predict(object, newdata)[, 2]
+ctrl <- rpart.control(cp = 0.005) # show the effects of overfitting
+fit <- rpart(fo, data = ecuador, control = ctrl)
+
+# Non-spatial 5-repeated 10-fold cross-validation:
+mypred.rpart <- function(object, newdata) predict(object, newdata)[,2]
+par.nsp.res <- parsperrorest(data = ecuador, formula = fo,
+                           model.fun = rpart, model.args = list(control = ctrl),
+                           pred.fun = mypred.rpart,
+                           verbose = "all",
+                           smp.fun = partition.cv,
+                           smp.args = list(repetition = 1:2, nfold = 4),
+                           par.args = list(par.mode = 3, par.units = 2,
+                               lb = FALSE, high = FALSE),
+                           error.rep = TRUE, error.fold = TRUE)
+
+expect_equal(length(par.nsp.res$error.fold[[1]]), 4)
+                                                                             
+})

@@ -6,7 +6,8 @@
 #' assessment of spatial variable importance.
 #' 
 #' @inheritParams partition.cv
-#' 
+#' @import foreach
+#' @import doParallel
 #' @import snow
 #' @import rpart
 #' @importFrom parallel detectCores mc.reset.stream clusterSetRNGStream mclapply
@@ -51,10 +52,10 @@
 #' known responses in \code{data} and the model predictions delivered 
 #' by \code{pred.fun}. E.g., \code{\link{err.default}} (the default). 
 #' See example and details below.
-#' @param err.fold logical (default: \code{TRUE} if \code{importance} is 
+#' @param error.fold logical (default: \code{TRUE} if \code{importance} is 
 #' \code{TRUE}, otherwise \code{FALSE}): calculate error measures on each fold 
 #' within a resampling repetition.
-#' @param err.rep logical (default: \code{TRUE}): calculate error measures 
+#' @param error.rep logical (default: \code{TRUE}): calculate error measures 
 #' based on the pooled predictions of all folds within a resampling repetition.
 #' @param err.train logical (default: \code{TRUE}): calculate error measures on 
 #' the training set (in addition to the test set estimation).
@@ -203,7 +204,7 @@
 #' summary(par.sp.res$error.rep)
 #' summary(par.sp.res$error.fold)
 #' summary(par.sp.res$represampling)
-#' plot(parspres$represampling, ecuador)
+#' plot(par.sp.res$represampling, ecuador)
 #' 
 #' # only run this part of the example if importance = TRUE!
 #' smry = data.frame(
@@ -588,7 +589,7 @@ parsperrorest.old = function(formula, data, coords = c("x", "y"),
       )
       if (par.args$lb == FALSE) {
         if (par.args$high == TRUE)
-          myRes = parLapply(cl = par.cl, X = resamp, fun = runreps)
+          myRes = parLapply(cl = par.cl, x = resamp, fun = runreps)
         else
           myRes = clusterApply(cl = par.cl, x = resamp, fun = runreps)
       }

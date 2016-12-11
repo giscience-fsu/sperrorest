@@ -70,6 +70,13 @@ known responses in \code{data} and the model predictions delivered
 by \code{pred.fun}. E.g., \code{\link{err.default}} (the default). 
 See example and details below.}
 
+\item{error.fold}{logical (default: \code{TRUE} if \code{importance} is 
+\code{TRUE}, otherwise \code{FALSE}): calculate error measures on each fold 
+within a resampling repetition.}
+
+\item{error.rep}{logical (default: \code{TRUE}): calculate error measures 
+based on the pooled predictions of all folds within a resampling repetition.}
+
 \item{err.train}{logical (default: \code{TRUE}): calculate error measures on 
 the training set (in addition to the test set estimation).}
 
@@ -106,13 +113,6 @@ Set to \code{FALSE} for no progress information.}
 perform benchmarking and return \code{sperrorestbenchmarks} object}
 
 \item{...}{currently not used}
-
-\item{err.fold}{logical (default: \code{TRUE} if \code{importance} is 
-\code{TRUE}, otherwise \code{FALSE}): calculate error measures on each fold 
-within a resampling repetition.}
-
-\item{err.rep}{logical (default: \code{TRUE}): calculate error measures 
-based on the pooled predictions of all folds within a resampling repetition.}
 }
 \value{
 A list (object of class \code{sperrorest}) with (up to) six components:

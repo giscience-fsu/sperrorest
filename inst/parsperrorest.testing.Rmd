@@ -1,8 +1,11 @@
 ---
-title: "R Notebook"
+title: "`sperrorest` Paket Update: Aktueller Stand"
 output:
+  html_notebook: 
+    highlight: pygments
+    theme: readable
+    toc: yes
   html_document: default
-  html_notebook: default
 date: "11.12.2016"
 ---
 
@@ -13,6 +16,8 @@ opts_chunk$set(cache = TRUE,
 ```
 
 # Überblick
+
+**(Dies ist ein Notebook Dokument. Oben rechts in der Ecke bitte auf `Code` klicken (Browseransicht) und das .Rmd file kann heruntergeladen und in RStudio ausgeführt werden.)**
 
 Zusammenfassung aller `sperrorest()` Parallelisierungs-Versuche welche ich in den letzten Monaten durchgeführt wurden. 
 
@@ -29,16 +34,20 @@ Bei `pbapply::pbLapply()` wird für Windows Systeme ein Cluster erstellt und bei
 # Vignette
 
 Die Vignette sollte erstmal nur mit der sequentiellen `sperrorest()` geschrieben werden, da alle Parallelfunktionen mit den dort benutzten Funktionen Probleme bekommen.  
-Ich schlage eine eigene Parallelvignette vor (sofern dies überhaupt nötig ist). Die basics werden ja auch in den Beispielen gezeigt. 
+Ich schlage eine eigene Parallelvignette vor (sofern dies überhaupt nötig ist). Die basics werden ja auch in den Beispielen voj `parsperrorest()` gezeigt. 
 
 # Weitere Vorgehensweise (Vorschlag)
 
 * Zwar gibt es viele Probleme mit den Parallelfunktionen, jedoch sollte man diese ins Paket einbinden mit einer warnung, dass das Verhalten abhängig ist von der jeweilig benutzten Funktion und man immer seine Resultate auf Vollständigkeit testen soll. Sollten zu viele Probleme auftreten, so soll man die sequentielle Version verwenden.  
 
-* Ich würde zwei Modi Vorschlagen: Der erste ist der `pbapply` Ansatz, welcher automatisch zwischen `mclapply` und `parApply` unterscheidet nach Plattform Typ. Der Zweite ist der `foreach` Ansatz, der zwar langsamer läuft, aber manchmal stabiler.
+* Ich würde zwei Modi Vorschlagen: Der Erste (`par.mode = 1`) ist der `pbapply` Ansatz, welcher automatisch zwischen `mclapply` und `parApply` unterscheidet nach Plattform Typ. Der Zweite (`par.mode = 2`) ist der `foreach` Ansatz, der zwar langsamer läuft, aber manchmal stabiler.
 Der `foreach` mode müsste dann noch aus `parsperrorest.old()` nach `parsperrorest()` exporiert werden. 
 
 * Wir bekommen Nutzerfeedback mit bestimmten Funktionen aus dem wir lernen können.
+
+# Andere Änderungen
+
+Sind im `NEWS.md` file zusammengefasst. Dazu bitte das Paket von Github installieren!
 
 # Beispiele
 
@@ -69,7 +78,7 @@ library(sperrorest)
 
 ### parsperrorest.old mit par.mode = 2 (`parallel::parApply`)
 * `high = TRUE` -> `parallel::parApply`
-* par.mode == 2
+* `par.mode = 2`
 
 ```{r}
 data(ecuador, package = "sperrorest") # Muenchow et al. (2012), see ?ecuador
@@ -90,14 +99,14 @@ parapply.out <- parsperrorest.old(data = ecuador, formula = fo,
                                   smp.fun = partition.cv, 
                                   smp.args = list(repetition = 1:20, nfold = 4), 
                                   par.args = list(par.mode = 2, par.units = 2, 
-                                                  lb = FALSE, high = T),
+                                                  lb = FALSE, high = TRUE),
                                   error.rep = TRUE, error.fold = TRUE)
 ```
 
 ### parsperrorest.old mit par.mode = 2 (`parallel::clusterApply()`)
 
 * `high = FALSE` -> `parallel::clusterApply()`
-* par.mode == 2
+* `par.mode = 2`
 ```{r}
 clusterapply.out <- parsperrorest.old(data = ecuador, formula = fo,
                                       model.fun = rpart, model.args = list(control = ctrl),
@@ -119,7 +128,7 @@ mclapply.out <- parsperrorest.old(data = ecuador, formula = fo,
                                   pred.fun = mypred.rpart,
                                   smp.fun = partition.cv, 
                                   smp.args = list(repetition = 1:20, nfold = 5), 
-                                  par.args = list(par.mode = 3, par.units = 2, 
+                                  par.args = list(par.mode = 1, par.units = 2, 
                                                   lb = FALSE, high = FALSE),
                                   error.rep = TRUE, error.fold = TRUE)
 ```
