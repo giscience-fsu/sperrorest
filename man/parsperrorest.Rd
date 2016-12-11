@@ -8,11 +8,11 @@ parsperrorest(formula, data, coords = c("x", "y"), model.fun,
   model.args = list(), pred.fun = NULL, pred.args = list(),
   smp.fun = partition.loo, smp.args = list(), train.fun = NULL,
   train.param = NULL, test.fun = NULL, test.param = NULL,
-  err.fun = err.default, err.fold = importance, err.rep = TRUE,
+  err.fun = err.default, error.fold = TRUE, error.rep = TRUE,
   err.train = TRUE, imp.variables = NULL, imp.permutations = 1000,
   importance = !is.null(imp.variables), distance = FALSE, do.gc = 1,
-  do.try = FALSE, silent = FALSE, par.args = list(), benchmark = FALSE,
-  ...)
+  do.try = FALSE, progress = TRUE, progress.out = "", par.args = list(),
+  benchmark = FALSE, ...)
 }
 \arguments{
 \item{formula}{A formula specifying the variables used by the \code{model}. 
@@ -69,11 +69,11 @@ known responses in \code{data} and the model predictions delivered
 by \code{pred.fun}. E.g., \code{\link{err.default}} (the default). 
 See example and details below.}
 
-\item{err.fold}{logical (default: \code{TRUE} if \code{importance} is 
+\item{error.fold}{logical (default: \code{TRUE} if \code{importance} is 
 \code{TRUE}, otherwise \code{FALSE}): calculate error measures on each fold 
 within a resampling repetition.}
 
-\item{err.rep}{logical (default: \code{TRUE}): calculate error measures 
+\item{error.rep}{logical (default: \code{TRUE}): calculate error measures 
 based on the pooled predictions of all folds within a resampling repetition.}
 
 \item{err.train}{logical (default: \code{TRUE}): calculate error measures on 
@@ -103,32 +103,24 @@ if \code{>=2}, after each fold}
 use \code{\link{try}} to robustify calls to \code{model.fun} and 
 \code{err.fun}; use with caution!}
 
-\item{silent}{If \code{FALSE}, show progress on console (in Windows Rgui, 
-disable 'Buffered output' in 'Misc' menu)}
+\item{progress}{logical (default: \code{TRUE}): Whether to show a progress 
+bar including information about elapsed time, estimated time remaining and a 
+percentage indicator (0\% - 100\%). Applies to \code{par.mode = 1}. For
+\code{par.mode = 2} the default is \code{"all"} which prints repetition and 
+fold information.
+Other possible values are \code{"rep"} (repitition only) or \code{FALSE} 
+for no output.}
 
-\item{par.args}{Contains parallelization parameters \code{par.mode} 
-(the method used for parallelization), \code{par.units} 
-(the number of parallel processing units), \code{par.libs} 
-(libraries to be loaded on cluster workers), \code{lb} 
-(logical, enable load balancing) and \code{high} 
-(logical, use high-level parallelization function). 
-Setting \code{par.mode} to 1 will only work for Linux or Mac OS users, 
-unless \code{par.units} is set to 1. 
-In that case the code will run on Windows machines, too. 
-However, execution will be sequential due to only one CPU core being used. 
-Setting \code{par.mode} to 2 will work on all operating systems, but does 
-not allow for individual workers to print progress to the 
-R console (cf. \code{silent}).
-\code{par.libs} must be a list on characters. This will only have an effect 
-if \code{par.mode} is set to 2.
-Setting \code{lb} to \code{TRUE} will enable load balancing. Instead of 
-pre-scheduling tasks per worker, each worker will be given a new task as 
-soon as it finishes its previous one.
-Setting \code{high} to \code{TRUE} will cause \code{parsperrorest} to use 
-the high-level parallelization function \code{parLapply()} instead of its 
-low-level equivalent \code{clusterApply()}. 
-This will only have an effect if \code{par.mode} is set to 2 and 
-\code{lb} is \code{FALSE}.}
+\item{progress.out}{only used if \code{par.mode = 2}: Directory of progress 
+output. Default is "" which results in console output for Unix-Systems and
+file output ("sperrorest.progress.txt") in the current working directory 
+for Windows-Systems.}
+
+\item{par.args}{list of parallelization parameters:
+\code{par.mode} (the parallelization mode),
+\code{par.units} (the number of parallel processing units), 
+\code{par.libs} (libraries to be loaded on cluster workers, character list).
+See Details for more information.}
 
 \item{benchmark}{logical (default: \code{FALSE}): if \code{TRUE}, 
 perform benchmarking and return \code{sperrorestbenchmarks} object}
@@ -137,7 +129,7 @@ perform benchmarking and return \code{sperrorestbenchmarks} object}
 }
 \value{
 A list (object of class \code{sperrorest}) with (up to) six components:
-\item{error.rep}{a \code{sperrorestpoolederror} object containing 
+\item{error.rep}{a \code{sperrorestreperror} object containing 
 predictive performances at the repetition level}
 \item{error.fold}{a \code{sperroresterror} object containing predictive 
 performances at the fold level}
@@ -148,14 +140,36 @@ permutation-based variable importances at the fold level}
 information on the system the code is running on, starting and 
 finishing times, number of available CPU cores, parallelization mode, 
 number of parallel units, and runtime performance}
-\item{package.version}{Information about the \code{sperrorest} package
-version}
+\item{package.version}{a \code{sperrorestpackageversion} object containing 
+information about the \code{sperrorest} package version}
 }
 \description{
 \code{parsperrorest} is a flexible interface for multiple types of 
 parallelized spatial and non-spatial cross-validation 
 and bootstrap error estimation and parallelized permutation-based 
 assessment of spatial variable importance.
+}
+\details{
+Two \code{par.mode} options are availabe. The default mode is 
+\code{par.mode = 1}. Here, \code{\link[pbapply]{pblapply}} is used which 
+either calls \code{\link[parallel]{mclapply}} (on Unix-Systems) or 
+\code{\link[parallel]{parApply}} (on Windows-Systems). \code{par.mode = 2}
+uses \code{\link[foreach]{foreach}}. While this approach is not as efficient
+as \code{par.mode = 1}, it may work in cases in which \code{par.mode = 1} fails.
+
+\code{par.libs} only applies to \code{par.mode = 1} on Windows-Systems.
+
+This parallelized version of \code{\link{sperrorest}} may highly 
+decrease computation time. However, please note that problems
+may occur depending on which function is used for cross-validation. 
+While the \code{\link[rpart]{rpart}} example (see Examples) here works fine, you may 
+encounter problems with other functions.
+
+For {par.mode = 2}, you may encounter missing repetitions in the results
+if repetitions finish to quickly. In this case, consider using 
+\code{\link[sperrorest]{sperrorest}}
+
+Known problems when being parallized: \code{\link[randomForest]{randomForest}}
 }
 \note{
 (1) Optionally save fitted models, training and test samples in the 
@@ -166,44 +180,49 @@ repetition into a file, and to skip repetitions for which a file already exists.
 }
 \examples{
 data(ecuador) # Muenchow et al. (2012), see ?ecuador
-fo = slides ~ dem + slope + hcurv + vcurv + 
-     log.carea + cslope
+fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
 
 # Example of a classification tree fitted to this data:
 library(rpart)
-ctrl = rpart.control(cp = 0.005) # show the effects of overfitting
-fit = rpart(fo, data = ecuador, control = ctrl)
-par(xpd = TRUE)
-plot(fit, compress = TRUE, main = "Stoyan's landslide data set")
-text(fit, use.n = TRUE)
+mypred.rpart <- function(object, newdata) predict(object, newdata)[, 2]
+ctrl <- rpart.control(cp = 0.005) # show the effects of overfitting
+fit <- rpart(fo, data = ecuador, control = ctrl)
 
 # Non-spatial 5-repeated 10-fold cross-validation:
-mypred.rpart = function(object, newdata) predict(object, newdata)[,2]
-parnspres = parsperrorest(data = ecuador, formula = fo,
-    model.fun = rpart, model.args = list(control = ctrl),
-    pred.fun = mypred.rpart,
-    smp.fun = partition.cv, smp.args = list(repetition=1:5, nfold=10), 
-    par.args = list(par.mode = 2, par.units=2, lb=FALSE, high=TRUE))
-summary(parnspres$error)
-summary(parnspres$represampling)
-plot(parnspres$represampling, ecuador)
+mypred.rpart <- function(object, newdata) predict(object, newdata)[,2]
+par.nsp.res <- parsperrorest(data = ecuador, formula = fo,
+                             model.fun = rpart, model.args = list(control = ctrl),
+                             pred.fun = mypred.rpart,
+                             progress = TRUE,
+                             smp.fun = partition.cv, 
+                             smp.args = list(repetition = 1:10, nfold = 4), 
+                             par.args = list(par.units = 2, par.mode = 1),
+                             error.rep = TRUE, error.fold = TRUE)
+summary(par.nsp.res$error.rep)
+summary(par.nsp.res$error.fold)
+summary(par.nsp.res$represampling)
+plot(par.nsp.res$represampling, ecuador)
 
 # Spatial 5-repeated 10-fold spatial cross-validation:
-parspres = parsperrorest(data = ecuador, formula = fo,
-    model.fun = rpart, model.args = list(control = ctrl),
-    pred.fun = mypred.rpart,
-    smp.fun = partition.kmeans, smp.args = list(repetition=1:5, nfold=10), 
-    par.args = list(par.mode = 2, par.units=2, lb=FALSE, high=TRUE))
-summary(parspres$error)
-summary(parspres$represampling)
-plot(parspres$represampling, ecuador)
+par.sp.res <- parsperrorest(data = ecuador, formula = fo,
+                            model.fun = rpart, model.args = list(control = ctrl),
+                            pred.fun = mypred.rpart,
+                            progress = TRUE,
+                            smp.fun = partition.kmeans, 
+                            smp.args = list(repetition = 1:5, nfold = 15), 
+                            par.args = list(par.units = 2, par.mode = 2),
+                            error.rep = TRUE, error.fold = TRUE)
+summary(par.sp.res$error.rep)
+summary(par.sp.res$error.fold)
+summary(par.sp.res$represampling)
+plot(par.sp.res$represampling, ecuador)
 
 # only run this part of the example if importance = TRUE!
 smry = data.frame(
-    nonspat.training = unlist(summary(parnspres$error,level=1)$train.auroc),
-    nonspat.test     = unlist(summary(parnspres$error,level=1)$test.auroc),
-    spatial.training = unlist(summary(parspres$error,level=1)$train.auroc),
-    spatial.test     = unlist(summary(parspres$error,level=1)$test.auroc))
+    nonspat.training = unlist(summary(par.nsp.res$error.rep, level = 1)$train.auroc),
+    nonspat.test     = unlist(summary(par.nsp.res$error.rep, level = 1)$test.auroc),
+    spatial.training = unlist(summary(par.sp.res$error.rep, level = 1)$train.auroc),
+    spatial.test     = unlist(summary(par.sp.res$error.rep, level = 1)$test.auroc))
 boxplot(smry, col = c("red","red","red","green"), 
     main = "Training vs. test, nonspatial vs. spatial",
     ylab = "Area under the ROC curve")
@@ -234,6 +253,6 @@ IDA 2010, Tucson, AZ, USA, 19-21 May 2010.
 Lecture Notes in Computer Science, 6065 LNCS: 184-195.
 }
 \seealso{
-\pkg{ipred}
+\code{\link[sperrorest]{sperrorest}}
 }
 

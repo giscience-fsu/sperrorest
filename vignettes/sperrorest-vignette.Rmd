@@ -2,7 +2,11 @@
 title: "sperrorest-vignette: Spatial modeling using statistical learning techniques"
 author: "Alexander Brenning, Patrick Schratz"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+bibliography: ../Biblio.bib
+csl: ../apa-old-doi-prefix.csl
+output: 
+    rmarkdown::html_vignette:
+      toc: true
 vignette: >
   %\VignetteIndexEntry{sperrorest-vignette}
   %\VignetteEngine{knitr::rmarkdown}
@@ -11,6 +15,7 @@ vignette: >
 ```{r, echo=FALSE, cache=FALSE}
 library(knitr)
 opts_chunk$set(cache = TRUE,
+               eval = TRUE, 
                fig.align = "center",
                collapse = TRUE,
                fig.width = 7,
@@ -18,20 +23,18 @@ opts_chunk$set(cache = TRUE,
 opts_knit$set(width = 125)
 ```
 
-# Data and packages
+# Data And Packages
 
 ```{r, message=FALSE}
 library(rpart)
 library(MASS)
-library(randomForest)
+library(ipred)
 library(sperrorest)
 ```
 
 The `maipo` data set from Marco Pena is used. 
 ```{r}
 data("maipo", package = "sperrorest")
-
-data("ecuador", package = "sperrorest")
 ```
 
 Variable description:
@@ -46,11 +49,11 @@ Variable description:
   
 **Others**  
   - `field`: field identifier (grouping variable - not to be used as predictor)  
-  - `utmx`, `utm`y: x/y location; not to be used as predictors  
+  - `utmx`, `utmy`: x/y location; not to be used as predictors  
 
 # Preprocessing
 
-Transform some of the predictor variables:
+Transformation of some predictor variables:
 
 ```{r}
 predictors <- colnames(maipo)[5:ncol(maipo)]
@@ -58,7 +61,7 @@ predictors <- colnames(maipo)[5:ncol(maipo)]
 fo <- as.formula(paste("croptype ~", paste(predictors, collapse = "+")))
 ```
 
-Take a quick look at (some) correlations among the predictors:
+Quick look at (some) correlations among the predictors:
 ```{r}
 co <- abs(cor(maipo[, predictors]) * 100)
 co[co < 70] <- 0 # mask out weak/moderate correlations
@@ -68,11 +71,11 @@ head(round(co))
 
 # Modeling
 
-## Linear discriminant analysis (LDA)
+## Linear Discriminant Analysis (LDA)
 
 Fit a model with all predictors:
 ```{r}
-fit <- MASS::lda(fo, data = maipo)
+fit <- lda(fo, data = maipo)
 ```
 
 Predict the croptype with the fitted model and calculate the average misclassification error rate (MER):
@@ -112,33 +115,21 @@ And take a look at the confusion matrix:
 table(pred = pred, obs = maipo$croptype)
 ```
 
-Note that some classes may be over-/underpredicted, i.e. remotely-sensed crop areas can be biased even if accuracy is high!:
+Note that some classes may be over-/underpredicted, i.e. remotely-sensed crop areas can be biased even if accuracy is high!
 
 ```{r}
 summary(pred)
 summary(maipo$croptype)
 ```
 
-## Random Forest
+## Bagging (ipred)
 
-(This will take some time...)
+The same can be done using the `bagging()` function from the `ipred` package [@Breiman1996]. This is a previous version of the famous `randomForest()` by Leo Breiman [@Breiman2001]. For some reason `randomForest()` does introduce problems when being paralized. Hence `bagging()` is used in this vignette. However, `randomForest()` works fine with the sequential `sperrorest()` function and should be prefered over `bagging()`. 
+
 ```{r}
-fit <- randomForest(fo, data = maipo, importance = TRUE)
+fit <- bagging(fo, data = maipo, coob = TRUE)
 fit
 ```
-
-Variable importance plot:
-```{r}
-varImpPlot(fit, type = 1, pch = 19, col = "blue", 
-           main = "Permutation-based variable importance")
-```
-
-Variable importance plots for specific crop types
-```{r}
-partialPlot(fit, maipo, x.var = "ndvi01", which.class = "crop1")
-partialPlot(fit, maipo, x.var = "ndvi01", which.class = "crop3")
-```
-
 Training-set misclassification error rate (MER) 
 ```{r}
 pred <- predict(fit, newdata = maipo, type = "class")
@@ -150,42 +141,37 @@ Confusion matrix:
 table(pred = pred, obs = maipo$croptype)
 ```
 
-- No misclassification at all!
-- Even RF's OOB (out-of-bag) estimate of the error rate is <1%.
+- Almost no missclassification! (only one observation)
+- Even the OOB (out-of-bag) estimate of the error rate is < 1%.
 - Too good to be true? We'll see...
 
+# Cross-Validation Estimation of Predictive Performance
 
-# Cross-validation estimation of predictive performance
+## Linear Discriminant Analysis (LDA)
 
-# LDA
-
-We need to set up some functions to create a wrapper predict function of the LDA model for `sperrorest`. 
-
-```{r}
-library(nnet)
-majority <- function(x) {
-  levels(x)[which.is.max(table(x))]
-}
-```
-
-```{r}
-majority.filter <- function(x, fac) {
-  for (lev in levels(fac)) {
-    x[ fac == lev ] <- majority(x[ fac == lev ])
-  }
-  x
-}
-```
+We need to set up some functions to create a wrapper predict function of the LDA model for `sperrorest()`. 
 
 ```{r}
 lda.predfun <- function(object, newdata, fac = NULL) {
+  library(nnet)
+  majority <- function(x) {
+    levels(x)[which.is.max(table(x))]
+  }
+  
+  majority.filter <- function(x, fac) {
+    for (lev in levels(fac)) {
+      x[ fac == lev ] <- majority(x[ fac == lev ])
+    }
+    x
+  }
+  
   pred <- predict(object, newdata = newdata)$class
   if (!is.null(fac)) pred <- majority.filter(pred, newdata[,fac]) 
   return(pred)
 }
 ```
 
-Finally, we can run `sperrorest` with a non-spatial sampling setup (`partition.cv`):
+Finally, we can run `sperrorest()` with a non-spatial sampling setup (`partition.cv()`):
 
 ```{r}
 res.lda.nsp <- res <- sperrorest(fo, data = maipo, coords = c("utmx","utmy"), 
@@ -193,80 +179,97 @@ res.lda.nsp <- res <- sperrorest(fo, data = maipo, coords = c("utmx","utmy"),
                                  pred.fun = lda.predfun, 
                                  pred.args = list(fac = "field"),
                                  smp.fun = partition.cv, 
-                                 smp.args = list(repetition = 1:4, nfold = 5),
-                                 err.rep = TRUE, err.fold = FALSE)
-round(summary(res.lda.nsp$err.rep), 3)
+                                 smp.args = list(repetition = 1:6, nfold = 5),
+                                 error.rep = TRUE, error.fold = FALSE)
+round(summary(res.lda.nsp$error.rep), 3)
 ```
 
-To run a spatial cross-validation at the field level, we can use `partition.factor.cv` as the sampling function. Subsequently, we have to specify the location of the fields. We can do so using the `field` variable of our data set and put in `smp.args`: 
+To run a spatial cross-validation at the field level, we can use `partition.factor.cv()` as the sampling function. Subsequently, we have to specify the location of the fields. We can do so using the `field` variable of our data set and put in `smp.args`: 
 
 ```{r}
 res.lda.sp <- sperrorest(fo, data = maipo, coords = c("utmx","utmy"), 
                          model.fun = lda,
                          pred.fun = lda.predfun, 
                          pred.args = list(fac = "field"),
-                         smp.fun = partition.factor.cv, 
-                         smp.args = list(fac = "field", repetition = 1:4, nfold = 5),
-                         err.rep = TRUE, err.fold = FALSE)
-round(summary(res.lda.sp$err.rep), 3)
+                         smp.fun = partition.factor.cv,
+                         smp.args = list(fac = "field", repetition = 1:6, nfold = 5),
+                         error.rep = TRUE, error.fold = FALSE, 
+                         benchmark = TRUE)
+res.lda.sp$benchmark$runtime.performance
 ```
 
-# RF
-
-Setup prediction function for random forest:
+The same can be done faster using `parsperrorest()`. 
 ```{r}
-rf.predfun <- function(object, newdata, fac = NULL) {
-  pred <- predict(object, newdata = newdata)
-  if (!is.null(fac)) pred <- majority.filter(pred, newdata[,fac]) 
-  return(pred)
-}
+res.lda.sp.par <- parsperrorest(fo, data = maipo, coords = c("utmx","utmy"), 
+                                model.fun = lda,
+                                pred.fun = lda.predfun, 
+                                pred.args = list(fac = "field"),
+                                smp.fun = partition.factor.cv,
+                                smp.args = list(fac = "field", repetition = 1:6, nfold = 5),
+                                par.args = list(par.units = 2, par.mode = 2),
+                                error.rep = TRUE, error.fold = TRUE,
+                                benchmark = TRUE)
+res.lda.sp.par$benchmark$runtime.performance
 ```
 
-Perform spatial cross-validation at the field level. Executing every repetition sequentially takes quite some time. we can take the parallelized versions of `sperrorest`, `parsperrorest` or `sperrorest.par`.
 
-The advantage of `sperrorest.par` is that you can the progress of your current run. For Unix-Systems, the progress is directly reported to the console. For Windows, it is written to a textfile named "sperrorest.txt" in your current working directory.
 ```{r}
-res.rf.sp <- sperrorest(fo, data = maipo, coords = c("utmx","utmy"), 
-                        model.fun = randomForest,
-                        pred.fun = rf.predfun, 
-                        pred.args = list(fac = "field"),
-                        smp.fun = partition.factor.cv,
-                        smp.args = list(fac = "field", 
-                                        repetition = 1:4, nfold = 5),
-                        err.rep = TRUE, err.fold = FALSE,
-                        benchmark = TRUE, silent = FALSE)
-res.rf.sp$benchmark
-```
-
-Läuft mit par.mode = 1
-```{r}
-res.rf.sp.par <- parsperrorest(fo, data = maipo, coords = c("utmx","utmy"), 
-                               model.fun = randomForest,
-                               pred.fun = rf.predfun, 
+res.lda.par <- parsperrorest(fo, data = maipo, coords = c("utmx","utmy"), 
+                               model.fun = lda,
+                               pred.fun = lda.predfun, 
                                pred.args = list(fac = "field"),
-                               smp.fun = partition.factor.cv,
-                               smp.args = list(fac = "field", 
-                                               repetition = 1:4, nfold = 5),
-                               par.args = list(par.mode = 1, par.units = 2, 
-                                               lb = T, high = TRUE),
-                               err.rep = TRUE, err.fold = FALSE,
-                               benchmark = TRUE, silent = FALSE)
-res.rf.sp.par$benchmark
+                               smp.fun = partition.cv,
+                               smp.args = list(repetition = 1:6, nfold = 5),
+                               par.args = list(par.units = 2, par.mode = 2),
+                               error.rep = TRUE, error.fold = TRUE,
+                               benchmark = TRUE)
+res.lda.sp.par$benchmark$runtime.performance
 ```
 
+## Bagging
 
-Läuft nicht (accumulate errors in foreach .combine) 
-```{r, eval = FALSE}
-res.rf.sp.par1 <- sperrorest.par(fo, data = maipo, coords = c("utmx","utmy"), 
-                                 model.fun = randomForest,
-                                 pred.fun = rf.predfun, 
+This time we do not need to set up a custom `pred.fun` as the generic `predict()` works fine. 
+Running `sperrorest()` takes some time here (a few minutes depending on your CPU power). 
+
+
+```{r}
+res.bagg.sp <- sperrorest(fo, data = maipo, coords = c("utmx","utmy"), 
+                          model.fun = bagging,
+                          pred.args = list(fac = "field"),
+                          smp.fun = partition.factor.cv,
+                          smp.args = list(fac = "field",
+                                          repetition = 1:6, nfold = 5),
+                          error.rep = TRUE, error.fold = TRUE,
+                          benchmark = TRUE, verbose = "rep")
+res.bagg.sp$benchmark$runtime.performance
+```
+
+To speed things up, we can use `parsperrorest()` and see the time difference. Note that we have two parallel modes to choose from!  
+In this example we will use `par.mode = 2` because `par.mode = 1` will not work in this example (reason unknown). 
+In this vignette we will always use 2 cores to ensure that this example is working for everybody.  
+You can of course increase the number of cores and also the number of repetitions/folds to your desire! 
+Note that we will not use any console outputs in this vignette to keep it tidy.
+However you can just change this setting to your desire using the `progress` argument. 
+
+#### Details of par.mode
+
+`par.mode = 1` uses either a `parallel::mclapply()` (Unix) or `parallel::parApply()` (Windows), depending on your platform.
+Due to this contraint this mode is not used in this vignette. 
+So if you are reading this and running a Windows machine, jump to `par.mode = 2` or `par.mode = 3` example!
+The advantage of using `par.mode = 1` compared to `par.mode = 2` is its speed. However `par.mode = 1` lacks in stability. 
+
+
+```{r}
+res.bagg.sp.par <- parsperrorest(fo, data = maipo, coords = c("utmx","utmy"), 
+                                 model.fun = bagging,
                                  pred.args = list(fac = "field"),
                                  smp.fun = partition.factor.cv,
                                  smp.args = list(fac = "field", 
-                                                 repetition = 1:4, nfold = 5),
-                                 par.units = 2, silent = 2,
-                                 err.fold = T, err.rep = T,
+                                                 repetition = 1:6, nfold = 5),
+                                 par.args = list(par.units = 2, par.mode = 2),
+                                 error.rep = TRUE, error.fold = TRUE,
                                  benchmark = TRUE)
-res.rf.sp.par1$benchmark
+res.bagg.sp.par$benchmarks$runtime.performance
 ```
 
+# References

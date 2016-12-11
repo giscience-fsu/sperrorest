@@ -1,0 +1,104 @@
+---
+title: "sperrorest parallelization"
+author: "Patrick Schratz"
+output:
+  rmdformats::html_clean:
+    highlight: kate
+---
+
+```{r, echo=FALSE, cache=FALSE}
+library(knitr)
+library(rmdformats)
+
+## Global options
+options(max.print = "75")
+opts_chunk$set(echo = TRUE,
+               eval = TRUE,
+	             cache = TRUE,
+               prompt = FALSE,
+               tidy = TRUE,
+               comment = NA,
+               message = FALSE,
+               warning = FALSE)
+opts_knit$set(width = 75)
+```
+
+```{r data and packages, echo = FALSE}
+require(sperrorest)
+require(rpart)
+require(foreach)
+require(doParallel)
+data(ecuador, package = "sperrorest")
+```
+
+# Examples
+
+## par.mode = 3 (Patrick Schratz) 
+
+```{r}
+fo <- slides ~ dem + slope + hcurv + vcurv +
+  log.carea + cslope
+mypred.rpart <- function(object, newdata) predict(object, newdata)[, 2]
+ctrl <- rpart.control(cp = 0.005)
+
+sperro.par.out <- parsperrorest(fo, data = ecuador,
+                                model.fun = rpart, model.args = list(control = ctrl),
+                                pred.fun = mypred.rpart,
+                                smp.fun = partition.cv, 
+                                smp.args = list(repetition = 1:10, nfold = 5),
+                                par.args = list(par.mode = 3, par.units = 2), 
+                                verbose = FALSE, benchmark = TRUE, 
+                                err.fold = T, err.rep = T)
+# sperro.par.out$benchmark
+```
+
+## sperrorest sequential (Alex)
+
+Note the time difference compared with Example #1
+```{r}
+fo <- slides ~ dem + slope + hcurv + vcurv +
+  log.carea + cslope
+mypred.rpart <- function(object, newdata) predict(object, newdata)[, 2]
+ctrl <- rpart.control(cp = 0.005)
+
+sperrorest.seq <- sperrorest(fo, data = ecuador,
+                             model.fun = rpart, model.args = list(control = ctrl),
+                             pred.fun = mypred.rpart,
+                             smp.fun = partition.cv, 
+                             smp.args = list(repetition = 1:10, nfold = 5), 
+                             verbose = "all", benchmark = TRUE, 
+                             err.fold = T, err.rep = T)
+# sperrorest.seq$benchmark
+```
+
+## par.mode = 1 & par.mode = 2 (Tobias Herrmann)
+
+```{r}
+fo <- slides ~ dem + slope + hcurv + vcurv +
+  log.carea + cslope
+mypred.rpart <- function(object, newdata) predict(object, newdata)[, 2]
+ctrl <- rpart.control(cp = 0.005)
+
+parsperro.out <- parsperrorest(fo, data = ecuador,
+                               model.fun = rpart, model.args = list(control = ctrl),
+                               pred.fun = mypred.rpart,
+                               smp.fun = partition.cv, 
+                               smp.args = list(repetition = 1:10, nfold = 5), 
+                               par.args = list(par.mode = 2, 
+                                               par.units = 2, lb = F, high = F), 
+                               benchmark = TRUE, verbose = FALSE,
+                               err.fold = T, err.rep = T)
+# parsperro.out$benchmark
+```
+
+
+
+
+```{r}
+
+ecuador$field <- as.factor(1:nrow(ecuador))
+
+rep1 <- partition.factor.cv(ecuador, c("x", "y"), fac = "field", seed1 = 1234, nfold = 5, repetition = 1:4)
+rep2 <- partition.cv(ecuador, c("x", "y"), seed1 = 1234, nfold = 5, repetition = 1:4)
+```
+
