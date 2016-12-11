@@ -31,7 +31,7 @@ install.packages("sperrorest")
 Or the development version from Github:
 
 ``` r
-devtools::install_github("pat-s/sperrorest")
+devtools::install_github("pat-s/sperrorest", build_vignettes = TRUE)
 ```
 
 References
