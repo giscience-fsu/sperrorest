@@ -7,13 +7,9 @@
 #' 
 #' @inheritParams partition.cv
 #' 
-#' @import foreach
-#' @import pbapply
-#' @import doParallel
-#' @import rpart
-#' @importFrom utils packageVersion
 #' @import snow
 #' @import rpart
+#' @importFrom parallel detectCores mc.reset.stream clusterSetRNGStream mclapply
 #' 
 #' @param data a \code{data.frame} with predictor and response variables. 
 #' Training and test samples will be drawn from this data set by \code{train.fun} 
@@ -55,10 +51,10 @@
 #' known responses in \code{data} and the model predictions delivered 
 #' by \code{pred.fun}. E.g., \code{\link{err.default}} (the default). 
 #' See example and details below.
-#' @param error.fold logical (default: \code{TRUE} if \code{importance} is 
+#' @param err.fold logical (default: \code{TRUE} if \code{importance} is 
 #' \code{TRUE}, otherwise \code{FALSE}): calculate error measures on each fold 
 #' within a resampling repetition.
-#' @param error.rep logical (default: \code{TRUE}): calculate error measures 
+#' @param err.rep logical (default: \code{TRUE}): calculate error measures 
 #' based on the pooled predictions of all folds within a resampling repetition.
 #' @param err.train logical (default: \code{TRUE}): calculate error measures on 
 #' the training set (in addition to the test set estimation).
@@ -181,7 +177,7 @@
 #'
 #' # Non-spatial 5-repeated 10-fold cross-validation:
 #' mypred.rpart <- function(object, newdata) predict(object, newdata)[,2]
-#' par.nsp.res <- parsperrorest(data = ecuador, formula = fo,
+#' par.nsp.res <- parsperrorest.old(data = ecuador, formula = fo,
 #'                            model.fun = rpart, model.args = list(control = ctrl),
 #'                            pred.fun = mypred.rpart,
 #'                            verbose = "all",
@@ -196,32 +192,31 @@
 #' plot(par.nsp.res$represampling, ecuador)
 #'
 #' # Spatial 5-repeated 10-fold spatial cross-validation:
-#' par.sp.res <- parsperrorest(data = ecuador, formula = fo,
+#' par.sp.res <- parsperrorest.old(data = ecuador, formula = fo,
 #'                           model.fun = rpart, model.args = list(control = ctrl),
 #'                           pred.fun = mypred.rpart,
 #'                           verbose = "all",
 #'                           smp.fun = partition.kmeans, 
 #'                           smp.args = list(repetition = 1:3, nfold = 4), 
-#'                           par.args = list(par.mode = 3, par.units = 2, 
-#'                               lb = FALSE, high = FALSE),
+#'                           par.args = list(par.mode = 3, par.units = 2),
 #'                           error.rep = TRUE, error.fold = TRUE)
 #' summary(par.sp.res$error.rep)
 #' summary(par.sp.res$error.fold)
 #' summary(par.sp.res$represampling)
-#' plot(par.sp.res$represampling, ecuador)
+#' plot(parspres$represampling, ecuador)
 #' 
 #' # only run this part of the example if importance = TRUE!
 #' smry = data.frame(
-#'     nonspat.training = unlist(summary(par.nsp.res$error.rep, level = 1)$train.auroc),
-#'     nonspat.test     = unlist(summary(par.nsp.res$error.rep, level = 1)$test.auroc),
-#'     spatial.training = unlist(summary(par.sp.res$error.rep, level = 1)$train.auroc),
-#'     spatial.test     = unlist(summary(par.sp.res$error.rep, level = 1)$test.auroc))
+#'     nonspat.training = unlist(summary(par.nsp.res$error.rep,level=1)$train.auroc),
+#'     nonspat.test     = unlist(summary(par.nsp.res$error.rep,level=1)$test.auroc),
+#'     spatial.training = unlist(summary(par.sp.res$error.rep,level=1)$train.auroc),
+#'     spatial.test     = unlist(summary(par.sp.res$error.rep,level=1)$test.auroc))
 #' boxplot(smry, col = c("red","red","red","green"), 
 #'     main = "Training vs. test, nonspatial vs. spatial",
 #'     ylab = "Area under the ROC curve")
 #'     
 #' @export
-parsperrorest = function(formula, data, coords = c("x", "y"),
+parsperrorest.old = function(formula, data, coords = c("x", "y"),
                          model.fun, model.args = list(),
                          pred.fun = NULL, pred.args = list(),
                          smp.fun = partition.loo, smp.args = list(),
@@ -241,7 +236,7 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
                          par.args = list(),
                          benchmark = FALSE, ...)
 { 
-  # if benchmark = TRUE, start clock
+  #if benchmark = TRUE, start clock
   if (benchmark) start.time = Sys.time()
   
   # Some checks:
@@ -257,7 +252,7 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
   if (importance) {
     if (!error.fold) {
       warning("'importance=TRUE' currently only supported with 
-              'error.fold=TRUE'.\nUsing 'importance=FALSE'")
+              'err.fold=TRUE'.\nUsing 'importance=FALSE'")
       importance = FALSE
     }
     stopifnot(is.numeric(imp.permutations))
@@ -303,10 +298,10 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
       stop("sorry: argument names have changed; 'silent' is now 'verbose'")
     }
     if (any(names(dots.args) == "err.pooled")) {
-      stop("sorry: argument names have changed; 'err.pooled' is now 'error.rep'")
+      stop("sorry: argument names have changed; 'err.pooled' is now 'err.rep'")
     }
     if (any(names(dots.args) == "err.unpooled")) {
-      stop("sorry: argument names have changed; 'err.unpooled' is now 'error.fold'")
+      stop("sorry: argument names have changed; 'err.unpooled' is now 'err.fold'")
     }
   }
   
@@ -564,22 +559,17 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
       par.args$par.units = detectCores()
     
     
-    # parallelization here (par.mode = 1 & par.mode = 2)    
+    
     # For each repetition:
     if (par.args$par.mode == 1) {
       RNGkind("L'Ecuyer-CMRG")
       set.seed(1234567)
-      parallel::mc.reset.stream() #set up RNG stream to obtain reproducible results
-      
-      
-      
+      mc.reset.stream() #set up RNG stream to obtain reproducible results
       if (par.args$lb == FALSE) {
-        pboptions(type = "timer", style = 1)
-        myRes = pblapply(resamp, FUN = runreps, cl = par.args$par.units)
+        myRes = mclapply(resamp, FUN = runreps, mc.cores = par.args$par.units)
       }
       else {
-        pboptions(type = "timer", style = 1)
-        myRes = pblapply(resamp, FUN = runreps, cl = par.args$par.units, 
+        myRes = mclapply(resamp, FUN = runreps, mc.cores = par.args$par.units, 
                          mc.preschedule = FALSE)
       }
     }
@@ -597,14 +587,10 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
         NULL}
       )
       if (par.args$lb == FALSE) {
-        if (par.args$high == TRUE) {
-          pboptions(type = "timer", style = 1)
-          myRes = pblapply(cl = par.cl, X = resamp, fun = runreps)
-        }
-        else {
-          pboptions(type = "timer", style = 1)
-          myRes = pblapply(cl = par.cl, x = resamp, fun = runreps)
-        }
+        if (par.args$high == TRUE)
+          myRes = parLapply(cl = par.cl, X = resamp, fun = runreps)
+        else
+          myRes = clusterApply(cl = par.cl, x = resamp, fun = runreps)
       }
       else
         myRes = clusterApplyLB(cl = par.cl, x = resamp, fun = runreps)
@@ -873,8 +859,9 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
                                    rm(nd.bak, nd)
                                  }
                                }
-                             } 
-                             # end of each fold (par.mode = 3) -------                        
+                               #res <- res[[i]][1, ]
+                             } #end of each fold
+                             # res[[i]] <- res[[i]][1, ]
                              if (error.rep) {
                                if (is.factor(data[, response])) {
                                  lev <- levels(data[, response])
@@ -941,11 +928,9 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
                                return(foreach.out)
                              }
                            }
-    on.exit(stopCluster(cl))
+    stopCluster(cl)
     
     # end foreach() ------    
-    
-    return(foreach.out)
     if (error.rep & !error.fold) {
       rep.err <- as.data.frame(foreach.out)
     }
@@ -1010,7 +995,7 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
     
     if (error.rep & error.fold) {
       class(err.fold) = "sperroresterror"
-      # this 'class' call converts from data.frame to list (sperrorestreperror)
+      # this 'class' converts from data.frame to list (sperrorestreperror)
       class(foreach.out[[1]][[1]]) = "sperrorestreperror"
       RES <- list(error.rep = foreach.out[[1]][[1]],
                   error.fold = err.fold, 
@@ -1045,4 +1030,3 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
     }
   }
 }
-

@@ -391,10 +391,10 @@ resample.factor <- function(data, param = list(fac = "class",
 #' known responses in \code{data} and the model predictions delivered 
 #' by \code{pred.fun}. E.g., \code{\link{err.default}} (the default). 
 #' See example and details below.
-#' @param err.fold logical (default: \code{TRUE} if \code{importance} is 
+#' @param error.fold logical (default: \code{TRUE} if \code{importance} is 
 #' \code{TRUE}, otherwise \code{FALSE}): calculate error measures on each fold 
 #' within a resampling repetition.
-#' @param err.rep logical (default: \code{TRUE}): calculate error measures 
+#' @param error.rep logical (default: \code{TRUE}): calculate error measures 
 #' based on the pooled predictions of all folds within a resampling repetition.
 #' @param err.train logical (default: \code{TRUE}): calculate error measures on 
 #' the training set (in addition to the test set estimation).
@@ -558,7 +558,7 @@ sperrorest = function(formula, data, coords = c("x", "y"),
     if (importance) {
         if (!error.fold) {
             warning("'importance=TRUE' currently only supported with 
-                    'err.fold=TRUE'.\nUsing 'importance=FALSE'")
+                    'error.fold=TRUE'.\nUsing 'importance=FALSE'")
             importance = FALSE
         }
         stopifnot(is.numeric(imp.permutations))
@@ -592,10 +592,10 @@ sperrorest = function(formula, data, coords = c("x", "y"),
           stop("sorry: argument names have changed; 'model' is now 'model.fun'")
         if (any(names(dots.args) == "err.combined")) 
           stop("sorry: argument names have changed; 
-               'err.combined' is now 'err.rep'")
+               'err.combined' is now 'error.rep'")
         if (any(names(dots.args) == "err.uncombined")) 
           stop("sorry: argument names have changed; 
-               'err.uncombined' is now 'err.fold'")
+               'err.uncombined' is now 'error.fold'")
         warning("'...' arguments currently not supported:\n
                 use 'model.args' to pass list of additional 
                 arguments to 'model.fun'")
