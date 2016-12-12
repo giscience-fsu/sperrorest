@@ -8,6 +8,7 @@
 #' @inheritParams partition.cv
 #' 
 #' @import pbapply
+#' @import notifier
 #' @import rpart
 #' @importFrom utils packageVersion
 #' @import snow
@@ -202,6 +203,7 @@
 #'                             model.fun = rpart, model.args = list(control = ctrl),
 #'                             pred.fun = mypred.rpart,
 #'                             progress = TRUE,
+#'                             notify = TRUE,
 #'                             smp.fun = partition.kmeans, 
 #'                             smp.args = list(repetition = 1:5, nfold = 15), 
 #'                             par.args = list(par.units = 2, par.mode = 2),
@@ -240,6 +242,7 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
                          do.try = FALSE,
                          progress = TRUE,
                          progress.out = "", 
+                         notify = FALSE,
                          par.args = list(),
                          benchmark = FALSE, ...)
 { 
@@ -621,6 +624,18 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
     }
     else my.bench = NULL
     
+    if (notify == TRUE) {
+      
+      if (!require("pacman")) suppressMessages(install.packages("pacman")) 
+      suppressMessages(devtools::install_github("gaborcsardi/notifier"))
+      suppressMessages(pacman::p_load(notifier))
+      
+      notify(
+        title = "parsperrorest() finished successfully!",
+        msg = paste0("Repetitions: ", length(smp.args$repetition), "; ", "Folds: ", smp.args$nfold)
+      )
+    }
+    
     RES = list(
       error.rep = pooled.err,
       error.fold = res, 
@@ -974,6 +989,18 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
     }
     else my.bench = NULL
     
+    if (notify == TRUE) {
+      
+      if (!require("pacman")) suppressMessages(install.packages("pacman")) 
+      suppressMessages(devtools::install_github("gaborcsardi/notifier"))
+      suppressMessages(pacman::p_load(notifier))
+      
+      notify(
+        title = "parsperrorest() finished successfully!",
+        msg = paste0("Repetitions: ", length(smp.args$repetition), "; ", "Folds: ", smp.args$nfold)
+      )
+    }
+    
     if (error.rep & error.fold) {
       class(err.fold) = "sperroresterror"
       # this 'class' converts from data.frame to list (sperrorestreperror)
@@ -1010,5 +1037,6 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
       return(RES)
     }
   }
+  
 }
 
