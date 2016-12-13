@@ -348,6 +348,7 @@ resample.factor <- function(data, param = list(fac = "class",
 #' 
 #' @importFrom utils packageVersion
 #' @import rpart
+#' @importFrom devtools install_github
 #' 
 #' @inheritParams partition.cv
 #' 
@@ -541,6 +542,7 @@ sperrorest = function(formula, data, coords = c("x", "y"),
                       do.gc = 1,
                       do.try = FALSE,
                       verbose = "all", 
+                      notify = FALSE,
                       benchmark = FALSE, ...)
 {
   
@@ -914,9 +916,7 @@ sperrorest = function(formula, data, coords = c("x", "y"),
     
     if (notify == TRUE) {
       
-      if (!require("pacman")) suppressMessages(install.packages("pacman")) 
-      suppressMessages(devtools::install_github("gaborcsardi/notifier"))
-      suppressMessages(pacman::p_load(notifier))
+      suppressMessages(install_github("gaborcsardi/notifier"))
       
       if (benchmark == TRUE) {
         msg <- paste0("Repetitions: ", length(smp.args$repetition), 
@@ -925,10 +925,12 @@ sperrorest = function(formula, data, coords = c("x", "y"),
       }
       else (msg <- paste0("Repetitions: ", length(smp.args$repetition), "; ", "Folds: ", smp.args$nfold))
       
-      notify( 
-        title = "parsperrorest() finished successfully!",
-        msg <- msg
-      )
+      if (requireNamespace("notifier", quietly = TRUE)) {
+        notifier::notify( 
+          title = "parsperrorest() finished successfully!",
+          msg <- msg
+        )
+      }
     }
     
     return( RES )

@@ -9,9 +9,10 @@
 #' 
 #' @import pbapply
 #' @import rpart
-#' @importFrom utils packageVersion
+#' @importFrom utils packageVersion 
 #' @import snow
 #' @importFrom parallel detectCores clusterSetRNGStream mclapply
+#' @importFrom devtools install_github
 #' 
 #' @param data a \code{data.frame} with predictor and response variables. 
 #' Training and test samples will be drawn from this data set by \code{train.fun} 
@@ -189,9 +190,9 @@
 #' par.nsp.res <- parsperrorest(data = ecuador, formula = fo,
 #'                              model.fun = rpart, model.args = list(control = ctrl),
 #'                              pred.fun = mypred.rpart,
-#'                              progress = TRUE, benchmark = T,
+#'                              progress = TRUE,
 #'                              smp.fun = partition.cv, 
-#'                              smp.args = list(repetition = 1:30, nfold = 4), 
+#'                              smp.args = list(repetition = 1:5, nfold = 15), 
 #'                              par.args = list(par.units = 2, par.mode = 1),
 #'                              error.rep = TRUE, error.fold = TRUE)
 #' summary(par.nsp.res$error.rep)
@@ -626,9 +627,7 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
     
     if (notify == TRUE) {
       
-      if (!require("pacman")) suppressMessages(install.packages("pacman")) 
-      suppressMessages(devtools::install_github("gaborcsardi/notifier"))
-      suppressMessages(pacman::p_load(notifier))
+      suppressMessages(install_github("gaborcsardi/notifier"))
       
       if (benchmark == TRUE) {
         msg <- paste0("Repetitions: ", length(smp.args$repetition), 
@@ -637,10 +636,12 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
       }
       else (msg <- paste0("Repetitions: ", length(smp.args$repetition), "; ", "Folds: ", smp.args$nfold))
       
-      notify( 
-        title = "parsperrorest() finished successfully!",
-        msg <- msg
-      )
+      if (requireNamespace("notifier", quietly = TRUE)) {
+        notifier::notify( 
+          title = "parsperrorest() finished successfully!",
+          msg <- msg
+        )
+      }
     }
     
     RES = list(
@@ -998,9 +999,7 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
     
     if (notify == TRUE) {
       
-      if (!require("pacman")) suppressMessages(install.packages("pacman")) 
-      suppressMessages(devtools::install_github("gaborcsardi/notifier"))
-      suppressMessages(pacman::p_load(notifier))
+      suppressMessages(install_github("gaborcsardi/notifier"))
       
       if (benchmark == TRUE) {
         msg <- paste0("Repetitions: ", length(smp.args$repetition), 
@@ -1009,10 +1008,12 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
       }
       else (msg <- paste0("Repetitions: ", length(smp.args$repetition), "; ", "Folds: ", smp.args$nfold))
       
-      notify( 
-        title = "parsperrorest() finished successfully!",
-        msg <- msg
-      )
+      if (requireNamespace("notifier", quietly = TRUE)) {
+        notifier::notify( 
+          title = "parsperrorest() finished successfully!",
+          msg <- msg
+        )
+      }
     }
     
     if (error.rep & error.fold) {
