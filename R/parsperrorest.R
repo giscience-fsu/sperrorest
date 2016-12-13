@@ -12,6 +12,8 @@
 #' @importFrom utils packageVersion 
 #' @import snow
 #' @importFrom parallel detectCores clusterSetRNGStream mclapply
+#' @import foreach
+#' @import doParallel
 #' @importFrom devtools install_github
 #' 
 #' @param data a \code{data.frame} with predictor and response variables. 
