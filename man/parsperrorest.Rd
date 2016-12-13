@@ -11,8 +11,8 @@ parsperrorest(formula, data, coords = c("x", "y"), model.fun,
   err.fun = err.default, error.fold = TRUE, error.rep = TRUE,
   err.train = TRUE, imp.variables = NULL, imp.permutations = 1000,
   importance = !is.null(imp.variables), distance = FALSE, do.gc = 1,
-  do.try = FALSE, progress = TRUE, progress.out = "", par.args = list(),
-  benchmark = FALSE, ...)
+  do.try = FALSE, progress = TRUE, progress.out = "", notify = FALSE,
+  par.args = list(), benchmark = FALSE, ...)
 }
 \arguments{
 \item{formula}{A formula specifying the variables used by the \code{model}. 
@@ -116,6 +116,8 @@ output. Default is "" which results in console output for Unix-Systems and
 file output ("sperrorest.progress.txt") in the current working directory 
 for Windows-Systems.}
 
+\item{notify}{Show a notification badge once \code{parsperrorest} has finished.}
+
 \item{par.args}{list of parallelization parameters:
 \code{par.mode} (the parallelization mode),
 \code{par.units} (the number of parallel processing units), 
@@ -193,9 +195,9 @@ mypred.rpart <- function(object, newdata) predict(object, newdata)[,2]
 par.nsp.res <- parsperrorest(data = ecuador, formula = fo,
                              model.fun = rpart, model.args = list(control = ctrl),
                              pred.fun = mypred.rpart,
-                             progress = TRUE,
+                             progress = TRUE, benchmark = T,
                              smp.fun = partition.cv, 
-                             smp.args = list(repetition = 1:10, nfold = 4), 
+                             smp.args = list(repetition = 1:30, nfold = 4), 
                              par.args = list(par.units = 2, par.mode = 1),
                              error.rep = TRUE, error.fold = TRUE)
 summary(par.nsp.res$error.rep)

@@ -8,11 +8,10 @@
 #' @inheritParams partition.cv
 #' 
 #' @import pbapply
-#' @import notifier
 #' @import rpart
 #' @importFrom utils packageVersion
 #' @import snow
-#' @importFrom parallel detectCores mc.reset.stream clusterSetRNGStream mclapply
+#' @importFrom parallel detectCores clusterSetRNGStream mclapply
 #' 
 #' @param data a \code{data.frame} with predictor and response variables. 
 #' Training and test samples will be drawn from this data set by \code{train.fun} 
@@ -95,6 +94,8 @@
 #' output. Default is "" which results in console output for Unix-Systems and
 #' file output ("sperrorest.progress.txt") in the current working directory 
 #' for Windows-Systems. 
+#' 
+#' @param notify Show a notification badge once \code{parsperrorest} has finished. 
 #' 
 #' @param par.args list of parallelization parameters:
 #' \code{par.mode} (the parallelization mode),
@@ -188,9 +189,9 @@
 #' par.nsp.res <- parsperrorest(data = ecuador, formula = fo,
 #'                              model.fun = rpart, model.args = list(control = ctrl),
 #'                              pred.fun = mypred.rpart,
-#'                              progress = TRUE,
+#'                              progress = TRUE, benchmark = T,
 #'                              smp.fun = partition.cv, 
-#'                              smp.args = list(repetition = 1:10, nfold = 4), 
+#'                              smp.args = list(repetition = 1:30, nfold = 4), 
 #'                              par.args = list(par.units = 2, par.mode = 1),
 #'                              error.rep = TRUE, error.fold = TRUE)
 #' summary(par.nsp.res$error.rep)
@@ -203,7 +204,6 @@
 #'                             model.fun = rpart, model.args = list(control = ctrl),
 #'                             pred.fun = mypred.rpart,
 #'                             progress = TRUE,
-#'                             notify = TRUE,
 #'                             smp.fun = partition.kmeans, 
 #'                             smp.args = list(repetition = 1:5, nfold = 15), 
 #'                             par.args = list(par.units = 2, par.mode = 2),
@@ -570,7 +570,7 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
     else {
       RNGkind("L'Ecuyer-CMRG")
       set.seed(1234567)
-      mc.reset.stream() #set up RNG stream to obtain reproducible results
+      # mc.reset.stream() #set up RNG stream to obtain reproducible results # comment: causing build to fail on Windows. Not sure if really necessary -> not in use for now
       par.cl <- par.args$par.units
     }
     
@@ -630,9 +630,16 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
       suppressMessages(devtools::install_github("gaborcsardi/notifier"))
       suppressMessages(pacman::p_load(notifier))
       
-      notify(
+      if (benchmark == TRUE) {
+        msg <- paste0("Repetitions: ", length(smp.args$repetition), 
+                      "; ", "Folds: ", smp.args$nfold, 
+                      "; ", "Total time: ", round(my.bench$runtime.performance, 2))
+      }
+      else (msg <- paste0("Repetitions: ", length(smp.args$repetition), "; ", "Folds: ", smp.args$nfold))
+      
+      notify( 
         title = "parsperrorest() finished successfully!",
-        msg = paste0("Repetitions: ", length(smp.args$repetition), "; ", "Folds: ", smp.args$nfold)
+        msg <- msg
       )
     }
     
@@ -995,9 +1002,16 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
       suppressMessages(devtools::install_github("gaborcsardi/notifier"))
       suppressMessages(pacman::p_load(notifier))
       
-      notify(
+      if (benchmark == TRUE) {
+        msg <- paste0("Repetitions: ", length(smp.args$repetition), 
+                      "; ", "Folds: ", smp.args$nfold, 
+                      "; ", "Total time: ", round(my.bench$runtime.performance, 2))
+      }
+      else (msg <- paste0("Repetitions: ", length(smp.args$repetition), "; ", "Folds: ", smp.args$nfold))
+      
+      notify( 
         title = "parsperrorest() finished successfully!",
-        msg = paste0("Repetitions: ", length(smp.args$repetition), "; ", "Folds: ", smp.args$nfold)
+        msg <- msg
       )
     }
     

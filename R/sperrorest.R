@@ -427,6 +427,8 @@ resample.factor <- function(data, param = list(fac = "class",
 #' If \code{verbose == "rep"}, only repetitions are shown. 
 #' Set to \code{FALSE} for no progress information. 
 #' 
+#' @param notify Show a notification badge once \code{sperrorest} has finished. 
+#' 
 #' @param benchmark logical (default: \code{FALSE}): if \code{TRUE}, 
 #' perform benchmarking and return \code{sperrorestbenchmarks} object
 #' 
@@ -909,6 +911,25 @@ sperrorest = function(formula, data, coords = c("x", "y"),
         benchmarks = my.bench, 
         package.version = packageVersion("sperrorest"))
     class(RES) = "sperrorest"
+    
+    if (notify == TRUE) {
+      
+      if (!require("pacman")) suppressMessages(install.packages("pacman")) 
+      suppressMessages(devtools::install_github("gaborcsardi/notifier"))
+      suppressMessages(pacman::p_load(notifier))
+      
+      if (benchmark == TRUE) {
+        msg <- paste0("Repetitions: ", length(smp.args$repetition), 
+                      "; ", "Folds: ", smp.args$nfold, 
+                      "; ", "Total time: ", round(my.bench$runtime.performance, 2))
+      }
+      else (msg <- paste0("Repetitions: ", length(smp.args$repetition), "; ", "Folds: ", smp.args$nfold))
+      
+      notify( 
+        title = "parsperrorest() finished successfully!",
+        msg <- msg
+      )
+    }
     
     return( RES )
 }

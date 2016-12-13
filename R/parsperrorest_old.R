@@ -10,7 +10,7 @@
 #' @import doParallel
 #' @import snow
 #' @import rpart
-#' @importFrom parallel detectCores mc.reset.stream clusterSetRNGStream mclapply
+#' @importFrom parallel detectCores clusterSetRNGStream mclapply
 #' 
 #' @param data a \code{data.frame} with predictor and response variables. 
 #' Training and test samples will be drawn from this data set by \code{train.fun} 
@@ -565,7 +565,7 @@ parsperrorest.old = function(formula, data, coords = c("x", "y"),
     if (par.args$par.mode == 1) {
       RNGkind("L'Ecuyer-CMRG")
       set.seed(1234567)
-      mc.reset.stream() #set up RNG stream to obtain reproducible results
+      # mc.reset.stream() #set up RNG stream to obtain reproducible results
       if (par.args$lb == FALSE) {
         myRes = mclapply(resamp, FUN = runreps, mc.cores = par.args$par.units)
       }

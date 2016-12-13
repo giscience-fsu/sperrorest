@@ -113,6 +113,8 @@ Set to \code{FALSE} for no progress information.}
 perform benchmarking and return \code{sperrorestbenchmarks} object}
 
 \item{...}{currently not used}
+
+\item{notify}{Show a notification badge once \code{sperrorest} has finished.}
 }
 \value{
 A list (object of class \code{sperrorest}) with (up to) six components:
