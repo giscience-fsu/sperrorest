@@ -1,30 +1,29 @@
-# sperrorest 1.0.0 (04 Oct 2016)
+sperrorest 1.0.0 (11 Dec 2016)
 
-* add `parsperrorest`: This function lets you exexute `sperrorest` in parallel. 
-- More information here - 
+* add `parsperrorest()`: This function lets you exexute `sperrorest()` in parallel. 
 
-* add `partition.factor.cv`: This resampling method enables partitioning based 
+* add `partition.factor.cv()`: This resampling method enables partitioning based 
 on a given factor variable. This can be used, for example, to resample 
 agricultural data that is grouped by fields, at the agricultural field level 
 in order to preserve spatial autocorrelation within fields.
 
-* add `benchmark` item to returned list of `sperrorest`, `parsperrorest` and 
-`sperrorest.par` giving information about execution time, 
-used cores and other system details. 
+* add `benchmark` item to returned `sperrorest()` and `parsperrorest()` object giving information about execution time, used cores and other system details. 
 
 * create github repo of `sperrorest` at 
 [https://github.com/pat-s/sperrorest/](https://github.com/pat-s/sperrorest/)
 
-* change params: `err.unpooled` to `err.fold` and `err.pooled` to `err.rep`
+* change params: `err.unpooled` to `error.fold` and `err.pooled` to `error.rep`
 
-* change order and naming of returned list for `sperrorest`, and `parsperrorest` 
-  - class `sperrorestpoolederror` is now `sperrorestreperror`
-  - returned `sperrorest` object is now ordered as follows: 
-    1. error.rep
-    2. error.fold
-    3. importance
-    4. benchmarks
-    5. package.version
+* change order and naming of returned `sperrorest()` and `parsperrorest()` object
+    - class `sperrorestpoolederror` is now `sperrorestreperror`
+    - returned `sperrorest` object is now ordered as follows: 
+         1. error.rep
+         2. error.fold
+         3. importance
+         4. benchmarks
+         5. package.version  
+         
+* add `notify` argument: Shows a notification badge once `sperrorest()` or `parsperrorest()` has finished.
 
 * add package NEWS
 
