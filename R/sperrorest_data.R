@@ -10,6 +10,9 @@
 #' distribution in the year 2000.
 #' @name ecuador
 #' 
+#' @keywords datasets
+#' @keywords internal
+#' 
 #' @docType data
 #' 
 #' @format a \code{data.frame} with point samples of landslide and 
@@ -34,15 +37,14 @@
 #' par(xpd = TRUE)
 #' plot(fit, compress = TRUE, main = "Muenchow's landslide data set")
 #' text(fit, use.n = TRUE)
-NULL
+"ecuador"
 
 #' Maipo dataset from Marco Pena
 #' 
 #' @name maipo
 #' @docType data
 #'
+#' @keywords datasets
+#' @keywords internal
 #'
-#'
-#'
-#'
-#'
+"maipo"

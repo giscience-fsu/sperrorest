@@ -1,7 +1,7 @@
 Package: sperrorest
 Type: Package
 Title: Spatial Error Estimation and Variable Importance
-Version: 0.2.1.9000
+Version: 1.0.0.9000
 Date: 2016-10-04
 Authors@R: c(
       person("Alexander", "Brenning", , "alexander.brenning@uni-jena.de",
@@ -12,25 +12,25 @@ Authors@R: c(
         "aut")  
       )
 BugReports: https://github.com/pat-s/sperrorest/issues
-Depends: R (>= 2.1.0)
+Depends: 
+    R (>= 2.1.0),
+    pbapply,
+    foreach,
+    doParallel,
+    snow,
+    ROCR,
+    parallel
 Suggests:
     ipred,
+    nnet,
     RSAGA,
-    sp,
-    knitr,
-    rmarkdown
+    knitr, 
+    testthat
 Imports:
     graphics, 
     stats,
-    ggplot2,
-    parallel,
     rpart,
-    doParallel,
-    foreach,
-    ROCR,
-    snow,
-    randomForest,
-    nnet
+    devtools
 Description: This package implements spatial error estimation and
     permutation-based variable importance measures for predictive models using
     spatial cross-validation and spatial block bootstrap.
@@ -45,6 +45,5 @@ Collate:
     'sperrorest_error.R'
     'sperrorest_data.R'
     'parsperrorest.R'
-    'sperrorest.par.R'
 RoxygenNote: 5.0.1
 VignetteBuilder: knitr

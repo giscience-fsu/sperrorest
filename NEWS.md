@@ -1,31 +1,29 @@
-# sperrorest 0.3 (04 Oct 2016)
+sperrorest 1.0.0 (11 Dec 2016)
 
-* add `sperrorest.par`: This function lets you exexute `sperrorest` in parallel. 
-It uses a `doParallel` and `foreach` setup and works on all major platforms with
-some constraints on Windows (no console output). This function is useful for 
-running CV setups with many repetitions and/or models with take quite long to 
-converge. 
+* add `parsperrorest()`: This function lets you exexute `sperrorest()` in parallel. 
 
-* add `parsperrorest`: This function lets you exexute `sperrorest` in parallel. 
-It uses `mclapply` and is faster than `sperrorest.par`. However, no output is 
-printed to the console and it does not work on Windows systems. 
-
-* add `partition.factor.cv`: This resampling method enables partitioning based 
+* add `partition.factor.cv()`: This resampling method enables partitioning based 
 on a given factor variable. This can be used, for example, to resample 
 agricultural data that is grouped by fields, at the agricultural field level 
 in order to preserve spatial autocorrelation within fields.
 
-* add `benchmark` item to returned list of `sperrorest`, `parsperrorest` and 
-`sperrorest.par` giving information about execution time, 
-used cores and other system details. 
+* add `benchmark` item to returned `sperrorest()` and `parsperrorest()` object giving information about execution time, used cores and other system details. 
 
 * create github repo of `sperrorest` at 
 [https://github.com/pat-s/sperrorest/](https://github.com/pat-s/sperrorest/)
 
-* change params: `err.unpooled` to `err.fold` and `err.pooled` to `err.rep`
+* change params: `err.unpooled` to `error.fold` and `err.pooled` to `error.rep`
 
-* change order and naming of returned list for `sperrorest`, `parsperrorest` and
-`sperrorest.par`
+* change order and naming of returned `sperrorest()` and `parsperrorest()` object
+    - class `sperrorestpoolederror` is now `sperrorestreperror`
+    - returned `sperrorest` object is now ordered as follows: 
+         1. error.rep
+         2. error.fold
+         3. importance
+         4. benchmarks
+         5. package.version  
+         
+* add `notify` argument: Shows a notification badge once `sperrorest()` or `parsperrorest()` has finished.
 
 * add package NEWS
 
