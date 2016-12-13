@@ -94,7 +94,7 @@ res.lda.nsp <- res <- sperrorest(fo, data = maipo, coords = c("utmx","utmy"),
                                  pred.args = list(fac = "field"),
                                  smp.fun = partition.cv, 
                                  smp.args = list(repetition = 1:6, nfold = 5),
-                                 error.rep = TRUE, error.fold = FALSE)
+                                 error.rep = TRUE, error.fold = TRUE)
 round(summary(res.lda.nsp$error.rep), 3)
 
 ## ------------------------------------------------------------------------
@@ -104,7 +104,7 @@ res.lda.sp <- sperrorest(fo, data = maipo, coords = c("utmx","utmy"),
                          pred.args = list(fac = "field"),
                          smp.fun = partition.factor.cv,
                          smp.args = list(fac = "field", repetition = 1:6, nfold = 5),
-                         error.rep = TRUE, error.fold = FALSE, 
+                         error.rep = TRUE, error.fold = TRUE, 
                          benchmark = TRUE)
 res.lda.sp$benchmark$runtime.performance
 
