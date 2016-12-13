@@ -1,6 +1,18 @@
 test_that("check list output of rep and folds for par.mode = 3", { 
   
   lda.predfun <- function(object, newdata, fac = NULL) {
+    library(nnet)
+    majority <- function(x) {
+      levels(x)[which.is.max(table(x))]
+    }
+    
+    majority.filter <- function(x, fac) {
+      for (lev in levels(fac)) {
+        x[ fac == lev ] <- majority(x[ fac == lev ])
+      }
+      x
+    }
+    
     pred <- predict(object, newdata = newdata)$class
     if (!is.null(fac)) pred <- majority.filter(pred, newdata[,fac]) 
     return(pred)
@@ -10,6 +22,7 @@ test_that("check list output of rep and folds for par.mode = 3", {
   library(foreach)
   library(sperrorest)
   library(rpart)
+  library(testthat)
   library(MASS)
   
   fo <- croptype ~ b12 + b13 + b14 + b15 + b16 + b17 + b22 + b23 + b24 + 
@@ -62,7 +75,7 @@ test_that("check list output of rep and folds for par.mode = 3", {
 }) 
 
 
-test_that("check if length of list (error.fold) equals folds for par.mode = 3", {
+test_that("check if length of list (error.fold) equals folds for par.mode = 2", {
   
 data(ecuador) 
 fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
