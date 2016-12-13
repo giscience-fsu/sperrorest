@@ -195,9 +195,9 @@ mypred.rpart <- function(object, newdata) predict(object, newdata)[,2]
 par.nsp.res <- parsperrorest(data = ecuador, formula = fo,
                              model.fun = rpart, model.args = list(control = ctrl),
                              pred.fun = mypred.rpart,
-                             progress = TRUE, benchmark = T,
+                             progress = TRUE,
                              smp.fun = partition.cv, 
-                             smp.args = list(repetition = 1:30, nfold = 4), 
+                             smp.args = list(repetition = 1:5, nfold = 15), 
                              par.args = list(par.units = 2, par.mode = 1),
                              error.rep = TRUE, error.fold = TRUE)
 summary(par.nsp.res$error.rep)

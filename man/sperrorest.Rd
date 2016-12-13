@@ -13,7 +13,8 @@ sperrorest(formula, data, coords = c("x", "y"), model.fun,
   err.fun = err.default, error.fold = TRUE, error.rep = TRUE,
   err.train = TRUE, imp.variables = NULL, imp.permutations = 1000,
   importance = !is.null(imp.variables), distance = FALSE, do.gc = 1,
-  do.try = FALSE, verbose = "all", benchmark = FALSE, ...)
+  do.try = FALSE, verbose = "all", notify = FALSE, benchmark = FALSE,
+  ...)
 }
 \arguments{
 \item{formula}{A formula specifying the variables used by the \code{model}. 
@@ -109,12 +110,12 @@ shown in console (in Windows Rgui, disable 'Buffered output' in 'Misc' menu).
 If \code{verbose == "rep"}, only repetitions are shown. 
 Set to \code{FALSE} for no progress information.}
 
+\item{notify}{Show a notification badge once \code{sperrorest} has finished.}
+
 \item{benchmark}{logical (default: \code{FALSE}): if \code{TRUE}, 
 perform benchmarking and return \code{sperrorestbenchmarks} object}
 
 \item{...}{currently not used}
-
-\item{notify}{Show a notification badge once \code{sperrorest} has finished.}
 }
 \value{
 A list (object of class \code{sperrorest}) with (up to) six components:
