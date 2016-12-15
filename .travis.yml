@@ -4,8 +4,6 @@ language: R
 sudo: required
 cache: packages	
 
-r_github_packages: 
-  - hadley/devtools
 r_check_args: "--no-examples"
 r_build_args: "--no-build-vignettes"
 
@@ -20,6 +18,7 @@ before_install:
   - ./pkg-build.sh bootstrap
   
 install:
+  - ./pkg-build.sh install_github hadley/devtools
   - ./pkg-build.sh install_deps
 
 script:
