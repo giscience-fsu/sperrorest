@@ -1,4 +1,8 @@
-test_that("check list output of rep and folds for par.mode = 3", { 
+test_that("check list output of rep and folds for par.mode = 2", { 
+  
+  testthat::skip_on_appveyor()
+  testthat::skip_on_travis()
+  testthat::skip_on_cran()
   
   lda.predfun <- function(object, newdata, fac = NULL) {
     library(nnet)
@@ -77,26 +81,29 @@ test_that("check list output of rep and folds for par.mode = 3", {
 
 test_that("check if length of list (error.fold) equals folds for par.mode = 2", {
   
-data(ecuador) 
-fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
-
-# Example of a classification tree fitted to this data:
-library(rpart)
-mypred.rpart <- function(object, newdata) predict(object, newdata)[, 2]
-ctrl <- rpart.control(cp = 0.005) # show the effects of overfitting
-fit <- rpart(fo, data = ecuador, control = ctrl)
-
-# Non-spatial 5-repeated 10-fold cross-validation:
-mypred.rpart <- function(object, newdata) predict(object, newdata)[,2]
-par.nsp.res <- parsperrorest(data = ecuador, formula = fo,
-                           model.fun = rpart, model.args = list(control = ctrl),
-                           pred.fun = mypred.rpart,
-                           progress = FALSE,
-                           smp.fun = partition.cv,
-                           smp.args = list(repetition = 1:2, nfold = 4),
-                           par.args = list(par.mode = 2, par.units = 2),
-                           error.rep = TRUE, error.fold = TRUE)
-
-expect_equal(length(par.nsp.res$error.fold[[1]]), 4)
-                                                                             
+  testthat::skip_on_appveyor()
+  testthat::skip_on_travis()
+  testthat::skip_on_cran()
+  
+  data(ecuador) 
+  fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
+  
+  # Example of a classification tree fitted to this data:
+  library(rpart)
+  mypred.rpart <- function(object, newdata) predict(object, newdata)[, 2]
+  ctrl <- rpart.control(cp = 0.005) # show the effects of overfitting
+  fit <- rpart(fo, data = ecuador, control = ctrl)
+  
+  # Non-spatial 5-repeated 10-fold cross-validation:
+  mypred.rpart <- function(object, newdata) predict(object, newdata)[,2]
+  par.nsp.res <- parsperrorest(data = ecuador, formula = fo,
+                               model.fun = rpart, model.args = list(control = ctrl),
+                               pred.fun = mypred.rpart,
+                               progress = FALSE,
+                               smp.fun = partition.cv,
+                               smp.args = list(repetition = 1:2, nfold = 4),
+                               par.args = list(par.mode = 2, par.units = 2),
+                               error.rep = TRUE, error.fold = TRUE)
+  
+  expect_equal(length(par.nsp.res$error.fold[[1]]), 4)
 })
