@@ -29,6 +29,8 @@ in order to preserve spatial autocorrelation within fields.
 
 * add package vignette
 
+* package is now ByteCompiled
+
 # sperrorest 0.2-1 (19 June 2012)
 
 * First release on CRAN
