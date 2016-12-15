@@ -14,7 +14,7 @@
 #' @importFrom parallel detectCores clusterSetRNGStream mclapply
 #' @import foreach
 #' @import doParallel
-#' @importFrom devtools install_github
+#' @importFrom ghit install_github
 #' 
 #' @param data a \code{data.frame} with predictor and response variables. 
 #' Training and test samples will be drawn from this data set by \code{train.fun} 
