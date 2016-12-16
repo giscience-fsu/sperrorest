@@ -47,9 +47,9 @@ es die Funktion ja gibt und auf Unix alles läuft.
 
 sperrorest 1.0.0 (11 Dec 2016)
 
-* add `parsperrorest`: This function lets you exexute `sperrorest` in parallel. 
+* add `parsperrorest()`: This function lets you exexute `sperrorest()` in parallel. 
 
-* add `partition.factor.cv`: This resampling method enables partitioning based 
+* add `partition.factor.cv()`: This resampling method enables partitioning based 
 on a given factor variable. This can be used, for example, to resample 
 agricultural data that is grouped by fields, at the agricultural field level 
 in order to preserve spatial autocorrelation within fields.
@@ -69,6 +69,8 @@ in order to preserve spatial autocorrelation within fields.
          3. importance
          4. benchmarks
          5. package.version  
+         
+* add `notify` argument: Shows a notification badge once `sperrorest()` or `parsperrorest()` has finished.
 
 * add package NEWS
 
@@ -78,7 +80,7 @@ in order to preserve spatial autocorrelation within fields.
 
 ## Install sperorrest from Github
 ```{r, eval = T}
-devtools::install_github("pat-s/sperrorest", ref = "master")
+devtools::install_github("pat-s/sperrorest", ref = "dev")
 library(sperrorest)
 ```
 
@@ -121,6 +123,7 @@ parsperro.mode.1 <- parsperrorest(data = ecuador, formula = fo,
                                   model.fun = rpart, model.args = list(control = ctrl),
                                   pred.fun = mypred.rpart,
                                   smp.fun = partition.cv, 
+                                  notify = TRUE,
                                   smp.args = list(repetition = 1:10, nfold = 5), 
                                   par.args = list(par.mode = 1, par.units = 2),
                                   error.rep = TRUE, error.fold = TRUE, 
