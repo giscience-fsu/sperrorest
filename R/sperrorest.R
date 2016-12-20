@@ -355,17 +355,21 @@ resample.factor <- function(data, param = list(fac = "class",
 #' @param data a \code{data.frame} with predictor and response variables. 
 #' Training and test samples will be drawn from this data set by \code{train.fun} 
 #' and \code{test.fun}, respectively.
+#' 
 #' @param formula A formula specifying the variables used by the \code{model}. 
 #' Only simple formulas without interactions or nonlinear terms should 
 #' be used, e.g. \code{y~x1+x2+x3} but not \code{y~x1*x2+log(x3)}. 
 #' Formulas involving interaction and nonlinear terms may possibly work 
 #' for error estimation but not for variable importance assessment, 
 #' but should be used with caution.
+#' 
 #' @param coords vector of length 2 defining the variables in \code{data} that 
 #' contain the x and y coordinates of sample locations.
+#' 
 #' @param model.fun Function that fits a predictive model, such as \code{glm} 
 #' or \code{rpart}. The function must accept at least two arguments, the first 
 #' one being a formula and the second a data.frame with the learning sample.
+#' 
 #' @param model.args Arguments to be passed to \code{model.fun} 
 #' (in addition to the \code{formula} and \code{data} argument, 
 #' which are provided by \code{sperrorest})
@@ -373,38 +377,52 @@ resample.factor <- function(data, param = list(fac = "class",
 #' by \code{model}. Must accept at least two arguments: the fitted 
 #' \code{object} and a \code{data.frame} \code{newdata} with data 
 #' on which to predict the outcome.
+#' 
 #' @param pred.args (optional) Arguments to \code{pred.fun} (in addition to the 
 #' fitted model object and the \code{newdata} argument, 
 #' which are provided by \code{sperrorest})
+#' 
 #' @param smp.fun A function for sampling training and test sets from 
 #' \code{data}. E.g., \code{\link{partition.kmeans}} for 
 #' spatial cross-validation using spatial \emph{k}-means clustering.
+#' 
 #' @param smp.args (optional) Arguments to be passed to \code{est.fun}
+#' 
 #' @param train.fun (optional) A function for resampling or subsampling the 
 #' training sample in order to achieve, e.g., uniform sample sizes on all 
 #' training sets, or maintaining a certain ratio of positives and negatives 
 #' in training sets. 
 #' E.g., \code{\link{resample.uniform}} or \code{\link{resample.strat.uniform}}
+#' 
 #' @param train.param (optional) Arguments to be passed to \code{resample.fun}
+#' 
 #' @param test.fun (optional) Like \code{train.fun} but for the test set.
+#' 
 #' @param test.param (optional) Arguments to be passed to \code{test.fun}
+#' 
 #' @param err.fun A function that calculates selected error measures from the 
 #' known responses in \code{data} and the model predictions delivered 
 #' by \code{pred.fun}. E.g., \code{\link{err.default}} (the default). 
 #' See example and details below.
+#' 
 #' @param error.fold logical (default: \code{TRUE} if \code{importance} is 
 #' \code{TRUE}, otherwise \code{FALSE}): calculate error measures on each fold 
 #' within a resampling repetition.
+#' 
 #' @param error.rep logical (default: \code{TRUE}): calculate error measures 
 #' based on the pooled predictions of all folds within a resampling repetition.
+#' 
 #' @param err.train logical (default: \code{TRUE}): calculate error measures on 
 #' the training set (in addition to the test set estimation).
-#' @param imp.variables (optional; used if \code{importance=TRUE}) 
+#' 
+#' @param imp.variables (optional; used if \code{importance = TRUE}) 
 #' Variables for which permutation-based variable importance assessment 
-#' is performed. If \code{importance=TRUE} and \code{imp.variables} is 
+#' is performed. If \code{importance = TRUE} and \code{imp.variables} is 
 #' \code{NULL}, all variables in \code{formula} will be used.
-#' @param imp.permutations (optional; used if \code{importance=TRUE}) 
+#' 
+#' @param imp.permutations (optional; used if \code{importance = TRUE}) 
 #' Number of permutations used for variable importance assessment.
+#' 
 #' @param importance logical: perform permutation-based variable 
 #' importance assessment?
 #' 
@@ -423,14 +441,14 @@ resample.factor <- function(data, param = list(fac = "class",
 #' use \code{\link{try}} to robustify calls to \code{model.fun} and 
 #' \code{err.fun}; use with caution!
 #' 
-#' @param progress if \code{progress == 1}, repetition and fold progress is 
+#' @param progress if \code{progress = 1}, repetition and fold progress is 
 #' shown in console (in Windows Rgui, disable 'Buffered output' in 'Misc' menu). 
-#' If \code{verbose == 2}, only repetition information is shown. 
+#' If \code{progress = 2}, only repetition information is shown. 
 #' Set to \code{FALSE} for no progress information. 
 #' 
-#' @param notify Show a notification badge once \code{sperrorest} has finished. 
+#' @param notify (optional) show a notification badge after \code{sperrorest} has finished. 
 #' 
-#' @param benchmark logical (default: \code{FALSE}): if \code{TRUE}, 
+#' @param benchmark (optional) logical (default: \code{FALSE}): if \code{TRUE}, 
 #' perform benchmarking and return \code{sperrorestbenchmarks} object
 #' 
 #' @return A list (object of class \code{sperrorest}) with (up to) six components:
@@ -477,8 +495,6 @@ resample.factor <- function(data, param = list(fac = "class",
 #' IDA 2010, Tucson, AZ, USA, 19-21 May 2010.  
 #' Lecture Notes in Computer Science, 6065 LNCS: 184-195.
 #' 
-#' @seealso \pkg{ipred}
-#' 
 #' @export
 #' 
 #' @aliases sperroresterror sperrorestimportance
@@ -501,7 +517,7 @@ resample.factor <- function(data, param = list(fac = "class",
 #'                      model.fun = rpart, model.args = list(control = ctrl),
 #'                      pred.fun = mypred.rpart,
 #'                      smp.fun = partition.cv, 
-#'                          smp.args = list(repetition = 1:5, nfold = 10))
+#'                      smp.args = list(repetition = 1:5, nfold = 10))
 #' summary(nspres$error.rep)                    
 #' summary(nspres$error.fold)
 #' summary(nspres$represampling)
@@ -512,7 +528,7 @@ resample.factor <- function(data, param = list(fac = "class",
 #'                     model.fun = rpart, model.args = list(control = ctrl),
 #'                     pred.fun = mypred.rpart,
 #'                     smp.fun = partition.kmeans, 
-#'                         smp.args = list(repetition = 1:5, nfold = 10))
+#'                     smp.args = list(repetition = 1:5, nfold = 10))
 #' summary(spres$error.rep)
 #' summary(spres$represampling)
 #' plot(spres$represampling, ecuador)

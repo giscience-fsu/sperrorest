@@ -13,8 +13,7 @@ sperrorest(formula, data, coords = c("x", "y"), model.fun,
   err.fun = err.default, error.fold = TRUE, error.rep = TRUE,
   err.train = TRUE, imp.variables = NULL, imp.permutations = 1000,
   importance = !is.null(imp.variables), distance = FALSE, do.gc = 1,
-  do.try = FALSE, verbose = "all", notify = FALSE, benchmark = FALSE,
-  ...)
+  do.try = FALSE, progress = 1, notify = FALSE, benchmark = FALSE, ...)
 }
 \arguments{
 \item{formula}{A formula specifying the variables used by the \code{model}. 
@@ -81,12 +80,12 @@ based on the pooled predictions of all folds within a resampling repetition.}
 \item{err.train}{logical (default: \code{TRUE}): calculate error measures on 
 the training set (in addition to the test set estimation).}
 
-\item{imp.variables}{(optional; used if \code{importance=TRUE}) 
+\item{imp.variables}{(optional; used if \code{importance = TRUE}) 
 Variables for which permutation-based variable importance assessment 
-is performed. If \code{importance=TRUE} and \code{imp.variables} is 
+is performed. If \code{importance = TRUE} and \code{imp.variables} is 
 \code{NULL}, all variables in \code{formula} will be used.}
 
-\item{imp.permutations}{(optional; used if \code{importance=TRUE}) 
+\item{imp.permutations}{(optional; used if \code{importance = TRUE}) 
 Number of permutations used for variable importance assessment.}
 
 \item{importance}{logical: perform permutation-based variable 
@@ -105,14 +104,14 @@ if \code{>=2}, after each fold}
 use \code{\link{try}} to robustify calls to \code{model.fun} and 
 \code{err.fun}; use with caution!}
 
-\item{verbose}{if \code{verbose == "all"}, repetition and fold progress is 
+\item{progress}{if \code{progress == 1}, repetition and fold progress is 
 shown in console (in Windows Rgui, disable 'Buffered output' in 'Misc' menu). 
-If \code{verbose == "rep"}, only repetitions are shown. 
+If \code{verbose == 2}, only repetition information is shown. 
 Set to \code{FALSE} for no progress information.}
 
-\item{notify}{Show a notification badge once \code{sperrorest} has finished.}
+\item{notify}{(optional) show a notification badge after \code{sperrorest} has finished.}
 
-\item{benchmark}{logical (default: \code{FALSE}): if \code{TRUE}, 
+\item{benchmark}{(optional) logical (default: \code{FALSE}): if \code{TRUE}, 
 perform benchmarking and return \code{sperrorestbenchmarks} object}
 
 \item{...}{currently not used}
@@ -163,7 +162,7 @@ nspres <- sperrorest(data = ecuador, formula = fo,
                      model.fun = rpart, model.args = list(control = ctrl),
                      pred.fun = mypred.rpart,
                      smp.fun = partition.cv, 
-                         smp.args = list(repetition = 1:5, nfold = 10))
+                     smp.args = list(repetition = 1:5, nfold = 10))
 summary(nspres$error.rep)                    
 summary(nspres$error.fold)
 summary(nspres$represampling)
@@ -174,7 +173,7 @@ spres <- sperrorest(data = ecuador, formula = fo,
                     model.fun = rpart, model.args = list(control = ctrl),
                     pred.fun = mypred.rpart,
                     smp.fun = partition.kmeans, 
-                        smp.args = list(repetition = 1:5, nfold = 10))
+                    smp.args = list(repetition = 1:5, nfold = 10))
 summary(spres$error.rep)
 summary(spres$represampling)
 plot(spres$represampling, ecuador)
@@ -211,8 +210,5 @@ yield prediction in Precision Agriculture. In Advances in Intelligent
 Data Analysis IX, Proceedings, 9th International Symposium, 
 IDA 2010, Tucson, AZ, USA, 19-21 May 2010.  
 Lecture Notes in Computer Science, 6065 LNCS: 184-195.
-}
-\seealso{
-\pkg{ipred}
 }
 
