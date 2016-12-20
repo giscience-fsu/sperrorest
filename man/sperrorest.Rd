@@ -104,9 +104,9 @@ if \code{>=2}, after each fold}
 use \code{\link{try}} to robustify calls to \code{model.fun} and 
 \code{err.fun}; use with caution!}
 
-\item{progress}{if \code{progress == 1}, repetition and fold progress is 
+\item{progress}{if \code{progress = 1}, repetition and fold progress is 
 shown in console (in Windows Rgui, disable 'Buffered output' in 'Misc' menu). 
-If \code{verbose == 2}, only repetition information is shown. 
+If \code{progress = 2}, only repetition information is shown. 
 Set to \code{FALSE} for no progress information.}
 
 \item{notify}{(optional) show a notification badge after \code{sperrorest} has finished.}
