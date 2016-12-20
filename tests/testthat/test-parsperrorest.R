@@ -85,6 +85,13 @@ test_that("check if length of list (error.fold) equals folds for par.mode = 2", 
   testthat::skip_on_travis()
   testthat::skip_on_cran()
   
+  library(doParallel)
+  library(foreach)
+  library(sperrorest)
+  library(rpart)
+  library(testthat)
+  library(MASS)
+  
   data(ecuador) 
   fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
   
@@ -99,7 +106,7 @@ test_that("check if length of list (error.fold) equals folds for par.mode = 2", 
   par.nsp.res <- parsperrorest(data = ecuador, formula = fo,
                                model.fun = rpart, model.args = list(control = ctrl),
                                pred.fun = mypred.rpart,
-                               progress = FALSE,
+                               progress = FALSE, 
                                smp.fun = partition.cv,
                                smp.args = list(repetition = 1:2, nfold = 4),
                                par.args = list(par.mode = 2, par.units = 2),
