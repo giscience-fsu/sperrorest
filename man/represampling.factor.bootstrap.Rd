@@ -66,7 +66,7 @@ plot(parti,ecuador)
 # using the factor bootstrap for a non-overlapping block bootstrap
 # (see also represampling.tile.bootstrap):
 fac <- partition.tiles(ecuador, return.factor = TRUE, repetition = c(1:3), 
-                       dsplit = 500, min.n = 200, rotation = "random", offset = "random")
+                       dsplit = 500, min.n = 200, rotation = 'random', offset = 'random')
 parti <- represampling.factor.bootstrap(ecuador, fac, oob = TRUE, repetition = c(1:3))
 plot(parti, ecuador)
 

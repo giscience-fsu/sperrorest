@@ -7,7 +7,7 @@
 tile.neighbors(nm, tileset, iterate = 0, diagonal = FALSE)
 }
 \arguments{
-\item{nm}{Character string or factor: name of a tile, e.g., \code{"X4:Y6"}}
+\item{nm}{Character string or factor: name of a tile, e.g., \code{'X4:Y6'}}
 
 \item{tileset}{Admissible tile names; if missing and \code{nm} is a factor 
 variable, then \code{levels(nm)} is used as a default for \code{tileset}.}
@@ -22,6 +22,6 @@ neighbours.}
 Character string.
 }
 \description{
-This based on "counting" up and down based on the tile name.
+This based on 'counting' up and down based on the tile name.
 }
 

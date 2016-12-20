@@ -111,9 +111,9 @@ information only (instead of repetition and fold).
 Set to \code{FALSE} for no progress information.}
 
 \item{out.progress}{only used if \code{par.mode = 2}: Optional write progress output to a file instead of console output. 
-The default (\code{""}) results in console output for Unix-Systems and
-file output ("parsperrorest.progress.txt") in the current working directory 
-for Windows-Systems.}
+The default (\code{''}) results in console output for Unix-systems and
+file output ('parsperrorest.progress.txt') in the current working directory 
+for Windows-systems.}
 
 \item{notify}{(optional) show a notification badge after \code{parsperrorest} has finished.}
 
@@ -153,12 +153,12 @@ assessment of spatial variable importance.
 \details{
 Two \code{par.mode} options are availabe. The default mode is 
 \code{par.mode = 1}. Here, \code{\link[pbapply]{pblapply}} is used which 
-either calls \code{\link[parallel]{mclapply}} (on Unix-Systems) or 
-\code{\link[parallel]{parApply}} (on Windows-Systems). \code{par.mode = 2}
+either calls \code{\link[parallel]{mclapply}} (on Unix-systems) or 
+\code{\link[parallel]{parApply}} (on Windows-systems). \code{par.mode = 2}
 uses \code{\link[foreach]{foreach}}. While this approach is not as efficient,
 it may work in cases in which \code{par.mode = 1} fails.
 
-\code{par.libs} only applies to \code{par.mode = 1} on Windows-Systems.
+\code{par.libs} only applies to \code{par.mode = 1} on Windows-systems.
 
 This parallelized version of \code{\link{sperrorest}} may highly 
 decrease computation time. However, please note that problems
@@ -223,9 +223,9 @@ smry <- data.frame(
     nonspat.test     = unlist(summary(par.nsp.res$error.rep, level = 1)$test.auroc),
     spatial.training = unlist(summary(par.sp.res$error.rep, level = 1)$train.auroc),
     spatial.test     = unlist(summary(par.sp.res$error.rep, level = 1)$test.auroc))
-boxplot(smry, col = c("red","red","red","green"), 
-    main = "Training vs. test, nonspatial vs. spatial",
-    ylab = "Area under the ROC curve")
+boxplot(smry, col = c('red','red','red','green'), 
+    main = 'Training vs. test, nonspatial vs. spatial',
+    ylab = 'Area under the ROC curve')
     
 }
 \references{

@@ -8,7 +8,7 @@ get.small.tiles(tile, min.n = NULL, min.frac = 0, ignore = c())
 }
 \arguments{
 \item{tile}{factor: tile/partition names for all samples; names must be 
-coercible to class \code{\link{tilename}}, i.e. of the form \code{"X4:Y2"} etc.}
+coercible to class \code{\link{tilename}}, i.e. of the form \code{'X4:Y2'} etc.}
 
 \item{min.n}{integer (optional): minimum number of samples per partition.}
 
@@ -34,11 +34,11 @@ parti = partition.tiles(ecuador, nsplit = c(10,10), reassign = FALSE)
 summary(parti)
 length(parti[[1]])
 # Same in factor format for the application of get.small.tiles:
-parti.fac = partition.tiles(ecuador, nsplit = c(10,10), reassign = FALSE, 
-                            return.factor = TRUE)
+parti.fac <- partition.tiles(ecuador, nsplit = c(10, 10), reassign = FALSE, 
+                             return.factor = TRUE)
 get.small.tiles(parti.fac[[1]], min.n = 20) # tiles with less than 20 samples
-parti2 = partition.tiles(ecuador, nsplit = c(10,10), reassign = TRUE, 
-    min.n = 20, min.frac = 0)
+parti2 <- partition.tiles(ecuador, nsplit = c(10, 10), reassign = TRUE, 
+                          min.n = 20, min.frac = 0)
 length(parti2[[1]]) # < length(parti[[1]])
 }
 \seealso{

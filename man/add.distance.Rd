@@ -43,10 +43,10 @@ the \code{fun} argument, which will be passed on to
 }
 \examples{
 data(ecuador) # Muenchow et al. (2012), see ?ecuador
-nsp.parti = partition.cv(ecuador)
-sp.parti = partition.kmeans(ecuador)
-nsp.parti = add.distance(nsp.parti, ecuador)
-sp.parti = add.distance(sp.parti, ecuador)
+nsp.parti <- partition.cv(ecuador)
+sp.parti <- partition.kmeans(ecuador)
+nsp.parti <- add.distance(nsp.parti, ecuador)
+sp.parti <- add.distance(sp.parti, ecuador)
 # non-spatial partioning: very small test-training distance:
 nsp.parti[[1]][[1]]$distance
 # spatial partitioning: more substantial distance, depending on number of 

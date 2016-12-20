@@ -49,7 +49,7 @@ data(ecuador)
 breaks <- quantile(ecuador$dem, seq(0, 1, length = 6))
 ecuador$zclass <- cut(ecuador$dem, breaks, include.lowest = TRUE)
 summary(ecuador$zclass)
-parti <- partition.factor(ecuador, fac = "zclass")
+parti <- partition.factor(ecuador, fac = 'zclass')
 plot(parti,ecuador)
 summary(parti)
 }

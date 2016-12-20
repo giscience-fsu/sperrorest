@@ -52,24 +52,27 @@
 #' resamp <- partition.cv(ecuador, nfold = 5, repetition = 1:2)
 #' plot(resamp, ecuador)
 #' # first repetition, second fold, test set indices:
-#' idx <- resamp[["1"]][[2]]$test
+#' idx <- resamp[['1']][[2]]$test
 #' # test sample used in this particular repetition and fold:
 #' ecuador[idx , ]
 #' @export
-partition.cv = function(data, coords = c("x","y"), nfold = 10, repetition = 1, 
-                        seed1 = NULL, return.factor = FALSE)
-{  
-  resampling = list()
+partition.cv <- function(data, coords = c("x", "y"), nfold = 10, repetition = 1, 
+  seed1 = NULL, return.factor = FALSE)
+  {
+  resampling <- list()
   
-  for (cnt in repetition) {
-    if (!is.null(seed1)) set.seed(seed1 + cnt)
-    resampler = sample(rep(sample(nfold), length = nrow(data)), 
-                       size = nrow(data))
-    resampler = factor(resampler)
-    if (!return.factor) resampler = as.resampling(resampler)
-    resampling[[as.character(cnt)]] = resampler
+  for (cnt in repetition)
+  {
+    if (!is.null(seed1)) 
+      set.seed(seed1 + cnt)
+    resampler <- sample(rep(sample(nfold), length = nrow(data)), size = nrow(data))
+    resampler <- factor(resampler)
+    if (!return.factor) 
+      resampler <- as.resampling(resampler)
+    resampling[[as.character(cnt)]] <- resampler
   }
-  if (!return.factor) resampling = as.represampling(resampling)
+  if (!return.factor) 
+    resampling <- as.represampling(resampling)
   
   return(resampling)
 }
@@ -101,41 +104,47 @@ partition.cv = function(data, coords = c("x","y"), nfold = 10, repetition = 1,
 #' 
 #' @examples
 #' data(ecuador)
-#' parti <- partition.cv.strat(ecuador, strat = "slides", nfold = 5, repetition = 1)
-#' idx <- parti[["1"]][[1]]$train
-#' mean(ecuador$slides[idx] == "TRUE") / mean(ecuador$slides == "TRUE")
+#' parti <- partition.cv.strat(ecuador, strat = 'slides', nfold = 5, repetition = 1)
+#' idx <- parti[['1']][[1]]$train
+#' mean(ecuador$slides[idx] == 'TRUE') / mean(ecuador$slides == 'TRUE')
 #' # always == 1
 #' # Non-stratified cross-validation:
 #' parti <- partition.cv(ecuador, nfold = 5, repetition = 1)
-#' idx <- parti[["1"]][[1]]$train
-#' mean(ecuador$slides[idx] == "TRUE") / mean(ecuador$slides == "TRUE")
+#' idx <- parti[['1']][[1]]$train
+#' mean(ecuador$slides[idx] == 'TRUE') / mean(ecuador$slides == 'TRUE')
 #' # close to 1 because of large sample size, but with some random variation
 #' @export
-partition.cv.strat = function(data, coords = c("x","y"), nfold = 10,
-                              return.factor = FALSE, repetition = 1, seed1 = NULL, strat)
-{  
-  repres = list()
+partition.cv.strat <- function(data, coords = c("x", "y"), nfold = 10, return.factor = FALSE, 
+  repetition = 1, seed1 = NULL, strat)
+  {
+  repres <- list()
   
-  stopifnot( (length(strat) == 1) | (length(strat) == nrow(data)) )
-  if (length(strat) == 1) strat = data[,strat]
+  stopifnot((length(strat) == 1) | (length(strat) == nrow(data)))
+  if (length(strat) == 1) 
+    strat <- data[, strat]
   stopifnot(is.factor(strat))
-  # Can't split into nfold partitions if there are less than nfold 
-  # samples within a stratum:
-  minstrat = min(tapply(strat, strat, length))
+  # Can't split into nfold partitions if there are less than nfold samples within a
+  # stratum:
+  minstrat <- min(tapply(strat, strat, length))
   stopifnot(minstrat >= nfold)
   
-  for (cnt in repetition) {    
-    if (!is.null(seed1)) set.seed(seed1 + cnt)
-    fac = rep(NA, nrow(data))
-    for (lev in levels(strat)) {
-      nstrat = sum( sel <- (strat == lev))
-      fac[sel] = sample(rep(sample(nfold), length = nstrat), size = nstrat)
+  for (cnt in repetition)
+  {
+    if (!is.null(seed1)) 
+      set.seed(seed1 + cnt)
+    fac <- rep(NA, nrow(data))
+    for (lev in levels(strat))
+    {
+      nstrat <- sum(sel <- (strat == lev))
+      fac[sel] <- sample(rep(sample(nfold), length = nstrat), size = nstrat)
     }
-    fac = factor(fac)
-    if (!return.factor) fac = as.resampling(fac)
-    repres[[as.character(cnt)]] = fac
+    fac <- factor(fac)
+    if (!return.factor) 
+      fac <- as.resampling(fac)
+    repres[[as.character(cnt)]] <- fac
   }
-  if (!return.factor) repres = as.represampling(repres)
+  if (!return.factor) 
+    repres <- as.represampling(repres)
   
   return(repres)
 }
@@ -170,20 +179,22 @@ partition.cv.strat = function(data, coords = c("x","y"), nfold = 10,
 #' breaks <- quantile(ecuador$dem, seq(0, 1, length = 6))
 #' ecuador$zclass <- cut(ecuador$dem, breaks, include.lowest = TRUE)
 #' summary(ecuador$zclass)
-#' parti <- partition.factor(ecuador, fac = "zclass")
+#' parti <- partition.factor(ecuador, fac = 'zclass')
 #' plot(parti,ecuador)
 #' summary(parti)
 #' @export
-partition.factor <- function(data, coords = c("x", "y"), fac, 
-                             return.factor = FALSE, repetition = 1)
-{
-  if (length(fac) == 1 && is.character(fac)) fac = data[,fac]
-  fac = factor(fac)
-  if (!return.factor) fac = as.resampling(fac)
-  represmp = list()
-  for (cnt in repetition)
-    represmp[[as.character(cnt)]] = fac
-  if (!return.factor) represmp = as.represampling(represmp)
+partition.factor <- function(data, coords = c("x", "y"), fac, return.factor = FALSE, 
+  repetition = 1)
+  {
+  if (length(fac) == 1 && is.character(fac)) 
+    fac <- data[, fac]
+  fac <- factor(fac)
+  if (!return.factor) 
+    fac <- as.resampling(fac)
+  represmp <- list()
+  for (cnt in repetition) represmp[[as.character(cnt)]] <- fac
+  if (!return.factor) 
+    represmp <- as.represampling(represmp)
   return(represmp)
 }
 
@@ -220,33 +231,31 @@ partition.factor <- function(data, coords = c("x", "y"), fac,
 #' \code{\link{partition.factor}}, \code{\link{as.resampling.factor}}
 #' 
 #' @export
-partition.factor.cv <- function(data, coords = c("x", "y"), fac, nfold = 10, 
-                                repetition = 1, seed1 = NULL, 
-                                return.factor = FALSE)
-{
+partition.factor.cv <- function(data, coords = c("x", "y"), fac, nfold = 10, repetition = 1, 
+  seed1 = NULL, return.factor = FALSE)
+  {
   if (length(fac) == 1 && is.character(fac)) 
-    fac = data[, fac]
-  fac = factor(fac)
-  if (nfold > nlevels(fac)) {
+    fac <- data[, fac]
+  fac <- factor(fac)
+  if (nfold > nlevels(fac))
+  {
     warning("'nfold' should be <= nlevels(fac); using nfold=nlevels(fac)\n")
-    nfold = nlevels(fac)
+    nfold <- nlevels(fac)
   }
-  resampling = list()
-  for (cnt in repetition) {
-    if (!is.null(seed1))
+  resampling <- list()
+  for (cnt in repetition)
+  {
+    if (!is.null(seed1)) 
       set.seed(seed1 + cnt)
-    fac.resampler = sample(
-      rep(sample(nfold), length = nlevels(fac)), 
-      size = nlevels(fac)
-    )
-    names(fac.resampler) = levels(fac)
-    resampler = factor(fac.resampler[fac])
-    if (!return.factor)
-      resampler = as.resampling(resampler)
-    resampling[[as.character(cnt)]] = resampler
+    fac.resampler <- sample(rep(sample(nfold), length = nlevels(fac)), size = nlevels(fac))
+    names(fac.resampler) <- levels(fac)
+    resampler <- factor(fac.resampler[fac])
+    if (!return.factor) 
+      resampler <- as.resampling(resampler)
+    resampling[[as.character(cnt)]] <- resampler
   }
   if (!return.factor) 
-    resampling = as.represampling(resampling)
+    resampling <- as.represampling(resampling)
   return(resampling)
 }
 
@@ -276,13 +285,13 @@ partition.factor.cv <- function(data, coords = c("x", "y"), fac, nfold = 10,
 #' its value is recycled.
 #' @param rotation indicates whether and how the rectangular grid should 
 #' be rotated; random rotation is only between \code{-45} and \code{+45} degrees.
-#' @param user.rotation if \code{rotation="user"}, angles (in degrees) by which 
+#' @param user.rotation if \code{rotation='user'}, angles (in degrees) by which 
 #' the rectangular grid is to be rotated in each repetition. Either a vector of 
 #' same length as \code{repetition}, or a single number that will be replicated 
 #' \code{length(repetition)} times.
 #' @param offset indicates whether and how the rectangular grid should be 
 #' shifted by an offset.
-#' @param user.offset if \code{offset="user"}, a list (or vector) of two 
+#' @param user.offset if \code{offset='user'}, a list (or vector) of two 
 #' components specifying a shift of the rectangular grid in (possibly rotated) x 
 #' and y direction. The offset values are relative values, a value of \code{0.5} 
 #' resulting in a one-half tile shift towards the left, or upward. 
@@ -314,7 +323,7 @@ partition.factor.cv <- function(data, coords = c("x", "y"), fac, nfold = 10,
 #' This function, especially the rotation and shifting part of it and the 
 #' algorithm for cleaning up small tiles is still a bit experimental. 
 #' Use with caution.
-#' For non-zero offsets (\code{offset!="none")}), the number of tiles may 
+#' For non-zero offsets (\code{offset!='none')}), the number of tiles may 
 #' actually be greater than \code{nsplit[1]*nsplit[2]} because of fractional 
 #' tiles lurking into the study region. \code{reassign=TRUE} with suitable 
 #' thresholds is therefore recommended for non-zero (including random) offsets.
@@ -335,189 +344,217 @@ partition.factor.cv <- function(data, coords = c("x", "y"), fac, nfold = 10,
 #' # tile B4 (in 'parti') was smaller than A3, therefore A4 was merged with B4, 
 #' # not with A3
 #' # now with random rotation and offset, and tiles of 2000 m length:
-#' parti3 <- partition.tiles(ecuador, dsplit = 2000, offset = "random", 
-#' rotation = "random", reassign = TRUE, min.n = 100)
+#' parti3 <- partition.tiles(ecuador, dsplit = 2000, offset = 'random', 
+#' rotation = 'random', reassign = TRUE, min.n = 100)
 #' plot(parti3,ecuador)
 #' summary(parti3)
 #' @export
-partition.tiles <- function(data, coords = c("x","y"), dsplit = NULL, 
-                            nsplit = NULL,
-                            rotation = c("none","random","user"), user.rotation,
-                            offset = c("none","random","user"), user.offset,
-                            reassign = TRUE, min.frac = 0.025, min.n = 5, 
-                            iterate = 1, return.factor = FALSE, 
-                            repetition = 1, seed1 = NULL)
-{
+partition.tiles <- function(data, coords = c("x", "y"), dsplit = NULL, nsplit = NULL, 
+  rotation = c("none", "random", "user"), user.rotation, offset = c("none", "random", 
+    "user"), user.offset, reassign = TRUE, min.frac = 0.025, min.n = 5, iterate = 1, 
+  return.factor = FALSE, repetition = 1, seed1 = NULL)
+  {
   # Some basic argument checks:
   stopifnot(is.numeric(min.frac) && length(min.frac) == 1)
   stopifnot(is.numeric(min.n) && length(min.n) == 1)
   stopifnot(is.numeric(iterate) && length(iterate) == 1)
   stopifnot(!is.null(nsplit) | !is.null(dsplit))
-  if (!is.null(nsplit)) {
+  if (!is.null(nsplit))
+  {
     stopifnot(is.numeric(nsplit) && length(nsplit) <= 2)
   } else stopifnot(is.numeric(dsplit) && length(dsplit) <= 2)
   
   # Prepare rotation angles, if applicable:
-  rotation = match.arg(rotation)
+  rotation <- match.arg(rotation)
   stopifnot(xor(rotation == "user", missing(user.rotation)))
-  if (rotation == "none") {
-    phi = rep(0, length(repetition))
-  } else if (rotation == "random") {
-    phi = runif(-45, 45, n = length(repetition))
-  } else if (rotation == "user") {
-    if (length(user.rotation) == 1) user.rotation = rep(user.rotation, 
-                                                        length(repetition))
+  if (rotation == "none")
+  {
+    phi <- rep(0, length(repetition))
+  } else if (rotation == "random")
+  {
+    phi <- runif(-45, 45, n = length(repetition))
+  } else if (rotation == "user")
+  {
+    if (length(user.rotation) == 1) 
+      user.rotation <- rep(user.rotation, length(repetition))
     stopifnot(length(user.rotation) == length(repetition))
-    phi = user.rotation
+    phi <- user.rotation
   }
-  names(phi) = as.character(repetition)
+  names(phi) <- as.character(repetition)
   
-  # This will make matrix multiplication (rotation) numerically better 
-  # conditioned:
-  data[,coords[1]] = data[,coords[1]] - mean(data[,coords[1]])
-  data[,coords[2]] = data[,coords[2]] - mean(data[,coords[2]])
+  # This will make matrix multiplication (rotation) numerically better conditioned:
+  data[, coords[1]] <- data[, coords[1]] - mean(data[, coords[1]])
+  data[, coords[2]] <- data[, coords[2]] - mean(data[, coords[2]])
   
-  offset = match.arg(offset)
+  offset <- match.arg(offset)
   stopifnot(xor(offset == "user", missing(user.offset)))
-  if (offset == "none") {
-    x.shift = y.shift = rep(0, length(repetition))
-  } else if (offset == "random") {
-    x.shift = runif(0, 1, n = length(repetition))
-    y.shift = runif(0, 1, n = length(repetition))
-  } else if (offset == "user") {
-    if (is.vector(user.offset) && length(user.offset) == 2)
-      user.offset = list(user.offset[1], user.offset[2])
+  if (offset == "none")
+  {
+    x.shift <- y.shift <- rep(0, length(repetition))
+  } else if (offset == "random")
+  {
+    x.shift <- runif(0, 1, n = length(repetition))
+    y.shift <- runif(0, 1, n = length(repetition))
+  } else if (offset == "user")
+  {
+    if (is.vector(user.offset) && length(user.offset) == 2) 
+      user.offset <- list(user.offset[1], user.offset[2])
     stopifnot(is.list(user.offset) && length(user.offset) == 2)
     # Recycle offsets as needed:
     if (length(user.offset[[1]]) == 1) 
-      user.offset[[1]] = rep(user.offset[[1]], length(repetition))
+      user.offset[[1]] <- rep(user.offset[[1]], length(repetition))
     if (length(user.offset[[2]]) == 1) 
-      user.offset[[2]] = rep(user.offset[[2]], length(repetition))
+      user.offset[[2]] <- rep(user.offset[[2]], length(repetition))
     # Got enough user.offsets?
     stopifnot(length(user.offset[[1]]) == length(repetition))
     stopifnot(length(user.offset[[2]]) == length(repetition))
     # Valid range, [0,1]?
-    stopifnot( min(user.offset[[1]] >= 0 & max(user.offset[[1]]) <= 1) )
-    stopifnot( min(user.offset[[2]] >= 0 & max(user.offset[[2]]) <= 1) )
-    x.shift = user.offset[[1]]
-    y.shift = user.offset[[2]]
+    stopifnot(min(user.offset[[1]] >= 0 & max(user.offset[[1]]) <= 1))
+    stopifnot(min(user.offset[[2]] >= 0 & max(user.offset[[2]]) <= 1))
+    x.shift <- user.offset[[1]]
+    y.shift <- user.offset[[2]]
   }
-  names(x.shift) = as.character(repetition)
-  names(y.shift) = as.character(repetition)
+  names(x.shift) <- as.character(repetition)
+  names(y.shift) <- as.character(repetition)
   
-  if (!is.null(nsplit))
-    if (length(nsplit) == 1)  nsplit = c(nsplit, nsplit)
-  if (!is.null(dsplit))
-    if (length(dsplit) == 1)  dsplit = c(dsplit, dsplit)
+  if (!is.null(nsplit)) 
+    if (length(nsplit) == 1) 
+      nsplit <- c(nsplit, nsplit)
+  if (!is.null(dsplit)) 
+    if (length(dsplit) == 1) 
+      dsplit <- c(dsplit, dsplit)
   
-  resampling = list()
-  for (cnt in repetition) {
+  resampling <- list()
+  for (cnt in repetition)
+  {
     
-    if (!is.null(seed1)) set.seed(seed1 + cnt)
+    if (!is.null(seed1)) 
+      set.seed(seed1 + cnt)
     
     # Prepare the arguments and data:
     
-    if (rotation != "none") {        
-      R = phi[as.character(cnt)] * 180 / pi
-      R = matrix(c(cos(R), -sin(R), sin(R), cos(R)), ncol = 2)
-      xy = R %*% t(data[,coords])
-      x = xy[1,]
-      y = xy[2,]
-    } else {
-      x = data[,coords[1]]
-      y = data[,coords[2]]
+    if (rotation != "none")
+    {
+      R <- phi[as.character(cnt)] * 180/pi
+      R <- matrix(c(cos(R), -sin(R), sin(R), cos(R)), ncol = 2)
+      xy <- R %*% t(data[, coords])
+      x <- xy[1, ]
+      y <- xy[2, ]
+    } else
+    {
+      x <- data[, coords[1]]
+      y <- data[, coords[2]]
     }
-    x.range = range(x)
-    y.range = range(y)
+    x.range <- range(x)
+    y.range <- range(y)
     
-    if (!is.null(nsplit)) {
-      x.delta = diff(x.range)/nsplit[1]
-      y.delta = diff(y.range)/nsplit[2]
-      my.nsplit = nsplit
-    } else {# if !is.null(dsplit)
-      x.delta = dsplit[1]
-      y.delta = dsplit[2]
+    if (!is.null(nsplit))
+    {
+      x.delta <- diff(x.range)/nsplit[1]
+      y.delta <- diff(y.range)/nsplit[2]
+      my.nsplit <- nsplit
+    } else
+    {
+      # if !is.null(dsplit)
+      x.delta <- dsplit[1]
+      y.delta <- dsplit[2]
     }
     # Apply offsets:
-    if (offset != "none") {
-      # Widen the range and increase nsplit to allow for "lurking" tiles:
-      x.range[2] = x.range[2] + x.delta
-      y.range[2] = y.range[2] + y.delta
-      x.range = x.range - x.delta * (x.shift[as.character(cnt)])
-      y.range = y.range - y.delta * (y.shift[as.character(cnt)])
-      if (is.null(dsplit)) my.nsplit = my.nsplit + 1
+    if (offset != "none")
+    {
+      # Widen the range and increase nsplit to allow for 'lurking' tiles:
+      x.range[2] <- x.range[2] + x.delta
+      y.range[2] <- y.range[2] + y.delta
+      x.range <- x.range - x.delta * (x.shift[as.character(cnt)])
+      y.range <- y.range - y.delta * (y.shift[as.character(cnt)])
+      if (is.null(dsplit)) 
+        my.nsplit <- my.nsplit + 1
     }
     
     # Calculate x and y splits:
-    if (is.null(dsplit)) {
-      x.split = seq(x.range[1], x.range[2], length = my.nsplit[1] + 1)
-      y.split = seq(y.range[1], y.range[2], length = my.nsplit[2] + 1)
-    } else {
-      x.split = seq(x.range[1], x.range[2] + x.delta, by = x.delta)
-      y.split = seq(y.range[1], y.range[2] + y.delta, by = y.delta)
-      my.nsplit = c(length(x.split) - 1, length(y.split) - 1)
+    if (is.null(dsplit))
+    {
+      x.split <- seq(x.range[1], x.range[2], length = my.nsplit[1] + 1)
+      y.split <- seq(y.range[1], y.range[2], length = my.nsplit[2] + 1)
+    } else
+    {
+      x.split <- seq(x.range[1], x.range[2] + x.delta, by = x.delta)
+      y.split <- seq(y.range[1], y.range[2] + y.delta, by = y.delta)
+      my.nsplit <- c(length(x.split) - 1, length(y.split) - 1)
     }
     
     # Group data into tiles, i.e. assign tile labels to samples:
-    tile = rep(NA, nrow(data))
-    for (ix in 1:my.nsplit[1]) {
+    tile <- rep(NA, nrow(data))
+    for (ix in 1:my.nsplit[1])
+    {
       # Intervals are normally open to the left, except the first one:
-      if (ix == 1) {
-        sel.x = (x >= x.split[ix]) & (x <= x.split[ix + 1])
-      } else {
-        sel.x = (x > x.split[ix]) & (x <= x.split[ix + 1])
+      if (ix == 1)
+      {
+        sel.x <- (x >= x.split[ix]) & (x <= x.split[ix + 1])
+      } else
+      {
+        sel.x <- (x > x.split[ix]) & (x <= x.split[ix + 1])
       }
-      for (iy in 1:my.nsplit[2]) {
-        if (iy == 1) {
-          sel.y = (y >= y.split[iy]) & (y <= y.split[iy + 1])
-        } else {
-          sel.y = (y > y.split[iy]) & (y <= y.split[iy + 1])
+      for (iy in 1:my.nsplit[2])
+      {
+        if (iy == 1)
+        {
+          sel.y <- (y >= y.split[iy]) & (y <= y.split[iy + 1])
+        } else
+        {
+          sel.y <- (y > y.split[iy]) & (y <= y.split[iy + 1])
         }
         # Assign tile name to samples:
-        if (any( sel.x & sel.y ))
-          tile[ sel.x & sel.y ] = as.character(as.tilename(c(ix,iy)))
+        if (any(sel.x & sel.y)) 
+          tile[sel.x & sel.y] <- as.character(as.tilename(c(ix, iy)))
       }
     }
-    tile = factor(tile)
+    tile <- factor(tile)
     
     # Identify and process small tiles:
-    s.tiles = get.small.tiles(tile, min.n = min.n, min.frac = min.frac)
-    if (length(s.tiles) > 0) { # any small tiles?
-      if (reassign) {
+    s.tiles <- get.small.tiles(tile, min.n = min.n, min.frac = min.frac)
+    if (length(s.tiles) > 0)
+    {
+      # any small tiles?
+      if (reassign)
+      {
         # Merge small tiles with neighbors:
-        ignore = c()
+        ignore <- c()
         # Repeat until no small tiles are left:
-        while ((length(s.tiles) > 0) & (length(levels(tile)) > 1)) {
+        while ((length(s.tiles) > 0) & (length(levels(tile)) > 1))
+        {
           # Start with smallest small tile:
-          nbrs = tile.neighbors(s.tiles[1], tileset = levels(tile), 
-                                iterate = iterate)
-          if (length(nbrs) == 0) {
-            ignore = c(ignore, as.character(s.tiles[1]))
-          } else {
-            # Merge tile with smallest neighbour to keep tile 
-            # sizes balanced:
-            n.tile = tapply(tile, tile, length)
-            s.nbr = nbrs[ which.min(n.tile[nbrs]) ]
-            tile[ tile == s.tiles[1] ] = s.nbr
-            tile = factor(as.character(tile))
+          nbrs <- tile.neighbors(s.tiles[1], tileset = levels(tile), iterate = iterate)
+          if (length(nbrs) == 0)
+          {
+          ignore <- c(ignore, as.character(s.tiles[1]))
+          } else
+          {
+          # Merge tile with smallest neighbour to keep tile sizes balanced:
+          n.tile <- tapply(tile, tile, length)
+          s.nbr <- nbrs[which.min(n.tile[nbrs])]
+          tile[tile == s.tiles[1]] <- s.nbr
+          tile <- factor(as.character(tile))
           }
           # Update small tiles list:
-          s.tiles = get.small.tiles(tile, min.n = min.n, 
-                                    min.frac = min.frac, 
-                                    ignore = ignore)
+          s.tiles <- get.small.tiles(tile, min.n = min.n, min.frac = min.frac, 
+          ignore = ignore)
         }
-      } else {
+      } else
+      {
         # Just eliminate small tiles:
-        tile[ tile %in% s.tiles ] = NA
-        tile = factor(as.character(tile))
+        tile[tile %in% s.tiles] <- NA
+        tile <- factor(as.character(tile))
       }
     }
     
-    if (!return.factor) tile = as.resampling(tile)
-    resampling[[as.character(cnt)]] = tile
+    if (!return.factor) 
+      tile <- as.resampling(tile)
+    resampling[[as.character(cnt)]] <- tile
   }
   
-  if (!return.factor) resampling = as.represampling(resampling)
+  if (!return.factor) 
+    resampling <- as.represampling(resampling)
   
   return(resampling)
 }
@@ -525,11 +562,9 @@ partition.tiles <- function(data, coords = c("x","y"), dsplit = NULL,
 
 
 
-# Function 'partition.kmeans'
-# ---------------------------
-# Uses k-means clustering to divide the samples
-# into 'nfold' spatial clusters and perform
-# spatial cross-validation.
+# Function 'partition.kmeans' --------------------------- Uses k-means clustering
+# to divide the samples into 'nfold' spatial clusters and perform spatial
+# cross-validation.
 
 #' Partition samples spatially using k-means clustering of the coordinates
 #'
@@ -583,41 +618,48 @@ partition.tiles <- function(data, coords = c("x","y"), dsplit = NULL,
 #' plot(resamp, ecuador)
 #' 
 #' @export
-partition.kmeans <- function(data, coords = c("x","y"), nfold = 10,
-                             repetition = 1, seed1 = NULL, return.factor = FALSE, balancing.steps = 1,
-                             order.clusters = TRUE, ...)
-{
-  if (any(names(list(...)) == "kfold")) {
+partition.kmeans <- function(data, coords = c("x", "y"), nfold = 10, repetition = 1, 
+  seed1 = NULL, return.factor = FALSE, balancing.steps = 1, order.clusters = TRUE, 
+  ...)
+  {
+  if (any(names(list(...)) == "kfold"))
+  {
     warning("argument 'kfold' has been renamed to 'nfold' in 
-                'partition.kmeans'")
-    nfold = list(...)$kfold
+        'partition.kmeans'")
+    nfold <- list(...)$kfold
   }
-  balancing.steps = max(1, balancing.steps)
+  balancing.steps <- max(1, balancing.steps)
   
-  resampling = list()
-  for (cnt in repetition) {
-    if (!is.null(seed1)) set.seed(seed1 + cnt)
-    kms = list()
-    for (i in 1:balancing.steps)
-      kms[[i]] = kmeans(data[,coords], centers = nfold, ...)
-    kmgini = function(x) {
-      p = x$size / sum(x$size)
-      return( 1 - sum(p^2) )
+  resampling <- list()
+  for (cnt in repetition)
+  {
+    if (!is.null(seed1)) 
+      set.seed(seed1 + cnt)
+    kms <- list()
+    for (i in 1:balancing.steps) kms[[i]] <- kmeans(data[, coords], centers = nfold, 
+      ...)
+    kmgini <- function(x)
+    {
+      p <- x$size/sum(x$size)
+      return(1 - sum(p^2))
     }
-    km = kms[[ which.max(sapply(kms, kmgini)) ]]
-    # To do: add more meaningful selection criteria such as minimum 
-    # number of positives and negatives in each partition ???
-    if (order.clusters) {
-      o = rank( km$center[,1], ties.method = "first" )
-      km$cluster = o[km$cluster]
+    km <- kms[[which.max(sapply(kms, kmgini))]]
+    # To do: add more meaningful selection criteria such as minimum number of
+    # positives and negatives in each partition ???
+    if (order.clusters)
+    {
+      o <- rank(km$center[, 1], ties.method = "first")
+      km$cluster <- o[km$cluster]
     }
     # The clusters are the partitions:
-    tile = factor(km$cluster)
+    tile <- factor(km$cluster)
     
-    if (!return.factor) tile = as.resampling(tile)
-    resampling[[as.character(cnt)]] = tile
+    if (!return.factor) 
+      tile <- as.resampling(tile)
+    resampling[[as.character(cnt)]] <- tile
   }
-  if (!return.factor) resampling = as.represampling(resampling)
+  if (!return.factor) 
+    resampling <- as.represampling(resampling)
   
   return(resampling)
 }
@@ -686,60 +728,70 @@ partition.kmeans <- function(data, coords = c("x","y"), nfold = 10,
 #' parti.loo <- partition.loo(ecuador, buffer = 200)
 #' summary(parti)
 #' @export
-partition.disc <- function(data, coords = c("x","y"), radius, buffer = NULL, 
-                           ndisc = nrow(data), seed1 = NULL, return.train = TRUE,
-                           prob = NULL, replace = FALSE, repetition = 1)
-{  
-  posbuf = buffer
-  if (is.null(buffer)) {
-    pospuf = 0
+partition.disc <- function(data, coords = c("x", "y"), radius, buffer = NULL, ndisc = nrow(data), 
+  seed1 = NULL, return.train = TRUE, prob = NULL, replace = FALSE, repetition = 1)
+  {
+  posbuf <- buffer
+  if (is.null(buffer))
+  {
+    pospuf <- 0
   } else stopifnot(buffer >= 0)
   
-  if (replace == FALSE & ndisc > nrow(data))
+  if (replace == FALSE & ndisc > nrow(data)) 
     stop("partition.disc: ndisc must be >nrow(data) if replace=FALSE")
   
-  resample = list()
+  resample <- list()
   
   # Loop for repetitions:
-  for (cnt in repetition) {    
-    if (!is.null(seed1)) set.seed(seed1 + cnt)
-    if (ndisc == nrow(data)) {
-      index = c(1:nrow(data))
-    } else {
-      index = sample.int(nrow(data), size = ndisc, replace = replace, 
-                         prob = prob)
+  for (cnt in repetition)
+  {
+    if (!is.null(seed1)) 
+      set.seed(seed1 + cnt)
+    if (ndisc == nrow(data))
+    {
+      index <- c(1:nrow(data))
+    } else
+    {
+      index <- sample.int(nrow(data), size = ndisc, replace = replace, prob = prob)
     }
     
-    res = list()
-    for (i in index) {
-      if (!is.null(buffer) | radius >= 0) {
-        di = sqrt( (data[,coords[1]] - data[i,coords[1]])^2 
-                   + (data[,coords[2]] - data[i,coords[2]])^2 )
+    res <- list()
+    for (i in index)
+    {
+      if (!is.null(buffer) | radius >= 0)
+      {
+        di <- sqrt((data[, coords[1]] - data[i, coords[1]])^2 + (data[, coords[2]] - 
+          data[i, coords[2]])^2)
       }
-      train.sel = numeric()
-      if (radius >= 0) {
+      train.sel <- numeric()
+      if (radius >= 0)
+      {
         # leave-disc-out with buffer:
-        test.sel = which( di <= radius )
-        if (return.train)
-          train.sel = which( di > (radius + posbuf) )
-      } else {
+        test.sel <- which(di <= radius)
+        if (return.train) 
+          train.sel <- which(di > (radius + posbuf))
+      } else
+      {
         # leave-one-out with buffer:
-        test.sel  = i
-        if (return.train) {
-          if (is.null(buffer)) {
-            train.sel = c(1:nrow(data))[-i]
-          } else train.sel = which( di > posbuf )
+        test.sel <- i
+        if (return.train)
+        {
+          if (is.null(buffer))
+          {
+          train.sel <- c(1:nrow(data))[-i]
+          } else train.sel <- which(di > posbuf)
         }
       }
-      if (return.train & (length(train.sel) == 0)) {
+      if (return.train & (length(train.sel) == 0))
+      {
         warning("empty training set in 'partition.disc': 'buffer' 
-                        and/or 'radius' too large?")
+            and/or 'radius' too large?")
       }
-      res[[as.character(i)]] = list(train = train.sel, test = test.sel)
+      res[[as.character(i)]] <- list(train = train.sel, test = test.sel)
     }
-    resample[[as.character(cnt)]] = res
-  }    
-  repres = as.represampling(resample)
+    resample[[as.character(cnt)]] <- res
+  }
+  repres <- as.represampling(resample)
   
   return(repres)
 }
@@ -750,10 +802,9 @@ partition.disc <- function(data, coords = c("x","y"), radius, buffer = NULL,
 #' @name partition.loo
 #' 
 #' @export
-partition.loo = function(data, ndisc = nrow(data), replace = FALSE, ...)
+partition.loo <- function(data, ndisc = nrow(data), replace = FALSE, ...)
 {
-  partition.disc(data = data, radius = -1, ndisc = ndisc, 
-                 replace = replace, ...)
+  partition.disc(data = data, radius = -1, ndisc = ndisc, replace = replace, ...)
 }
 
 
@@ -785,24 +836,26 @@ partition.loo = function(data, ndisc = nrow(data), replace = FALSE, ...)
 #' # because some samples are included in both the training and
 #' # the test sample (possibly even multiple times)
 #' @export
-represampling.bootstrap <- function(data, coords = c("x","y"), 
-                                    nboot = nrow(data),
-                                    repetition = 1, seed1 = NULL, oob = FALSE)
-{
-  resample = list()
-  for (cnt in repetition) {
-    if (!is.null(seed1)) set.seed(seed1 + cnt)
+represampling.bootstrap <- function(data, coords = c("x", "y"), nboot = nrow(data), 
+  repetition = 1, seed1 = NULL, oob = FALSE)
+  {
+  resample <- list()
+  for (cnt in repetition)
+  {
+    if (!is.null(seed1)) 
+      set.seed(seed1 + cnt)
     # Bootstrap training sample, drawn with replacement:
-    train = sample(nrow(data), nboot, replace = TRUE)
-    if (oob) {
+    train <- sample(nrow(data), nboot, replace = TRUE)
+    if (oob)
+    {
       # test set = out of bag sample:
-      test = c(1:nrow(data))[ !(c(1:nrow(data)) %in% train) ]
-    } else {
+      test <- c(1:nrow(data))[!(c(1:nrow(data)) %in% train)]
+    } else
+    {
       # test set = independently drawn bootstrap sample
-      test  = sample(nrow(data), nboot, replace = TRUE)
+      test <- sample(nrow(data), nboot, replace = TRUE)
     }
-    resample[[as.character(cnt)]] = list( "1" = list(train = train, 
-                                                     test = test) )
+    resample[[as.character(cnt)]] <- list(`1` = list(train = train, test = test))
   }
   return(as.represampling(resample))
 }
@@ -857,61 +910,72 @@ represampling.bootstrap <- function(data, coords = c("x","y"),
 #' # using the factor bootstrap for a non-overlapping block bootstrap
 #' # (see also represampling.tile.bootstrap):
 #' fac <- partition.tiles(ecuador, return.factor = TRUE, repetition = c(1:3), 
-#'                        dsplit = 500, min.n = 200, rotation = "random", offset = "random")
+#'                        dsplit = 500, min.n = 200, rotation = 'random', offset = 'random')
 #' parti <- represampling.factor.bootstrap(ecuador, fac, oob = TRUE, repetition = c(1:3))
 #' plot(parti, ecuador)
 #' 
 #' @export
 represampling.factor.bootstrap <- function(data, fac, repetition = 1, nboot = -1, 
-                                           seed1 = NULL, oob = FALSE)
-{
-  if (oob && length(nboot) > 1) warning("nboot[2] ignored because 'oob=TRUE'")
-  if (is.list(fac)) {
+  seed1 = NULL, oob = FALSE)
+  {
+  if (oob && length(nboot) > 1) 
+    warning("nboot[2] ignored because 'oob=TRUE'")
+  if (is.list(fac))
+  {
     stopifnot(length(fac) == length(repetition))
-    if (is.null(names(fac))) {
-      names(fac) = as.character(repetition)
+    if (is.null(names(fac)))
+    {
+      names(fac) <- as.character(repetition)
     } else stopifnot(all(as.character(repetition) %in% names(fac)))
-  } else {
-    if (length(fac) == 1 && is.character(fac)) {
-      fac = data[,fac]
+  } else
+  {
+    if (length(fac) == 1 && is.character(fac))
+    {
+      fac <- data[, fac]
     } else stopifnot(length(fac) == nrow(data))
-    fac = factor(fac)
+    fac <- factor(fac)
   }
-  if (length(nboot) == 1) nboot = rep(nboot,2)
+  if (length(nboot) == 1) 
+    nboot <- rep(nboot, 2)
   
-  resample = list()
+  resample <- list()
   
-  for (cnt in repetition) {
-    if (!is.null(seed1)) set.seed(seed1 + cnt)
+  for (cnt in repetition)
+  {
+    if (!is.null(seed1)) 
+      set.seed(seed1 + cnt)
     # what factor variable to resample?:
-    if (is.list(fac)) {
-      the.fac = factor(fac[[as.character(cnt)]])
-    } else the.fac = fac
+    if (is.list(fac))
+    {
+      the.fac <- factor(fac[[as.character(cnt)]])
+    } else the.fac <- fac
     # How many bootstrap samples (at the factor level)?:
-    the.nboot = nboot
-    if (the.nboot[1] < 0) the.nboot[1] = nlevels(the.fac)
-    if (the.nboot[2] < 0) the.nboot[2] = nlevels(the.fac)
+    the.nboot <- nboot
+    if (the.nboot[1] < 0) 
+      the.nboot[1] <- nlevels(the.fac)
+    if (the.nboot[2] < 0) 
+      the.nboot[2] <- nlevels(the.fac)
     # Factor levels to be used in training sample:
-    train = sample(levels(the.fac), the.nboot[1], replace = TRUE)
-    # Factor levels to be used for test sample:
-    if (oob) { # out-of-bag, i.e. factors that are not used for the training 
-      # sample:
-      test = levels(the.fac)[ !(levels(the.fac) %in% train) ]
-    } else {
+    train <- sample(levels(the.fac), the.nboot[1], replace = TRUE)
+    # Factor levels to be used for test sample: out-of-bag, i.e. factors that are not
+    # used for the training sample:
+    if (oob)
+    {
+      test <- levels(the.fac)[!(levels(the.fac) %in% train)]
+    } else
+    {
       # second, independently drawn bootstrap sample at the factor level:
-      test  = sample(levels(the.fac), the.nboot[2], replace = TRUE)
+      test <- sample(levels(the.fac), the.nboot[2], replace = TRUE)
     }
     # Turn factor levels into indices:
-    train = unlist( sapply(train, function(x) which(the.fac != x)), 
-                    use.names = FALSE )
-    test  = unlist( sapply(test,  function(x) which(the.fac == x)), 
-                    use.names = FALSE )
+    train <- unlist(sapply(train, function(x) which(the.fac != x)), use.names = FALSE)
+    test <- unlist(sapply(test, function(x) which(the.fac == x)), use.names = FALSE)
     # Compile training and test indices into a resampling object:
-    resample[[as.character(cnt)]] = as.resampling(
-      list( "1" = list(train = train, test = test) ) )
+    resample[[as.character(cnt)]] <- as.resampling(list(`1` = list(train = train, 
+      test = test)))
   }
   
-  resample = as.represampling(resample)
+  resample <- as.represampling(resample)
   return(resample)
 }
 
@@ -929,17 +993,13 @@ represampling.factor.bootstrap <- function(data, fac, repetition = 1, nboot = -1
 #' @param ... additional arguments to be passed to \code{\link{partition.tiles}}
 #' 
 #' @export
-represampling.tile.bootstrap <- function(data, coords = c("x","y"), 
-                                         repetition = 1, nboot = -1, 
-                                         seed1 = NULL, oob = FALSE, ...)
-{
-  parti = partition.tiles(data = data, coords = coords, 
-                          repetition = repetition, seed1 = seed1, 
-                          return.factor = TRUE, ...)
-  repres = represampling.factor.bootstrap(data = data, fac = parti, 
-                                          repetition = repetition, 
-                                          seed1 = seed1, nboot = nboot, 
-                                          oob = oob)
+represampling.tile.bootstrap <- function(data, coords = c("x", "y"), repetition = 1, 
+  nboot = -1, seed1 = NULL, oob = FALSE, ...)
+  {
+  parti <- partition.tiles(data = data, coords = coords, repetition = repetition, 
+    seed1 = seed1, return.factor = TRUE, ...)
+  repres <- represampling.factor.bootstrap(data = data, fac = parti, repetition = repetition, 
+    seed1 = seed1, nboot = nboot, oob = oob)
   return(repres)
 }
 
@@ -958,18 +1018,13 @@ represampling.tile.bootstrap <- function(data, coords = c("x","y"),
 #' @param ... additional arguments to be passed to \code{\link{partition.kmeans}}
 #' 
 #' @export
-represampling.kmeans.bootstrap <- function(data, coords = c("x","y"), 
-                                           repetition = 1, nfold = 10, 
-                                           nboot = nfold, seed1 = NULL, 
-                                           oob = FALSE, ...)
-{
-  parti = partition.tiles(data = data, coords = coords, 
-                          repetition = repetition, seed1 = seed1, 
-                          return.factor = TRUE, ...)
-  repres = represampling.factor.bootstrap(data = data, fac = parti, 
-                                          repetition = repetition, 
-                                          seed1 = seed1, nboot = nboot, 
-                                          oob = oob)
+represampling.kmeans.bootstrap <- function(data, coords = c("x", "y"), repetition = 1, 
+  nfold = 10, nboot = nfold, seed1 = NULL, oob = FALSE, ...)
+  {
+  parti <- partition.tiles(data = data, coords = coords, repetition = repetition, 
+    seed1 = seed1, return.factor = TRUE, ...)
+  repres <- represampling.factor.bootstrap(data = data, fac = parti, repetition = repetition, 
+    seed1 = seed1, nboot = nboot, oob = oob)
   return(repres)
 }
 
@@ -1014,53 +1069,53 @@ represampling.kmeans.bootstrap <- function(data, coords = c("x","y"),
 #' plot(parti,ecuador)
 #' 
 #' @export
-represampling.disc.bootstrap <- function(data, coords = c("x","y"), nboot,
-                                         repetition = 1, seed1 = NULL, 
-                                         oob = FALSE, ...)
-{
-  if (oob && length(nboot) > 1) warning("nboot[2] ignored because oob=TRUE")
-  if (length(nboot) == 1)  nboot = c(nboot, nboot)
+represampling.disc.bootstrap <- function(data, coords = c("x", "y"), nboot, repetition = 1, 
+  seed1 = NULL, oob = FALSE, ...)
+  {
+  if (oob && length(nboot) > 1) 
+    warning("nboot[2] ignored because oob=TRUE")
+  if (length(nboot) == 1) 
+    nboot <- c(nboot, nboot)
   
-  if (oob) {
-    resample = list()
-    for (cnt in repetition) {
-      if (!is.null(seed1)) set.seed(seed1 + cnt)
-      train = partition.disc(data = data, coords = coords, 
-                             repetition = c(1:nboot[1]), 
-                             replace = TRUE, ndisc = 1, seed1 = NULL, 
-                             return.train = TRUE, ...)
-      test = c(1:nrow(data))
-      for (i in 1:nboot[1]) {
-        test = test[ test %in% train[[i]][[1]]$train ] # yes, $train!
-        train[[i]][[1]]$train = NULL
+  if (oob)
+  {
+    resample <- list()
+    for (cnt in repetition)
+    {
+      if (!is.null(seed1)) 
+        set.seed(seed1 + cnt)
+      train <- partition.disc(data = data, coords = coords, repetition = c(1:nboot[1]), 
+        replace = TRUE, ndisc = 1, seed1 = NULL, return.train = TRUE, ...)
+      test <- c(1:nrow(data))
+      for (i in 1:nboot[1])
+      {
+        test <- test[test %in% train[[i]][[1]]$train]  # yes, $train!
+        train[[i]][[1]]$train <- NULL
       }
-      if (length(test) == 0)
+      if (length(test) == 0) 
         warning("empty test set in 'partition.disc.bootstrap':\n'buffer' 
-                and/or 'radius' and/or 'nboot' too large?")
-      train = unname(unlist(train))
-      resample[[as.character(cnt)]] = list("1" = list(train = train, 
-                                                      test = test))
+        and/or 'radius' and/or 'nboot' too large?")
+      train <- unname(unlist(train))
+      resample[[as.character(cnt)]] <- list(`1` = list(train = train, test = test))
     }
-  } else {
-    resample = list()
-    for (cnt in repetition) {
-      if (!is.null(seed1)) set.seed(seed1 + cnt)
-      train = partition.disc(data = data, coords = coords, 
-                             repetition = c(1:nboot[1]), seed1 = NULL, 
-                             replace = TRUE, ndisc = 1, 
-                             return.train = FALSE, ...)
-      train = unname(unlist(train))
-      test = partition.disc(data = data, coords = coords, 
-                            repetition = c(1:nboot[2]), seed1 = NULL, 
-                            replace = TRUE, ndisc = 1, 
-                            return.train = FALSE, ...)
-      test = unname(unlist(test))
-      resample[[as.character(cnt)]] = list("1" = list(train = train, 
-                                                      test = test))
+  } else
+  {
+    resample <- list()
+    for (cnt in repetition)
+    {
+      if (!is.null(seed1)) 
+        set.seed(seed1 + cnt)
+      train <- partition.disc(data = data, coords = coords, repetition = c(1:nboot[1]), 
+        seed1 = NULL, replace = TRUE, ndisc = 1, return.train = FALSE, ...)
+      train <- unname(unlist(train))
+      test <- partition.disc(data = data, coords = coords, repetition = c(1:nboot[2]), 
+        seed1 = NULL, replace = TRUE, ndisc = 1, return.train = FALSE, ...)
+      test <- unname(unlist(test))
+      resample[[as.character(cnt)]] <- list(`1` = list(train = train, test = test))
     }
   }
   
-  resample = as.represampling(resample)
+  resample <- as.represampling(resample)
   return(resample)
 }
 
@@ -1103,37 +1158,42 @@ represampling.disc.bootstrap <- function(data, coords = c("x","y"), nboot,
 #' plot(resamp, ecuador)
 #' 
 #' @export
-plot.represampling <- function(x, data, coords = c("x","y"), pch = "+", 
-                               wiggle.sd = 0, ...)
-{
-  if (missing(data)) stop("'data' argument missing")
+plot.represampling <- function(x, data, coords = c("x", "y"), pch = "+", wiggle.sd = 0, 
+  ...)
+  {
+  if (missing(data)) 
+    stop("'data' argument missing")
   stopifnot(wiggle.sd >= 0)
-  resample = x
-  nr = length(resample)
-  nc = max( sapply(resample,length) )
-  if (nr > 5) warning("Probably too many repetitions length(x) to be able to\n
-                        plot represampling object x. Trying anyway...")
-  if (nr > 7) warning("Probably too many folds max(sapply(x,length)) to\n
-                        be able to plot represampling object x. 
-                        Trying anyway...")
-  op = par(no.readonly = TRUE)
-  par(mfrow = c(nr,nc), mar = c(2,2,3,.5), mgp = c(2,0.7,0), tcl = -0.3, 
-      cex = 0.5)
-  for (i in 1:length(resample)) {
-    for (j in 1:length(resample[[i]])) {
-      seltrain = resample[[i]][[j]]$train
-      seltest  = resample[[i]][[j]]$test
-      main = paste("Repetition ", names(resample)[i], ", Fold ", j)
-      plot(data[,coords[1]], data[,coords[2]], pch = ".", type = "n",
-           main = main, xlab = "", ylab = "", ...) # xlab=coords[1], ylab=coords[2])
-      wxtrain = rnorm(length(seltrain), sd = wiggle.sd)
-      wytrain = rnorm(length(seltrain), sd = wiggle.sd)
-      wxtest = rnorm(length(seltest), sd = wiggle.sd)
-      wytest = rnorm(length(seltest), sd = wiggle.sd)
-      points(data[seltrain,coords[1]] + wxtrain, 
-             data[seltrain,coords[2]] + wytrain, pch = pch)
-      points(data[seltest,coords[1]] + wxtest, 
-             data[seltest,coords[2]] + wxtest, pch = pch, col = "red")
+  resample <- x
+  nr <- length(resample)
+  nc <- max(sapply(resample, length))
+  if (nr > 5) 
+    warning("Probably too many repetitions length(x) to be able to\n
+            plot represampling object x. Trying anyway...")
+  if (nr > 7) 
+    warning("Probably too many folds max(sapply(x,length)) to\n
+            be able to plot represampling object x. 
+            Trying anyway...")
+  op <- par(no.readonly = TRUE)
+  par(mfrow = c(nr, nc), mar = c(2, 2, 3, 0.5), mgp = c(2, 0.7, 0), tcl = -0.3, 
+    cex = 0.5)
+  for (i in 1:length(resample))
+  {
+    for (j in 1:length(resample[[i]]))
+    {
+      seltrain <- resample[[i]][[j]]$train
+      seltest <- resample[[i]][[j]]$test
+      main <- paste("Repetition ", names(resample)[i], ", Fold ", j)
+      plot(data[, coords[1]], data[, coords[2]], pch = ".", type = "n", main = main, 
+        xlab = "", ylab = "", ...)  # xlab=coords[1], ylab=coords[2])
+      wxtrain <- rnorm(length(seltrain), sd = wiggle.sd)
+      wytrain <- rnorm(length(seltrain), sd = wiggle.sd)
+      wxtest <- rnorm(length(seltest), sd = wiggle.sd)
+      wytest <- rnorm(length(seltest), sd = wiggle.sd)
+      points(data[seltrain, coords[1]] + wxtrain, data[seltrain, coords[2]] + 
+        wytrain, pch = pch)
+      points(data[seltest, coords[1]] + wxtest, data[seltest, coords[2]] + 
+        wxtest, pch = pch, col = "red")
     }
   }
   par(op)
@@ -1144,6 +1204,6 @@ plot.represampling <- function(x, data, coords = c("x","y"), pch = "+",
 #' @method plot resampling
 plot.resampling <- function(x, ...)
 {
-  x = as.represampling(list( "1" = x ))
+  x <- as.represampling(list(`1` = x))
   plot.represampling(x)
 }

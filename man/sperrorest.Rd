@@ -153,11 +153,11 @@ library(rpart)
 ctrl <- rpart.control(cp = 0.005) # show the effects of overfitting
 fit <- rpart(fo, data = ecuador, control = ctrl)
 par(xpd = TRUE)
-plot(fit, compress = TRUE, main = "Stoyan's landslide data set")
+plot(fit, compress = TRUE, main = 'Stoyans landslide data set')
 text(fit, use.n = TRUE)
 
 # Non-spatial 5-repeated 10-fold cross-validation:
-mypred.rpart <- function(object, newdata) predict(object, newdata)[,2]
+mypred.rpart <- function(object, newdata) predict(object, newdata)[, 2]
 nspres <- sperrorest(data = ecuador, formula = fo,
                      model.fun = rpart, model.args = list(control = ctrl),
                      pred.fun = mypred.rpart,
@@ -183,9 +183,9 @@ smry <- data.frame(
      nonspat.test     = unlist(summary(nspres$error.rep, level = 1)$test.auroc),
      spatial.training = unlist(summary(spres$error.rep,  level = 1)$train.auroc),
      spatial.test     = unlist(summary(spres$error.rep,  level = 1)$test.auroc))
-boxplot(smry, col = c("red","red","red","green"), 
-        main = "Training vs. test, nonspatial vs. spatial",
-        ylab = "Area under the ROC curve")
+boxplot(smry, col = c('red','red','red','green'), 
+        main = 'Training vs. test, nonspatial vs. spatial',
+        ylab = 'Area under the ROC curve')
 }
 \references{
 Brenning, A. 2012. Spatial cross-validation and bootstrap for 
