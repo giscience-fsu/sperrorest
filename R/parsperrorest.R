@@ -19,59 +19,79 @@
 #' @param data a \code{data.frame} with predictor and response variables. 
 #' Training and test samples will be drawn from this data set by \code{train.fun} 
 #' and \code{test.fun}, respectively.
+#' 
 #' @param formula A formula specifying the variables used by the \code{model}. 
 #' Only simple formulas without interactions or nonlinear terms should 
 #' be used, e.g. \code{y~x1+x2+x3} but not \code{y~x1*x2+log(x3)}. 
 #' Formulas involving interaction and nonlinear terms may possibly work 
 #' for error estimation but not for variable importance assessment, 
 #' but should be used with caution.
+#' 
 #' @param coords vector of length 2 defining the variables in \code{data} that 
 #' contain the x and y coordinates of sample locations.
+#' 
 #' @param model.fun Function that fits a predictive model, such as \code{glm} 
 #' or \code{rpart}. The function must accept at least two arguments, the first 
 #' one being a formula and the second a data.frame with the learning sample.
 #' @param model.args Arguments to be passed to \code{model.fun} 
 #' (in addition to the \code{formula} and \code{data} argument, 
 #' which are provided by \code{sperrorest})
+#' 
 #' @param pred.fun Prediction function for a fitted model object created 
 #' by \code{model}. Must accept at least two arguments: the fitted 
 #' \code{object} and a \code{data.frame} \code{newdata} with data 
 #' on which to predict the outcome.
+#' 
 #' @param pred.args (optional) Arguments to \code{pred.fun} (in addition to the 
 #' fitted model object and the \code{newdata} argument, 
 #' which are provided by \code{sperrorest})
+#' 
 #' @param smp.fun A function for sampling training and test sets from 
 #' \code{data}. E.g., \code{\link{partition.kmeans}} for 
 #' spatial cross-validation using spatial \emph{k}-means clustering.
+#' 
 #' @param smp.args (optional) Arguments to be passed to \code{est.fun}
+#' 
 #' @param train.fun (optional) A function for resampling or subsampling the 
 #' training sample in order to achieve, e.g., uniform sample sizes on all 
 #' training sets, or maintaining a certain ratio of positives and negatives 
 #' in training sets. 
 #' E.g., \code{\link{resample.uniform}} or \code{\link{resample.strat.uniform}}
+#' 
 #' @param train.param (optional) Arguments to be passed to \code{resample.fun}
+#' 
 #' @param test.fun (optional) Like \code{train.fun} but for the test set.
+#' 
 #' @param test.param (optional) Arguments to be passed to \code{test.fun}
+#' 
 #' @param err.fun A function that calculates selected error measures from the 
 #' known responses in \code{data} and the model predictions delivered 
 #' by \code{pred.fun}. E.g., \code{\link{err.default}} (the default). 
 #' See example and details below.
-#' @param error.fold logical (default: \code{TRUE} if \code{importance} is 
+#' 
+#' @param error.fold logical (default: \code{TRUE}) if \code{importance} is 
 #' \code{TRUE}, otherwise \code{FALSE}): calculate error measures on each fold 
 #' within a resampling repetition.
+#' 
 #' @param error.rep logical (default: \code{TRUE}): calculate error measures 
 #' based on the pooled predictions of all folds within a resampling repetition.
+#' 
 #' @param err.train logical (default: \code{TRUE}): calculate error measures on 
 #' the training set (in addition to the test set estimation).
-#' @param imp.variables (optional; used if \code{importance=TRUE}) 
+#' 
+#' @param imp.variables (optional; used if \code{importance = TRUE}) 
 #' Variables for which permutation-based variable importance assessment 
-#' is performed. If \code{importance=TRUE} and \code{imp.variables} is 
+#' is performed. If \code{importance = TRUE} and \code{imp.variables} is 
 #' \code{NULL}, all variables in \code{formula} will be used.
-#' @param imp.permutations (optional; used if \code{importance=TRUE}) 
+#' 
+#' @param imp.permutations (optional; used if \code{importance = TRUE}) 
 #' Number of permutations used for variable importance assessment.
+#' 
 #' @param importance logical: perform permutation-based variable 
 #' importance assessment?
+#' 
 #' @param ... currently not used
+#' 
 #' @param distance logical (default: \code{FALSE}): if \code{TRUE}, calculate 
 #' mean nearest-neighbour distances from test samples to training samples using 
 #' \code{\link{add.distance.represampling}}
@@ -85,17 +105,16 @@
 #' use \code{\link{try}} to robustify calls to \code{model.fun} and 
 #' \code{err.fun}; use with caution!
 #' 
-#' @param progress logical (default: \code{TRUE}): Whether to show a progress 
-#' bar including information about elapsed time, estimated time remaining and a 
-#' percentage indicator (0\% - 100\%). Applies to \code{par.mode = 1}. For
-#' \code{par.mode = 2} the default is \code{"all"} which prints repetition and 
-#' fold information.
-#' Other possible values are \code{"rep"} (repitition only) or \code{FALSE} 
-#' for no output. 
+#' @param progress numeric (default: \code{1}): Whether to show progress 
+#' information. For \code{par.mode = 1}, information about elapsed time, estimated time remaining and a 
+#' percentage indicator (0\% - 100\%) are shown. 
+#' \code{progress = 2} only applies to \code{par.mode = 2} and shows repetition 
+#' information only (instead of repetition and fold).
+#' Set to \code{FALSE} for no progress information. 
 #' 
-#' @param progress.out only used if \code{par.mode = 2}: Directory of progress 
-#' output. Default is "" which results in console output for Unix-Systems and
-#' file output ("sperrorest.progress.txt") in the current working directory 
+#' @param out.progress only used if \code{par.mode = 2}: Optional write progress output to a file instead of console output. 
+#' The default (\code{""}) results in console output for Unix-Systems and
+#' file output ("parsperrorest.progress.txt") in the current working directory 
 #' for Windows-Systems. 
 #' 
 #' @param notify Show a notification badge once \code{parsperrorest} has finished. 
@@ -128,8 +147,8 @@
 #' \code{par.mode = 1}. Here, \code{\link[pbapply]{pblapply}} is used which 
 #' either calls \code{\link[parallel]{mclapply}} (on Unix-Systems) or 
 #' \code{\link[parallel]{parApply}} (on Windows-Systems). \code{par.mode = 2}
-#' uses \code{\link[foreach]{foreach}}. While this approach is not as efficient
-#' as \code{par.mode = 1}, it may work in cases in which \code{par.mode = 1} fails.
+#' uses \code{\link[foreach]{foreach}}. While this approach is not as efficient,
+#'it may work in cases in which \code{par.mode = 1} fails.
 #' 
 #' @details \code{par.libs} only applies to \code{par.mode = 1} on Windows-Systems.
 #' 
@@ -216,8 +235,7 @@
 #' summary(par.sp.res$represampling)
 #' plot(par.sp.res$represampling, ecuador)
 #' 
-#' # only run this part of the example if importance = TRUE!
-#' smry = data.frame(
+#' smry <- data.frame(
 #'     nonspat.training = unlist(summary(par.nsp.res$error.rep, level = 1)$train.auroc),
 #'     nonspat.test     = unlist(summary(par.nsp.res$error.rep, level = 1)$test.auroc),
 #'     spatial.training = unlist(summary(par.sp.res$error.rep, level = 1)$train.auroc),
@@ -243,8 +261,8 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
                          distance = FALSE,
                          do.gc = 1,
                          do.try = FALSE,
-                         progress = TRUE,
-                         progress.out = "", 
+                         progress = 1,
+                         out.progress = "", 
                          notify = FALSE,
                          par.args = list(),
                          benchmark = FALSE, ...)
@@ -669,16 +687,16 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
     
     # suppress any progress output of workes if progress = FALSE
     if (progress == FALSE) {
-      progress.out <- "/dev/null"
+      out.progress <- "/dev/null"
       if (Sys.info()["sysname"] == "Windows") {
-        progress.out <- "nul:"
+        out.progress <- "nul:"
       } 
     }
     # special settings for Windows
-    if (progress.out == "" & Sys.info()["sysname"] == "Windows")
-      progress.out <- paste0(getwd(), "/sperrorest.progress.txt")
+    if (out.progress == "" & Sys.info()["sysname"] == "Windows")
+      out.progress <- paste0(getwd(), "/parsperrorest.progress.txt")
     
-    cl <- makeCluster(par.args$par.units, outfile = progress.out)
+    cl <- makeCluster(par.args$par.units, outfile = out.progress)
     registerDoParallel(cl, cores = par.args$par.units)
     
     foreach.out <- foreach(i = 1:length(resamp), 
@@ -695,9 +713,13 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
                                pooled.obs.test = pooled.pred.test = c()
                              }
                              for (j in 1:length(resamp[[i]])) {
-                               if (progress == TRUE) {
+                               if (progress == TRUE | progress == 1) {
                                  cat(date(), "Repetition", 
                                      names(resamp)[i], "- Fold", j, "\n") 
+                               }
+                               if (progress == 2) {
+                                 cat(date(), "Repetition", 
+                                     names(resamp)[i], "\n") 
                                }
                                nd <- data[resamp[[i]][[j]]$train, ]
                                if (!is.null(train.fun)) {
@@ -801,17 +823,17 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
                                if (importance & error.fold) {
                                  if (is.null(res[[i]][[j]]$test)) {
                                    impo[[i]][[j]] <- c()
-                                   if (progress == TRUE) 
+                                   if (!progress == FALSE) 
                                      cat(date(), 
                                          "-- skipping variable importance\n")
                                  }
                                  else {
-                                   if (progress == TRUE) {
+                                   if (!progress == FALSE) {
                                      cat(date(), "-- Variable importance\n")
                                    }
                                    imp.temp <- imp.one.rep
                                    for (cnt in 1:imp.permutations) {
-                                     if (progress == TRUE & 
+                                     if (!progress == FALSE & 
                                          (cnt > 1)) 
                                        if (log10(cnt) == floor(log10(cnt))) 
                                          cat(date(), "   ", cnt, "\n")
@@ -979,7 +1001,7 @@ parsperrorest = function(formula, data, coords = c("x", "y"),
       }
     }
     
-    if (progress == TRUE) {
+    if (!progress == FALSE) {
       cat(date(), "Done.\n")
     }
     if (importance) {
