@@ -423,9 +423,9 @@ resample.factor <- function(data, param = list(fac = "class",
 #' use \code{\link{try}} to robustify calls to \code{model.fun} and 
 #' \code{err.fun}; use with caution!
 #' 
-#' @param verbose if \code{verbose == "all"}, repetition and fold progress is 
+#' @param progress if \code{progress == 1}, repetition and fold progress is 
 #' shown in console (in Windows Rgui, disable 'Buffered output' in 'Misc' menu). 
-#' If \code{verbose == "rep"}, only repetitions are shown. 
+#' If \code{verbose == 2}, only repetition information is shown. 
 #' Set to \code{FALSE} for no progress information. 
 #' 
 #' @param notify Show a notification badge once \code{sperrorest} has finished. 
@@ -541,7 +541,7 @@ sperrorest = function(formula, data, coords = c("x", "y"),
                       distance = FALSE,
                       do.gc = 1,
                       do.try = FALSE,
-                      verbose = "all", 
+                      progress = 1, 
                       notify = FALSE,
                       benchmark = FALSE, ...)
 {
@@ -600,7 +600,7 @@ sperrorest = function(formula, data, coords = c("x", "y"),
               use 'model.args' to pass list of additional 
               arguments to 'model.fun'")
       if (any(names(dots.args) == "silent")) {
-        stop("sorry: argument names have changed; 'silent' is now 'verbose'")
+        stop("sorry: argument names have changed; 'silent' is now 'progress'")
       }
       if (any(names(dots.args) == "err.pooled")) {
         stop("sorry: argument names have changed; 'err.pooled' is now 'error.rep'")
@@ -650,7 +650,7 @@ sperrorest = function(formula, data, coords = c("x", "y"),
 
     # For each repetition:
     for (i in 1:length(resamp)) {
-      if (verbose == "all" | verbose == "rep") {
+      if (progress == 1 | progress == 2) {
         cat(date(), "Repetition", names(resamp)[i], "\n")
       }
 
@@ -664,12 +664,12 @@ sperrorest = function(formula, data, coords = c("x", "y"),
         # For each fold:
         for (j in 1:length(resamp[[i]])) {
           
-          if (verbose == "all") {
+          if (progress == 1) {
             cat(date(), "- Fold", j, "\n")
           }
           
           # 'silent' setting of try() calls
-          if (verbose == "all" | verbose == "rep") {
+          if (progress == 1 | progress == 2) {
             silent <- FALSE
           } else (silent <- TRUE)
             
@@ -768,12 +768,12 @@ sperrorest = function(formula, data, coords = c("x", "y"),
             
             if (is.null(res[[i]][[j]]$test)) {
               impo[[i]][[j]] = c()
-              if (verbose == "all" | verbose == "rep") {
+              if (progress == 1 | progress == 2) {
                 cat(date(), "-- skipping variable importance\n")
               }
             } else {
               
-              if (verbose == "all" | verbose == "rep") {
+              if (progress == 1 | progress == 2) {
                 cat(date(), "-- Variable importance\n")
               }
               imp.temp = imp.one.rep
@@ -781,7 +781,7 @@ sperrorest = function(formula, data, coords = c("x", "y"),
               # Parallelize this: ???
               for (cnt in 1:imp.permutations) {
                 # Some output on screen:
-                if (verbose == "all" | verbose == "rep" & (cnt > 1)) {
+                if (progress == 1 | progress == 2 & (cnt > 1)) {
                   if (log10(cnt) == floor(log10(cnt))) {
                     cat(date(), "   ", cnt, "\n")
                   }
@@ -889,7 +889,7 @@ sperrorest = function(formula, data, coords = c("x", "y"),
       class(pooled.err) = "sperrorestreperror"
     }
     
-    if (verbose == "all" | verbose == "rep") {
+    if (progress == 1 | progress == 2) {
       cat(date(), "Done.\n")
     }
 
