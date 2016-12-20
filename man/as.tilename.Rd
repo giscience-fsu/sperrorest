@@ -34,12 +34,12 @@ vector of length 2
 }
 \description{
 Functions for generating and handling alphanumeric tile names of the 
-form \code{"X2:Y7"} as used by \code{\link{partition.tiles}} and 
+form \code{'X2:Y7'} as used by \code{\link{partition.tiles}} and 
 \code{\link{represampling.tile.bootstrap}}.
 }
 \examples{
-tnm = as.tilename(c(2,3))
-tnm # "X2:Y3"
+tnm <- as.tilename(c(2,3))
+tnm # 'X2:Y3'
 as.numeric(tnm) # c(2,3)
 }
 \seealso{

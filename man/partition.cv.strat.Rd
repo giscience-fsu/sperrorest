@@ -50,14 +50,14 @@ to cross-validation test and training sets.
 }
 \examples{
 data(ecuador)
-parti = partition.cv.strat(ecuador, strat = "slides", nfold = 5, repetition = 1)
-idx = parti[["1"]][[1]]$train
-mean(ecuador$slides[idx]=="TRUE") / mean(ecuador$slides=="TRUE")
+parti <- partition.cv.strat(ecuador, strat = 'slides', nfold = 5, repetition = 1)
+idx <- parti[['1']][[1]]$train
+mean(ecuador$slides[idx] == 'TRUE') / mean(ecuador$slides == 'TRUE')
 # always == 1
 # Non-stratified cross-validation:
-parti = partition.cv(ecuador, nfold = 5, repetition = 1)
-idx = parti[["1"]][[1]]$train
-mean(ecuador$slides[idx]=="TRUE") / mean(ecuador$slides=="TRUE")
+parti <- partition.cv(ecuador, nfold = 5, repetition = 1)
+idx <- parti[['1']][[1]]$train
+mean(ecuador$slides[idx] == 'TRUE') / mean(ecuador$slides == 'TRUE')
 # close to 1 because of large sample size, but with some random variation
 }
 \seealso{

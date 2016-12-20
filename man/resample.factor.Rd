@@ -30,9 +30,9 @@ If \code{param$replace=TRUE}, the number of groups to be drawn is \code{param$n}
 }
 \examples{
 data(ecuador) # Muenchow et al. (2012), see ?ecuador
-d = resample.uniform(ecuador, param = list(strat = "slides", n = 200))
+d = resample.uniform(ecuador, param = list(strat = 'slides', n = 200))
 nrow(d) # == 200
-sum(d$slides == "TRUE")
+sum(d$slides == 'TRUE')
 
 }
 \seealso{

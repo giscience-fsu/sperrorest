@@ -42,8 +42,8 @@ Nearest-neighbour distances are calculated for each point in
 is applied to this vector.
 }
 \examples{
-d = data.frame(x = rnorm(100), y = rnorm(100))
-dataset.distance(d, d) # == 0
+df <- data.frame(x = rnorm(100), y = rnorm(100))
+dataset.distance(df, df) # == 0
 
 }
 \seealso{

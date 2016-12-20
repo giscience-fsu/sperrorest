@@ -54,7 +54,7 @@ only indices between \code{1} and \code{n} identifying the seleciton
 (see Examples).
 
 Another example is bootstrap resampling. \code{\link{represampling.bootstrap}} 
-with argument \code{oob=TRUE} generates [\code{rep}]\code{resampling} objects 
+with argument \code{oob = TRUE} generates [\code{rep}]\code{resampling} objects 
 with indices of a bootstrap sample in the \code{train} component and indices 
 of the out-of-bag sample in the test component (see Examples below).
 
@@ -65,30 +65,30 @@ of the out-of-bag sample in the test component (see Examples below).
 
 \code{as.resampling.list} checks if the list in \code{object} has a valid 
 \code{resampling} object structure (with components \code{train} and 
-\code{test} etc.) and assigns the class attribute \code{"resampling"} if 
+\code{test} etc.) and assigns the class attribute \code{'resampling'} if 
 successful.
 }
 \examples{
 data(ecuador) # Muenchow et al. (2012), see ?ecuador
 
 # Partitioning by elevation classes in 200 m steps:
-parti = factor( as.character( floor( ecuador$dem / 200 ) ) )
-smp = as.resampling(parti)
+parti <- factor( as.character( floor( ecuador$dem / 200 ) ) )
+smp <- as.resampling(parti)
 summary(smp)
 # Compare:
 summary(parti)
 
 # k-fold (non-spatial) cross-validation partitioning:
-parti = partition.cv(ecuador)
-parti = parti[[1]] # the first (and only) resampling object in parti
+parti <- partition.cv(ecuador)
+parti <- parti[[1]] # the first (and only) resampling object in parti
 # data corresponding to the test sample of the first fold:
 str( ecuador[ parti[[1]]$test , ] )
 # the corresponding training sample - larger:
 str( ecuador[ parti[[1]]$train , ] )
 
 # Bootstrap training sets, out-of-bag test sets:
-parti = represampling.bootstrap(ecuador, oob = TRUE)
-parti = parti[[1]] # the first (and only) resampling object in parti
+parti <- represampling.bootstrap(ecuador, oob = TRUE)
+parti <- parti[[1]] # the first (and only) resampling object in parti
 # out-of-bag test sample: approx. one-third of nrow(ecuador):
 str( ecuador[ parti[[1]]$test , ] )
 # bootstrap training sample: same size as nrow(ecuador):

@@ -11,7 +11,7 @@ parsperrorest(formula, data, coords = c("x", "y"), model.fun,
   err.fun = err.default, error.fold = TRUE, error.rep = TRUE,
   err.train = TRUE, imp.variables = NULL, imp.permutations = 1000,
   importance = !is.null(imp.variables), distance = FALSE, do.gc = 1,
-  do.try = FALSE, progress = TRUE, progress.out = "", notify = FALSE,
+  do.try = FALSE, progress = 1, out.progress = "", notify = FALSE,
   par.args = list(), benchmark = FALSE, ...)
 }
 \arguments{
@@ -69,7 +69,7 @@ known responses in \code{data} and the model predictions delivered
 by \code{pred.fun}. E.g., \code{\link{err.default}} (the default). 
 See example and details below.}
 
-\item{error.fold}{logical (default: \code{TRUE} if \code{importance} is 
+\item{error.fold}{logical (default: \code{TRUE}) if \code{importance} is 
 \code{TRUE}, otherwise \code{FALSE}): calculate error measures on each fold 
 within a resampling repetition.}
 
@@ -79,12 +79,12 @@ based on the pooled predictions of all folds within a resampling repetition.}
 \item{err.train}{logical (default: \code{TRUE}): calculate error measures on 
 the training set (in addition to the test set estimation).}
 
-\item{imp.variables}{(optional; used if \code{importance=TRUE}) 
+\item{imp.variables}{(optional; used if \code{importance = TRUE}) 
 Variables for which permutation-based variable importance assessment 
-is performed. If \code{importance=TRUE} and \code{imp.variables} is 
+is performed. If \code{importance = TRUE} and \code{imp.variables} is 
 \code{NULL}, all variables in \code{formula} will be used.}
 
-\item{imp.permutations}{(optional; used if \code{importance=TRUE}) 
+\item{imp.permutations}{(optional; used if \code{importance = TRUE}) 
 Number of permutations used for variable importance assessment.}
 
 \item{importance}{logical: perform permutation-based variable 
@@ -103,20 +103,19 @@ if \code{>=2}, after each fold}
 use \code{\link{try}} to robustify calls to \code{model.fun} and 
 \code{err.fun}; use with caution!}
 
-\item{progress}{logical (default: \code{TRUE}): Whether to show a progress 
-bar including information about elapsed time, estimated time remaining and a 
-percentage indicator (0\% - 100\%). Applies to \code{par.mode = 1}. For
-\code{par.mode = 2} the default is \code{"all"} which prints repetition and 
-fold information.
-Other possible values are \code{"rep"} (repitition only) or \code{FALSE} 
-for no output.}
+\item{progress}{numeric (default: \code{1}): Whether to show progress 
+information. For \code{par.mode = 1}, information about elapsed time, estimated time remaining and a 
+percentage indicator (0\% - 100\%) are shown. 
+\code{progress = 2} only applies to \code{par.mode = 2} and shows repetition 
+information only (instead of repetition and fold).
+Set to \code{FALSE} for no progress information.}
 
-\item{progress.out}{only used if \code{par.mode = 2}: Directory of progress 
-output. Default is "" which results in console output for Unix-Systems and
-file output ("sperrorest.progress.txt") in the current working directory 
-for Windows-Systems.}
+\item{out.progress}{only used if \code{par.mode = 2}: Optional write progress output to a file instead of console output. 
+The default (\code{''}) results in console output for Unix-systems and
+file output ('parsperrorest.progress.txt') in the current working directory 
+for Windows-systems.}
 
-\item{notify}{Show a notification badge once \code{parsperrorest} has finished.}
+\item{notify}{(optional) show a notification badge after \code{parsperrorest} has finished.}
 
 \item{par.args}{list of parallelization parameters:
 \code{par.mode} (the parallelization mode),
@@ -124,7 +123,7 @@ for Windows-Systems.}
 \code{par.libs} (libraries to be loaded on cluster workers, character list).
 See Details for more information.}
 
-\item{benchmark}{logical (default: \code{FALSE}): if \code{TRUE}, 
+\item{benchmark}{(optional) logical (default: \code{FALSE}): if \code{TRUE}, 
 perform benchmarking and return \code{sperrorestbenchmarks} object}
 
 \item{...}{currently not used}
@@ -154,12 +153,12 @@ assessment of spatial variable importance.
 \details{
 Two \code{par.mode} options are availabe. The default mode is 
 \code{par.mode = 1}. Here, \code{\link[pbapply]{pblapply}} is used which 
-either calls \code{\link[parallel]{mclapply}} (on Unix-Systems) or 
-\code{\link[parallel]{parApply}} (on Windows-Systems). \code{par.mode = 2}
-uses \code{\link[foreach]{foreach}}. While this approach is not as efficient
-as \code{par.mode = 1}, it may work in cases in which \code{par.mode = 1} fails.
+either calls \code{\link[parallel]{mclapply}} (on Unix-systems) or 
+\code{\link[parallel]{parApply}} (on Windows-systems). \code{par.mode = 2}
+uses \code{\link[foreach]{foreach}}. While this approach is not as efficient,
+it may work in cases in which \code{par.mode = 1} fails.
 
-\code{par.libs} only applies to \code{par.mode = 1} on Windows-Systems.
+\code{par.libs} only applies to \code{par.mode = 1} on Windows-systems.
 
 This parallelized version of \code{\link{sperrorest}} may highly 
 decrease computation time. However, please note that problems
@@ -219,15 +218,14 @@ summary(par.sp.res$error.fold)
 summary(par.sp.res$represampling)
 plot(par.sp.res$represampling, ecuador)
 
-# only run this part of the example if importance = TRUE!
-smry = data.frame(
+smry <- data.frame(
     nonspat.training = unlist(summary(par.nsp.res$error.rep, level = 1)$train.auroc),
     nonspat.test     = unlist(summary(par.nsp.res$error.rep, level = 1)$test.auroc),
     spatial.training = unlist(summary(par.sp.res$error.rep, level = 1)$train.auroc),
     spatial.test     = unlist(summary(par.sp.res$error.rep, level = 1)$test.auroc))
-boxplot(smry, col = c("red","red","red","green"), 
-    main = "Training vs. test, nonspatial vs. spatial",
-    ylab = "Area under the ROC curve")
+boxplot(smry, col = c('red','red','red','green'), 
+    main = 'Training vs. test, nonspatial vs. spatial',
+    ylab = 'Area under the ROC curve')
     
 }
 \references{

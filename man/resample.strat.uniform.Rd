@@ -33,9 +33,9 @@ If \code{param$replace=TRUE}, the size of the subsample is \code{param$n}.
 \examples{
 data(ecuador) # Muenchow et al. (2012), see ?ecuador
 d = resample.strat.uniform(ecuador, 
-                           param = list(strat = "slides", nstrat = 100))
+                           param = list(strat = 'slides', nstrat = 100))
 nrow(d) # == 200
-sum(d$slides == "TRUE") # == 100
+sum(d$slides == 'TRUE') # == 100
 
 }
 \seealso{

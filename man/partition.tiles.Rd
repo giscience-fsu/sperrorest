@@ -30,7 +30,7 @@ its value is recycled.}
 \item{rotation}{indicates whether and how the rectangular grid should 
 be rotated; random rotation is only between \code{-45} and \code{+45} degrees.}
 
-\item{user.rotation}{if \code{rotation="user"}, angles (in degrees) by which 
+\item{user.rotation}{if \code{rotation='user'}, angles (in degrees) by which 
 the rectangular grid is to be rotated in each repetition. Either a vector of 
 same length as \code{repetition}, or a single number that will be replicated 
 \code{length(repetition)} times.}
@@ -38,7 +38,7 @@ same length as \code{repetition}, or a single number that will be replicated
 \item{offset}{indicates whether and how the rectangular grid should be 
 shifted by an offset.}
 
-\item{user.offset}{if \code{offset="user"}, a list (or vector) of two 
+\item{user.offset}{if \code{offset='user'}, a list (or vector) of two 
 components specifying a shift of the rectangular grid in (possibly rotated) x 
 and y direction. The offset values are relative values, a value of \code{0.5} 
 resulting in a one-half tile shift towards the left, or upward. 
@@ -96,26 +96,26 @@ Default parameter settings may change in future releases.
 This function, especially the rotation and shifting part of it and the 
 algorithm for cleaning up small tiles is still a bit experimental. 
 Use with caution.
-For non-zero offsets (\code{offset!="none")}), the number of tiles may 
+For non-zero offsets (\code{offset!='none')}), the number of tiles may 
 actually be greater than \code{nsplit[1]*nsplit[2]} because of fractional 
 tiles lurking into the study region. \code{reassign=TRUE} with suitable 
 thresholds is therefore recommended for non-zero (including random) offsets.
 }
 \examples{
 data(ecuador)
-parti = partition.tiles(ecuador, nsplit = c(4,3), reassign = FALSE)
+parti <- partition.tiles(ecuador, nsplit = c(4,3), reassign = FALSE)
 plot(parti,ecuador)
 summary(parti) # tile A4 has only 55 samples
 # same partitioning, but now merge tiles with less than 100 samples to 
 # adjacent tiles:
-parti2 = partition.tiles(ecuador, nsplit = c(4,3), reassign = TRUE, min.n = 100)
+parti2 <- partition.tiles(ecuador, nsplit = c(4,3), reassign = TRUE, min.n = 100)
 plot(parti2,ecuador)
 summary(parti2)
 # tile B4 (in 'parti') was smaller than A3, therefore A4 was merged with B4, 
 # not with A3
 # now with random rotation and offset, and tiles of 2000 m length:
-parti3 = partition.tiles(ecuador, dsplit = 2000, offset = "random", 
-rotation = "random", reassign = TRUE, min.n = 100)
+parti3 <- partition.tiles(ecuador, dsplit = 2000, offset = 'random', 
+rotation = 'random', reassign = TRUE, min.n = 100)
 plot(parti3,ecuador)
 summary(parti3)
 }

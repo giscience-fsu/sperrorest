@@ -37,10 +37,10 @@ of numerical and categorical response variables.
 i.e. they will result in an error.
 }
 \examples{
-obs = rnorm(1000)
+obs <- rnorm(1000)
 # Two mock (soft) classification examples:
-err.default( obs>0, rnorm(1000) ) # just noise
-err.default( obs>0, obs + rnorm(1000) ) # some discrimination
+err.default( obs > 0, rnorm(1000) ) # just noise
+err.default( obs > 0, obs + rnorm(1000) ) # some discrimination
 # Three mock regression examples:
 err.default( obs, rnorm(1000) ) # just noise, but no bias
 err.default( obs, obs + rnorm(1000) ) # some association, no bias
