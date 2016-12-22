@@ -116,7 +116,7 @@ summary(parti2)
 # now with random rotation and offset, and tiles of 2000 m length:
 parti3 <- partition.tiles(ecuador, dsplit = 2000, offset = 'random', 
 rotation = 'random', reassign = TRUE, min.n = 100)
-plot(parti3,ecuador)
+plot(parti3, ecuador)
 summary(parti3)
 }
 \seealso{
