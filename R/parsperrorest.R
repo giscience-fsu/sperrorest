@@ -1001,8 +1001,6 @@ parsperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.
         i <- i + 1
       }
       
-      ## error.fold multiple (unnecessary) lists are written in foreach loop. Reason
-      ## unknown.  Subset to important lists only containing fold error measures
       foreach.out.tmp <- foreach.out[[1]]
       foreach.out.tmp[[1]] <- NULL
       for (i in seq_along(resamp))
