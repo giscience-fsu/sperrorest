@@ -349,7 +349,6 @@ resample.factor <- function(data, param = list(fac = "class", n = Inf, replace =
 #' 
 #' @importFrom utils packageVersion
 #' @import rpart
-#' @importFrom ghit install_github
 #' 
 #' @inheritParams partition.cv
 #' 
