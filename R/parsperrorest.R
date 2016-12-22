@@ -14,8 +14,6 @@
 #' @importFrom parallel detectCores clusterSetRNGStream mclapply
 #' @import foreach
 #' @import doParallel
-#' @importFrom ghit install_github
-#' @import notifier
 #' 
 #' @param data a \code{data.frame} with predictor and response variables. 
 #' Training and test samples will be drawn from this data set by \code{train.fun} 
@@ -117,8 +115,6 @@
 #' The default (\code{''}) results in console output for Unix-systems and
 #' file output ('parsperrorest.progress.txt') in the current working directory 
 #' for Windows-systems. 
-#' 
-#' @param notify (optional) show a notification badge after \code{parsperrorest} has finished. 
 #' 
 #' @param par.args list of parallelization parameters:
 #' \code{par.mode} (the parallelization mode),
@@ -251,7 +247,7 @@ parsperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.
   train.fun = NULL, train.param = NULL, test.fun = NULL, test.param = NULL, err.fun = err.default, 
   error.fold = TRUE, error.rep = TRUE, err.train = TRUE, imp.variables = NULL, 
   imp.permutations = 1000, importance = !is.null(imp.variables), distance = FALSE, 
-  do.gc = 1, do.try = FALSE, progress = 1, out.progress = "", notify = FALSE, par.args = list(), 
+  do.gc = 1, do.try = FALSE, progress = 1, out.progress = "", par.args = list(), 
   benchmark = FALSE, ...)
   {
   # if benchmark = TRUE, start clock
@@ -693,22 +689,6 @@ parsperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.
       class(my.bench) <- "sperrorestbenchmarks"
     } else my.bench <- NULL
     
-    if (notify == TRUE)
-    {
-      
-      suppressMessages(install_github("gaborcsardi/notifier"))
-      
-      if (benchmark == TRUE)
-      {
-        msg <- paste0("Repetitions: ", length(smp.args$repetition), "; ", 
-                      "Folds: ", smp.args$nfold, "; ", "Total time: ", round(my.bench$runtime.performance, 
-                                                                             2))
-      } else (msg <- paste0("Repetitions: ", length(smp.args$repetition), "; ", 
-                            "Folds: ", smp.args$nfold))
-      
-      notify(title = "parsperrorest() finished successfully!", 
-             msg <- msg)
-    }
     
     RES <- list(error.rep = pooled.err, error.fold = res, represampling = resamp, 
       importance = impo, benchmarks = my.bench, package.version = packageVersion("sperrorest"))
@@ -1059,23 +1039,6 @@ parsperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.
         runtime.performance = end.time - start.time)
       class(my.bench) <- "sperrorestbenchmarks"
     } else my.bench <- NULL
-    
-    if (notify == TRUE)
-    {
-      
-      suppressMessages(install_github("gaborcsardi/notifier"))
-      
-      if (benchmark == TRUE)
-      {
-        msg <- paste0("Repetitions: ", length(smp.args$repetition), "; ", 
-                      "Folds: ", smp.args$nfold, "; ", "Total time: ", round(my.bench$runtime.performance, 
-                                                                             2))
-      } else (msg <- paste0("Repetitions: ", length(smp.args$repetition), "; ", 
-                            "Folds: ", smp.args$nfold))
-      
-      notify(title = "parsperrorest() finished successfully!", 
-             msg <- msg)
-    }
     
     if (error.rep & error.fold)
     {

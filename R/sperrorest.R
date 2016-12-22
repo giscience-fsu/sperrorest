@@ -448,8 +448,6 @@ resample.factor <- function(data, param = list(fac = "class", n = Inf, replace =
 #' If \code{progress = 2}, only repetition information is shown. 
 #' Set to \code{FALSE} for no progress information. 
 #' 
-#' @param notify (optional) show a notification badge after \code{sperrorest} has finished. 
-#' 
 #' @param benchmark (optional) logical (default: \code{FALSE}): if \code{TRUE}, 
 #' perform benchmarking and return \code{sperrorestbenchmarks} object
 #' 
@@ -548,7 +546,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
   train.fun = NULL, train.param = NULL, test.fun = NULL, test.param = NULL, err.fun = err.default, 
   error.fold = TRUE, error.rep = TRUE, err.train = TRUE, imp.variables = NULL, 
   imp.permutations = 1000, importance = !is.null(imp.variables), distance = FALSE, 
-  do.gc = 1, do.try = FALSE, progress = 1, notify = FALSE, benchmark = FALSE, ...)
+  do.gc = 1, do.try = FALSE, progress = 1, benchmark = FALSE, ...)
   {
   
   # if benchmark = TRUE, start clock
@@ -970,22 +968,6 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
   RES <- list(error.rep = pooled.err, error.fold = res, represampling = resamp, 
     importance = impo, benchmarks = my.bench, package.version = packageVersion("sperrorest"))
   class(RES) <- "sperrorest"
-  
-  if (notify == TRUE)
-  {
-    
-    suppressMessages(install_github("gaborcsardi/notifier"))
-    
-    if (benchmark == TRUE)
-    {
-      msg <- paste0("Repetitions: ", length(smp.args$repetition), "; ", "Folds: ", 
-                    smp.args$nfold, "; ", "Total time: ", round(my.bench$runtime.performance, 
-                                                                2))
-    } else (msg <- paste0("Repetitions: ", length(smp.args$repetition), "; ", "Folds: ", 
-                          smp.args$nfold))
-    
-    notifier::notify(title = "parsperrorest() finished successfully!", msg <- msg)
-  }
   
   return(RES)
 }
