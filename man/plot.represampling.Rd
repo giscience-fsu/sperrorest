@@ -42,10 +42,10 @@ the number of maps that can be displayed at once, i.e., the number of rows
 \examples{
 data(ecuador)
 # non-spatial cross-validation:
-resamp = partition.cv(ecuador, nfold = 5, repetition = 1:2)
+resamp <- partition.cv(ecuador, nfold = 5, repetition = 1:2)
 plot(resamp, ecuador)
 # spatial cross-validation using k-means clustering:
-resamp = partition.kmeans(ecuador, nfold = 5, repetition = 1:2)
+resamp <- partition.kmeans(ecuador, nfold = 5, repetition = 1:2)
 plot(resamp, ecuador)
 
 }

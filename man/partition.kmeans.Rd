@@ -33,7 +33,7 @@ to initialize the random number generator before sampling from the data set.}
 other \code{sperrorest} functions), return a \code{list} containing factor 
 vectors (see Value)}
 
-\item{balancing.steps}{if \code{>1}, perform \code{nfold}-means clustering 
+\item{balancing.steps}{if \code{> 1}, perform \code{nfold}-means clustering 
 \code{balancing.steps} times, and pick the clustering that minimizes the Gini 
 index of the sample size distribution among the partitions. The idea is that 
 'degenerate' partitions will be avoided, but this also has the side effect of 
