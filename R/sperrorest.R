@@ -8,7 +8,6 @@
 #' at the overall or repetition level.
 #' 
 #' @import rpart
-#' @import notifier
 #' @importFrom stats IQR kmeans mad median predict
 #' rnorm runif sd terms weighted.mean 
 #' @importFrom graphics par plot points
