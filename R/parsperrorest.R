@@ -15,6 +15,7 @@
 #' @import foreach
 #' @import doParallel
 #' @importFrom ghit install_github
+#' @import notifier
 #' 
 #' @param data a \code{data.frame} with predictor and response variables. 
 #' Training and test samples will be drawn from this data set by \code{train.fun} 
@@ -700,16 +701,13 @@ parsperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.
       if (benchmark == TRUE)
       {
         msg <- paste0("Repetitions: ", length(smp.args$repetition), "; ", 
-          "Folds: ", smp.args$nfold, "; ", "Total time: ", round(my.bench$runtime.performance, 
-          2))
+                      "Folds: ", smp.args$nfold, "; ", "Total time: ", round(my.bench$runtime.performance, 
+                                                                             2))
       } else (msg <- paste0("Repetitions: ", length(smp.args$repetition), "; ", 
-        "Folds: ", smp.args$nfold))
+                            "Folds: ", smp.args$nfold))
       
-      if (requireNamespace("notifier", quietly = TRUE))
-      {
-        notifier::notify(title = "parsperrorest() finished successfully!", 
-          msg <- msg)
-      }
+      notify(title = "parsperrorest() finished successfully!", 
+             msg <- msg)
     }
     
     RES <- list(error.rep = pooled.err, error.fold = res, represampling = resamp, 
@@ -1070,16 +1068,13 @@ parsperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.
       if (benchmark == TRUE)
       {
         msg <- paste0("Repetitions: ", length(smp.args$repetition), "; ", 
-          "Folds: ", smp.args$nfold, "; ", "Total time: ", round(my.bench$runtime.performance, 
-          2))
+                      "Folds: ", smp.args$nfold, "; ", "Total time: ", round(my.bench$runtime.performance, 
+                                                                             2))
       } else (msg <- paste0("Repetitions: ", length(smp.args$repetition), "; ", 
-        "Folds: ", smp.args$nfold))
+                            "Folds: ", smp.args$nfold))
       
-      if (requireNamespace("notifier", quietly = TRUE))
-      {
-        notifier::notify(title = "parsperrorest() finished successfully!", 
-          msg <- msg)
-      }
+      notify(title = "parsperrorest() finished successfully!", 
+             msg <- msg)
     }
     
     if (error.rep & error.fold)

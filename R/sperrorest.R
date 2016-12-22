@@ -8,6 +8,7 @@
 #' at the overall or repetition level.
 #' 
 #' @import rpart
+#' @import notifier
 #' @importFrom stats IQR kmeans mad median predict
 #' rnorm runif sd terms weighted.mean 
 #' @importFrom graphics par plot points
@@ -978,15 +979,12 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
     if (benchmark == TRUE)
     {
       msg <- paste0("Repetitions: ", length(smp.args$repetition), "; ", "Folds: ", 
-        smp.args$nfold, "; ", "Total time: ", round(my.bench$runtime.performance, 
-          2))
+                    smp.args$nfold, "; ", "Total time: ", round(my.bench$runtime.performance, 
+                                                                2))
     } else (msg <- paste0("Repetitions: ", length(smp.args$repetition), "; ", "Folds: ", 
-      smp.args$nfold))
+                          smp.args$nfold))
     
-    if (requireNamespace("notifier", quietly = TRUE))
-    {
-      notifier::notify(title = "parsperrorest() finished successfully!", msg <- msg)
-    }
+    notifier::notify(title = "parsperrorest() finished successfully!", msg <- msg)
   }
   
   return(RES)
