@@ -1,7 +1,7 @@
 test_that("check list output of rep and folds for par.mode = 2", { 
   
   testthat::skip_on_appveyor()
-  testthat::skip_on_travis()
+  # testthat::skip_on_travis()
   testthat::skip_on_cran()
   
   lda.predfun <- function(object, newdata, fac = NULL) {
@@ -82,7 +82,7 @@ test_that("check list output of rep and folds for par.mode = 2", {
 test_that("check if length of list (error.fold) equals folds for par.mode = 2", {
   
   testthat::skip_on_appveyor()
-  testthat::skip_on_travis()
+  # testthat::skip_on_travis()
   testthat::skip_on_cran()
   
   library(doParallel)
