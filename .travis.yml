@@ -6,6 +6,10 @@ dist: trusty
 
 warnings_are_errors: false
 
+script: -|
+  R CMD build .
+  travis_wait 40 R CMD check sperrorest.tar.gz
+
 r_build_args: "--no-build-vignettes"
 r_check_args: "--no-build-vignettes"
 
