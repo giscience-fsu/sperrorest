@@ -22,10 +22,9 @@ r_packages:
 r_github_packages:
   - jimhester/covr
   
-script: 
-  -|
-    R CMD build .
-    travis_wait 40 R CMD check sperrorest*tar.gz
+script: -|
+  R CMD build .
+  travis_wait 40 R CMD check sperrorest*tar.gz
 
 notifications:
   email:
