@@ -28,9 +28,9 @@ script:
     travis_wait 40 R CMD check --no-build-vignettes sperrorest*tar.gz
 
 notifications:
-  email:
-    on_success: change
-    on_failure: change
+  slack: giscience-fsu:Wkbb0S8LMk9xdfVjweh8IDZx
+  on_success: change # default: always
+  on_failure: always # default: always
     
 after_success:
   - Rscript -e 'covr::codecov()'
