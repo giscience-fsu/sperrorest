@@ -8,7 +8,7 @@ warnings_are_errors: false
 
 
 r_build_args: "--no-build-vignettes"
-r_check_args: "--no-build-vignettes"
+r_check_args: "--no-vignettes"
 
 
 r_packages: 
@@ -25,7 +25,7 @@ r_github_packages:
 script: 
   - |
     R CMD build --no-build-vignettes.
-    travis_wait 40 R CMD check --no-build-vignettes sperrorest*tar.gz
+    travis_wait 40 R CMD check --no-vignettes sperrorest*tar.gz
 
 notifications:
   slack: giscience-fsu:Wkbb0S8LMk9xdfVjweh8IDZx
