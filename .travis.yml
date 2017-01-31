@@ -8,7 +8,7 @@ warnings_are_errors: false
 
 
 r_build_args: "--no-build-vignettes"
-r_check_args: "--no-build-vignettes"
+r_check_args: "--no-vignettes"
 
 
 r_packages: 
@@ -24,14 +24,14 @@ r_github_packages:
   - hadley/testthat
   
 install:
-  - Rscript -e 'install.packages(c("devtools","roxygen2"))'
+  - Rscript -e 'install.packages(c("devtools","roxygen2"));devtools::install_deps("sperrorest")'
 script:
   - Rscript -e 'devtools::check("sperrorest")'
 
 notifications:
   slack: giscience-fsu:Wkbb0S8LMk9xdfVjweh8IDZx
   on_success: change # default: always
-  on_failure: always # default: always
+  on_failure: change # default: always
     
 after_success:
   - Rscript -e 'covr::codecov()'
