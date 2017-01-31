@@ -26,8 +26,10 @@ r_github_packages:
 install:
   - Rscript -e 'install.packages(c("devtools","roxygen2"))'
 
-script: - |
-  R CMD build --no-build-vignettes
+script: 
+  - |
+  R CMD build --no-build-vignettes .
+  
 script:
   - Rscript -e 'devtools::check("sperrorest")'
 
