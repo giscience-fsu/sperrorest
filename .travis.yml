@@ -23,10 +23,10 @@ r_github_packages:
   - jimhester/covr
   - hadley/testthat
   
-script: 
-  - |
-    R CMD build --no-build-vignettes .
-    travis_wait 40 R CMD check --no-vignettes sperrorest*tar.gz
+install:
+  - Rscript -e 'install.packages(c("devtools","roxygen2"))'
+script:
+  - Rscript -e 'devtools::check("sperrorest")'
 
 notifications:
   slack: giscience-fsu:Wkbb0S8LMk9xdfVjweh8IDZx
