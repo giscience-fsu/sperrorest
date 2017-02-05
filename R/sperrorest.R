@@ -1,10 +1,10 @@
 
-#' Summarize error statistics obtained by \code{sperrorest}
+#' Summarize error statistics obtained by `sperrorest`
 #'
-#' \code{summary.sperroresterror} calculates mean, standard deviation, 
+#' `summary.sperroresterror` calculates mean, standard deviation, 
 #' median etc. of the calculated error measures at the specified level 
 #' (overall, repetition, or fold).
-#' \code{summary.sperrorestreperror} does the same with the pooled error, 
+#' `summary.sperrorestreperror` does the same with the pooled error, 
 #' at the overall or repetition level.
 #' 
 #' @import rpart
@@ -15,38 +15,38 @@
 #' @name summary.sperroresterror
 #' @method summary sperroresterror
 #' 
-#' @param object \code{sperroresterror} resp. \code{sperrorestcombinederror} 
-#' error object calculated by \code{\link{sperrorest}}
+#' @param object `sperroresterror` resp. `sperrorestcombinederror` 
+#' error object calculated by [sperrorest()]
 #' @param level Level at which errors are summarized: 
 #' 0: overall; 1: repetition; 2: fold
-#' @param pooled If \code{TRUE} (default), mean and standard deviation etc are 
-#' calculated between fold-level error estimates. If \code{FALSE}, 
-#' apply first a \code{\link{weighted.mean}} among folds before calculating 
+#' @param pooled If `TRUE` (default), mean and standard deviation etc are 
+#' calculated between fold-level error estimates. If `FALSE`, 
+#' apply first a [weighted.mean()] among folds before calculating 
 #' mean, standard deviation etc among repetitions. See also Details.
-#' @param na.rm Remove \code{NA} values? See \code{\link{mean}} etc.
+#' @param na.rm Remove `NA` values? See [mean()] etc.
 #' @param ... additional arguments (currently ignored)
 #' 
-#' @return Depending on the level of aggregation, a \code{list} or 
-#' \code{data.frame} with mean, and at level 0 also standard deviation, 
+#' @return Depending on the level of aggregation, a `list` or 
+#' `data.frame` with mean, and at level 0 also standard deviation, 
 #' median and IQR of the error measures.
 #' 
-#' @details Let's use an example to explain the \code{error.rep} argument. 
+#' @details Let's use an example to explain the `error.rep` argument. 
 #' E.g., assume we are using 100-repeated 10-fold cross-validation. 
-#' If \code{error.rep = TRUE} (default), the mean and standard deviation calculated 
-#' when summarizing at \code{level = 0}
+#' If `error.rep = TRUE` (default), the mean and standard deviation calculated 
+#' when summarizing at `level = 0`
 #' are calculated across the error estimates obtained for 
-#' each of the \code{100*10 = 1000} folds.
-#' If \code{error.rep = FALSE}, mean and standard deviation are calculated across 
-#' the \code{100} repetitions, using the weighted average of the fold-level 
+#' each of the `100*10 = 1000` folds.
+#' If `error.rep = FALSE`, mean and standard deviation are calculated across 
+#' the `100` repetitions, using the weighted average of the fold-level 
 #' errors to calculate an error value for the entire sample. 
 #' This will essentially not affect the mean value but of course the 
-#' standard deviation of the error. \code{error.rep = FALSE} is not recommended, 
+#' standard deviation of the error. `error.rep = FALSE` is not recommended, 
 #' it is mainly for testing purposes; when the test sets are small 
 #' (as in leave-one-out cross-validation, in the extreme case), 
-#' consider running \code{\link{sperrorest}} with \code{error.rep = TRUE} and 
-#' examine only the \code{error.rep} component of its result.
+#' consider running [sperrorest()] with `error.rep = TRUE` and 
+#' examine only the `error.rep` component of its result.
 #' 
-#' @seealso \code{\link[sperrorest]{parsperrorest}}
+#' @seealso [sperrorest::parsperrorest()]
 #' 
 #' @export
 summary.sperroresterror <- function(object, level = 0, pooled = TRUE, na.rm = TRUE, 
@@ -120,21 +120,21 @@ summary.sperrorestreperror <- function(object, level = 0, na.rm = TRUE, ...)
   return(object)
 }
 
-#' Summarize variable importance statistics obtained by \code{sperrorest}
+#' Summarize variable importance statistics obtained by `sperrorest`
 #'
-#' \code{summary.sperrorestimportance} calculated mean, standard deviation, 
+#' `summary.sperrorestimportance` calculated mean, standard deviation, 
 #' median etc. of the calculated error measures at the specified level 
 #' (overall, repetition, or fold).
 #' @name summary.sperrorestimportance
 #' @method summary sperrorestimportance
 #' 
-#' @param object \code{\link{sperrorestimportance}} object calculated by 
-#' \code{\link{sperrorest}} called with argument \code{importance=TRUE}
+#' @param object [sperrorestimportance()] object calculated by 
+#' [sperrorest()] called with argument `importance=TRUE`
 #' @inheritParams summary.sperroresterror
 #' @param which optional character vector specifying selected variables for 
 #' which the importances should be summarized (to do: check implementation)
 #' 
-#' @return a list or data.frame, depending on the \code{level} of aggregation
+#' @return a list or data.frame, depending on the `level` of aggregation
 #' 
 #' @export
 summary.sperrorestimportance <- function(object, level = 0, na.rm = TRUE, which = NULL, 
@@ -168,25 +168,25 @@ summary.sperrorestimportance <- function(object, level = 0, na.rm = TRUE, which 
 
 #' Draw stratified random sample
 #'
-#' \code{resample.strat.uniform} draws a stratified random sample 
-#' (with or without replacement) from the samples in \code{data}. 
-#' Stratification is over the levels of \code{data[,param$response]}. 
+#' `resample.strat.uniform` draws a stratified random sample 
+#' (with or without replacement) from the samples in `data`. 
+#' Stratification is over the levels of `data[,param$response]`. 
 #' The same number of samples is drawn within each level.
 #' 
-#' @param data a \code{data.frame}, rows represent samples
-#' @param param a list with the following components: \code{strat} is either 
-#' the name of a factor variable in \code{data} that defines the stratification
-#'  levels, or a vector of type factor and length \code{nrow(data)}; 
-#'  \code{n} is a numeric value specifying the size of the subsample; 
-#'  \code{replace} determines if sampling is with or without replacement
+#' @param data a `data.frame`, rows represent samples
+#' @param param a list with the following components: `strat` is either 
+#' the name of a factor variable in `data` that defines the stratification
+#'  levels, or a vector of type factor and length `nrow(data)`; 
+#'  `n` is a numeric value specifying the size of the subsample; 
+#'  `replace` determines if sampling is with or without replacement
 #'  
-#' @return a \code{data.frame} containing a subset of the rows of \code{data}.
+#' @return a `data.frame` containing a subset of the rows of `data`.
 #' 
-#' @details If \code{param$replace=FALSE}, a subsample of size 
-#' \code{min(param$n,nrow(data))} will be drawn from \code{data}. 
-#' If \code{param$replace=TRUE}, the size of the subsample is \code{param$n}.
+#' @details If `param$replace=FALSE`, a subsample of size 
+#' `min(param$n,nrow(data))` will be drawn from `data`. 
+#' If `param$replace=TRUE`, the size of the subsample is `param$n`.
 #' 
-#' @seealso \code{\link{resample.uniform}}, \code{\link{sample}}
+#' @seealso [resample.uniform()], [sample()]
 #' 
 #' @examples
 #' data(ecuador) # Muenchow et al. (2012), see ?ecuador
@@ -247,21 +247,21 @@ resample.strat.uniform <- function(data, param = list(strat = "class", nstrat = 
 
 #' Draw uniform random (sub)sample
 #'
-#' \code{resample.uniform} draws a random (sub)sample 
-#' (with or without replacement) from the samples in \code{data}.
+#' `resample.uniform` draws a random (sub)sample 
+#' (with or without replacement) from the samples in `data`.
 #' 
-#' @param data a \code{data.frame}, rows represent samples
-#' @param param a list with the following components: \code{n} is a numeric 
-#' value specifying the size of the subsample; \code{replace} determines if 
+#' @param data a `data.frame`, rows represent samples
+#' @param param a list with the following components: `n` is a numeric 
+#' value specifying the size of the subsample; `replace` determines if 
 #' sampling is with or without replacement
 #' 
-#' @return a \code{data.frame} containing a subset of the rows of \code{data}.
+#' @return a `data.frame` containing a subset of the rows of `data`.
 #' 
-#' @details If \code{param$replace=FALSE}, a subsample of size 
-#' \code{min(param$n,nrow(data))} will be drawn from \code{data}. 
-#' If \code{param$replace=TRUE}, the size of the subsample is \code{param$n}.
+#' @details If `param$replace=FALSE`, a subsample of size 
+#' `min(param$n,nrow(data))` will be drawn from `data`. 
+#' If `param$replace=TRUE`, the size of the subsample is `param$n`.
 #' 
-#' @seealso \code{\link{resample.strat.uniform}}, \code{\link{sample}}
+#' @seealso [resample.strat.uniform()], [sample()]
 #' 
 #' @examples
 #' data(ecuador) # Muenchow et al. (2012), see ?ecuador
@@ -291,24 +291,24 @@ resample.uniform <- function(data, param = list(n = Inf, replace = FALSE))
 
 #' Draw uniform random (sub)sample at the group level
 #'
-#' \code{resample.factor} draws a random (sub)sample 
+#' `resample.factor` draws a random (sub)sample 
 #' (with or without replacement) of the groups or clusters identified by 
-#' the \code{fac} argument.
+#' the `fac` argument.
 #' 
-#' @param data a \code{data.frame}, rows represent samples
-#' @param param a list with the following components: \code{fac} is a factor 
-#' variable of length \code{nrow(data)} or the name of a factor variable 
-#' in \code{data}; \code{n} is a numeric value specifying the size of the 
-#' subsample (in terms of groups, not observations); \code{replace} determines 
+#' @param data a `data.frame`, rows represent samples
+#' @param param a list with the following components: `fac` is a factor 
+#' variable of length `nrow(data)` or the name of a factor variable 
+#' in `data`; `n` is a numeric value specifying the size of the 
+#' subsample (in terms of groups, not observations); `replace` determines 
 #' if resampling of groups is to be done with or without replacement.
 #' 
-#' @return a \code{data.frame} containing a subset of the rows of \code{data}.
+#' @return a `data.frame` containing a subset of the rows of `data`.
 #' 
-#' @details If \code{param$replace=FALSE}, a subsample of 
-#' \code{min(param$n,nlevel(data[,fac]))} groups will be drawn from \code{data}. 
-#' If \code{param$replace=TRUE}, the number of groups to be drawn is \code{param$n}.
+#' @details If `param$replace=FALSE`, a subsample of 
+#' `min(param$n,nlevel(data[,fac]))` groups will be drawn from `data`. 
+#' If `param$replace=TRUE`, the number of groups to be drawn is `param$n`.
 #' 
-#' @seealso \code{\link{resample.strat.uniform}}, \code{\link{sample}}
+#' @seealso [resample.strat.uniform()], [sample()]
 #' 
 #' @examples
 #' data(ecuador) # Muenchow et al. (2012), see ?ecuador
@@ -343,7 +343,7 @@ resample.factor <- function(data, param = list(fac = "class", n = Inf, replace =
 
 #' Perform spatial error estimation and variable importance assessment
 #'
-#' \code{sperrorest} is a flexible interface for multiple types of spatial and 
+#' `sperrorest` is a flexible interface for multiple types of spatial and 
 #' non-spatial cross-validation and bootstrap error estimation and 
 #' permutation-based assessment of spatial variable importance.
 #' 
@@ -352,75 +352,75 @@ resample.factor <- function(data, param = list(fac = "class", n = Inf, replace =
 #' 
 #' @inheritParams partition.cv
 #' 
-#' @param data a \code{data.frame} with predictor and response variables. 
-#' Training and test samples will be drawn from this data set by \code{train.fun} 
-#' and \code{test.fun}, respectively.
+#' @param data a `data.frame` with predictor and response variables. 
+#' Training and test samples will be drawn from this data set by `train.fun` 
+#' and `test.fun`, respectively.
 #' 
-#' @param formula A formula specifying the variables used by the \code{model}. 
+#' @param formula A formula specifying the variables used by the `model`. 
 #' Only simple formulas without interactions or nonlinear terms should 
-#' be used, e.g. \code{y~x1+x2+x3} but not \code{y~x1*x2+log(x3)}. 
+#' be used, e.g. `y~x1+x2+x3` but not `y~x1*x2+log(x3)`. 
 #' Formulas involving interaction and nonlinear terms may possibly work 
 #' for error estimation but not for variable importance assessment, 
 #' but should be used with caution.
 #' 
-#' @param coords vector of length 2 defining the variables in \code{data} that 
+#' @param coords vector of length 2 defining the variables in `data` that 
 #' contain the x and y coordinates of sample locations.
 #' 
-#' @param model.fun Function that fits a predictive model, such as \code{glm} 
-#' or \code{rpart}. The function must accept at least two arguments, the first 
+#' @param model.fun Function that fits a predictive model, such as `glm` 
+#' or `rpart`. The function must accept at least two arguments, the first 
 #' one being a formula and the second a data.frame with the learning sample.
 #' 
-#' @param model.args Arguments to be passed to \code{model.fun} 
-#' (in addition to the \code{formula} and \code{data} argument, 
-#' which are provided by \code{sperrorest})
+#' @param model.args Arguments to be passed to `model.fun` 
+#' (in addition to the `formula` and `data` argument, 
+#' which are provided by `sperrorest`)
 #' @param pred.fun Prediction function for a fitted model object created 
-#' by \code{model}. Must accept at least two arguments: the fitted 
-#' \code{object} and a \code{data.frame} \code{newdata} with data 
+#' by `model`. Must accept at least two arguments: the fitted 
+#' `object` and a `data.frame` `newdata` with data 
 #' on which to predict the outcome.
 #' 
-#' @param pred.args (optional) Arguments to \code{pred.fun} (in addition to the 
-#' fitted model object and the \code{newdata} argument, 
-#' which are provided by \code{sperrorest})
+#' @param pred.args (optional) Arguments to `pred.fun` (in addition to the 
+#' fitted model object and the `newdata` argument, 
+#' which are provided by `sperrorest`)
 #' 
 #' @param smp.fun A function for sampling training and test sets from 
-#' \code{data}. E.g., \code{\link{partition.kmeans}} for 
+#' `data`. E.g., [partition.kmeans()] for 
 #' spatial cross-validation using spatial \emph{k}-means clustering.
 #' 
-#' @param smp.args (optional) Arguments to be passed to \code{est.fun}
+#' @param smp.args (optional) Arguments to be passed to `est.fun`
 #' 
 #' @param train.fun (optional) A function for resampling or subsampling the 
 #' training sample in order to achieve, e.g., uniform sample sizes on all 
 #' training sets, or maintaining a certain ratio of positives and negatives 
 #' in training sets. 
-#' E.g., \code{\link{resample.uniform}} or \code{\link{resample.strat.uniform}}
+#' E.g., [resample.uniform()] or [resample.strat.uniform()]
 #' 
-#' @param train.param (optional) Arguments to be passed to \code{resample.fun}
+#' @param train.param (optional) Arguments to be passed to `resample.fun`
 #' 
-#' @param test.fun (optional) Like \code{train.fun} but for the test set.
+#' @param test.fun (optional) Like `train.fun` but for the test set.
 #' 
-#' @param test.param (optional) Arguments to be passed to \code{test.fun}
+#' @param test.param (optional) Arguments to be passed to `test.fun`
 #' 
 #' @param err.fun A function that calculates selected error measures from the 
-#' known responses in \code{data} and the model predictions delivered 
-#' by \code{pred.fun}. E.g., \code{\link{err.default}} (the default). 
+#' known responses in `data` and the model predictions delivered 
+#' by `pred.fun`. E.g., [err.default()] (the default). 
 #' See example and details below.
 #' 
-#' @param error.fold logical (default: \code{TRUE} if \code{importance} is 
-#' \code{TRUE}, otherwise \code{FALSE}): calculate error measures on each fold 
+#' @param error.fold logical (default: `TRUE` if `importance` is 
+#' `TRUE`, otherwise `FALSE`): calculate error measures on each fold 
 #' within a resampling repetition.
 #' 
-#' @param error.rep logical (default: \code{TRUE}): calculate error measures 
+#' @param error.rep logical (default: `TRUE`): calculate error measures 
 #' based on the pooled predictions of all folds within a resampling repetition.
 #' 
-#' @param err.train logical (default: \code{TRUE}): calculate error measures on 
+#' @param err.train logical (default: `TRUE`): calculate error measures on 
 #' the training set (in addition to the test set estimation).
 #' 
-#' @param imp.variables (optional; used if \code{importance = TRUE}) 
+#' @param imp.variables (optional; used if `importance = TRUE`) 
 #' Variables for which permutation-based variable importance assessment 
-#' is performed. If \code{importance = TRUE} and \code{imp.variables} is 
-#' \code{NULL}, all variables in \code{formula} will be used.
+#' is performed. If `importance = TRUE` and `imp.variables` is 
+#' `NULL`, all variables in `formula` will be used.
 #' 
-#' @param imp.permutations (optional; used if \code{importance = TRUE}) 
+#' @param imp.permutations (optional; used if `importance = TRUE`) 
 #' Number of permutations used for variable importance assessment.
 #' 
 #' @param importance logical: perform permutation-based variable 
@@ -428,41 +428,41 @@ resample.factor <- function(data, param = list(fac = "class", n = Inf, replace =
 #' 
 #' @param ... currently not used
 #' 
-#' @param distance logical (default: \code{FALSE}): if \code{TRUE}, calculate 
+#' @param distance logical (default: `FALSE`): if `TRUE`, calculate 
 #' mean nearest-neighbour distances from test samples to training samples using 
-#' \code{\link{add.distance.represampling}}
+#' [add.distance.represampling()]
 #' 
 #' @param do.gc numeric (default: 1): defines frequency of memory garbage 
-#' collection by calling \code{\link{gc}}; if \code{<1}, no garbage collection; 
-#' if \code{>=1}, run a \code{gc()} after each repetition; 
-#' if \code{>=2}, after each fold
+#' collection by calling [gc()]; if `<1`, no garbage collection; 
+#' if `>=1`, run a `gc()` after each repetition; 
+#' if `>=2`, after each fold
 #' 
-#' @param do.try logical (default: \code{FALSE}): if \code{TRUE} [untested!!], 
-#' use \code{\link{try}} to robustify calls to \code{model.fun} and 
-#' \code{err.fun}; use with caution!
+#' @param do.try logical (default: `FALSE`): if `TRUE` [untested!!], 
+#' use [try()] to robustify calls to `model.fun` and 
+#' `err.fun`; use with caution!
 #' 
-#' @param progress if \code{progress = 1}, repetition and fold progress is 
+#' @param progress if `progress = 1`, repetition and fold progress is 
 #' shown in console (in Windows Rgui, disable 'Buffered output' in 'Misc' menu). 
-#' If \code{progress = 2}, only repetition information is shown. 
-#' Set to \code{FALSE} for no progress information. 
+#' If `progress = 2`, only repetition information is shown. 
+#' Set to `FALSE` for no progress information. 
 #' 
-#' @param benchmark (optional) logical (default: \code{FALSE}): if \code{TRUE}, 
-#' perform benchmarking and return \code{sperrorestbenchmarks} object
+#' @param benchmark (optional) logical (default: `FALSE`): if `TRUE`, 
+#' perform benchmarking and return `sperrorestbenchmarks` object
 #' 
-#' @return A list (object of class \code{sperrorest}) with (up to) six components:
-#' \item{error.rep}{a \code{sperrorestreperror} object containing 
+#' @return A list (object of class `sperrorest`) with (up to) six components:
+#' \item{error.rep}{a `sperrorestreperror` object containing 
 #' predictive performances at the repetition level}
-#' \item{error.fold}{a \code{sperroresterror} object containing predictive 
+#' \item{error.fold}{a `sperroresterror` object containing predictive 
 #' performances at the fold level}
-#' \item{represampling}{a \code{\link{represampling}} object}
-#' \item{importance}{a \code{sperrorestimportance} object containing 
+#' \item{represampling}{a [represampling()] object}
+#' \item{importance}{a `sperrorestimportance` object containing 
 #' permutation-based variable importances at the fold level}
-#' \item{benchmarks}{a \code{sperrorestbenchmarks} object containing 
+#' \item{benchmarks}{a `sperrorestbenchmarks` object containing 
 #' information on the system the code is running on, starting and 
 #' finishing times, number of available CPU cores, parallelization mode, 
 #' number of parallel units, and runtime performance}
-#' \item{package.version}{a \code{sperrorestpackageversion} object containing 
-#' information about the \code{sperrorest} package version}
+#' \item{package.version}{a `sperrorestpackageversion` object containing 
+#' information about the `sperrorest` package version}
 #' 
 #' @note (1) Optionally save fitted models, training and test samples in the 
 #' results object; (2) Optionally save intermediate results in some file, and 
@@ -979,16 +979,16 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
 #' 
 #' @method summary sperrorest
 #' 
-#' @param object a \code{\link{sperrorest}} object
-#' @param ... additional arguments for \code{\link{summary.sperroresterror}} 
-#' or \code{\link{summary.sperrorestimportance}}
-#' @param x Depending on method, a \code{\link{sperrorest}}, 
-#' \code{\link{sperroresterror}} or \code{\link{sperrorestimportance}} object
+#' @param object a [sperrorest()] object
+#' @param ... additional arguments for [summary.sperroresterror()] 
+#' or [summary.sperrorestimportance()]
+#' @param x Depending on method, a [sperrorest()], 
+#' [sperroresterror()] or [sperrorestimportance()] object
 #' 
-#' @seealso \code{\link{sperrorest}}, \code{\link{sperroresterror}}, 
-#' \code{\link{sperrorestimportance}}, 
-#' \code{\link{summary.sperroresterror}}, 
-#' \code{\link{summary.sperrorestimportance}}
+#' @seealso [sperrorest()], [sperroresterror()], 
+#' [sperrorestimportance()], 
+#' [summary.sperroresterror()], 
+#' [summary.sperrorestimportance()]
 #' 
 #' @export
 summary.sperrorest <- function(object, ...)

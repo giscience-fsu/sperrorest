@@ -15,7 +15,7 @@
 #' 
 #' @docType data
 #' 
-#' @format a \code{data.frame} with point samples of landslide and 
+#' @format a `data.frame` with point samples of landslide and 
 #' non-landslide locations in a study area in the Andes of southern Ecuador.
 #' 
 #' @references Muenchow, J., Brenning, A., Richter, M., 2012. Geomorphic process 

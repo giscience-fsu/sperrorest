@@ -1,28 +1,28 @@
 
 #' Calculate mean nearest-neighbour distance between point datasets
 #'
-#' \code{dataset.distance} calculates Euclidean nearest-neighbour distances 
+#' `dataset.distance` calculates Euclidean nearest-neighbour distances 
 #' between two point datasets and summarizes these distances using some 
 #' function, by default the mean.
 #'
-#' @param d1 a \code{data.frame} with (at least) columns with names given by 
-#' \code{x.name} and \code{y.name}; these contain the x and y coordinates, 
+#' @param d1 a `data.frame` with (at least) columns with names given by 
+#' `x.name` and `y.name`; these contain the x and y coordinates, 
 #' respectively.
-#' @param d2 see \code{d1}  - second set of points
-#' @param x.name name of column in \code{d1} and \code{d2} containing the x 
+#' @param d2 see `d1`  - second set of points
+#' @param x.name name of column in `d1` and `d2` containing the x 
 #' coordinates of points.
 #' @param y.name same for y coordinates
 #' @param fun function to be applied to the vector of nearest-neighbor 
-#' distances of \code{d1} from \code{d2}.
-#' @param method type of distance metric to be used; only \code{'euclidean'} 
+#' distances of `d1` from `d2`.
+#' @param method type of distance metric to be used; only `'euclidean'` 
 #' is currently supported.
-#' @param ... additional arguments to \code{fun}.
+#' @param ... additional arguments to `fun`.
 #' 
-#' @return depends on \code{fun}; typically (e.g., \code{mean}) a numeric vector
+#' @return depends on `fun`; typically (e.g., `mean`) a numeric vector
 #' of length 1
 #' 
 #' @details Nearest-neighbour distances are calculated for each point in 
-#' \code{d1}, resulting in a vector of length \code{nrow(d1)}, and \code{fun} 
+#' `d1`, resulting in a vector of length `nrow(d1)`, and `fun` 
 #' is applied to this vector.
 #' 
 #' @examples
@@ -35,7 +35,7 @@
 #' 
 #' @aliases dataset.distance
 #' 
-#' @seealso \code{\link{add.distance}}
+#' @seealso [add.distance()]
 #' 
 dataset.distance <- function(d1, d2, x.name = "x", y.name = "y", fun = mean, method = "euclidean", 
   ...)
@@ -67,25 +67,25 @@ dataset.distance <- function(d1, d2, x.name = "x", y.name = "y", fun = mean, met
 #' 
 #' @inheritParams partition.cv
 #' 
-#' @param object \code{\link{resampling}} or \code{\link{represampling}} object.
-#' @param ... Additional arguments to \code{\link{dataset.distance}} and 
-#' \code{\link{add.distance.resampling}}, respectively.
+#' @param object [resampling()] or [represampling()] object.
+#' @param ... Additional arguments to [dataset.distance()] and 
+#' [add.distance.resampling()], respectively.
 #' 
-#' @return A \code{\link{resampling}} or \code{\link{represampling}} object 
+#' @return A [resampling()] or [represampling()] object 
 #' containing an additional.
-#' \code{$distance} component in each \code{\link{resampling}} object. 
-#' The \code{distance} component is a single numeric value indicating, for 
-#' each \code{train} / \code{test} pair, the (by default, mean) 
+#' `$distance` component in each [resampling()] object. 
+#' The `distance` component is a single numeric value indicating, for 
+#' each `train` / `test` pair, the (by default, mean) 
 #' nearest-neighbour distance between the two sets.
 #' 
 #' @details Nearest-neighbour distances are calculated for each sample in the 
-#' test set. These \code{nrow(???$test)} nearest-neighbour distances are then 
-#' averaged. Aggregation methods other than \code{mean} can be chosen using 
-#' the \code{fun} argument, which will be passed on to 
-#' \code{\link{dataset.distance}}.
+#' test set. These `nrow(???$test)` nearest-neighbour distances are then 
+#' averaged. Aggregation methods other than `mean` can be chosen using 
+#' the `fun` argument, which will be passed on to 
+#' [dataset.distance()].
 #' 
-#' @seealso \code{\link{dataset.distance}} \code{\link{represampling}} 
-#' \code{\link{resampling}}
+#' @seealso [dataset.distance()] [represampling()] 
+#' [resampling()]
 #' 
 #' @examples
 #' data(ecuador) # Muenchow et al. (2012), see ?ecuador
@@ -132,26 +132,26 @@ add.distance.represampling <- function(object, ...)
 #' Alphanumeric tile names
 #'
 #' Functions for generating and handling alphanumeric tile names of the 
-#' form \code{'X2:Y7'} as used by \code{\link{partition.tiles}} and 
-#' \code{\link{represampling.tile.bootstrap}}.
+#' form `'X2:Y7'` as used by [partition.tiles()] and 
+#' [represampling.tile.bootstrap()].
 #'
 #' @name as.tilename
 #' 
 #' @aliases tilename
 #' 
-#' @param x object of class \code{tilename}, \code{character}, or 
-#' \code{numeric} (of length 2).
+#' @param x object of class `tilename`, `character`, or 
+#' `numeric` (of length 2).
 #' @param ... additional arguments (currently ignored).
 #' 
-#' @return object of class \code{tilename}, \code{character}, or numeric 
+#' @return object of class `tilename`, `character`, or numeric 
 #' vector of length 2
 #' 
 #' @examples
 #' tnm <- as.tilename(c(2,3))
 #' tnm # 'X2:Y3'
 #' as.numeric(tnm) # c(2,3)
-#' @seealso \code{\link{partition.tiles}}, \code{\link{represampling}}, 
-#' \code{\link{represampling.tile.bootstrap}}
+#' @seealso [partition.tiles()], [represampling()], 
+#' [represampling.tile.bootstrap()]
 #' 
 #' @export
 as.tilename <- function(x, ...) UseMethod("as.tilename")
@@ -223,12 +223,12 @@ print.tilename <- function(x, ...)
 
 #' Identify small partitions that need to be fixed.
 #'
-#' \code{get.small.tiles} identifies partitions (tiles) that are too small 
+#' `get.small.tiles` identifies partitions (tiles) that are too small 
 #' according to some defined criterion / criteria (minimum number of samples in 
 #' tile and/or minimum fraction of entire dataset).
 #' 
 #' @param tile factor: tile/partition names for all samples; names must be 
-#' coercible to class \code{\link{tilename}}, i.e. of the form \code{'X4:Y2'} etc.
+#' coercible to class [tilename()], i.e. of the form `'X4:Y2'` etc.
 #' @param min.n integer (optional): minimum number of samples per partition.
 #' @param min.frac numeric >0, <1: minimum relative size of partition as 
 #' percentage of sample.
@@ -238,7 +238,7 @@ print.tilename <- function(x, ...)
 #' @return character vector: names of tiles that are considered 'small' 
 #' according to these criteria
 #' 
-#' @seealso \code{\link{partition.tiles}}, \code{\link{tilename}}
+#' @seealso [partition.tiles()], [tilename()]
 #' 
 #' @examples
 #' data(ecuador) # Muenchow et al. (2012), see ?ecuador
@@ -290,12 +290,12 @@ get.small.tiles <- function(tile, min.n = NULL, min.frac = 0, ignore = c())
 #'
 #' This based on 'counting' up and down based on the tile name.
 #' 
-#' @param nm Character string or factor: name of a tile, e.g., \code{'X4:Y6'}
-#' @param tileset Admissible tile names; if missing and \code{nm} is a factor 
-#' variable, then \code{levels(nm)} is used as a default for \code{tileset}.
+#' @param nm Character string or factor: name of a tile, e.g., `'X4:Y6'`
+#' @param tileset Admissible tile names; if missing and `nm` is a factor 
+#' variable, then `levels(nm)` is used as a default for `tileset`.
 #' @param iterate internal - do not change default: to control behaviour in an 
 #' interative call to this function.
-#' @param diagonal if \code{TRUE}, diagonal neighbours are also considered 
+#' @param diagonal if `TRUE`, diagonal neighbours are also considered 
 #' neighbours.
 #' 
 #' @return Character string.
@@ -370,38 +370,38 @@ tile.neighbors <- function(nm, tileset, iterate = 0, diagonal = FALSE)
 #'
 #' @param object depending on the function/method, a list or a vector of type 
 #' factor defining a partitioning of the dataset.
-#' @param x object of class \code{resampling}.
+#' @param x object of class `resampling`.
 #' @param ... currently not used.
 #' 
 #' @name as.resampling
 #' 
-#' @return \code{as.resampling} methods: An object of class \code{resampling}.
+#' @return `as.resampling` methods: An object of class `resampling`.
 #' 
-#' @details A \code{resampling} object is a list of lists defining a set of 
+#' @details A `resampling` object is a list of lists defining a set of 
 #' training and test samples.
 #'
-#' In the case of \code{k}-fold cross-validation partitioning, for example, 
-#' the corresponding \code{resampling} object would be of length \code{k}, 
-#' i.e. contain \code{k} lists. Each of these \code{k} lists defines a training
-#' set of size \code{n(k-1)/k} (where \code{n} is the overall sample size), and 
-#' a test set of size \code{n/k}.
-#' The \code{resampling} object does, however, not contain the data itself, but 
-#' only indices between \code{1} and \code{n} identifying the seleciton 
+#' In the case of `k`-fold cross-validation partitioning, for example, 
+#' the corresponding `resampling` object would be of length `k`, 
+#' i.e. contain `k` lists. Each of these `k` lists defines a training
+#' set of size `n(k-1)/k` (where `n` is the overall sample size), and 
+#' a test set of size `n/k`.
+#' The `resampling` object does, however, not contain the data itself, but 
+#' only indices between `1` and `n` identifying the seleciton 
 #' (see Examples).
 #'
-#' Another example is bootstrap resampling. \code{\link{represampling.bootstrap}} 
-#' with argument \code{oob = TRUE} generates [\code{rep}]\code{resampling} objects 
-#' with indices of a bootstrap sample in the \code{train} component and indices 
+#' Another example is bootstrap resampling. [represampling.bootstrap()] 
+#' with argument `oob = TRUE` generates [`rep`]`resampling` objects 
+#' with indices of a bootstrap sample in the `train` component and indices 
 #' of the out-of-bag sample in the test component (see Examples below).
 #'
-#' \code{as.resampling.factor}: For each factor level of the input variable, 
-#' \code{as.resampling.factor} determines the indices of samples in this level 
+#' `as.resampling.factor`: For each factor level of the input variable, 
+#' `as.resampling.factor` determines the indices of samples in this level 
 #' (= test samples) and outside this level (= training samples). Empty levels of 
-#' \code{object} are dropped without warning.
+#' `object` are dropped without warning.
 #'
-#' \code{as.resampling.list} checks if the list in \code{object} has a valid 
-#' \code{resampling} object structure (with components \code{train} and 
-#' \code{test} etc.) and assigns the class attribute \code{'resampling'} if 
+#' `as.resampling.list` checks if the list in `object` has a valid 
+#' `resampling` object structure (with components `train` and 
+#' `test` etc.) and assigns the class attribute `'resampling'` if 
 #' successful.
 #' 
 #' @examples
@@ -430,8 +430,8 @@ tile.neighbors <- function(nm, tileset, iterate = 0, diagonal = FALSE)
 #' # bootstrap training sample: same size as nrow(ecuador):
 #' str( ecuador[ parti[[1]]$train , ] )
 #' 
-#' @seealso \code{\link{represampling}}, \code{\link{partition.cv}}, 
-#' \code{\link{partition.kmeans}}, \code{\link{represampling.bootstrap}}, etc.
+#' @seealso [represampling()], [partition.cv()], 
+#' [partition.kmeans()], [represampling.bootstrap()], etc.
 #' 
 #' @aliases as.resampling resampling
 #' 
@@ -526,35 +526,35 @@ print.resampling <- function(x, ...)
 #' Resampling objects with repetition, i.e. sets of partitionings or boostrap 
 #' samples
 #'
-#' Functions for handling \code{represampling} objects, i.e. \code{list}s of 
-#' \code{\link{resampling}} objects.
+#' Functions for handling `represampling` objects, i.e. `list`s of 
+#' [resampling()] objects.
 #' 
-#' @param object object of class \code{represampling}, or a list to be coerced 
+#' @param object object of class `represampling`, or a list to be coerced 
 #' to this class.
-#' @param x object of class \code{represampling}.
+#' @param x object of class `represampling`.
 #' @param ... currently not used.
 #' 
 #' @name as.represampling
 #' 
-#' @return \code{as.represampling} methods return an object of class 
-#' \code{represampling} with the contents of \code{object}.
+#' @return `as.represampling` methods return an object of class 
+#' `represampling` with the contents of `object`.
 #' 
-#' @details \code{represampling} objects are (names) lists of 
-#' \code{\link{resampling}} objects. Such objects are typically created by 
-#' \code{\link{partition.cv}}, \code{\link{partition.kmeans}},
-#' \code{\link{represampling.disc.bootstrap}} and related functions.
+#' @details `represampling` objects are (names) lists of 
+#' [resampling()] objects. Such objects are typically created by 
+#' [partition.cv()], [partition.kmeans()],
+#' [represampling.disc.bootstrap()] and related functions.
 #'
-#' In \code{r}-repeated \code{k}-fold cross-validation, for example, the 
-#' corresponding \code{represampling} object has length \code{r}, and each of 
-#' its \code{r} \code{\link{resampling}} objects has length \code{k}.
+#' In `r`-repeated `k`-fold cross-validation, for example, the 
+#' corresponding `represampling` object has length `r`, and each of 
+#' its `r` [resampling()] objects has length `k`.
 #'
-#' \code{as.resampling.list} coerces \code{object} to class \code{represampling} 
-#' while coercing its elements to \code{\link{resampling}} objects. 
+#' `as.resampling.list` coerces `object` to class `represampling` 
+#' while coercing its elements to [resampling()] objects. 
 #' Some validity checks are performed.
 #' 
-#' @seealso \code{\link{resampling}}, \code{\link{partition.cv}}, 
-#' \code{\link{partition.kmeans}}, 
-#' \code{\link{represampling.disc.bootstrap}}, etc.
+#' @seealso [resampling()], [partition.cv()], 
+#' [partition.kmeans()], 
+#' [represampling.disc.bootstrap()], etc.
 #' 
 #' @examples
 #' data(ecuador) # Muenchow et al. (2012), see ?ecuador
@@ -618,16 +618,16 @@ is.represampling <- function(object) inherits(object, "represampling")
 #' Summary statistics for a resampling objects
 #'
 #' Calculates sample sizes of training and test sets within repetitions and 
-#' folds of a \code{resampling} or \code{represampling} object.
+#' folds of a `resampling` or `represampling` object.
 #' 
 #' @name summary.represampling
 #' 
 #' @method summary represampling
 #' 
-#' @param object A \code{resampling} or \code{represampling} object.
+#' @param object A `resampling` or `represampling` object.
 #' @param ... currently ignored.
 #' 
-#' @return A list of \code{data.frame}s summarizing the sample sizes of training 
+#' @return A list of `data.frame`s summarizing the sample sizes of training 
 #' and test sets in each fold of each repetition.
 #' 
 #' @export
