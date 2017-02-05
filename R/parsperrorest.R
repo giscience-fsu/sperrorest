@@ -1,4 +1,4 @@
-#' Perform parallelized spatial error estimation and variable importance assessment
+#' Perform spatial error estimation and variable importance assessment
 #'
 #' \code{parsperrorest} is a flexible interface for multiple types of 
 #' parallelized spatial and non-spatial cross-validation 
