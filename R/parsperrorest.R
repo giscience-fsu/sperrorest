@@ -722,7 +722,7 @@ parsperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.
       out.progress <- paste0(getwd(), "/parsperrorest.progress.txt")
     
     cl <- makeCluster(par.args$par.units, outfile = out.progress)
-    registerDoParallel(cl, cores = par.args$par.units)
+    registerDoParallel(cl)
     
     foreach.out <- foreach(i = 1:length(resamp), .packages = (.packages()), .errorhandling = "remove", 
       .combine = "comb", .multicombine = TRUE, .verbose = FALSE) %dopar% {
