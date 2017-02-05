@@ -55,4 +55,3 @@ examine only the \code{error.rep} component of its result.
 \seealso{
 \code{\link[sperrorest]{parsperrorest}}
 }
-

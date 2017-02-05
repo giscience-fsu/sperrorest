@@ -31,4 +31,3 @@ Data Analysis IX, Proceedings, 9th International Symposium, IDA 2010,
 Tucson, AZ, USA, 19-21 May 2010.  
 Lecture Notes in Computer Science, 6065 LNCS: 184-195.
 }
-

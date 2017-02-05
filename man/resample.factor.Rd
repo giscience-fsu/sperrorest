@@ -38,4 +38,3 @@ sum(d$slides == 'TRUE')
 \seealso{
 \code{\link{resample.strat.uniform}}, \code{\link{sample}}
 }
-

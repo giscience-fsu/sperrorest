@@ -53,7 +53,7 @@ blocks are circular.
 data(ecuador)
 # Overlapping disc bootstrap:
 parti <- represampling.disc.bootstrap(ecuador, radius = 200, nboot = 20, oob = FALSE)
-plot(parti, ecuador)
+# plot(parti, ecuador)
 # Note that a 'buffer' argument would make no difference because boostrap 
 # sets of discs are drawn independently for the training and test sample.
 #
@@ -61,7 +61,6 @@ plot(parti, ecuador)
 # sample:
 parti <- represampling.disc.bootstrap(ecuador, radius = 200, buffer = 200, 
                                       nboot = 10, oob = TRUE)
-plot(parti,ecuador)
+# plot(parti,ecuador)
 
 }
-

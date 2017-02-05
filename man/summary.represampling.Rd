@@ -22,4 +22,3 @@ and test sets in each fold of each repetition.
 Calculates sample sizes of training and test sets within repetitions and 
 folds of a \code{resampling} or \code{represampling} object.
 }
-

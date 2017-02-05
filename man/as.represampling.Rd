@@ -2,10 +2,10 @@
 % Please edit documentation in R/sperrorest_misc.R
 \name{as.represampling}
 \alias{as.represampling}
-\alias{as.represampling.list}
-\alias{is.represampling}
-\alias{print.represampling}
 \alias{represampling}
+\alias{as.represampling.list}
+\alias{print.represampling}
+\alias{is.represampling}
 \title{Resampling objects with repetition, i.e. sets of partitionings or boostrap 
 samples}
 \usage{
@@ -63,4 +63,3 @@ summary(parti)
 \code{\link{partition.kmeans}}, 
 \code{\link{represampling.disc.bootstrap}}, etc.
 }
-

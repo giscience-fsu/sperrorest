@@ -59,4 +59,3 @@ sense.
 \code{\link{sperrorest}}, \code{\link{partition.cv}}, 
 \code{\link{partition.factor}}, \code{\link{as.resampling.factor}}
 }
-

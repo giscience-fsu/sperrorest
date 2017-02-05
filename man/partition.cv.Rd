@@ -59,7 +59,7 @@ containing the indices of training and test samples.
 data(ecuador)
 ## non-spatial cross-validation:
 resamp <- partition.cv(ecuador, nfold = 5, repetition = 1:2)
-plot(resamp, ecuador)
+# plot(resamp, ecuador)
 # first repetition, second fold, test set indices:
 idx <- resamp[['1']][[2]]$test
 # test sample used in this particular repetition and fold:
@@ -68,4 +68,3 @@ ecuador[idx , ]
 \seealso{
 \code{\link{sperrorest}}, \code{\link{represampling}}
 }
-

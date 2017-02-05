@@ -164,7 +164,7 @@ nspres <- sperrorest(data = ecuador, formula = fo,
 summary(nspres$error.rep)                    
 summary(nspres$error.fold)
 summary(nspres$represampling)
-plot(nspres$represampling, ecuador)
+# plot(nspres$represampling, ecuador)
 
 # Spatial 5-repeated 10-fold spatial cross-validation:
 spres <- sperrorest(data = ecuador, formula = fo,
@@ -174,7 +174,7 @@ spres <- sperrorest(data = ecuador, formula = fo,
                     smp.args = list(repetition = 1:5, nfold = 10))
 summary(spres$error.rep)
 summary(spres$represampling)
-plot(spres$represampling, ecuador)
+# plot(spres$represampling, ecuador)
 
 smry <- data.frame(
      nonspat.training = unlist(summary(nspres$error.rep, level = 1)$train.auroc),
@@ -209,4 +209,3 @@ Data Analysis IX, Proceedings, 9th International Symposium,
 IDA 2010, Tucson, AZ, USA, 19-21 May 2010.  
 Lecture Notes in Computer Science, 6065 LNCS: 184-195.
 }
-

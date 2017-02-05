@@ -50,4 +50,3 @@ err.default( obs, obs + 1 ) # perfect correlation, but with bias
 \seealso{
 \pkg{ROCR}
 }
-

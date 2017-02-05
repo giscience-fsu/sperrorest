@@ -29,4 +29,3 @@ a list or data.frame, depending on the \code{level} of aggregation
 median etc. of the calculated error measures at the specified level 
 (overall, repetition, or fold).
 }
-

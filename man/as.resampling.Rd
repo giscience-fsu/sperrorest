@@ -2,13 +2,13 @@
 % Please edit documentation in R/sperrorest_misc.R
 \name{as.resampling}
 \alias{as.resampling}
+\alias{resampling}
 \alias{as.resampling.default}
 \alias{as.resampling.factor}
 \alias{as.resampling.list}
+\alias{validate.resampling}
 \alias{is.resampling}
 \alias{print.resampling}
-\alias{resampling}
-\alias{validate.resampling}
 \title{Resampling objects such as partitionings or bootstrap samples}
 \usage{
 as.resampling(object, ...)
@@ -99,4 +99,3 @@ str( ecuador[ parti[[1]]$train , ] )
 \code{\link{represampling}}, \code{\link{partition.cv}}, 
 \code{\link{partition.kmeans}}, \code{\link{represampling.bootstrap}}, etc.
 }
-

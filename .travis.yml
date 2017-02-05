@@ -1,38 +1,32 @@
-## See https://github.com/metacran/r-builder for details.
-
-language: R		 
+language: r		 
 sudo: required
-cache: packages	
+cache: 
+  - packages
+dist: trusty
 
-r_check_args: "--no-examples"
+warnings_are_errors: false 
+
+
 r_build_args: "--no-build-vignettes"
+r_check_args: "--no-vignettes"
 
-env:
-  global:
-    - R_CHECK_ARGS = "--no-examples"
-    - R_BUILD_ARGS =  "--no-build-vignettes"
 
-before_install:
-  - curl -OL https://raw.githubusercontent.com/metacran/r-builder/master/pkg-build.sh
-  - chmod 755 pkg-build.sh
-  - ./pkg-build.sh bootstrap
+r_packages: 
+  - lda
+  - randomForest
+  - foreach
+  - doParallel
+  - rpart
+  - pbapply
+
+r_github_packages:
+  - jimhester/covr
+  - hadley/testthat
   
-install:
-  - ./pkg-build.sh install_github cran/git2r cloudyr/ghit cran/pbapply
-  - ./pkg-build.sh install_deps
-
-script:
-  - ./pkg-build.sh run_tests
-
-after_failure:
-  - ./pkg-build.sh dump_logs
-
 notifications:
-  email:
-    on_success: change
-    on_failure: change
+  slack: giscience-fsu:Wkbb0S8LMk9xdfVjweh8IDZx
+  on_success: change # default: always
+  on_failure: change # default: always
     
-
 after_success:
-  - Rscript -e 'install.packages("devtools"); devtools::install_github("jimhester/covr"); covr::codecov(quiet = FALSE)'
-  #- bash <(curl -s https://codecov.io/bash)
+  - Rscript -e 'covr::codecov()'

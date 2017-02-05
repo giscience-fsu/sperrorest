@@ -50,11 +50,10 @@ breaks <- quantile(ecuador$dem, seq(0, 1, length = 6))
 ecuador$zclass <- cut(ecuador$dem, breaks, include.lowest = TRUE)
 summary(ecuador$zclass)
 parti <- partition.factor(ecuador, fac = 'zclass')
-plot(parti,ecuador)
+# plot(parti,ecuador)
 summary(parti)
 }
 \seealso{
 \code{\link{sperrorest}}, \code{\link{partition.cv}}, 
 \code{\link{as.resampling.factor}}
 }
-
