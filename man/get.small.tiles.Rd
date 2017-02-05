@@ -44,4 +44,3 @@ length(parti2[[1]]) # < length(parti[[1]])
 \seealso{
 \code{\link{partition.tiles}}, \code{\link{tilename}}
 }
-

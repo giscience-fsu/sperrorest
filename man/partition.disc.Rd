@@ -73,7 +73,7 @@ would fall within the test area disc.
 data(ecuador)
 parti <- partition.disc(ecuador, radius = 200, buffer = 200, 
                         ndisc = 5, repetition = 1:2)
-plot(parti,ecuador)
+# plot(parti,ecuador)
 summary(parti)
 
 # leave-one-out with buffer:
@@ -89,4 +89,3 @@ Sciences, 5(6): 853-862.
 \code{\link{sperrorest}}, \code{\link{partition.cv}}, 
 \code{\link{partition.kmeans}}
 }
-

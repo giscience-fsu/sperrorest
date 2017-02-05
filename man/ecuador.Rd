@@ -39,4 +39,3 @@ Natural Hazards and Earth System Sciences, 5(6): 853-862.
 }
 \keyword{datasets}
 \keyword{internal}
-

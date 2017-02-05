@@ -41,4 +41,3 @@ sum(d$slides == 'TRUE') # == 100
 \seealso{
 \code{\link{resample.uniform}}, \code{\link{sample}}
 }
-

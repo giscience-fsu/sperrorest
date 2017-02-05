@@ -2,8 +2,8 @@
 % Please edit documentation in R/sperrorest_misc.R
 \name{add.distance}
 \alias{add.distance}
-\alias{add.distance.represampling}
 \alias{add.distance.resampling}
+\alias{add.distance.represampling}
 \title{Add distance information to resampling objects}
 \usage{
 add.distance(object, ...)
@@ -58,4 +58,3 @@ sp.parti[[1]][[1]]$distance
 \code{\link{dataset.distance}} \code{\link{represampling}} 
 \code{\link{resampling}}
 }
-

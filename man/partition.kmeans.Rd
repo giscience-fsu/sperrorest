@@ -61,7 +61,7 @@ Default parameter settings may change in future releases.
 \examples{
 data(ecuador)
 resamp <- partition.kmeans(ecuador, nfold = 5, repetition = 1:2)
-plot(resamp, ecuador)
+# plot(resamp, ecuador)
 
 }
 \references{
@@ -80,4 +80,3 @@ Lecture Notes in Computer Science, 6178 LNAI: 350-359.
 \code{\link{partition.disc}}, \code{\link{partition.tiles}}, 
 \code{\link{kmeans}}
 }
-

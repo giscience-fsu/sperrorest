@@ -64,4 +64,3 @@ mean(ecuador$slides[idx] == 'TRUE') / mean(ecuador$slides == 'TRUE')
 \code{\link{sperrorest}}, \code{\link{as.resampling}}, 
 \code{\link{resample.strat.uniform}}
 }
-

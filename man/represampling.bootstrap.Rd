@@ -45,8 +45,7 @@ Indices are row indices for \code{data}.
 data(ecuador)
 # only 10 bootstrap repetitions, normally use >=100:
 parti <- represampling.bootstrap(ecuador, repetition = 10)
-plot(parti, ecuador) # careful: overplotting occurs 
+# plot(parti, ecuador) # careful: overplotting occurs 
 # because some samples are included in both the training and
 # the test sample (possibly even multiple times)
 }
-
