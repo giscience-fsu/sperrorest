@@ -231,7 +231,6 @@
 #' summary(par.sp.res$error.fold)
 #' summary(par.sp.res$represampling)
 #' # plot(par.sp.res$represampling, ecuador)
-#' ![](example-plot.jpg "Example Plot Title")
 #' 
 #' smry <- data.frame(
 #'     nonspat.training = unlist(summary(par.nsp.res$error.rep, level = 1)$train.auroc),
