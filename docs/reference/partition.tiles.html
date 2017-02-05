@@ -76,8 +76,8 @@
     </div>
 
     
-    <p><code>partition.tiles</code> divides the study area into a specified number of 
-rectangular tiles. Optionally small partitions can be merged with adjacent 
+    <p><code>partition.tiles</code> divides the study area into a specified number of
+rectangular tiles. Optionally small partitions can be merged with adjacent
 tiles to achieve a minimum number or percentage of samples in each tile.</p>
     
 
@@ -90,98 +90,98 @@ tiles to achieve a minimum number or percentage of samples in each tile.</p>
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <dl class="dl-horizontal">
       <dt>data</dt>
-      <dd><code>data.frame</code> containing at least the columns specified 
+      <dd><code>data.frame</code> containing at least the columns specified
 by <code>coords</code></dd>
       <dt>coords</dt>
-      <dd>vector of length 2 defining the variables in <code>data</code> that 
+      <dd>vector of length 2 defining the variables in <code>data</code> that
 contain the x and y coordinates of sample locations</dd>
       <dt>dsplit</dt>
-      <dd>optional vector of length 2: equidistance of splits in 
-(possibly rotated) x direction (<code>dsplit[1]</code>) and y direction 
-(<code>dsplit[2]</code>) used to define tiles. If <code>dsplit</code> is of length 1, 
+      <dd>optional vector of length 2: equidistance of splits in
+(possibly rotated) x direction (<code>dsplit[1]</code>) and y direction
+(<code>dsplit[2]</code>) used to define tiles. If <code>dsplit</code> is of length 1,
 its value is recycled. Either <code>dsplit</code> or <code>nsplit</code> must be specified.</dd>
       <dt>nsplit</dt>
-      <dd>optional vector of length 2: number of splits in 
-(possibly rotated) x direction (<code>nsplit[1]</code>) and y direction 
-(<code>nsplit[2]</code>) used to define tiles. If <code>nsplit</code> is of length 1, 
+      <dd>optional vector of length 2: number of splits in
+(possibly rotated) x direction (<code>nsplit[1]</code>) and y direction
+(<code>nsplit[2]</code>) used to define tiles. If <code>nsplit</code> is of length 1,
 its value is recycled.</dd>
       <dt>rotation</dt>
-      <dd>indicates whether and how the rectangular grid should 
+      <dd>indicates whether and how the rectangular grid should
 be rotated; random rotation is only between <code>-45</code> and <code>+45</code> degrees.</dd>
       <dt>user.rotation</dt>
-      <dd>if <code>rotation=&#39;user&#39;</code>, angles (in degrees) by which 
-the rectangular grid is to be rotated in each repetition. Either a vector of 
-same length as <code>repetition</code>, or a single number that will be replicated 
+      <dd>if <code>rotation=&#39;user&#39;</code>, angles (in degrees) by which
+the rectangular grid is to be rotated in each repetition. Either a vector of
+same length as <code>repetition</code>, or a single number that will be replicated
 <code>length(repetition)</code> times.</dd>
       <dt>offset</dt>
-      <dd>indicates whether and how the rectangular grid should be 
+      <dd>indicates whether and how the rectangular grid should be
 shifted by an offset.</dd>
       <dt>user.offset</dt>
-      <dd>if <code>offset=&#39;user&#39;</code>, a list (or vector) of two 
-components specifying a shift of the rectangular grid in (possibly rotated) x 
-and y direction. The offset values are relative values, a value of <code>0.5</code> 
-resulting in a one-half tile shift towards the left, or upward. 
-If this is a list, its first (second) component refers to the rotated x (y) 
-direction, and both components must have same length as <code>repetition</code> 
-(or length 1). If a vector of length 2 (or list components have length 1), 
-the two values will be interpreted as relative shifts in (rotated) x and y 
-direction, respectively, and will therefore be recycled as needed 
+      <dd>if <code>offset=&#39;user&#39;</code>, a list (or vector) of two
+components specifying a shift of the rectangular grid in (possibly rotated) x
+and y direction. The offset values are relative values, a value of <code>0.5</code>
+resulting in a one-half tile shift towards the left, or upward.
+If this is a list, its first (second) component refers to the rotated x (y)
+direction, and both components must have same length as <code>repetition</code>
+(or length 1). If a vector of length 2 (or list components have length 1),
+the two values will be interpreted as relative shifts in (rotated) x and y
+direction, respectively, and will therefore be recycled as needed
 (<code>length(repetition)</code> times each).</dd>
       <dt>reassign</dt>
-      <dd>logical (default <code>TRUE</code>): if <code>TRUE</code>, &#39;small&#39; tiles 
-(as per <code>min.frac</code> and <code>min.n</code> arguments and 
-<code><a href='get.small.tiles.html'>get.small.tiles</a></code>) are merged with (smallest) adjacent tiles. 
+      <dd>logical (default <code>TRUE</code>): if <code>TRUE</code>, &#39;small&#39; tiles
+(as per <code>min.frac</code> and <code>min.n</code> arguments and
+<code><a href='get.small.tiles.html'>get.small.tiles()</a></code>) are merged with (smallest) adjacent tiles.
 If <code>FALSE</code>, small tiles are &#39;eliminated&#39;, i.e. set to <code>NA</code>.</dd>
       <dt>min.frac</dt>
-      <dd>numeric &gt;=0, &lt;1: minimum relative size of partition as 
-percentage of sample; argument passed to <code><a href='get.small.tiles.html'>get.small.tiles</a></code>. 
+      <dd>numeric &gt;=0, &lt;1: minimum relative size of partition as
+percentage of sample; argument passed to <code><a href='get.small.tiles.html'>get.small.tiles()</a></code>.
 Will be ignored if <code>NULL</code>.</dd>
       <dt>min.n</dt>
-      <dd>integer &gt;=0: minimum number of samples per partition; 
-argument passed to <code><a href='get.small.tiles.html'>get.small.tiles</a></code>. 
+      <dd>integer &gt;=0: minimum number of samples per partition;
+argument passed to <code><a href='get.small.tiles.html'>get.small.tiles()</a></code>.
 Will be ignored if <code>NULL</code>.</dd>
       <dt>iterate</dt>
-      <dd>argument to be passed to <code><a href='tile.neighbors.html'>tile.neighbors</a></code></dd>
+      <dd>argument to be passed to <code><a href='tile.neighbors.html'>tile.neighbors()</a></code></dd>
       <dt>return.factor</dt>
-      <dd>if <code>FALSE</code> (default), return a 
-<code><a href='as.represampling.html'>represampling</a></code> object; if <code>TRUE</code> (used internally by 
-other <code>sperrorest</code> functions), return a <code>list</code> containing factor 
+      <dd>if <code>FALSE</code> (default), return a
+<code><a href='as.represampling.html'>represampling()</a></code> object; if <code>TRUE</code> (used internally by
+other <code>sperrorest</code> functions), return a <code>list</code> containing factor
 vectors (see Value)</dd>
       <dt>repetition</dt>
-      <dd>numeric vector: cross-validation repetitions 
-to be generated. Note that this is not the number of repetitions, 
-but the indices of these repetitions. E.g., use <code>repetition=c(1:100)</code> 
-to obtain (the &#39;first&#39;) 100 repetitions, and <code>repetition=c(101:200)</code> 
+      <dd>numeric vector: cross-validation repetitions
+to be generated. Note that this is not the number of repetitions,
+but the indices of these repetitions. E.g., use <code>repetition = c(1:100)</code>
+to obtain (the &#39;first&#39;) 100 repetitions, and <code>repetition = c(101:200)</code>
 to obtain a different set of 100 repetitions.</dd>
       <dt>seed1</dt>
-      <dd><code>seed1+i</code> is the random seed that will be used by 
-<code>set.seed</code> in repetition <code>i</code> (<code>i</code> in <code>repetition</code>) 
+      <dd><code>seed1+i</code> is the random seed that will be used by
+<code>set.seed()</code> in repetition <code>i</code> (<code>i</code> in <code>repetition</code>)
 to initialize the random number generator before sampling from the data set.</dd>
     </dl>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A <code><a href='as.represampling.html'>represampling</a></code> object. 
-Contains <code>length(repetition)</code> <code><a href='as.resampling.html'>resampling</a></code> objects as 
-repetitions. The exact number of folds / test-set tiles within each 
-<code><a href='as.resampling.html'>resampling</a></code> objects depends on the spatial configuration of 
+    <p>A <code><a href='as.represampling.html'>represampling()</a></code> object.
+Contains <code>length(repetition)</code> <code><a href='as.resampling.html'>resampling()</a></code> objects as
+repetitions. The exact number of folds / test-set tiles within each
+<code><a href='as.resampling.html'>resampling()</a></code> objects depends on the spatial configuration of
 the data set and possible cleaning steps (see <code>min.frac</code>, <code>min.n</code>).</p>
     
     <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
 
-    <p>Default parameter settings may change in future releases. 
-This function, especially the rotation and shifting part of it and the 
-algorithm for cleaning up small tiles is still a bit experimental. 
+    <p>Default parameter settings may change in future releases.
+This function, especially the rotation and shifting part of it and the
+algorithm for cleaning up small tiles is still a bit experimental.
 Use with caution.
-For non-zero offsets (<code>offset!=&#39;none&#39;)</code>), the number of tiles may 
-actually be greater than <code>nsplit[1]*nsplit[2]</code> because of fractional 
-tiles lurking into the study region. <code>reassign=TRUE</code> with suitable 
+For non-zero offsets (<code>offset!=&#39;none&#39;)</code>), the number of tiles may
+actually be greater than <code>nsplit[1]*nsplit[2]</code> because of fractional
+tiles lurking into the study region. <code>reassign=TRUE</code> with suitable
 thresholds is therefore recommended for non-zero (including random) offsets.</p>
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <p><code><a href='sperrorest.html'>sperrorest</a></code>, <code><a href='as.resampling.html'>as.resampling.factor</a></code>, 
-<code><a href='get.small.tiles.html'>get.small.tiles</a></code>, <code><a href='tile.neighbors.html'>tile.neighbors</a></code></p>
+    <p><code><a href='sperrorest.html'>sperrorest()</a></code>, <code><a href='as.resampling.html'>as.resampling.factor()</a></code>,
+<code><a href='get.small.tiles.html'>get.small.tiles()</a></code>, <code><a href='tile.neighbors.html'>tile.neighbors()</a></code></p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
@@ -225,11 +225,11 @@ thresholds is therefore recommended for non-zero (including random) offsets.</p>
 <span class='co'># plot(parti3, ecuador)</span>
 <span class='fu'>summary</span>(<span class='no'>parti3</span>)</div><div class='output co'>#&gt; $`1`
 #&gt;       n.train n.test
-#&gt; X1:Y2    1887    113
-#&gt; X2:Y2    1388    612
-#&gt; X2:Y3    1737    263
-#&gt; X3:Y2    1363    637
-#&gt; X3:Y3    1625    375
+#&gt; X2:Y1    1629    371
+#&gt; X2:Y2    1239    761
+#&gt; X2:Y3    1810    190
+#&gt; X3:Y1    1662    338
+#&gt; X3:Y2    1660    340
 #&gt; </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

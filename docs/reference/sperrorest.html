@@ -76,8 +76,8 @@
     </div>
 
     
-    <p><code>sperrorest</code> is a flexible interface for multiple types of spatial and 
-non-spatial cross-validation and bootstrap error estimation and 
+    <p><code>sperrorest</code> is a flexible interface for multiple types of spatial and
+non-spatial cross-validation and bootstrap error estimation and
 permutation-based assessment of spatial variable importance.</p>
     
 
@@ -93,48 +93,48 @@ permutation-based assessment of spatial variable importance.</p>
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <dl class="dl-horizontal">
       <dt>formula</dt>
-      <dd>A formula specifying the variables used by the <code>model</code>. 
-Only simple formulas without interactions or nonlinear terms should 
-be used, e.g. <code>y~x1+x2+x3</code> but not <code>y~x1*x2+log(x3)</code>. 
-Formulas involving interaction and nonlinear terms may possibly work 
-for error estimation but not for variable importance assessment, 
+      <dd>A formula specifying the variables used by the <code>model</code>.
+Only simple formulas without interactions or nonlinear terms should
+be used, e.g. <code>y~x1+x2+x3</code> but not <code>y~x1*x2+log(x3)</code>.
+Formulas involving interaction and nonlinear terms may possibly work
+for error estimation but not for variable importance assessment,
 but should be used with caution.</dd>
       <dt>data</dt>
-      <dd>a <code>data.frame</code> with predictor and response variables. 
-Training and test samples will be drawn from this data set by <code>train.fun</code> 
+      <dd>a <code>data.frame</code> with predictor and response variables.
+Training and test samples will be drawn from this data set by <code>train.fun</code>
 and <code>test.fun</code>, respectively.</dd>
       <dt>coords</dt>
-      <dd>vector of length 2 defining the variables in <code>data</code> that 
+      <dd>vector of length 2 defining the variables in <code>data</code> that
 contain the x and y coordinates of sample locations.</dd>
       <dt>model.fun</dt>
-      <dd>Function that fits a predictive model, such as <code>glm</code> 
-or <code>rpart</code>. The function must accept at least two arguments, the first 
+      <dd>Function that fits a predictive model, such as <code>glm</code>
+or <code>rpart</code>. The function must accept at least two arguments, the first
 one being a formula and the second a data.frame with the learning sample.</dd>
       <dt>model.args</dt>
-      <dd>Arguments to be passed to <code>model.fun</code> 
-(in addition to the <code>formula</code> and <code>data</code> argument, 
+      <dd>Arguments to be passed to <code>model.fun</code>
+(in addition to the <code>formula</code> and <code>data</code> argument,
 which are provided by <code>sperrorest</code>)</dd>
       <dt>pred.fun</dt>
-      <dd>Prediction function for a fitted model object created 
-by <code>model</code>. Must accept at least two arguments: the fitted 
-<code>object</code> and a <code>data.frame</code> <code>newdata</code> with data 
+      <dd>Prediction function for a fitted model object created
+by <code>model</code>. Must accept at least two arguments: the fitted
+<code>object</code> and a <code>data.frame</code> <code>newdata</code> with data
 on which to predict the outcome.</dd>
       <dt>pred.args</dt>
-      <dd>(optional) Arguments to <code>pred.fun</code> (in addition to the 
-fitted model object and the <code>newdata</code> argument, 
+      <dd>(optional) Arguments to <code>pred.fun</code> (in addition to the
+fitted model object and the <code>newdata</code> argument,
 which are provided by <code>sperrorest</code>)</dd>
       <dt>smp.fun</dt>
-      <dd>A function for sampling training and test sets from 
-<code>data</code>. E.g., <code><a href='partition.kmeans.html'>partition.kmeans</a></code> for 
+      <dd>A function for sampling training and test sets from
+<code>data</code>. E.g., <code><a href='partition.kmeans.html'>partition.kmeans()</a></code> for
 spatial cross-validation using spatial <em>k</em>-means clustering.</dd>
       <dt>smp.args</dt>
       <dd>(optional) Arguments to be passed to <code>est.fun</code></dd>
       <dt>train.fun</dt>
-      <dd>(optional) A function for resampling or subsampling the 
-training sample in order to achieve, e.g., uniform sample sizes on all 
-training sets, or maintaining a certain ratio of positives and negatives 
-in training sets. 
-E.g., <code><a href='resample.uniform.html'>resample.uniform</a></code> or <code><a href='resample.strat.uniform.html'>resample.strat.uniform</a></code></dd>
+      <dd>(optional) A function for resampling or subsampling the
+training sample in order to achieve, e.g., uniform sample sizes on all
+training sets, or maintaining a certain ratio of positives and negatives
+in training sets.
+E.g., <code><a href='resample.uniform.html'>resample.uniform()</a></code> or <code><a href='resample.strat.uniform.html'>resample.strat.uniform()</a></code></dd>
       <dt>train.param</dt>
       <dd>(optional) Arguments to be passed to <code>resample.fun</code></dd>
       <dt>test.fun</dt>
@@ -142,51 +142,51 @@ E.g., <code><a href='resample.uniform.html'>resample.uniform</a></code> or <code
       <dt>test.param</dt>
       <dd>(optional) Arguments to be passed to <code>test.fun</code></dd>
       <dt>err.fun</dt>
-      <dd>A function that calculates selected error measures from the 
-known responses in <code>data</code> and the model predictions delivered 
-by <code>pred.fun</code>. E.g., <code><a href='err.default.html'>err.default</a></code> (the default). 
+      <dd>A function that calculates selected error measures from the
+known responses in <code>data</code> and the model predictions delivered
+by <code>pred.fun</code>. E.g., <code><a href='err.default.html'>err.default()</a></code> (the default).
 See example and details below.</dd>
       <dt>error.fold</dt>
-      <dd>logical (default: <code>TRUE</code> if <code>importance</code> is 
-<code>TRUE</code>, otherwise <code>FALSE</code>): calculate error measures on each fold 
+      <dd>logical (default: <code>TRUE</code> if <code>importance</code> is
+<code>TRUE</code>, otherwise <code>FALSE</code>): calculate error measures on each fold
 within a resampling repetition.</dd>
       <dt>error.rep</dt>
-      <dd>logical (default: <code>TRUE</code>): calculate error measures 
+      <dd>logical (default: <code>TRUE</code>): calculate error measures
 based on the pooled predictions of all folds within a resampling repetition.</dd>
       <dt>err.train</dt>
-      <dd>logical (default: <code>TRUE</code>): calculate error measures on 
+      <dd>logical (default: <code>TRUE</code>): calculate error measures on
 the training set (in addition to the test set estimation).</dd>
       <dt>imp.variables</dt>
-      <dd>(optional; used if <code>importance = TRUE</code>) 
-Variables for which permutation-based variable importance assessment 
-is performed. If <code>importance = TRUE</code> and <code>imp.variables</code> is 
+      <dd>(optional; used if <code>importance = TRUE</code>)
+Variables for which permutation-based variable importance assessment
+is performed. If <code>importance = TRUE</code> and <code>imp.variables</code> is
 <code>NULL</code>, all variables in <code>formula</code> will be used.</dd>
       <dt>imp.permutations</dt>
-      <dd>(optional; used if <code>importance = TRUE</code>) 
+      <dd>(optional; used if <code>importance = TRUE</code>)
 Number of permutations used for variable importance assessment.</dd>
       <dt>importance</dt>
-      <dd>logical: perform permutation-based variable 
+      <dd>logical: perform permutation-based variable
 importance assessment?</dd>
       <dt>distance</dt>
-      <dd>logical (default: <code>FALSE</code>): if <code>TRUE</code>, calculate 
-mean nearest-neighbour distances from test samples to training samples using 
-<code><a href='add.distance.html'>add.distance.represampling</a></code></dd>
+      <dd>logical (default: <code>FALSE</code>): if <code>TRUE</code>, calculate
+mean nearest-neighbour distances from test samples to training samples using
+<code><a href='add.distance.html'>add.distance.represampling()</a></code></dd>
       <dt>do.gc</dt>
-      <dd>numeric (default: 1): defines frequency of memory garbage 
-collection by calling <code>gc</code>; if <code>&lt;1</code>, no garbage collection; 
-if <code>&gt;=1</code>, run a <code>gc()</code> after each repetition; 
+      <dd>numeric (default: 1): defines frequency of memory garbage
+collection by calling <code>gc()</code>; if <code>&lt;1</code>, no garbage collection;
+if <code>&gt;=1</code>, run a <code>gc()</code> after each repetition;
 if <code>&gt;=2</code>, after each fold</dd>
       <dt>do.try</dt>
-      <dd>logical (default: <code>FALSE</code>): if <code>TRUE</code> [untested!!], 
-use <code>try</code> to robustify calls to <code>model.fun</code> and 
+      <dd>logical (default: <code>FALSE</code>): if <code>TRUE</code> untested!!,
+use <code>try()</code> to robustify calls to <code>model.fun</code> and
 <code>err.fun</code>; use with caution!</dd>
       <dt>progress</dt>
-      <dd>if <code>progress = 1</code>, repetition and fold progress is 
-shown in console (in Windows Rgui, disable &#39;Buffered output&#39; in &#39;Misc&#39; menu). 
-If <code>progress = 2</code>, only repetition information is shown. 
+      <dd>if <code>progress = 1</code>, repetition and fold progress is
+shown in console (in Windows Rgui, disable &#39;Buffered output&#39; in &#39;Misc&#39; menu).
+If <code>progress = 2</code>, only repetition information is shown.
 Set to <code>FALSE</code> for no progress information.</dd>
       <dt>benchmark</dt>
-      <dd>(optional) logical (default: <code>FALSE</code>): if <code>TRUE</code>, 
+      <dd>(optional) logical (default: <code>FALSE</code>): if <code>TRUE</code>,
 perform benchmarking and return <code>sperrorestbenchmarks</code> object</dd>
       <dt>...</dt>
       <dd>currently not used</dd>
@@ -198,31 +198,31 @@ perform benchmarking and return <code>sperrorestbenchmarks</code> object</dd>
     
     <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
 
-    <p>(1) Optionally save fitted models, training and test samples in the 
-results object; (2) Optionally save intermediate results in some file, and 
-enable the function to continue an interrupted sperrorest call where it 
-was interrupted. (3) Optionally have sperrorest dump the result of each 
+    <p>(1) Optionally save fitted models, training and test samples in the
+results object; (2) Optionally save intermediate results in some file, and
+enable the function to continue an interrupted sperrorest call where it
+was interrupted. (3) Optionally have sperrorest dump the result of each
 repetition into a file, and to skip repetitions for which a file already exists.</p>
     
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
-    <p>Brenning, A. 2012. Spatial cross-validation and bootstrap for 
-the assessment of prediction rules in remote sensing: the R package &#39;sperrorest&#39;. 
-2012 IEEE International Geoscience and Remote Sensing Symposium (IGARSS), 
+    <p>Brenning, A. 2012. Spatial cross-validation and bootstrap for
+the assessment of prediction rules in remote sensing: the R package &#39;sperrorest&#39;.
+2012 IEEE International Geoscience and Remote Sensing Symposium (IGARSS),
 23-27 July 2012, p. 5372-5375.</p>
-    <p>Brenning, A. 2005. Spatial prediction models for landslide hazards: review, 
+    <p>Brenning, A. 2005. Spatial prediction models for landslide hazards: review,
 comparison and evaluation. Natural Hazards and Earth System Sciences, 5(6): 853-862.</p>
-    <p>Brenning, A., S. Long &amp; P. Fieguth. Forthcoming. Detecting rock glacier flow 
-structures using Gabor filters and IKONOS imagery. 
+    <p>Brenning, A., S. Long &amp; P. Fieguth. Forthcoming. Detecting rock glacier flow
+structures using Gabor filters and IKONOS imagery.
 Submitted to Remote Sensing of Environment.</p>
-    <p>Russ, G. &amp; A. Brenning. 2010a. Data mining in precision agriculture: 
-Management of spatial information. In 13th International Conference on 
-Information Processing and Management of Uncertainty, IPMU 2010; Dortmund; 
+    <p>Russ, G. &amp; A. Brenning. 2010a. Data mining in precision agriculture:
+Management of spatial information. In 13th International Conference on
+Information Processing and Management of Uncertainty, IPMU 2010; Dortmund;
 28 June - 2 July 2010. Lecture Notes in Computer Science, 6178 LNAI: 350-359.</p>
-    <p>Russ, G. &amp; A. Brenning. 2010b. Spatial variable importance assessment for 
-yield prediction in Precision Agriculture. In Advances in Intelligent 
-Data Analysis IX, Proceedings, 9th International Symposium, 
-IDA 2010, Tucson, AZ, USA, 19-21 May 2010.  
+    <p>Russ, G. &amp; A. Brenning. 2010b. Spatial variable importance assessment for
+yield prediction in Precision Agriculture. In Advances in Intelligent
+Data Analysis IX, Proceedings, 9th International Symposium,
+IDA 2010, Tucson, AZ, USA, 19-21 May 2010.
 Lecture Notes in Computer Science, 6065 LNCS: 184-195.</p>
     
 
@@ -242,113 +242,113 @@ Lecture Notes in Computer Science, 6065 LNCS: 184-195.</p>
                      <span class='kw'>model.fun</span> <span class='kw'>=</span> <span class='no'>rpart</span>, <span class='kw'>model.args</span> <span class='kw'>=</span> <span class='fu'>list</span>(<span class='kw'>control</span> <span class='kw'>=</span> <span class='no'>ctrl</span>),
                      <span class='kw'>pred.fun</span> <span class='kw'>=</span> <span class='no'>mypred.rpart</span>,
                      <span class='kw'>smp.fun</span> <span class='kw'>=</span> <span class='no'>partition.cv</span>,
-                     <span class='kw'>smp.args</span> <span class='kw'>=</span> <span class='fu'>list</span>(<span class='kw'>repetition</span> <span class='kw'>=</span> <span class='fl'>1</span>:<span class='fl'>5</span>, <span class='kw'>nfold</span> <span class='kw'>=</span> <span class='fl'>10</span>))</div><div class='output co'>#&gt; Sun Feb  5 19:21:04 2017 Repetition 1 
-#&gt; Sun Feb  5 19:21:04 2017 - Fold 1 
-#&gt; Sun Feb  5 19:21:05 2017 - Fold 2 
-#&gt; Sun Feb  5 19:21:05 2017 - Fold 3 
-#&gt; Sun Feb  5 19:21:05 2017 - Fold 4 
-#&gt; Sun Feb  5 19:21:05 2017 - Fold 5 
-#&gt; Sun Feb  5 19:21:05 2017 - Fold 6 
-#&gt; Sun Feb  5 19:21:05 2017 - Fold 7 
-#&gt; Sun Feb  5 19:21:06 2017 - Fold 8 
-#&gt; Sun Feb  5 19:21:06 2017 - Fold 9 
-#&gt; Sun Feb  5 19:21:06 2017 - Fold 10 
-#&gt; Sun Feb  5 19:21:07 2017 Repetition 2 
-#&gt; Sun Feb  5 19:21:07 2017 - Fold 1 
-#&gt; Sun Feb  5 19:21:07 2017 - Fold 2 
-#&gt; Sun Feb  5 19:21:07 2017 - Fold 3 
-#&gt; Sun Feb  5 19:21:07 2017 - Fold 4 
-#&gt; Sun Feb  5 19:21:07 2017 - Fold 5 
-#&gt; Sun Feb  5 19:21:07 2017 - Fold 6 
-#&gt; Sun Feb  5 19:21:07 2017 - Fold 7 
-#&gt; Sun Feb  5 19:21:07 2017 - Fold 8 
-#&gt; Sun Feb  5 19:21:07 2017 - Fold 9 
-#&gt; Sun Feb  5 19:21:08 2017 - Fold 10 
-#&gt; Sun Feb  5 19:21:09 2017 Repetition 3 
-#&gt; Sun Feb  5 19:21:09 2017 - Fold 1 
-#&gt; Sun Feb  5 19:21:09 2017 - Fold 2 
-#&gt; Sun Feb  5 19:21:09 2017 - Fold 3 
-#&gt; Sun Feb  5 19:21:09 2017 - Fold 4 
-#&gt; Sun Feb  5 19:21:09 2017 - Fold 5 
-#&gt; Sun Feb  5 19:21:09 2017 - Fold 6 
-#&gt; Sun Feb  5 19:21:09 2017 - Fold 7 
-#&gt; Sun Feb  5 19:21:09 2017 - Fold 8 
-#&gt; Sun Feb  5 19:21:09 2017 - Fold 9 
-#&gt; Sun Feb  5 19:21:09 2017 - Fold 10 
-#&gt; Sun Feb  5 19:21:11 2017 Repetition 4 
-#&gt; Sun Feb  5 19:21:11 2017 - Fold 1 
-#&gt; Sun Feb  5 19:21:11 2017 - Fold 2 
-#&gt; Sun Feb  5 19:21:11 2017 - Fold 3 
-#&gt; Sun Feb  5 19:21:11 2017 - Fold 4 
-#&gt; Sun Feb  5 19:21:11 2017 - Fold 5 
-#&gt; Sun Feb  5 19:21:11 2017 - Fold 6 
-#&gt; Sun Feb  5 19:21:11 2017 - Fold 7 
-#&gt; Sun Feb  5 19:21:11 2017 - Fold 8 
-#&gt; Sun Feb  5 19:21:11 2017 - Fold 9 
-#&gt; Sun Feb  5 19:21:11 2017 - Fold 10 
-#&gt; Sun Feb  5 19:21:12 2017 Repetition 5 
-#&gt; Sun Feb  5 19:21:12 2017 - Fold 1 
-#&gt; Sun Feb  5 19:21:12 2017 - Fold 2 
-#&gt; Sun Feb  5 19:21:13 2017 - Fold 3 
-#&gt; Sun Feb  5 19:21:13 2017 - Fold 4 
-#&gt; Sun Feb  5 19:21:13 2017 - Fold 5 
-#&gt; Sun Feb  5 19:21:13 2017 - Fold 6 
-#&gt; Sun Feb  5 19:21:13 2017 - Fold 7 
-#&gt; Sun Feb  5 19:21:13 2017 - Fold 8 
-#&gt; Sun Feb  5 19:21:13 2017 - Fold 9 
-#&gt; Sun Feb  5 19:21:13 2017 - Fold 10 
-#&gt; Sun Feb  5 19:21:14 2017 Done.</div><div class='input'><span class='fu'>summary</span>(<span class='no'>nspres</span>$<span class='no'>error.rep</span>)</div><div class='output co'>#&gt;                           mean          sd       median         IQR
-#&gt; train.auroc       7.487850e-01 0.010260547 7.499008e-01 0.010163988
-#&gt; train.error       2.941333e-01 0.008119440 2.952778e-01 0.008944444
-#&gt; train.accuracy    7.058667e-01 0.008119440 7.047222e-01 0.008944444
-#&gt; train.sensitivity 6.784667e-01 0.030209904 6.778889e-01 0.048111111
-#&gt; train.specificity 7.332667e-01 0.016032105 7.274444e-01 0.028111111
-#&gt; train.fpr70       3.018222e-01 0.027160429 3.050000e-01 0.024222222
-#&gt; train.fpr80       4.704667e-01 0.042487137 4.696667e-01 0.024555556
-#&gt; train.fpr90       6.642222e-01 0.022104968 6.607778e-01 0.035888889
-#&gt; train.tpr80       5.662444e-01 0.011906633 5.698889e-01 0.008444444
-#&gt; train.tpr90       3.280444e-01 0.017781354 3.206667e-01 0.022333333
-#&gt; train.tpr95       1.845778e-01 0.018511658 1.794444e-01 0.022111111
+                     <span class='kw'>smp.args</span> <span class='kw'>=</span> <span class='fu'>list</span>(<span class='kw'>repetition</span> <span class='kw'>=</span> <span class='fl'>1</span>:<span class='fl'>5</span>, <span class='kw'>nfold</span> <span class='kw'>=</span> <span class='fl'>10</span>))</div><div class='output co'>#&gt; Sun Feb  5 22:57:31 2017 Repetition 1 
+#&gt; Sun Feb  5 22:57:31 2017 - Fold 1 
+#&gt; Sun Feb  5 22:57:31 2017 - Fold 2 
+#&gt; Sun Feb  5 22:57:31 2017 - Fold 3 
+#&gt; Sun Feb  5 22:57:32 2017 - Fold 4 
+#&gt; Sun Feb  5 22:57:32 2017 - Fold 5 
+#&gt; Sun Feb  5 22:57:32 2017 - Fold 6 
+#&gt; Sun Feb  5 22:57:32 2017 - Fold 7 
+#&gt; Sun Feb  5 22:57:32 2017 - Fold 8 
+#&gt; Sun Feb  5 22:57:32 2017 - Fold 9 
+#&gt; Sun Feb  5 22:57:32 2017 - Fold 10 
+#&gt; Sun Feb  5 22:57:33 2017 Repetition 2 
+#&gt; Sun Feb  5 22:57:33 2017 - Fold 1 
+#&gt; Sun Feb  5 22:57:33 2017 - Fold 2 
+#&gt; Sun Feb  5 22:57:33 2017 - Fold 3 
+#&gt; Sun Feb  5 22:57:33 2017 - Fold 4 
+#&gt; Sun Feb  5 22:57:34 2017 - Fold 5 
+#&gt; Sun Feb  5 22:57:34 2017 - Fold 6 
+#&gt; Sun Feb  5 22:57:34 2017 - Fold 7 
+#&gt; Sun Feb  5 22:57:34 2017 - Fold 8 
+#&gt; Sun Feb  5 22:57:34 2017 - Fold 9 
+#&gt; Sun Feb  5 22:57:34 2017 - Fold 10 
+#&gt; Sun Feb  5 22:57:35 2017 Repetition 3 
+#&gt; Sun Feb  5 22:57:35 2017 - Fold 1 
+#&gt; Sun Feb  5 22:57:35 2017 - Fold 2 
+#&gt; Sun Feb  5 22:57:35 2017 - Fold 3 
+#&gt; Sun Feb  5 22:57:36 2017 - Fold 4 
+#&gt; Sun Feb  5 22:57:36 2017 - Fold 5 
+#&gt; Sun Feb  5 22:57:36 2017 - Fold 6 
+#&gt; Sun Feb  5 22:57:36 2017 - Fold 7 
+#&gt; Sun Feb  5 22:57:36 2017 - Fold 8 
+#&gt; Sun Feb  5 22:57:36 2017 - Fold 9 
+#&gt; Sun Feb  5 22:57:36 2017 - Fold 10 
+#&gt; Sun Feb  5 22:57:38 2017 Repetition 4 
+#&gt; Sun Feb  5 22:57:38 2017 - Fold 1 
+#&gt; Sun Feb  5 22:57:38 2017 - Fold 2 
+#&gt; Sun Feb  5 22:57:38 2017 - Fold 3 
+#&gt; Sun Feb  5 22:57:38 2017 - Fold 4 
+#&gt; Sun Feb  5 22:57:38 2017 - Fold 5 
+#&gt; Sun Feb  5 22:57:38 2017 - Fold 6 
+#&gt; Sun Feb  5 22:57:38 2017 - Fold 7 
+#&gt; Sun Feb  5 22:57:38 2017 - Fold 8 
+#&gt; Sun Feb  5 22:57:38 2017 - Fold 9 
+#&gt; Sun Feb  5 22:57:38 2017 - Fold 10 
+#&gt; Sun Feb  5 22:57:40 2017 Repetition 5 
+#&gt; Sun Feb  5 22:57:40 2017 - Fold 1 
+#&gt; Sun Feb  5 22:57:40 2017 - Fold 2 
+#&gt; Sun Feb  5 22:57:40 2017 - Fold 3 
+#&gt; Sun Feb  5 22:57:40 2017 - Fold 4 
+#&gt; Sun Feb  5 22:57:40 2017 - Fold 5 
+#&gt; Sun Feb  5 22:57:40 2017 - Fold 6 
+#&gt; Sun Feb  5 22:57:40 2017 - Fold 7 
+#&gt; Sun Feb  5 22:57:40 2017 - Fold 8 
+#&gt; Sun Feb  5 22:57:40 2017 - Fold 9 
+#&gt; Sun Feb  5 22:57:41 2017 - Fold 10 
+#&gt; Sun Feb  5 22:57:42 2017 Done.</div><div class='input'><span class='fu'>summary</span>(<span class='no'>nspres</span>$<span class='no'>error.rep</span>)</div><div class='output co'>#&gt;                           mean          sd       median         IQR
+#&gt; train.auroc       7.541176e-01 0.007734918 7.586347e-01 0.010858031
+#&gt; train.error       2.876667e-01 0.006134174 2.849444e-01 0.009944444
+#&gt; train.accuracy    7.123333e-01 0.006134174 7.150556e-01 0.009944444
+#&gt; train.sensitivity 6.947556e-01 0.024654201 6.967778e-01 0.018777778
+#&gt; train.specificity 7.299111e-01 0.015436529 7.231111e-01 0.017777778
+#&gt; train.fpr70       2.937778e-01 0.030719058 2.796667e-01 0.021222222
+#&gt; train.fpr80       4.508667e-01 0.031878763 4.382222e-01 0.048666667
+#&gt; train.fpr90       6.503778e-01 0.021334144 6.446667e-01 0.024444444
+#&gt; train.tpr80       5.752889e-01 0.004794287 5.761111e-01 0.004222222
+#&gt; train.tpr90       3.439333e-01 0.008217942 3.475556e-01 0.007777778
+#&gt; train.tpr95       1.902667e-01 0.013407341 1.877778e-01 0.022555556
 #&gt; train.events      9.000000e+03 0.000000000 9.000000e+03 0.000000000
 #&gt; train.count       1.800000e+04 0.000000000 1.800000e+04 0.000000000
-#&gt; test.auroc        6.441383e-01 0.001090248 6.435630e-01 0.001760500
-#&gt; test.error        3.784000e-01 0.006904709 3.795000e-01 0.006000000
-#&gt; test.accuracy     6.216000e-01 0.006904709 6.205000e-01 0.006000000
-#&gt; test.sensitivity  5.954000e-01 0.020549939 5.890000e-01 0.024000000
-#&gt; test.specificity  6.478000e-01 0.023530831 6.370000e-01 0.025000000
-#&gt; test.fpr70        5.016000e-01 0.021007142 5.010000e-01 0.009000000
-#&gt; test.fpr80        6.566000e-01 0.030549959 6.450000e-01 0.001000000
-#&gt; test.fpr90        8.164000e-01 0.023212066 8.170000e-01 0.017000000
-#&gt; test.tpr80        3.992000e-01 0.014446453 3.990000e-01 0.019000000
-#&gt; test.tpr90        1.772000e-01 0.018579559 1.880000e-01 0.032000000
-#&gt; test.tpr95        8.520000e-02 0.014754660 8.800000e-02 0.025000000
+#&gt; test.auroc        6.468379e-01 0.009813666 6.474200e-01 0.003515500
+#&gt; test.error        3.771000e-01 0.009800510 3.795000e-01 0.011000000
+#&gt; test.accuracy     6.229000e-01 0.009800510 6.205000e-01 0.011000000
+#&gt; test.sensitivity  6.058000e-01 0.023295922 6.110000e-01 0.024000000
+#&gt; test.specificity  6.400000e-01 0.013171940 6.380000e-01 0.023000000
+#&gt; test.fpr70        4.964000e-01 0.039303944 4.990000e-01 0.046000000
+#&gt; test.fpr80        6.322000e-01 0.020029978 6.320000e-01 0.012000000
+#&gt; test.fpr90        8.066000e-01 0.023912340 8.060000e-01 0.018000000
+#&gt; test.tpr80        3.900000e-01 0.017677670 3.900000e-01 0.007000000
+#&gt; test.tpr90        1.790000e-01 0.020186629 1.660000e-01 0.029000000
+#&gt; test.tpr95        9.320000e-02 0.006058052 9.400000e-02 0.002000000
 #&gt; test.events       1.000000e+03 0.000000000 1.000000e+03 0.000000000
 #&gt; test.count        2.000000e+03 0.000000000 2.000000e+03 0.000000000</div><div class='input'><span class='fu'>summary</span>(<span class='no'>nspres</span>$<span class='no'>error.fold</span>)</div><div class='output co'>#&gt;                            mean         sd        median         IQR
-#&gt; train.auroc          0.74321427 0.02474586    0.74930539  0.02571436
-#&gt; train.error          0.29413333 0.01821879    0.29194444  0.02166667
-#&gt; train.accuracy       0.70586667 0.01821879    0.70805556  0.02166667
-#&gt; train.sensitivity    0.67849549 0.06050419    0.68886363  0.08570120
-#&gt; train.specificity    0.73324269 0.04290137    0.73158400  0.05950818
-#&gt; train.fpr70          0.43113706 0.20340171    0.33575605  0.19872038
-#&gt; train.fpr80          0.58225951 0.15278612    0.54040965  0.23553985
-#&gt; train.fpr90          0.72669846 0.09446432    0.69923977  0.16933477
-#&gt; train.tpr80          0.52268197 0.06312166    0.53669243  0.09173833
-#&gt; train.tpr90          0.15959015 0.11174132    0.13643975  0.13918061
-#&gt; train.tpr95          0.10262918 0.06095902    0.08775793  0.09462404
-#&gt; train.events       900.00000000 7.37618894  899.00000000 10.50000000
+#&gt; train.auroc          0.74912639 0.02143980    0.75033148  0.03112967
+#&gt; train.error          0.28766667 0.01639076    0.28555556  0.02208333
+#&gt; train.accuracy       0.71233333 0.01639076    0.71444444  0.02208333
+#&gt; train.sensitivity    0.69466527 0.05024675    0.70597675  0.04577112
+#&gt; train.specificity    0.72985596 0.03076859    0.73113417  0.03960747
+#&gt; train.fpr70          0.38511548 0.19134039    0.30182068  0.12268728
+#&gt; train.fpr80          0.56298127 0.14984727    0.51055437  0.25964491
+#&gt; train.fpr90          0.73369686 0.07874645    0.72477817  0.15214458
+#&gt; train.tpr80          0.53397778 0.05815153    0.54196762  0.07407714
+#&gt; train.tpr90          0.18430120 0.12462037    0.12714731  0.22853789
+#&gt; train.tpr95          0.10587489 0.05303136    0.09742637  0.07111641
+#&gt; train.events       900.00000000 7.51325360  899.00000000 10.75000000
 #&gt; train.count       1800.00000000 0.00000000 1800.00000000  0.00000000
-#&gt; test.auroc           0.64464275 0.03303863    0.64310000  0.03378576
-#&gt; test.error           0.37840000 0.02802040    0.38000000  0.04000000
-#&gt; test.accuracy        0.62160000 0.02802040    0.62000000  0.04000000
-#&gt; test.sensitivity     0.59502935 0.06651896    0.59896907  0.08879098
-#&gt; test.specificity     0.64747465 0.06149653    0.64466089  0.07088723
-#&gt; test.fpr70           0.61891638 0.15614910    0.57287032  0.19757348
-#&gt; test.fpr80           0.73956862 0.11608691    0.73539353  0.16399123
-#&gt; test.fpr90           0.84136832 0.07232780    0.85142689  0.11550325
-#&gt; test.tpr80           0.32443371 0.13691147    0.36559140  0.14288910
-#&gt; test.tpr90           0.10290722 0.08476413    0.09112586  0.08357111
-#&gt; test.tpr95           0.05053111 0.03411585    0.04397729  0.04836650
-#&gt; test.events        100.00000000 7.37618894  101.00000000 10.50000000
+#&gt; test.auroc           0.64756570 0.03887745    0.64305880  0.05091328
+#&gt; test.error           0.37710000 0.03115285    0.37500000  0.04500000
+#&gt; test.accuracy        0.62290000 0.03115285    0.62500000  0.04500000
+#&gt; test.sensitivity     0.60670980 0.06104520    0.60495010  0.06089113
+#&gt; test.specificity     0.64053284 0.04474527    0.64772727  0.06980895
+#&gt; test.fpr70           0.57981234 0.15262972    0.55038197  0.16120326
+#&gt; test.fpr80           0.70339807 0.11282255    0.69497799  0.18414459
+#&gt; test.fpr90           0.83695808 0.07143887    0.84545455  0.09563986
+#&gt; test.tpr80           0.32293180 0.13922692    0.35355572  0.15178856
+#&gt; test.tpr90           0.10496289 0.09200011    0.06905208  0.09170656
+#&gt; test.tpr95           0.05111912 0.02848776    0.04723708  0.02911104
+#&gt; test.events        100.00000000 7.51325360  101.00000000 10.75000000
 #&gt; test.count         200.00000000 0.00000000  200.00000000  0.00000000
 #&gt; distance            -1.00000000 0.00000000   -1.00000000  0.00000000</div><div class='input'><span class='fu'>summary</span>(<span class='no'>nspres</span>$<span class='no'>represampling</span>)</div><div class='output co'>#&gt; $`1`
 #&gt;    n.train n.test
@@ -421,94 +421,94 @@ Lecture Notes in Computer Science, 6065 LNCS: 184-195.</p>
                     <span class='kw'>model.fun</span> <span class='kw'>=</span> <span class='no'>rpart</span>, <span class='kw'>model.args</span> <span class='kw'>=</span> <span class='fu'>list</span>(<span class='kw'>control</span> <span class='kw'>=</span> <span class='no'>ctrl</span>),
                     <span class='kw'>pred.fun</span> <span class='kw'>=</span> <span class='no'>mypred.rpart</span>,
                     <span class='kw'>smp.fun</span> <span class='kw'>=</span> <span class='no'>partition.kmeans</span>,
-                    <span class='kw'>smp.args</span> <span class='kw'>=</span> <span class='fu'>list</span>(<span class='kw'>repetition</span> <span class='kw'>=</span> <span class='fl'>1</span>:<span class='fl'>5</span>, <span class='kw'>nfold</span> <span class='kw'>=</span> <span class='fl'>10</span>))</div><div class='output co'>#&gt; Sun Feb  5 19:21:14 2017 Repetition 1 
-#&gt; Sun Feb  5 19:21:14 2017 - Fold 1 
-#&gt; Sun Feb  5 19:21:15 2017 - Fold 2 
-#&gt; Sun Feb  5 19:21:15 2017 - Fold 3 
-#&gt; Sun Feb  5 19:21:15 2017 - Fold 4 
-#&gt; Sun Feb  5 19:21:15 2017 - Fold 5 
-#&gt; Sun Feb  5 19:21:15 2017 - Fold 6 
-#&gt; Sun Feb  5 19:21:15 2017 - Fold 7 
-#&gt; Sun Feb  5 19:21:15 2017 - Fold 8 
-#&gt; Sun Feb  5 19:21:15 2017 - Fold 9 
-#&gt; Sun Feb  5 19:21:15 2017 - Fold 10 
-#&gt; Sun Feb  5 19:21:16 2017 Repetition 2 
-#&gt; Sun Feb  5 19:21:16 2017 - Fold 1 
-#&gt; Sun Feb  5 19:21:16 2017 - Fold 2 
-#&gt; Sun Feb  5 19:21:17 2017 - Fold 3 
-#&gt; Sun Feb  5 19:21:17 2017 - Fold 4 
-#&gt; Sun Feb  5 19:21:17 2017 - Fold 5 
-#&gt; Sun Feb  5 19:21:17 2017 - Fold 6 
-#&gt; Sun Feb  5 19:21:17 2017 - Fold 7 
-#&gt; Sun Feb  5 19:21:17 2017 - Fold 8 
-#&gt; Sun Feb  5 19:21:17 2017 - Fold 9 
-#&gt; Sun Feb  5 19:21:17 2017 - Fold 10 
-#&gt; Sun Feb  5 19:21:18 2017 Repetition 3 
-#&gt; Sun Feb  5 19:21:18 2017 - Fold 1 
-#&gt; Sun Feb  5 19:21:18 2017 - Fold 2 
-#&gt; Sun Feb  5 19:21:18 2017 - Fold 3 
-#&gt; Sun Feb  5 19:21:18 2017 - Fold 4 
-#&gt; Sun Feb  5 19:21:18 2017 - Fold 5 
-#&gt; Sun Feb  5 19:21:19 2017 - Fold 6 
-#&gt; Sun Feb  5 19:21:19 2017 - Fold 7 
-#&gt; Sun Feb  5 19:21:19 2017 - Fold 8 
-#&gt; Sun Feb  5 19:21:19 2017 - Fold 9 
-#&gt; Sun Feb  5 19:21:19 2017 - Fold 10 
-#&gt; Sun Feb  5 19:21:20 2017 Repetition 4 
-#&gt; Sun Feb  5 19:21:20 2017 - Fold 1 
-#&gt; Sun Feb  5 19:21:20 2017 - Fold 2 
-#&gt; Sun Feb  5 19:21:20 2017 - Fold 3 
-#&gt; Sun Feb  5 19:21:20 2017 - Fold 4 
-#&gt; Sun Feb  5 19:21:20 2017 - Fold 5 
-#&gt; Sun Feb  5 19:21:20 2017 - Fold 6 
-#&gt; Sun Feb  5 19:21:21 2017 - Fold 7 
-#&gt; Sun Feb  5 19:21:21 2017 - Fold 8 
-#&gt; Sun Feb  5 19:21:21 2017 - Fold 9 
-#&gt; Sun Feb  5 19:21:21 2017 - Fold 10 
-#&gt; Sun Feb  5 19:21:22 2017 Repetition 5 
-#&gt; Sun Feb  5 19:21:22 2017 - Fold 1 
-#&gt; Sun Feb  5 19:21:22 2017 - Fold 2 
-#&gt; Sun Feb  5 19:21:22 2017 - Fold 3 
-#&gt; Sun Feb  5 19:21:22 2017 - Fold 4 
-#&gt; Sun Feb  5 19:21:22 2017 - Fold 5 
-#&gt; Sun Feb  5 19:21:22 2017 - Fold 6 
-#&gt; Sun Feb  5 19:21:22 2017 - Fold 7 
-#&gt; Sun Feb  5 19:21:22 2017 - Fold 8 
-#&gt; Sun Feb  5 19:21:22 2017 - Fold 9 
-#&gt; Sun Feb  5 19:21:23 2017 - Fold 10 
-#&gt; Sun Feb  5 19:21:23 2017 Done.</div><div class='input'><span class='fu'>summary</span>(<span class='no'>spres</span>$<span class='no'>error.rep</span>)</div><div class='output co'>#&gt;                           mean          sd       median          IQR
-#&gt; train.auroc       7.518698e-01 0.001742309 7.516471e-01 0.0001501358
-#&gt; train.error       2.932000e-01 0.001521249 2.937222e-01 0.0003888889
-#&gt; train.accuracy    7.068000e-01 0.001521249 7.062778e-01 0.0003888889
-#&gt; train.sensitivity 6.961333e-01 0.008647914 6.916667e-01 0.0028888889
-#&gt; train.specificity 7.174667e-01 0.005752831 7.191111e-01 0.0021111111
-#&gt; train.fpr70       2.943111e-01 0.003003496 2.926667e-01 0.0021111111
-#&gt; train.fpr80       4.600000e-01 0.006838526 4.578889e-01 0.0023333333
-#&gt; train.fpr90       6.594444e-01 0.016055459 6.637778e-01 0.0188888889
-#&gt; train.tpr80       5.574667e-01 0.006523651 5.585556e-01 0.0100000000
-#&gt; train.tpr90       3.425333e-01 0.008682464 3.447778e-01 0.0045555556
-#&gt; train.tpr95       1.724222e-01 0.009467749 1.760000e-01 0.0181111111
-#&gt; train.events      9.000000e+03 0.000000000 9.000000e+03 0.0000000000
-#&gt; train.count       1.800000e+04 0.000000000 1.800000e+04 0.0000000000
-#&gt; test.auroc        5.613221e-01 0.005606086 5.635500e-01 0.0047010000
-#&gt; test.error        4.416000e-01 0.016648574 4.350000e-01 0.0175000000
-#&gt; test.accuracy     5.584000e-01 0.016648574 5.650000e-01 0.0175000000
-#&gt; test.sensitivity  4.896000e-01 0.010237187 4.910000e-01 0.0080000000
-#&gt; test.specificity  6.272000e-01 0.033951436 6.510000e-01 0.0490000000
-#&gt; test.fpr70        6.462000e-01 0.015106290 6.400000e-01 0.0110000000
-#&gt; test.fpr80        7.520000e-01 0.019493589 7.410000e-01 0.0100000000
-#&gt; test.fpr90        8.656000e-01 0.008354639 8.610000e-01 0.0130000000
-#&gt; test.tpr80        2.618000e-01 0.028525427 2.470000e-01 0.0230000000
-#&gt; test.tpr90        1.208000e-01 0.040288956 1.100000e-01 0.0560000000
-#&gt; test.tpr95        3.480000e-02 0.023815961 2.500000e-02 0.0030000000
-#&gt; test.events       1.000000e+03 0.000000000 1.000000e+03 0.0000000000
-#&gt; test.count        2.000000e+03 0.000000000 2.000000e+03 0.0000000000</div><div class='input'><span class='fu'>summary</span>(<span class='no'>spres</span>$<span class='no'>represampling</span>)</div><div class='output co'>#&gt; $`1`
+                    <span class='kw'>smp.args</span> <span class='kw'>=</span> <span class='fu'>list</span>(<span class='kw'>repetition</span> <span class='kw'>=</span> <span class='fl'>1</span>:<span class='fl'>5</span>, <span class='kw'>nfold</span> <span class='kw'>=</span> <span class='fl'>10</span>))</div><div class='output co'>#&gt; Sun Feb  5 22:57:42 2017 Repetition 1 
+#&gt; Sun Feb  5 22:57:42 2017 - Fold 1 
+#&gt; Sun Feb  5 22:57:42 2017 - Fold 2 
+#&gt; Sun Feb  5 22:57:42 2017 - Fold 3 
+#&gt; Sun Feb  5 22:57:42 2017 - Fold 4 
+#&gt; Sun Feb  5 22:57:42 2017 - Fold 5 
+#&gt; Sun Feb  5 22:57:42 2017 - Fold 6 
+#&gt; Sun Feb  5 22:57:42 2017 - Fold 7 
+#&gt; Sun Feb  5 22:57:43 2017 - Fold 8 
+#&gt; Sun Feb  5 22:57:43 2017 - Fold 9 
+#&gt; Sun Feb  5 22:57:43 2017 - Fold 10 
+#&gt; Sun Feb  5 22:57:44 2017 Repetition 2 
+#&gt; Sun Feb  5 22:57:44 2017 - Fold 1 
+#&gt; Sun Feb  5 22:57:44 2017 - Fold 2 
+#&gt; Sun Feb  5 22:57:44 2017 - Fold 3 
+#&gt; Sun Feb  5 22:57:44 2017 - Fold 4 
+#&gt; Sun Feb  5 22:57:44 2017 - Fold 5 
+#&gt; Sun Feb  5 22:57:44 2017 - Fold 6 
+#&gt; Sun Feb  5 22:57:44 2017 - Fold 7 
+#&gt; Sun Feb  5 22:57:44 2017 - Fold 8 
+#&gt; Sun Feb  5 22:57:44 2017 - Fold 9 
+#&gt; Sun Feb  5 22:57:44 2017 - Fold 10 
+#&gt; Sun Feb  5 22:57:45 2017 Repetition 3 
+#&gt; Sun Feb  5 22:57:45 2017 - Fold 1 
+#&gt; Sun Feb  5 22:57:45 2017 - Fold 2 
+#&gt; Sun Feb  5 22:57:46 2017 - Fold 3 
+#&gt; Sun Feb  5 22:57:46 2017 - Fold 4 
+#&gt; Sun Feb  5 22:57:46 2017 - Fold 5 
+#&gt; Sun Feb  5 22:57:46 2017 - Fold 6 
+#&gt; Sun Feb  5 22:57:46 2017 - Fold 7 
+#&gt; Sun Feb  5 22:57:46 2017 - Fold 8 
+#&gt; Sun Feb  5 22:57:46 2017 - Fold 9 
+#&gt; Sun Feb  5 22:57:46 2017 - Fold 10 
+#&gt; Sun Feb  5 22:57:47 2017 Repetition 4 
+#&gt; Sun Feb  5 22:57:47 2017 - Fold 1 
+#&gt; Sun Feb  5 22:57:47 2017 - Fold 2 
+#&gt; Sun Feb  5 22:57:47 2017 - Fold 3 
+#&gt; Sun Feb  5 22:57:47 2017 - Fold 4 
+#&gt; Sun Feb  5 22:57:48 2017 - Fold 5 
+#&gt; Sun Feb  5 22:57:48 2017 - Fold 6 
+#&gt; Sun Feb  5 22:57:48 2017 - Fold 7 
+#&gt; Sun Feb  5 22:57:48 2017 - Fold 8 
+#&gt; Sun Feb  5 22:57:48 2017 - Fold 9 
+#&gt; Sun Feb  5 22:57:48 2017 - Fold 10 
+#&gt; Sun Feb  5 22:57:49 2017 Repetition 5 
+#&gt; Sun Feb  5 22:57:49 2017 - Fold 1 
+#&gt; Sun Feb  5 22:57:49 2017 - Fold 2 
+#&gt; Sun Feb  5 22:57:49 2017 - Fold 3 
+#&gt; Sun Feb  5 22:57:49 2017 - Fold 4 
+#&gt; Sun Feb  5 22:57:49 2017 - Fold 5 
+#&gt; Sun Feb  5 22:57:50 2017 - Fold 6 
+#&gt; Sun Feb  5 22:57:50 2017 - Fold 7 
+#&gt; Sun Feb  5 22:57:50 2017 - Fold 8 
+#&gt; Sun Feb  5 22:57:50 2017 - Fold 9 
+#&gt; Sun Feb  5 22:57:50 2017 - Fold 10 
+#&gt; Sun Feb  5 22:57:51 2017 Done.</div><div class='input'><span class='fu'>summary</span>(<span class='no'>spres</span>$<span class='no'>error.rep</span>)</div><div class='output co'>#&gt;                           mean          sd       median         IQR
+#&gt; train.auroc       7.544108e-01 0.003917592 7.537600e-01 0.002417198
+#&gt; train.error       2.907111e-01 0.003705893 2.916667e-01 0.003055556
+#&gt; train.accuracy    7.092889e-01 0.003705893 7.083333e-01 0.003055556
+#&gt; train.sensitivity 6.982000e-01 0.010572034 6.944444e-01 0.010444444
+#&gt; train.specificity 7.203778e-01 0.013953981 7.188889e-01 0.006333333
+#&gt; train.fpr70       2.884667e-01 0.008664672 2.924444e-01 0.009222222
+#&gt; train.fpr80       4.554667e-01 0.005711371 4.527778e-01 0.005777778
+#&gt; train.fpr90       6.578444e-01 0.014958296 6.637778e-01 0.024444444
+#&gt; train.tpr80       5.645111e-01 0.015065003 5.584444e-01 0.006888889
+#&gt; train.tpr90       3.483333e-01 0.004217102 3.483333e-01 0.007111111
+#&gt; train.tpr95       1.630889e-01 0.018423415 1.618889e-01 0.026222222
+#&gt; train.events      9.000000e+03 0.000000000 9.000000e+03 0.000000000
+#&gt; train.count       1.800000e+04 0.000000000 1.800000e+04 0.000000000
+#&gt; test.auroc        5.511817e-01 0.026744515 5.605860e-01 0.006621500
+#&gt; test.error        4.495000e-01 0.023997396 4.415000e-01 0.017500000
+#&gt; test.accuracy     5.505000e-01 0.023997396 5.585000e-01 0.017500000
+#&gt; test.sensitivity  4.836000e-01 0.023586013 4.910000e-01 0.017000000
+#&gt; test.specificity  6.174000e-01 0.033530583 6.090000e-01 0.051000000
+#&gt; test.fpr70        6.538000e-01 0.033988233 6.360000e-01 0.011000000
+#&gt; test.fpr80        7.768000e-01 0.032980297 7.700000e-01 0.027000000
+#&gt; test.fpr90        8.798000e-01 0.019537144 8.860000e-01 0.027000000
+#&gt; test.tpr80        2.414000e-01 0.075632665 2.610000e-01 0.023000000
+#&gt; test.tpr90        1.036000e-01 0.050520293 1.100000e-01 0.043000000
+#&gt; test.tpr95        3.540000e-02 0.020622803 2.800000e-02 0.012000000
+#&gt; test.events       1.000000e+03 0.000000000 1.000000e+03 0.000000000
+#&gt; test.count        2.000000e+03 0.000000000 2.000000e+03 0.000000000</div><div class='input'><span class='fu'>summary</span>(<span class='no'>spres</span>$<span class='no'>represampling</span>)</div><div class='output co'>#&gt; $`1`
 #&gt;    n.train n.test
 #&gt; 1     1784    216
-#&gt; 2     1787    213
+#&gt; 2     1789    211
 #&gt; 3     1799    201
-#&gt; 4     1853    147
-#&gt; 5     1835    165
+#&gt; 4     1850    150
+#&gt; 5     1836    164
 #&gt; 6     1775    225
 #&gt; 7     1809    191
 #&gt; 8     1770    230
@@ -516,19 +516,6 @@ Lecture Notes in Computer Science, 6065 LNCS: 184-195.</p>
 #&gt; 10    1794    206
 #&gt; 
 #&gt; $`2`
-#&gt;    n.train n.test
-#&gt; 1     1812    188
-#&gt; 2     1825    175
-#&gt; 3     1784    216
-#&gt; 4     1764    236
-#&gt; 5     1851    149
-#&gt; 6     1825    175
-#&gt; 7     1830    170
-#&gt; 8     1794    206
-#&gt; 9     1716    284
-#&gt; 10    1799    201
-#&gt; 
-#&gt; $`3`
 #&gt;    n.train n.test
 #&gt; 1     1812    188
 #&gt; 2     1825    175
@@ -541,31 +528,44 @@ Lecture Notes in Computer Science, 6065 LNCS: 184-195.</p>
 #&gt; 9     1713    287
 #&gt; 10    1804    196
 #&gt; 
+#&gt; $`3`
+#&gt;    n.train n.test
+#&gt; 1     1784    216
+#&gt; 2     1786    214
+#&gt; 3     1794    206
+#&gt; 4     1852    148
+#&gt; 5     1824    176
+#&gt; 6     1775    225
+#&gt; 7     1809    191
+#&gt; 8     1783    217
+#&gt; 9     1798    202
+#&gt; 10    1795    205
+#&gt; 
 #&gt; $`4`
+#&gt;    n.train n.test
+#&gt; 1     1624    376
+#&gt; 2     1803    197
+#&gt; 3     1806    194
+#&gt; 4     1849    151
+#&gt; 5     1750    250
+#&gt; 6     1843    157
+#&gt; 7     1833    167
+#&gt; 8     1846    154
+#&gt; 9     1825    175
+#&gt; 10    1821    179
+#&gt; 
+#&gt; $`5`
 #&gt;    n.train n.test
 #&gt; 1     1812    188
 #&gt; 2     1825    175
 #&gt; 3     1784    216
-#&gt; 4     1764    236
+#&gt; 4     1762    238
 #&gt; 5     1851    149
 #&gt; 6     1825    175
 #&gt; 7     1830    170
 #&gt; 8     1794    206
-#&gt; 9     1716    284
+#&gt; 9     1718    282
 #&gt; 10    1799    201
-#&gt; 
-#&gt; $`5`
-#&gt;    n.train n.test
-#&gt; 1     1744    256
-#&gt; 2     1818    182
-#&gt; 3     1763    237
-#&gt; 4     1783    217
-#&gt; 5     1836    164
-#&gt; 6     1838    162
-#&gt; 7     1803    197
-#&gt; 8     1860    140
-#&gt; 9     1727    273
-#&gt; 10    1828    172
 #&gt; </div><div class='input'><span class='co'># plot(spres$represampling, ecuador)</span>
 
 <span class='no'>smry</span> <span class='kw'>&lt;-</span> <span class='fu'>data.frame</span>(

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Partition the data for a (non-spatial) k-fold cross-validation at the group 
+<title>Partition the data for a (non-spatial) k-fold cross-validation at the group
  — partition.factor.cv • sperrorest</title>
 
 <!-- jquery -->
@@ -73,17 +73,17 @@
       <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Partition the data for a (non-spatial) k-fold cross-validation at the group 
+    <h1>Partition the data for a (non-spatial) k-fold cross-validation at the group
 </h1>
     </div>
 
     
-    <p><code>partition.factor.cv</code> creates a <code><a href='as.represampling.html'>represampling</a></code> object, 
+    <p><code>partition.factor.cv</code> creates a <code><a href='as.represampling.html'>represampling()</a></code> object,
 i.e. a set of sample indices defining cross-validation test and training sets,
-where partitions are obtained by resampling at the level of groups of 
+where partitions are obtained by resampling at the level of groups of
 observations as defined by a given factor variable.
-This can be used, for example, to resample agricultural data that is grouped 
-by fields, at the agricultural field level in order to preserve 
+This can be used, for example, to resample agricultural data that is grouped
+by fields, at the agricultural field level in order to preserve
 spatial autocorrelation within fields.</p>
     
 
@@ -93,50 +93,50 @@ spatial autocorrelation within fields.</p>
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <dl class="dl-horizontal">
       <dt>data</dt>
-      <dd><code>data.frame</code> containing at least the columns specified 
+      <dd><code>data.frame</code> containing at least the columns specified
 by <code>coords</code></dd>
       <dt>coords</dt>
-      <dd>vector of length 2 defining the variables in <code>data</code> 
+      <dd>vector of length 2 defining the variables in <code>data</code>
 that contain the x and y coordinates of sample locations.</dd>
       <dt>fac</dt>
-      <dd>either the name of a variable (column) in <code>data</code>, or a 
-vector of type factor and length <code>nrow(data)</code> that defines groups or 
+      <dd>either the name of a variable (column) in <code>data</code>, or a
+vector of type factor and length <code>nrow(data)</code> that defines groups or
 clusters of observations.</dd>
       <dt>nfold</dt>
-      <dd>number of partitions (folds) in <code>nfold</code>-fold 
+      <dd>number of partitions (folds) in <code>nfold</code>-fold
 cross-validation partitioning</dd>
       <dt>repetition</dt>
-      <dd>numeric vector: cross-validation repetitions 
-to be generated. Note that this is not the number of repetitions, 
-but the indices of these repetitions. E.g., use <code>repetition=c(1:100)</code> 
-to obtain (the &#39;first&#39;) 100 repetitions, and <code>repetition=c(101:200)</code> 
+      <dd>numeric vector: cross-validation repetitions
+to be generated. Note that this is not the number of repetitions,
+but the indices of these repetitions. E.g., use <code>repetition = c(1:100)</code>
+to obtain (the &#39;first&#39;) 100 repetitions, and <code>repetition = c(101:200)</code>
 to obtain a different set of 100 repetitions.</dd>
       <dt>seed1</dt>
-      <dd><code>seed1+i</code> is the random seed that will be used by 
-<code>set.seed</code> in repetition <code>i</code> (<code>i</code> in <code>repetition</code>) 
+      <dd><code>seed1+i</code> is the random seed that will be used by
+<code>set.seed()</code> in repetition <code>i</code> (<code>i</code> in <code>repetition</code>)
 to initialize the random number generator before sampling from the data set.</dd>
       <dt>return.factor</dt>
-      <dd>if <code>FALSE</code> (default), return a 
-<code><a href='as.represampling.html'>represampling</a></code> object; if <code>TRUE</code> (used internally by 
-other <code>sperrorest</code> functions), return a <code>list</code> containing factor 
+      <dd>if <code>FALSE</code> (default), return a
+<code><a href='as.represampling.html'>represampling()</a></code> object; if <code>TRUE</code> (used internally by
+other <code>sperrorest</code> functions), return a <code>list</code> containing factor
 vectors (see Value)</dd>
     </dl>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A <code><a href='as.represampling.html'>represampling</a></code> object, 
-see also <code><a href='partition.cv.html'>partition.cv</a></code> for details.</p>
+    <p>A <code><a href='as.represampling.html'>represampling()</a></code> object,
+see also <code><a href='partition.cv.html'>partition.cv()</a></code> for details.</p>
     
     <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
 
-    <p>In this partitioning approach, the number of factor levels in 
-<code>fac</code> must be large enough for this factor-level resampling to make 
+    <p>In this partitioning approach, the number of factor levels in
+<code>fac</code> must be large enough for this factor-level resampling to make
 sense.</p>
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <p><code><a href='sperrorest.html'>sperrorest</a></code>, <code><a href='partition.cv.html'>partition.cv</a></code>, 
-<code><a href='partition.factor.html'>partition.factor</a></code>, <code><a href='as.resampling.html'>as.resampling.factor</a></code></p>
+    <p><code><a href='sperrorest.html'>sperrorest()</a></code>, <code><a href='partition.cv.html'>partition.cv()</a></code>,
+<code><a href='partition.factor.html'>partition.factor()</a></code>, <code><a href='as.resampling.html'>as.resampling.factor()</a></code></p>
     
 
   </div>

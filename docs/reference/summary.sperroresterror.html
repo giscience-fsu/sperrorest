@@ -76,10 +76,10 @@
     </div>
 
     
-    <p><code>summary.sperroresterror</code> calculates mean, standard deviation, 
-median etc. of the calculated error measures at the specified level 
+    <p><code>summary.sperroresterror</code> calculates mean, standard deviation,
+median etc. of the calculated error measures at the specified level
 (overall, repetition, or fold).
-<code>summary.sperrorestreperror</code> does the same with the pooled error, 
+<code>summary.sperrorestreperror</code> does the same with the pooled error,
 at the overall or repetition level.</p>
     
 
@@ -90,49 +90,49 @@ at the overall or repetition level.</p>
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <dl class="dl-horizontal">
       <dt>object</dt>
-      <dd><code>sperroresterror</code> resp. <code>sperrorestcombinederror</code> 
-error object calculated by <code><a href='sperrorest.html'>sperrorest</a></code></dd>
+      <dd><code>sperroresterror</code> resp. <code>sperrorestcombinederror</code>
+error object calculated by <code><a href='sperrorest.html'>sperrorest()</a></code></dd>
       <dt>level</dt>
-      <dd>Level at which errors are summarized: 
+      <dd>Level at which errors are summarized:
 0: overall; 1: repetition; 2: fold</dd>
       <dt>pooled</dt>
-      <dd>If <code>TRUE</code> (default), mean and standard deviation etc are 
-calculated between fold-level error estimates. If <code>FALSE</code>, 
-apply first a <code>weighted.mean</code> among folds before calculating 
+      <dd>If <code>TRUE</code> (default), mean and standard deviation etc are
+calculated between fold-level error estimates. If <code>FALSE</code>,
+apply first a <code>weighted.mean()</code> among folds before calculating
 mean, standard deviation etc among repetitions. See also Details.</dd>
       <dt>na.rm</dt>
-      <dd>Remove <code>NA</code> values? See <code>mean</code> etc.</dd>
+      <dd>Remove <code>NA</code> values? See <code>mean()</code> etc.</dd>
       <dt>...</dt>
       <dd>additional arguments (currently ignored)</dd>
     </dl>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>Depending on the level of aggregation, a <code>list</code> or 
-<code>data.frame</code> with mean, and at level 0 also standard deviation, 
+    <p>Depending on the level of aggregation, a <code>list</code> or
+<code>data.frame</code> with mean, and at level 0 also standard deviation,
 median and IQR of the error measures.</p>
     
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>Let&#39;s use an example to explain the <code>error.rep</code> argument. 
-E.g., assume we are using 100-repeated 10-fold cross-validation. 
-If <code>error.rep = TRUE</code> (default), the mean and standard deviation calculated 
+    <p>Let&#39;s use an example to explain the <code>error.rep</code> argument.
+E.g., assume we are using 100-repeated 10-fold cross-validation.
+If <code>error.rep = TRUE</code> (default), the mean and standard deviation calculated
 when summarizing at <code>level = 0</code>
-are calculated across the error estimates obtained for 
+are calculated across the error estimates obtained for
 each of the <code>100*10 = 1000</code> folds.
-If <code>error.rep = FALSE</code>, mean and standard deviation are calculated across 
-the <code>100</code> repetitions, using the weighted average of the fold-level 
-errors to calculate an error value for the entire sample. 
-This will essentially not affect the mean value but of course the 
-standard deviation of the error. <code>error.rep = FALSE</code> is not recommended, 
-it is mainly for testing purposes; when the test sets are small 
-(as in leave-one-out cross-validation, in the extreme case), 
-consider running <code><a href='sperrorest.html'>sperrorest</a></code> with <code>error.rep = TRUE</code> and 
+If <code>error.rep = FALSE</code>, mean and standard deviation are calculated across
+the <code>100</code> repetitions, using the weighted average of the fold-level
+errors to calculate an error value for the entire sample.
+This will essentially not affect the mean value but of course the
+standard deviation of the error. <code>error.rep = FALSE</code> is not recommended,
+it is mainly for testing purposes; when the test sets are small
+(as in leave-one-out cross-validation, in the extreme case),
+consider running <code><a href='sperrorest.html'>sperrorest()</a></code> with <code>error.rep = TRUE</code> and
 examine only the <code>error.rep</code> component of its result.</p>
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <p><code><a href='parsperrorest.html'>parsperrorest</a></code></p>
+    <p><code>sperrorest::parsperrorest()</code></p>
     
 
   </div>

@@ -76,8 +76,8 @@
     </div>
 
     
-    <p><code>partition.kmeans</code> divides the study area into irregularly shaped 
-spatial partitions based on <em>k</em>-means (<code>kmeans</code>) clustering 
+    <p><code>partition.kmeans</code> divides the study area into irregularly shaped
+spatial partitions based on <em>k</em>-means (<code>kmeans()</code>) clustering
 of spatial coordinates.</p>
     
 
@@ -88,48 +88,48 @@ of spatial coordinates.</p>
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <dl class="dl-horizontal">
       <dt>data</dt>
-      <dd><code>data.frame</code> containing at least the columns specified 
+      <dd><code>data.frame</code> containing at least the columns specified
 by <code>coords</code></dd>
       <dt>coords</dt>
-      <dd>vector of length 2 defining the variables in <code>data</code> that 
+      <dd>vector of length 2 defining the variables in <code>data</code> that
 contain the x and y coordinates of sample locations.</dd>
       <dt>nfold</dt>
-      <dd>number of cross-validation folds, i.e. parameter <em>k</em> in 
+      <dd>number of cross-validation folds, i.e. parameter <em>k</em> in
 <em>k</em>-means clustering.</dd>
       <dt>repetition</dt>
-      <dd>numeric vector: cross-validation repetitions 
-to be generated. Note that this is not the number of repetitions, 
-but the indices of these repetitions. E.g., use <code>repetition=c(1:100)</code> 
-to obtain (the &#39;first&#39;) 100 repetitions, and <code>repetition=c(101:200)</code> 
+      <dd>numeric vector: cross-validation repetitions
+to be generated. Note that this is not the number of repetitions,
+but the indices of these repetitions. E.g., use <code>repetition = c(1:100)</code>
+to obtain (the &#39;first&#39;) 100 repetitions, and <code>repetition = c(101:200)</code>
 to obtain a different set of 100 repetitions.</dd>
       <dt>seed1</dt>
-      <dd><code>seed1+i</code> is the random seed that will be used by 
-<code>set.seed</code> in repetition <code>i</code> (<code>i</code> in <code>repetition</code>) 
+      <dd><code>seed1+i</code> is the random seed that will be used by
+<code>set.seed()</code> in repetition <code>i</code> (<code>i</code> in <code>repetition</code>)
 to initialize the random number generator before sampling from the data set.</dd>
       <dt>return.factor</dt>
-      <dd>if <code>FALSE</code> (default), return a 
-<code><a href='as.represampling.html'>represampling</a></code> object; if <code>TRUE</code> (used internally by 
-other <code>sperrorest</code> functions), return a <code>list</code> containing factor 
+      <dd>if <code>FALSE</code> (default), return a
+<code><a href='as.represampling.html'>represampling()</a></code> object; if <code>TRUE</code> (used internally by
+other <code>sperrorest</code> functions), return a <code>list</code> containing factor
 vectors (see Value)</dd>
       <dt>balancing.steps</dt>
-      <dd>if <code>&gt; 1</code>, perform <code>nfold</code>-means clustering 
-<code>balancing.steps</code> times, and pick the clustering that minimizes the Gini 
-index of the sample size distribution among the partitions. The idea is that 
-&#39;degenerate&#39; partitions will be avoided, but this also has the side effect of 
-reducing variation among partitioning repetitions. More meaningful 
-constraints (e.g., minimum number of positive and negative samples within 
+      <dd>if <code>&gt; 1</code>, perform <code>nfold</code>-means clustering
+<code>balancing.steps</code> times, and pick the clustering that minimizes the Gini
+index of the sample size distribution among the partitions. The idea is that
+&#39;degenerate&#39; partitions will be avoided, but this also has the side effect of
+reducing variation among partitioning repetitions. More meaningful
+constraints (e.g., minimum number of positive and negative samples within
 each partition should be added in the future.</dd>
       <dt>order.clusters</dt>
-      <dd>if <code>TRUE</code>, clusters are ordered by increasing x 
+      <dd>if <code>TRUE</code>, clusters are ordered by increasing x
 coordinate of center point.</dd>
       <dt>...</dt>
-      <dd>additional arguments to <code>kmeans</code>.</dd>
+      <dd>additional arguments to <code>kmeans()</code>.</dd>
     </dl>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A <code><a href='as.represampling.html'>represampling</a></code> object, see also 
-<code><a href='partition.cv.html'>partition.cv</a></code> for details.</p>
+    <p>A <code><a href='as.represampling.html'>represampling()</a></code> object, see also
+<code><a href='partition.cv.html'>partition.cv()</a></code> for details.</p>
     
     <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
 
@@ -137,20 +137,20 @@ coordinate of center point.</dd>
     
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
-    <p>Brenning, A., S. Long &amp; P. Fieguth. Forthcoming. 
-Detecting rock glacier flow structures using Gabor filters and IKONOS imagery. 
+    <p>Brenning, A., S. Long &amp; P. Fieguth. Forthcoming.
+Detecting rock glacier flow structures using Gabor filters and IKONOS imagery.
 Submitted to Remote Sensing of Environment.</p>
-    <p>Russ, G. &amp; A. Brenning. 2010a. Data mining in precision agriculture: 
-Management of spatial information. In 13th International Conference on 
-Information Processing and Management of Uncertainty, 
-IPMU 2010; Dortmund; 28 June - 2 July 2010.  
+    <p>Russ, G. &amp; A. Brenning. 2010a. Data mining in precision agriculture:
+Management of spatial information. In 13th International Conference on
+Information Processing and Management of Uncertainty,
+IPMU 2010; Dortmund; 28 June - 2 July 2010.
 Lecture Notes in Computer Science, 6178 LNAI: 350-359.</p>
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <p><code><a href='sperrorest.html'>sperrorest</a></code>, <code><a href='partition.cv.html'>partition.cv</a></code>, 
-<code><a href='partition.disc.html'>partition.disc</a></code>, <code><a href='partition.tiles.html'>partition.tiles</a></code>, 
-<code>kmeans</code></p>
+    <p><code><a href='sperrorest.html'>sperrorest()</a></code>, <code><a href='partition.cv.html'>partition.cv()</a></code>,
+<code><a href='partition.disc.html'>partition.disc()</a></code>, <code><a href='partition.tiles.html'>partition.tiles()</a></code>,
+<code>kmeans()</code></p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>

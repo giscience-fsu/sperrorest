@@ -90,12 +90,12 @@
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <dl class="dl-horizontal">
       <dt>object</dt>
-      <dd><code><a href='as.resampling.html'>resampling</a></code> or <code><a href='as.represampling.html'>represampling</a></code> object.</dd>
+      <dd><code><a href='as.resampling.html'>resampling()</a></code> or <code><a href='as.represampling.html'>represampling()</a></code> object.</dd>
       <dt>...</dt>
-      <dd>Additional arguments to <code><a href='dataset.distance.html'>dataset.distance</a></code> and 
-<code>add.distance.resampling</code>, respectively.</dd>
+      <dd>Additional arguments to <code><a href='dataset.distance.html'>dataset.distance()</a></code> and
+<code>add.distance.resampling()</code>, respectively.</dd>
       <dt>data</dt>
-      <dd><code>data.frame</code> containing at least the columns specified 
+      <dd><code>data.frame</code> containing at least the columns specified
 by <code>coords</code></dd>
       <dt>coords</dt>
       <dd>(ignored by <code>partition.cv</code>)</dd>
@@ -103,25 +103,25 @@ by <code>coords</code></dd>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A <code><a href='as.resampling.html'>resampling</a></code> or <code><a href='as.represampling.html'>represampling</a></code> object 
+    <p>A <code><a href='as.resampling.html'>resampling()</a></code> or <code><a href='as.represampling.html'>represampling()</a></code> object
 containing an additional.
-<code>$distance</code> component in each <code><a href='as.resampling.html'>resampling</a></code> object. 
-The <code>distance</code> component is a single numeric value indicating, for 
-each <code>train</code> / <code>test</code> pair, the (by default, mean) 
+<code>$distance</code> component in each <code><a href='as.resampling.html'>resampling()</a></code> object.
+The <code>distance</code> component is a single numeric value indicating, for
+each <code>train</code> / <code>test</code> pair, the (by default, mean)
 nearest-neighbour distance between the two sets.</p>
     
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>Nearest-neighbour distances are calculated for each sample in the 
-test set. These <code>nrow(???$test)</code> nearest-neighbour distances are then 
-averaged. Aggregation methods other than <code>mean</code> can be chosen using 
-the <code>fun</code> argument, which will be passed on to 
-<code><a href='dataset.distance.html'>dataset.distance</a></code>.</p>
+    <p>Nearest-neighbour distances are calculated for each sample in the
+test set. These <code>nrow(???$test)</code> nearest-neighbour distances are then
+averaged. Aggregation methods other than <code>mean</code> can be chosen using
+the <code>fun</code> argument, which will be passed on to
+<code><a href='dataset.distance.html'>dataset.distance()</a></code>.</p>
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <p><code><a href='dataset.distance.html'>dataset.distance</a></code> <code><a href='as.represampling.html'>represampling</a></code> 
-<code><a href='as.resampling.html'>resampling</a></code></p>
+    <p><code><a href='dataset.distance.html'>dataset.distance()</a></code> <code><a href='as.represampling.html'>represampling()</a></code>
+<code><a href='as.resampling.html'>resampling()</a></code></p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
@@ -131,9 +131,9 @@ the <code>fun</code> argument, which will be passed on to
 <span class='no'>nsp.parti</span> <span class='kw'>&lt;-</span> <span class='fu'>add.distance</span>(<span class='no'>nsp.parti</span>, <span class='no'>ecuador</span>)
 <span class='no'>sp.parti</span> <span class='kw'>&lt;-</span> <span class='fu'>add.distance</span>(<span class='no'>sp.parti</span>, <span class='no'>ecuador</span>)
 <span class='co'># non-spatial partioning: very small test-training distance:</span>
-<span class='no'>nsp.parti</span><span class='kw'>[[</span><span class='fl'>1</span>]]<span class='kw'>[[</span><span class='fl'>1</span>]]$<span class='no'>distance</span></div><div class='output co'>#&gt; [1] 32.86588</div><div class='input'><span class='co'># spatial partitioning: more substantial distance, depending on number of </span>
+<span class='no'>nsp.parti</span><span class='kw'>[[</span><span class='fl'>1</span>]]<span class='kw'>[[</span><span class='fl'>1</span>]]$<span class='no'>distance</span></div><div class='output co'>#&gt; [1] 32.71038</div><div class='input'><span class='co'># spatial partitioning: more substantial distance, depending on number of </span>
 <span class='co'># folds etc.</span>
-<span class='no'>sp.parti</span><span class='kw'>[[</span><span class='fl'>1</span>]]<span class='kw'>[[</span><span class='fl'>1</span>]]$<span class='no'>distance</span></div><div class='output co'>#&gt; [1] 364.2922</div><div class='input'>
+<span class='no'>sp.parti</span><span class='kw'>[[</span><span class='fl'>1</span>]]<span class='kw'>[[</span><span class='fl'>1</span>]]$<span class='no'>distance</span></div><div class='output co'>#&gt; [1] 309.7278</div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
