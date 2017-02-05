@@ -32,7 +32,7 @@ other \code{sperrorest} functions), return a \code{list} containing factor
 vectors (see Value)}
 }
 \value{
-If \code{return.factor=FALSE} (the default), a
+If \code{return.factor = FALSE} (the default), a
 \code{\link[=represampling]{represampling()}} object. Specifically, this is a (named) list of
 \code{length(repetition)} \code{resampling} objects.
 Each of these \code{\link[=resampling]{resampling()}} objects is a list of length

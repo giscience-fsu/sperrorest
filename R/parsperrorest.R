@@ -100,7 +100,7 @@
 #' if `>=1`, run a `gc()` after each repetition; 
 #' if `>=2`, after each fold
 #' 
-#' @param do.try logical (default: `FALSE`): if `TRUE` [untested!!], 
+#' @param do.try logical (default: `FALSE`): if `TRUE` (untested!!), 
 #' use [try()] to robustify calls to `model.fun` and 
 #' `err.fun`; use with caution!
 #' 

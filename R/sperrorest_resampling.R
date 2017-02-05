@@ -34,7 +34,7 @@
 #' ![](plot_resampling.png "Example Plot Title") \cr
 #' Fig. 1: Five-fold partitions created by `partition.cv()`. See examples. 
 #' 
-#' @return If `return.factor=FALSE` (the default), a 
+#' @return If `return.factor = FALSE` (the default), a 
 #' [represampling()] object. Specifically, this is a (named) list of 
 #' `length(repetition)` `resampling` objects.
 #' Each of these [resampling()] objects is a list of length 
@@ -84,27 +84,27 @@ partition.cv <- function(data, coords = c("x", "y"), nfold = 10, repetition = 1,
 
 #' Partition the data for a stratified (non-spatial) cross-validation
 #'
-#' `partition.cv.strat` creates a set of sample indices corresponding 
+#' \code{partition.cv.strat} creates a set of sample indices corresponding 
 #' to cross-validation test and training sets.
 #' 
 #' @name partition.cv.strat
 #' @inheritParams partition.cv
 #' 
-#' @param coords vector of length 2 defining the variables in `data` that 
+#' @param coords vector of length 2 defining the variables in \code{data} that 
 #' contain the x and y coordinates of sample locations
-#' @param strat character: column in `data` containing a factor variable 
+#' @param strat character: column in \code{data} containing a factor variable 
 #' over which the partitioning should be stratified; or factor vector of length 
-#' `nrow(data)`: variable over which to stratify
+#' \code{nrow(data)}: variable over which to stratify
 #' 
-#' @return A [represampling()] object, see also 
-#' [partition.cv()]. `partition.strat.cv`, however, 
-#' stratified with respect to the variable `data[,strat]`; 
+#' @return A \code{\link{represampling}} object, see also 
+#' \code{\link{partition.cv}}. \code{partition.strat.cv}, however, 
+#' stratified with respect to the variable \code{data[,strat]}; 
 #' i.e., cross-validation partitioning is done within each set 
-#' `data[data[,strat]==i,]` (`i` in `levels(data[,strat])`), and 
-#' the `i`th folds of all levels are combined into one cross-validation fold.
+#' \code{data[data[,strat]==i,]} (\code{i} in \code{levels(data[,strat])}), and 
+#' the \code{i}th folds of all levels are combined into one cross-validation fold.
 #' 
-#' @seealso [sperrorest()], [as.resampling()], 
-#' [resample.strat.uniform()]
+#' @seealso \code{\link{sperrorest}}, \code{\link{as.resampling}}, 
+#' \code{\link{resample.strat.uniform}}
 #' 
 #' @examples
 #' data(ecuador)
@@ -118,6 +118,7 @@ partition.cv <- function(data, coords = c("x", "y"), nfold = 10, repetition = 1,
 #' mean(ecuador$slides[idx] == 'TRUE') / mean(ecuador$slides == 'TRUE')
 #' # close to 1 because of large sample size, but with some random variation
 #' @export
+#' @noMd
 partition.cv.strat <- function(data, coords = c("x", "y"), nfold = 10, return.factor = FALSE, 
                                repetition = 1, seed1 = NULL, strat)
 {

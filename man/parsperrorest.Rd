@@ -99,7 +99,7 @@ collection by calling \code{\link[=gc]{gc()}}; if \code{<1}, no garbage collecti
 if \code{>=1}, run a \code{gc()} after each repetition;
 if \code{>=2}, after each fold}
 
-\item{do.try}{logical (default: \code{FALSE}): if \code{TRUE} \link{untested!!},
+\item{do.try}{logical (default: \code{FALSE}): if \code{TRUE} (untested!!),
 use \code{\link[=try]{try()}} to robustify calls to \code{model.fun} and
 \code{err.fun}; use with caution!}
 
