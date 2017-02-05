@@ -519,7 +519,7 @@ resample.factor <- function(data, param = list(fac = "class", n = Inf, replace =
 #' summary(nspres$error.rep)                    
 #' summary(nspres$error.fold)
 #' summary(nspres$represampling)
-#' plot(nspres$represampling, ecuador)
+#' # plot(nspres$represampling, ecuador)
 #'
 #' # Spatial 5-repeated 10-fold spatial cross-validation:
 #' spres <- sperrorest(data = ecuador, formula = fo,
@@ -529,7 +529,7 @@ resample.factor <- function(data, param = list(fac = "class", n = Inf, replace =
 #'                     smp.args = list(repetition = 1:5, nfold = 10))
 #' summary(spres$error.rep)
 #' summary(spres$represampling)
-#' plot(spres$represampling, ecuador)
+#' # plot(spres$represampling, ecuador)
 #' 
 #' smry <- data.frame(
 #'      nonspat.training = unlist(summary(nspres$error.rep, level = 1)$train.auroc),

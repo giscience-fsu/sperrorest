@@ -216,7 +216,7 @@
 #' summary(par.nsp.res$error.rep)
 #' summary(par.nsp.res$error.fold)
 #' summary(par.nsp.res$represampling)
-#' plot(par.nsp.res$represampling, ecuador)
+#' # plot(par.nsp.res$represampling, ecuador)
 #'
 #' # Spatial 5-repeated 10-fold spatial cross-validation:
 #' par.sp.res <- parsperrorest(data = ecuador, formula = fo,
@@ -230,7 +230,7 @@
 #' summary(par.sp.res$error.rep)
 #' summary(par.sp.res$error.fold)
 #' summary(par.sp.res$represampling)
-#' plot(par.sp.res$represampling, ecuador)
+#' # plot(par.sp.res$represampling, ecuador)
 #' 
 #' smry <- data.frame(
 #'     nonspat.training = unlist(summary(par.nsp.res$error.rep, level = 1)$train.auroc),

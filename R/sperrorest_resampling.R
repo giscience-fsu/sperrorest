@@ -50,7 +50,7 @@
 #' data(ecuador)
 #' ## non-spatial cross-validation:
 #' resamp <- partition.cv(ecuador, nfold = 5, repetition = 1:2)
-#' plot(resamp, ecuador)
+#' # plot(resamp, ecuador)
 #' # first repetition, second fold, test set indices:
 #' idx <- resamp[['1']][[2]]$test
 #' # test sample used in this particular repetition and fold:
@@ -180,7 +180,7 @@ partition.cv.strat <- function(data, coords = c("x", "y"), nfold = 10, return.fa
 #' ecuador$zclass <- cut(ecuador$dem, breaks, include.lowest = TRUE)
 #' summary(ecuador$zclass)
 #' parti <- partition.factor(ecuador, fac = 'zclass')
-#' plot(parti,ecuador)
+#' # plot(parti,ecuador)
 #' summary(parti)
 #' @export
 partition.factor <- function(data, coords = c("x", "y"), fac, return.factor = FALSE, 
@@ -334,19 +334,19 @@ partition.factor.cv <- function(data, coords = c("x", "y"), fac, nfold = 10, rep
 #' @examples
 #' data(ecuador)
 #' parti <- partition.tiles(ecuador, nsplit = c(4,3), reassign = FALSE)
-#' plot(parti,ecuador)
+#' # plot(parti,ecuador)
 #' summary(parti) # tile A4 has only 55 samples
 #' # same partitioning, but now merge tiles with less than 100 samples to 
 #' # adjacent tiles:
 #' parti2 <- partition.tiles(ecuador, nsplit = c(4,3), reassign = TRUE, min.n = 100)
-#' plot(parti2,ecuador)
+#' # plot(parti2,ecuador)
 #' summary(parti2)
 #' # tile B4 (in 'parti') was smaller than A3, therefore A4 was merged with B4, 
 #' # not with A3
 #' # now with random rotation and offset, and tiles of 2000 m length:
 #' parti3 <- partition.tiles(ecuador, dsplit = 2000, offset = 'random', 
 #' rotation = 'random', reassign = TRUE, min.n = 100)
-#' plot(parti3, ecuador)
+#' # plot(parti3, ecuador)
 #' summary(parti3)
 #' @export
 partition.tiles <- function(data, coords = c("x", "y"), dsplit = NULL, nsplit = NULL, 
@@ -615,7 +615,7 @@ partition.tiles <- function(data, coords = c("x", "y"), dsplit = NULL, nsplit = 
 #' @examples
 #' data(ecuador)
 #' resamp <- partition.kmeans(ecuador, nfold = 5, repetition = 1:2)
-#' plot(resamp, ecuador)
+#' # plot(resamp, ecuador)
 #' 
 #' @export
 partition.kmeans <- function(data, coords = c("x", "y"), nfold = 10, repetition = 1, 
@@ -721,7 +721,7 @@ partition.kmeans <- function(data, coords = c("x", "y"), nfold = 10, repetition 
 #' data(ecuador)
 #' parti <- partition.disc(ecuador, radius = 200, buffer = 200, 
 #'                         ndisc = 5, repetition = 1:2)
-#' plot(parti,ecuador)
+#' # plot(parti,ecuador)
 #' summary(parti)
 #' 
 #' # leave-one-out with buffer:
@@ -832,7 +832,7 @@ partition.loo <- function(data, ndisc = nrow(data), replace = FALSE, ...)
 #' data(ecuador)
 #' # only 10 bootstrap repetitions, normally use >=100:
 #' parti <- represampling.bootstrap(ecuador, repetition = 10)
-#' plot(parti, ecuador) # careful: overplotting occurs 
+#' # plot(parti, ecuador) # careful: overplotting occurs 
 #' # because some samples are included in both the training and
 #' # the test sample (possibly even multiple times)
 #' @export
@@ -906,13 +906,13 @@ represampling.bootstrap <- function(data, coords = c("x", "y"), nboot = nrow(dat
 #' parti <- represampling.factor.bootstrap(ecuador, 
 #'                                        factor(floor(ecuador$dem / 100)), 
 #'                                        oob = TRUE)
-#' plot(parti,ecuador)
+#' # plot(parti,ecuador)
 #' # using the factor bootstrap for a non-overlapping block bootstrap
 #' # (see also represampling.tile.bootstrap):
 #' fac <- partition.tiles(ecuador, return.factor = TRUE, repetition = c(1:3), 
 #'                        dsplit = 500, min.n = 200, rotation = 'random', offset = 'random')
 #' parti <- represampling.factor.bootstrap(ecuador, fac, oob = TRUE, repetition = c(1:3))
-#' plot(parti, ecuador)
+#' # plot(parti, ecuador)
 #' 
 #' @export
 represampling.factor.bootstrap <- function(data, fac, repetition = 1, nboot = -1, 
@@ -1058,7 +1058,7 @@ represampling.kmeans.bootstrap <- function(data, coords = c("x", "y"), repetitio
 #' data(ecuador)
 #' # Overlapping disc bootstrap:
 #' parti <- represampling.disc.bootstrap(ecuador, radius = 200, nboot = 20, oob = FALSE)
-#' plot(parti, ecuador)
+#' # plot(parti, ecuador)
 #' # Note that a 'buffer' argument would make no difference because boostrap 
 #' # sets of discs are drawn independently for the training and test sample.
 #' #
@@ -1066,7 +1066,7 @@ represampling.kmeans.bootstrap <- function(data, coords = c("x", "y"), repetitio
 #' # sample:
 #' parti <- represampling.disc.bootstrap(ecuador, radius = 200, buffer = 200, 
 #'                                       nboot = 10, oob = TRUE)
-#' plot(parti,ecuador)
+#' # plot(parti,ecuador)
 #' 
 #' @export
 represampling.disc.bootstrap <- function(data, coords = c("x", "y"), nboot, repetition = 1, 
@@ -1152,10 +1152,10 @@ represampling.disc.bootstrap <- function(data, coords = c("x", "y"), nboot, repe
 #' data(ecuador)
 #' # non-spatial cross-validation:
 #' resamp <- partition.cv(ecuador, nfold = 5, repetition = 1:2)
-#' plot(resamp, ecuador)
+#' # plot(resamp, ecuador)
 #' # spatial cross-validation using k-means clustering:
 #' resamp <- partition.kmeans(ecuador, nfold = 5, repetition = 1:2)
-#' plot(resamp, ecuador)
+#' # plot(resamp, ecuador)
 #' 
 #' @export
 plot.represampling <- function(x, data, coords = c("x", "y"), pch = "+", wiggle.sd = 0, 
