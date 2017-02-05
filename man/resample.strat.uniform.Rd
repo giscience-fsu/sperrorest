@@ -10,24 +10,24 @@ resample.strat.uniform(data, param = list(strat = "class", nstrat = Inf,
 \arguments{
 \item{data}{a \code{data.frame}, rows represent samples}
 
-\item{param}{a list with the following components: \code{strat} is either 
+\item{param}{a list with the following components: \code{strat} is either
 the name of a factor variable in \code{data} that defines the stratification
- levels, or a vector of type factor and length \code{nrow(data)}; 
- \code{n} is a numeric value specifying the size of the subsample; 
- \code{replace} determines if sampling is with or without replacement}
+levels, or a vector of type factor and length \code{nrow(data)};
+\code{n} is a numeric value specifying the size of the subsample;
+\code{replace} determines if sampling is with or without replacement}
 }
 \value{
 a \code{data.frame} containing a subset of the rows of \code{data}.
 }
 \description{
-\code{resample.strat.uniform} draws a stratified random sample 
-(with or without replacement) from the samples in \code{data}. 
-Stratification is over the levels of \code{data[,param$response]}. 
+\code{resample.strat.uniform} draws a stratified random sample
+(with or without replacement) from the samples in \code{data}.
+Stratification is over the levels of \code{data[,param$response]}.
 The same number of samples is drawn within each level.
 }
 \details{
-If \code{param$replace=FALSE}, a subsample of size 
-\code{min(param$n,nrow(data))} will be drawn from \code{data}. 
+If \code{param$replace=FALSE}, a subsample of size
+\code{min(param$n,nrow(data))} will be drawn from \code{data}.
 If \code{param$replace=TRUE}, the size of the subsample is \code{param$n}.
 }
 \examples{
@@ -39,5 +39,5 @@ sum(d$slides == 'TRUE') # == 100
 
 }
 \seealso{
-\code{\link{resample.uniform}}, \code{\link{sample}}
+\code{\link[=resample.uniform]{resample.uniform()}}, \code{\link[=sample]{sample()}}
 }

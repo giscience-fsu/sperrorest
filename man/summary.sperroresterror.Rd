@@ -8,50 +8,50 @@
   na.rm = TRUE, ...)
 }
 \arguments{
-\item{object}{\code{sperroresterror} resp. \code{sperrorestcombinederror} 
-error object calculated by \code{\link{sperrorest}}}
+\item{object}{\code{sperroresterror} resp. \code{sperrorestcombinederror}
+error object calculated by \code{\link[=sperrorest]{sperrorest()}}}
 
-\item{level}{Level at which errors are summarized: 
+\item{level}{Level at which errors are summarized:
 0: overall; 1: repetition; 2: fold}
 
-\item{pooled}{If \code{TRUE} (default), mean and standard deviation etc are 
-calculated between fold-level error estimates. If \code{FALSE}, 
-apply first a \code{\link{weighted.mean}} among folds before calculating 
+\item{pooled}{If \code{TRUE} (default), mean and standard deviation etc are
+calculated between fold-level error estimates. If \code{FALSE},
+apply first a \code{\link[=weighted.mean]{weighted.mean()}} among folds before calculating
 mean, standard deviation etc among repetitions. See also Details.}
 
-\item{na.rm}{Remove \code{NA} values? See \code{\link{mean}} etc.}
+\item{na.rm}{Remove \code{NA} values? See \code{\link[=mean]{mean()}} etc.}
 
 \item{...}{additional arguments (currently ignored)}
 }
 \value{
-Depending on the level of aggregation, a \code{list} or 
-\code{data.frame} with mean, and at level 0 also standard deviation, 
+Depending on the level of aggregation, a \code{list} or
+\code{data.frame} with mean, and at level 0 also standard deviation,
 median and IQR of the error measures.
 }
 \description{
-\code{summary.sperroresterror} calculates mean, standard deviation, 
-median etc. of the calculated error measures at the specified level 
+\code{summary.sperroresterror} calculates mean, standard deviation,
+median etc. of the calculated error measures at the specified level
 (overall, repetition, or fold).
-\code{summary.sperrorestreperror} does the same with the pooled error, 
+\code{summary.sperrorestreperror} does the same with the pooled error,
 at the overall or repetition level.
 }
 \details{
-Let's use an example to explain the \code{error.rep} argument. 
-E.g., assume we are using 100-repeated 10-fold cross-validation. 
-If \code{error.rep = TRUE} (default), the mean and standard deviation calculated 
+Let's use an example to explain the \code{error.rep} argument.
+E.g., assume we are using 100-repeated 10-fold cross-validation.
+If \code{error.rep = TRUE} (default), the mean and standard deviation calculated
 when summarizing at \code{level = 0}
-are calculated across the error estimates obtained for 
+are calculated across the error estimates obtained for
 each of the \code{100*10 = 1000} folds.
-If \code{error.rep = FALSE}, mean and standard deviation are calculated across 
-the \code{100} repetitions, using the weighted average of the fold-level 
-errors to calculate an error value for the entire sample. 
-This will essentially not affect the mean value but of course the 
-standard deviation of the error. \code{error.rep = FALSE} is not recommended, 
-it is mainly for testing purposes; when the test sets are small 
-(as in leave-one-out cross-validation, in the extreme case), 
-consider running \code{\link{sperrorest}} with \code{error.rep = TRUE} and 
+If \code{error.rep = FALSE}, mean and standard deviation are calculated across
+the \code{100} repetitions, using the weighted average of the fold-level
+errors to calculate an error value for the entire sample.
+This will essentially not affect the mean value but of course the
+standard deviation of the error. \code{error.rep = FALSE} is not recommended,
+it is mainly for testing purposes; when the test sets are small
+(as in leave-one-out cross-validation, in the extreme case),
+consider running \code{\link[=sperrorest]{sperrorest()}} with \code{error.rep = TRUE} and
 examine only the \code{error.rep} component of its result.
 }
 \seealso{
-\code{\link[sperrorest]{parsperrorest}}
+\code{\link[sperrorest:parsperrorest]{sperrorest::parsperrorest()}}
 }

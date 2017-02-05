@@ -16,48 +16,48 @@ sperrorest(formula, data, coords = c("x", "y"), model.fun,
   do.try = FALSE, progress = 1, benchmark = FALSE, ...)
 }
 \arguments{
-\item{formula}{A formula specifying the variables used by the \code{model}. 
-Only simple formulas without interactions or nonlinear terms should 
-be used, e.g. \code{y~x1+x2+x3} but not \code{y~x1*x2+log(x3)}. 
-Formulas involving interaction and nonlinear terms may possibly work 
-for error estimation but not for variable importance assessment, 
+\item{formula}{A formula specifying the variables used by the \code{model}.
+Only simple formulas without interactions or nonlinear terms should
+be used, e.g. \code{y~x1+x2+x3} but not \code{y~x1*x2+log(x3)}.
+Formulas involving interaction and nonlinear terms may possibly work
+for error estimation but not for variable importance assessment,
 but should be used with caution.}
 
-\item{data}{a \code{data.frame} with predictor and response variables. 
-Training and test samples will be drawn from this data set by \code{train.fun} 
+\item{data}{a \code{data.frame} with predictor and response variables.
+Training and test samples will be drawn from this data set by \code{train.fun}
 and \code{test.fun}, respectively.}
 
-\item{coords}{vector of length 2 defining the variables in \code{data} that 
+\item{coords}{vector of length 2 defining the variables in \code{data} that
 contain the x and y coordinates of sample locations.}
 
-\item{model.fun}{Function that fits a predictive model, such as \code{glm} 
-or \code{rpart}. The function must accept at least two arguments, the first 
+\item{model.fun}{Function that fits a predictive model, such as \code{glm}
+or \code{rpart}. The function must accept at least two arguments, the first
 one being a formula and the second a data.frame with the learning sample.}
 
-\item{model.args}{Arguments to be passed to \code{model.fun} 
-(in addition to the \code{formula} and \code{data} argument, 
+\item{model.args}{Arguments to be passed to \code{model.fun}
+(in addition to the \code{formula} and \code{data} argument,
 which are provided by \code{sperrorest})}
 
-\item{pred.fun}{Prediction function for a fitted model object created 
-by \code{model}. Must accept at least two arguments: the fitted 
-\code{object} and a \code{data.frame} \code{newdata} with data 
+\item{pred.fun}{Prediction function for a fitted model object created
+by \code{model}. Must accept at least two arguments: the fitted
+\code{object} and a \code{data.frame} \code{newdata} with data
 on which to predict the outcome.}
 
-\item{pred.args}{(optional) Arguments to \code{pred.fun} (in addition to the 
-fitted model object and the \code{newdata} argument, 
+\item{pred.args}{(optional) Arguments to \code{pred.fun} (in addition to the
+fitted model object and the \code{newdata} argument,
 which are provided by \code{sperrorest})}
 
-\item{smp.fun}{A function for sampling training and test sets from 
-\code{data}. E.g., \code{\link{partition.kmeans}} for 
+\item{smp.fun}{A function for sampling training and test sets from
+\code{data}. E.g., \code{\link[=partition.kmeans]{partition.kmeans()}} for
 spatial cross-validation using spatial \emph{k}-means clustering.}
 
 \item{smp.args}{(optional) Arguments to be passed to \code{est.fun}}
 
-\item{train.fun}{(optional) A function for resampling or subsampling the 
-training sample in order to achieve, e.g., uniform sample sizes on all 
-training sets, or maintaining a certain ratio of positives and negatives 
-in training sets. 
-E.g., \code{\link{resample.uniform}} or \code{\link{resample.strat.uniform}}}
+\item{train.fun}{(optional) A function for resampling or subsampling the
+training sample in order to achieve, e.g., uniform sample sizes on all
+training sets, or maintaining a certain ratio of positives and negatives
+in training sets.
+E.g., \code{\link[=resample.uniform]{resample.uniform()}} or \code{\link[=resample.strat.uniform]{resample.strat.uniform()}}}
 
 \item{train.param}{(optional) Arguments to be passed to \code{resample.fun}}
 
@@ -65,81 +65,81 @@ E.g., \code{\link{resample.uniform}} or \code{\link{resample.strat.uniform}}}
 
 \item{test.param}{(optional) Arguments to be passed to \code{test.fun}}
 
-\item{err.fun}{A function that calculates selected error measures from the 
-known responses in \code{data} and the model predictions delivered 
-by \code{pred.fun}. E.g., \code{\link{err.default}} (the default). 
+\item{err.fun}{A function that calculates selected error measures from the
+known responses in \code{data} and the model predictions delivered
+by \code{pred.fun}. E.g., \code{\link[=err.default]{err.default()}} (the default).
 See example and details below.}
 
-\item{error.fold}{logical (default: \code{TRUE} if \code{importance} is 
-\code{TRUE}, otherwise \code{FALSE}): calculate error measures on each fold 
+\item{error.fold}{logical (default: \code{TRUE} if \code{importance} is
+\code{TRUE}, otherwise \code{FALSE}): calculate error measures on each fold
 within a resampling repetition.}
 
-\item{error.rep}{logical (default: \code{TRUE}): calculate error measures 
+\item{error.rep}{logical (default: \code{TRUE}): calculate error measures
 based on the pooled predictions of all folds within a resampling repetition.}
 
-\item{err.train}{logical (default: \code{TRUE}): calculate error measures on 
+\item{err.train}{logical (default: \code{TRUE}): calculate error measures on
 the training set (in addition to the test set estimation).}
 
-\item{imp.variables}{(optional; used if \code{importance = TRUE}) 
-Variables for which permutation-based variable importance assessment 
-is performed. If \code{importance = TRUE} and \code{imp.variables} is 
+\item{imp.variables}{(optional; used if \code{importance = TRUE})
+Variables for which permutation-based variable importance assessment
+is performed. If \code{importance = TRUE} and \code{imp.variables} is
 \code{NULL}, all variables in \code{formula} will be used.}
 
-\item{imp.permutations}{(optional; used if \code{importance = TRUE}) 
+\item{imp.permutations}{(optional; used if \code{importance = TRUE})
 Number of permutations used for variable importance assessment.}
 
-\item{importance}{logical: perform permutation-based variable 
+\item{importance}{logical: perform permutation-based variable
 importance assessment?}
 
-\item{distance}{logical (default: \code{FALSE}): if \code{TRUE}, calculate 
-mean nearest-neighbour distances from test samples to training samples using 
-\code{\link{add.distance.represampling}}}
+\item{distance}{logical (default: \code{FALSE}): if \code{TRUE}, calculate
+mean nearest-neighbour distances from test samples to training samples using
+\code{\link[=add.distance.represampling]{add.distance.represampling()}}}
 
-\item{do.gc}{numeric (default: 1): defines frequency of memory garbage 
-collection by calling \code{\link{gc}}; if \code{<1}, no garbage collection; 
-if \code{>=1}, run a \code{gc()} after each repetition; 
+\item{do.gc}{numeric (default: 1): defines frequency of memory garbage
+collection by calling \code{\link[=gc]{gc()}}; if \code{<1}, no garbage collection;
+if \code{>=1}, run a \code{gc()} after each repetition;
 if \code{>=2}, after each fold}
 
-\item{do.try}{logical (default: \code{FALSE}): if \code{TRUE} [untested!!], 
-use \code{\link{try}} to robustify calls to \code{model.fun} and 
+\item{do.try}{logical (default: \code{FALSE}): if \code{TRUE} \link{untested!!},
+use \code{\link[=try]{try()}} to robustify calls to \code{model.fun} and
 \code{err.fun}; use with caution!}
 
-\item{progress}{if \code{progress = 1}, repetition and fold progress is 
-shown in console (in Windows Rgui, disable 'Buffered output' in 'Misc' menu). 
-If \code{progress = 2}, only repetition information is shown. 
+\item{progress}{if \code{progress = 1}, repetition and fold progress is
+shown in console (in Windows Rgui, disable 'Buffered output' in 'Misc' menu).
+If \code{progress = 2}, only repetition information is shown.
 Set to \code{FALSE} for no progress information.}
 
-\item{benchmark}{(optional) logical (default: \code{FALSE}): if \code{TRUE}, 
+\item{benchmark}{(optional) logical (default: \code{FALSE}): if \code{TRUE},
 perform benchmarking and return \code{sperrorestbenchmarks} object}
 
 \item{...}{currently not used}
 }
 \value{
 A list (object of class \code{sperrorest}) with (up to) six components:
-\item{error.rep}{a \code{sperrorestreperror} object containing 
+\item{error.rep}{a \code{sperrorestreperror} object containing
 predictive performances at the repetition level}
-\item{error.fold}{a \code{sperroresterror} object containing predictive 
+\item{error.fold}{a \code{sperroresterror} object containing predictive
 performances at the fold level}
-\item{represampling}{a \code{\link{represampling}} object}
-\item{importance}{a \code{sperrorestimportance} object containing 
+\item{represampling}{a \code{\link[=represampling]{represampling()}} object}
+\item{importance}{a \code{sperrorestimportance} object containing
 permutation-based variable importances at the fold level}
-\item{benchmarks}{a \code{sperrorestbenchmarks} object containing 
-information on the system the code is running on, starting and 
-finishing times, number of available CPU cores, parallelization mode, 
+\item{benchmarks}{a \code{sperrorestbenchmarks} object containing
+information on the system the code is running on, starting and
+finishing times, number of available CPU cores, parallelization mode,
 number of parallel units, and runtime performance}
-\item{package.version}{a \code{sperrorestpackageversion} object containing 
+\item{package.version}{a \code{sperrorestpackageversion} object containing
 information about the \code{sperrorest} package version}
 }
 \description{
-\code{sperrorest} is a flexible interface for multiple types of spatial and 
-non-spatial cross-validation and bootstrap error estimation and 
+\code{sperrorest} is a flexible interface for multiple types of spatial and
+non-spatial cross-validation and bootstrap error estimation and
 permutation-based assessment of spatial variable importance.
 }
 \note{
-(1) Optionally save fitted models, training and test samples in the 
-results object; (2) Optionally save intermediate results in some file, and 
-enable the function to continue an interrupted sperrorest call where it 
-was interrupted. (3) Optionally have sperrorest dump the result of each 
+(1) Optionally save fitted models, training and test samples in the
+results object; (2) Optionally save intermediate results in some file, and
+enable the function to continue an interrupted sperrorest call where it
+was interrupted. (3) Optionally have sperrorest dump the result of each
 repetition into a file, and to skip repetitions for which a file already exists.
 }
 \examples{
@@ -186,26 +186,26 @@ boxplot(smry, col = c('red','red','red','green'),
         ylab = 'Area under the ROC curve')
 }
 \references{
-Brenning, A. 2012. Spatial cross-validation and bootstrap for 
-the assessment of prediction rules in remote sensing: the R package 'sperrorest'. 
-2012 IEEE International Geoscience and Remote Sensing Symposium (IGARSS), 
+Brenning, A. 2012. Spatial cross-validation and bootstrap for
+the assessment of prediction rules in remote sensing: the R package 'sperrorest'.
+2012 IEEE International Geoscience and Remote Sensing Symposium (IGARSS),
 23-27 July 2012, p. 5372-5375.
 
-Brenning, A. 2005. Spatial prediction models for landslide hazards: review, 
+Brenning, A. 2005. Spatial prediction models for landslide hazards: review,
 comparison and evaluation. Natural Hazards and Earth System Sciences, 5(6): 853-862.
 
-Brenning, A., S. Long & P. Fieguth. Forthcoming. Detecting rock glacier flow 
-structures using Gabor filters and IKONOS imagery. 
+Brenning, A., S. Long & P. Fieguth. Forthcoming. Detecting rock glacier flow
+structures using Gabor filters and IKONOS imagery.
 Submitted to Remote Sensing of Environment.
 
-Russ, G. & A. Brenning. 2010a. Data mining in precision agriculture: 
-Management of spatial information. In 13th International Conference on 
-Information Processing and Management of Uncertainty, IPMU 2010; Dortmund; 
+Russ, G. & A. Brenning. 2010a. Data mining in precision agriculture:
+Management of spatial information. In 13th International Conference on
+Information Processing and Management of Uncertainty, IPMU 2010; Dortmund;
 28 June - 2 July 2010. Lecture Notes in Computer Science, 6178 LNAI: 350-359.
 
-Russ, G. & A. Brenning. 2010b. Spatial variable importance assessment for 
-yield prediction in Precision Agriculture. In Advances in Intelligent 
-Data Analysis IX, Proceedings, 9th International Symposium, 
-IDA 2010, Tucson, AZ, USA, 19-21 May 2010.  
+Russ, G. & A. Brenning. 2010b. Spatial variable importance assessment for
+yield prediction in Precision Agriculture. In Advances in Intelligent
+Data Analysis IX, Proceedings, 9th International Symposium,
+IDA 2010, Tucson, AZ, USA, 19-21 May 2010.
 Lecture Notes in Computer Science, 6065 LNCS: 184-195.
 }

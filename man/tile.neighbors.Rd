@@ -9,13 +9,13 @@ tile.neighbors(nm, tileset, iterate = 0, diagonal = FALSE)
 \arguments{
 \item{nm}{Character string or factor: name of a tile, e.g., \code{'X4:Y6'}}
 
-\item{tileset}{Admissible tile names; if missing and \code{nm} is a factor 
+\item{tileset}{Admissible tile names; if missing and \code{nm} is a factor
 variable, then \code{levels(nm)} is used as a default for \code{tileset}.}
 
-\item{iterate}{internal - do not change default: to control behaviour in an 
+\item{iterate}{internal - do not change default: to control behaviour in an
 interative call to this function.}
 
-\item{diagonal}{if \code{TRUE}, diagonal neighbours are also considered 
+\item{diagonal}{if \code{TRUE}, diagonal neighbours are also considered
 neighbours.}
 }
 \value{

@@ -9,50 +9,50 @@ partition.kmeans(data, coords = c("x", "y"), nfold = 10, repetition = 1,
   order.clusters = TRUE, ...)
 }
 \arguments{
-\item{data}{\code{data.frame} containing at least the columns specified 
+\item{data}{\code{data.frame} containing at least the columns specified
 by \code{coords}}
 
-\item{coords}{vector of length 2 defining the variables in \code{data} that 
+\item{coords}{vector of length 2 defining the variables in \code{data} that
 contain the x and y coordinates of sample locations.}
 
-\item{nfold}{number of cross-validation folds, i.e. parameter \emph{k} in 
+\item{nfold}{number of cross-validation folds, i.e. parameter \emph{k} in
 \emph{k}-means clustering.}
 
-\item{repetition}{numeric vector: cross-validation repetitions 
-to be generated. Note that this is not the number of repetitions, 
-but the indices of these repetitions. E.g., use \code{repetition=c(1:100)} 
-to obtain (the 'first') 100 repetitions, and \code{repetition=c(101:200)} 
+\item{repetition}{numeric vector: cross-validation repetitions
+to be generated. Note that this is not the number of repetitions,
+but the indices of these repetitions. E.g., use \code{repetition = c(1:100)}
+to obtain (the 'first') 100 repetitions, and \code{repetition = c(101:200)}
 to obtain a different set of 100 repetitions.}
 
-\item{seed1}{\code{seed1+i} is the random seed that will be used by 
-\code{\link{set.seed}} in repetition \code{i} (\code{i} in \code{repetition}) 
+\item{seed1}{\code{seed1+i} is the random seed that will be used by
+\code{\link[=set.seed]{set.seed()}} in repetition \code{i} (\code{i} in \code{repetition})
 to initialize the random number generator before sampling from the data set.}
 
-\item{return.factor}{if \code{FALSE} (default), return a 
-\code{\link{represampling}} object; if \code{TRUE} (used internally by 
-other \code{sperrorest} functions), return a \code{list} containing factor 
+\item{return.factor}{if \code{FALSE} (default), return a
+\code{\link[=represampling]{represampling()}} object; if \code{TRUE} (used internally by
+other \code{sperrorest} functions), return a \code{list} containing factor
 vectors (see Value)}
 
-\item{balancing.steps}{if \code{> 1}, perform \code{nfold}-means clustering 
-\code{balancing.steps} times, and pick the clustering that minimizes the Gini 
-index of the sample size distribution among the partitions. The idea is that 
-'degenerate' partitions will be avoided, but this also has the side effect of 
-reducing variation among partitioning repetitions. More meaningful 
-constraints (e.g., minimum number of positive and negative samples within 
+\item{balancing.steps}{if \code{> 1}, perform \code{nfold}-means clustering
+\code{balancing.steps} times, and pick the clustering that minimizes the Gini
+index of the sample size distribution among the partitions. The idea is that
+'degenerate' partitions will be avoided, but this also has the side effect of
+reducing variation among partitioning repetitions. More meaningful
+constraints (e.g., minimum number of positive and negative samples within
 each partition should be added in the future.}
 
-\item{order.clusters}{if \code{TRUE}, clusters are ordered by increasing x 
+\item{order.clusters}{if \code{TRUE}, clusters are ordered by increasing x
 coordinate of center point.}
 
-\item{...}{additional arguments to \code{\link{kmeans}}.}
+\item{...}{additional arguments to \code{\link[=kmeans]{kmeans()}}.}
 }
 \value{
-A \code{\link{represampling}} object, see also 
-\code{\link{partition.cv}} for details.
+A \code{\link[=represampling]{represampling()}} object, see also
+\code{\link[=partition.cv]{partition.cv()}} for details.
 }
 \description{
-\code{partition.kmeans} divides the study area into irregularly shaped 
-spatial partitions based on \emph{k}-means (\code{\link{kmeans}}) clustering 
+\code{partition.kmeans} divides the study area into irregularly shaped
+spatial partitions based on \emph{k}-means (\code{\link[=kmeans]{kmeans()}}) clustering
 of spatial coordinates.
 }
 \note{
@@ -65,18 +65,18 @@ resamp <- partition.kmeans(ecuador, nfold = 5, repetition = 1:2)
 
 }
 \references{
-Brenning, A., S. Long & P. Fieguth. Forthcoming. 
-Detecting rock glacier flow structures using Gabor filters and IKONOS imagery. 
+Brenning, A., S. Long & P. Fieguth. Forthcoming.
+Detecting rock glacier flow structures using Gabor filters and IKONOS imagery.
 Submitted to Remote Sensing of Environment.
 
-Russ, G. & A. Brenning. 2010a. Data mining in precision agriculture: 
-Management of spatial information. In 13th International Conference on 
-Information Processing and Management of Uncertainty, 
-IPMU 2010; Dortmund; 28 June - 2 July 2010.  
+Russ, G. & A. Brenning. 2010a. Data mining in precision agriculture:
+Management of spatial information. In 13th International Conference on
+Information Processing and Management of Uncertainty,
+IPMU 2010; Dortmund; 28 June - 2 July 2010.
 Lecture Notes in Computer Science, 6178 LNAI: 350-359.
 }
 \seealso{
-\code{\link{sperrorest}}, \code{\link{partition.cv}}, 
-\code{\link{partition.disc}}, \code{\link{partition.tiles}}, 
-\code{\link{kmeans}}
+\code{\link[=sperrorest]{sperrorest()}}, \code{\link[=partition.cv]{partition.cv()}},
+\code{\link[=partition.disc]{partition.disc()}}, \code{\link[=partition.tiles]{partition.tiles()}},
+\code{\link[=kmeans]{kmeans()}}
 }

@@ -12,61 +12,61 @@ partition.disc(data, coords = c("x", "y"), radius, buffer = NULL,
 partition.loo(data, ndisc = nrow(data), replace = FALSE, ...)
 }
 \arguments{
-\item{data}{\code{data.frame} containing at least the columns specified 
+\item{data}{\code{data.frame} containing at least the columns specified
 by \code{coords}}
 
-\item{coords}{vector of length 2 defining the variables in \code{data} that 
+\item{coords}{vector of length 2 defining the variables in \code{data} that
 contain the x and y coordinates of sample locations.}
 
-\item{radius}{radius of test area discs; performs leave-one-out resampling 
+\item{radius}{radius of test area discs; performs leave-one-out resampling
 if radius <0.}
 
-\item{buffer}{radius of additional 'neutral area' around test area discs 
-that is excluded from training and test sets; defaults to 0, 
+\item{buffer}{radius of additional 'neutral area' around test area discs
+that is excluded from training and test sets; defaults to 0,
 i.e. all samples are either in the test area or in the training area.}
 
-\item{ndisc}{Number of discs to be randomly selected; each disc constitutes 
-a separate test set. Defaults to \code{nrow(data)}, i.e. one disc around 
+\item{ndisc}{Number of discs to be randomly selected; each disc constitutes
+a separate test set. Defaults to \code{nrow(data)}, i.e. one disc around
 each sample.}
 
-\item{seed1}{\code{seed1+i} is the random seed that will be used by 
-\code{\link{set.seed}} in repetition \code{i} (\code{i} in \code{repetition}) 
+\item{seed1}{\code{seed1+i} is the random seed that will be used by
+\code{\link[=set.seed]{set.seed()}} in repetition \code{i} (\code{i} in \code{repetition})
 to initialize the random number generator before sampling from the data set.}
 
-\item{return.train}{If \code{FALSE}, returns only test sample; 
+\item{return.train}{If \code{FALSE}, returns only test sample;
 if \code{TRUE}, also the training area.}
 
-\item{prob}{optional argument to \code{\link{sample}}.}
+\item{prob}{optional argument to \code{\link[=sample]{sample()}}.}
 
-\item{replace}{optional argument to \code{\link{sample}}: sampling with or 
+\item{replace}{optional argument to \code{\link[=sample]{sample()}}: sampling with or
 without replacement?}
 
-\item{repetition}{see \code{partition.cv}; however, 
+\item{repetition}{see \code{partition.cv}; however,
 see Note below: \code{repetition} should normally be \code{=1} in this function.}
 
 \item{...}{arguments to be passed to \code{partition.disc}}
 }
 \value{
-A \code{\link{represampling}} object. 
-Contains \code{length(repetition)} \code{resampling} objects. 
-Each of these contains \code{ndisc} lists with indices of test and 
+A \code{\link[=represampling]{represampling()}} object.
+Contains \code{length(repetition)} \code{resampling} objects.
+Each of these contains \code{ndisc} lists with indices of test and
 (if \code{return.train=TRUE}) training sets.
 }
 \description{
-\code{partition.disc} partitions the sample into training and tests set by 
-selecting circular test areas (possibly surrounded by an exclusion buffer) 
-and using the remaining samples as training samples (leave-one-disc-out 
+\code{partition.disc} partitions the sample into training and tests set by
+selecting circular test areas (possibly surrounded by an exclusion buffer)
+and using the remaining samples as training samples (leave-one-disc-out
 cross-validation). \code{partition.loo} creates training and test sets for
 leave-one-out cross-validation with (optional) buffer.
 }
 \note{
-Test area discs are centered at (random) samples, not at general 
-random locations. Test area discs may (and likely will) overlap independently 
-of the value of \code{replace}. \code{replace} only controls the replacement 
-of the center point of discs when drawing center points from the samples. 
+Test area discs are centered at (random) samples, not at general
+random locations. Test area discs may (and likely will) overlap independently
+of the value of \code{replace}. \code{replace} only controls the replacement
+of the center point of discs when drawing center points from the samples.
 
-\code{radius<0} does leave-one-out resampling with an optional buffer. 
-\code{radius=0} is similar except that samples with identical coordinates 
+\code{radius<0} does leave-one-out resampling with an optional buffer.
+\code{radius=0} is similar except that samples with identical coordinates
 would fall within the test area disc.
 }
 \examples{
@@ -81,11 +81,11 @@ parti.loo <- partition.loo(ecuador, buffer = 200)
 summary(parti)
 }
 \references{
-Brenning, A. 2005. Spatial prediction models for landslide 
-hazards: review, comparison and evaluation. Natural Hazards and Earth System 
+Brenning, A. 2005. Spatial prediction models for landslide
+hazards: review, comparison and evaluation. Natural Hazards and Earth System
 Sciences, 5(6): 853-862.
 }
 \seealso{
-\code{\link{sperrorest}}, \code{\link{partition.cv}}, 
-\code{\link{partition.kmeans}}
+\code{\link[=sperrorest]{sperrorest()}}, \code{\link[=partition.cv]{partition.cv()}},
+\code{\link[=partition.kmeans]{partition.kmeans()}}
 }

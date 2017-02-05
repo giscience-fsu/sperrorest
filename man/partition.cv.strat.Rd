@@ -8,44 +8,47 @@ partition.cv.strat(data, coords = c("x", "y"), nfold = 10,
   return.factor = FALSE, repetition = 1, seed1 = NULL, strat)
 }
 \arguments{
-\item{data}{\code{data.frame} containing at least the columns specified 
+\item{data}{\code{data.frame} containing at least the columns specified
 by \code{coords}}
 
-\item{coords}{vector of length 2 defining the variables in \code{data} that 
+\item{coords}{vector of length 2 defining the variables in \code{data} that
 contain the x and y coordinates of sample locations}
 
-\item{nfold}{number of partitions (folds) in \code{nfold}-fold 
+\item{nfold}{number of partitions (folds) in \code{nfold}-fold
 cross-validation partitioning}
 
-\item{return.factor}{if \code{FALSE} (default), return a 
-\code{\link{represampling}} object; if \code{TRUE} (used internally by 
-other \code{sperrorest} functions), return a \code{list} containing factor 
+\item{return.factor}{if \code{FALSE} (default), return a
+\code{\link[=represampling]{represampling()}} object; if \code{TRUE} (used internally by
+other \code{sperrorest} functions), return a \code{list} containing factor
 vectors (see Value)}
 
-\item{repetition}{numeric vector: cross-validation repetitions 
-to be generated. Note that this is not the number of repetitions, 
-but the indices of these repetitions. E.g., use \code{repetition=c(1:100)} 
-to obtain (the 'first') 100 repetitions, and \code{repetition=c(101:200)} 
+\item{repetition}{numeric vector: cross-validation repetitions
+to be generated. Note that this is not the number of repetitions,
+but the indices of these repetitions. E.g., use \code{repetition = c(1:100)}
+to obtain (the 'first') 100 repetitions, and \code{repetition = c(101:200)}
 to obtain a different set of 100 repetitions.}
 
-\item{seed1}{\code{seed1+i} is the random seed that will be used by 
-\code{\link{set.seed}} in repetition \code{i} (\code{i} in \code{repetition}) 
+\item{seed1}{\code{seed1+i} is the random seed that will be used by
+\code{\link[=set.seed]{set.seed()}} in repetition \code{i} (\code{i} in \code{repetition})
 to initialize the random number generator before sampling from the data set.}
 
-\item{strat}{character: column in \code{data} containing a factor variable 
-over which the partitioning should be stratified; or factor vector of length 
+\item{strat}{character: column in \code{data} containing a factor variable
+over which the partitioning should be stratified; or factor vector of length
 \code{nrow(data)}: variable over which to stratify}
 }
 \value{
-A \code{\link{represampling}} object, see also 
-\code{\link{partition.cv}}. \code{partition.strat.cv}, however, 
-stratified with respect to the variable \code{data[,strat]}; 
-i.e., cross-validation partitioning is done within each set 
-\code{data[data[,strat]==i,]} (\code{i} in \code{levels(data[,strat])}), and 
+A \code{\link[=represampling]{represampling()}} object, see also
+\code{\link[=partition.cv]{partition.cv()}}. \code{partition.strat.cv}, however,
+stratified with respect to the variable \code{data[,strat]};
+i.e., cross-validation partitioning is done within each set
+\code{data[data[,strat]==i,]} (\code{i} in \code{levels(data[,strat])}), and
 the \code{i}th folds of all levels are combined into one cross-validation fold.
+
+[data\link{,strat}: R:data[,strat
+\link{,strat}: R:,strat
 }
 \description{
-\code{partition.cv.strat} creates a set of sample indices corresponding 
+\code{partition.cv.strat} creates a set of sample indices corresponding
 to cross-validation test and training sets.
 }
 \examples{
@@ -61,6 +64,6 @@ mean(ecuador$slides[idx] == 'TRUE') / mean(ecuador$slides == 'TRUE')
 # close to 1 because of large sample size, but with some random variation
 }
 \seealso{
-\code{\link{sperrorest}}, \code{\link{as.resampling}}, 
-\code{\link{resample.strat.uniform}}
+\code{\link[=sperrorest]{sperrorest()}}, \code{\link[=as.resampling]{as.resampling()}},
+\code{\link[=resample.strat.uniform]{resample.strat.uniform()}}
 }
