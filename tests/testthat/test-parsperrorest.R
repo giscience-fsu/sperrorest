@@ -1,9 +1,11 @@
+Sys.unsetenv("R_TESTS")
+
 test_that("check list output of rep and folds for par.mode = 2", {
 
-  testthat::skip_on_appveyor()
-  testthat::skip_on_travis()
+  # testthat::skip_on_appveyor()
+  # testthat::skip_on_travis()
   testthat::skip_on_cran()
-  testthat::skip("par.mode = 2 tests not working")
+  #testthat::skip("par.mode = 2 tests not working")
 
   lda.predfun <- function(object, newdata, fac = NULL) {
     library(nnet)
@@ -83,10 +85,10 @@ test_that("check list output of rep and folds for par.mode = 2", {
 
 test_that("check if length of list (error.fold) equals folds for par.mode = 2", {
 
-  testthat::skip_on_appveyor()
+  # testthat::skip_on_appveyor()
   # testthat::skip_on_travis()
   testthat::skip_on_cran()
-  testthat::skip("par.mode = 2 tests not working")
+  # testthat::skip("par.mode = 2 tests not working")
 
   library(doParallel)
   library(foreach)
@@ -121,10 +123,10 @@ test_that("check if length of list (error.fold) equals folds for par.mode = 2", 
 
 test_that("check list output of rep and folds for par.mode = 1", {
 
-  testthat::skip_on_appveyor()
-  testthat::skip_on_travis()
+  # testthat::skip_on_appveyor()
+  # testthat::skip_on_travis()
   testthat::skip_on_cran()
-  testthat::skip("par.mode = 2 tests not working")
+  # testthat::skip("par.mode = 2 tests not working")
 
   lda.predfun <- function(object, newdata, fac = NULL) {
     library(nnet)
@@ -202,7 +204,7 @@ test_that("check list output of rep and folds for par.mode = 1", {
 
 test_that("check if length of list (error.fold) equals folds for par.mode = 1", {
   
-  testthat::skip_on_appveyor()
+  # testthat::skip_on_appveyor()
   # testthat::skip_on_travis()
   testthat::skip_on_cran()
   
