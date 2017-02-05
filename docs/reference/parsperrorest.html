@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Perform parallelized spatial error estimation and variable importance assessment — parsperrorest • sperrorest</title>
+<title>Perform spatial error estimation and variable importance assessment — parsperrorest • sperrorest</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -72,7 +72,7 @@
       <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Perform parallelized spatial error estimation and variable importance assessment</h1>
+    <h1>Perform spatial error estimation and variable importance assessment</h1>
     </div>
 
     
@@ -283,7 +283,7 @@ Lecture Notes in Computer Science, 6065 LNCS: 184-195.</p>
                              <span class='kw'>smp.fun</span> <span class='kw'>=</span> <span class='no'>partition.cv</span>,
                              <span class='kw'>smp.args</span> <span class='kw'>=</span> <span class='fu'>list</span>(<span class='kw'>repetition</span> <span class='kw'>=</span> <span class='fl'>1</span>:<span class='fl'>5</span>, <span class='kw'>nfold</span> <span class='kw'>=</span> <span class='fl'>15</span>),
                              <span class='kw'>par.args</span> <span class='kw'>=</span> <span class='fu'>list</span>(<span class='kw'>par.units</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>par.mode</span> <span class='kw'>=</span> <span class='fl'>1</span>),
-                             <span class='kw'>error.rep</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>error.fold</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt;   |+++++++++++++++++                                 | 33% elapsed =04s, remaining ~09s  |++++++++++++++++++++++++++++++++++                | 67% elapsed =08s, remaining ~04s  |++++++++++++++++++++++++++++++++++++++++++++++++++| 100% elapsed =12s, remaining ~00s</div><div class='input'><span class='fu'>summary</span>(<span class='no'>par.nsp.res</span>$<span class='no'>error.rep</span>)</div><div class='output co'>#&gt;                           mean          sd       median         IQR
+                             <span class='kw'>error.rep</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>error.fold</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt;   |+++++++++++++++++                                 | 33% elapsed =04s, remaining ~07s  |++++++++++++++++++++++++++++++++++                | 67% elapsed =08s, remaining ~04s  |++++++++++++++++++++++++++++++++++++++++++++++++++| 100% elapsed =11s, remaining ~00s</div><div class='input'><span class='fu'>summary</span>(<span class='no'>par.nsp.res</span>$<span class='no'>error.rep</span>)</div><div class='output co'>#&gt;                           mean          sd       median         IQR
 #&gt; train.auroc       7.410875e-01 0.003862250 7.399036e-01 0.002177564
 #&gt; train.error       2.994357e-01 0.003661315 2.998214e-01 0.002035714
 #&gt; train.accuracy    7.005643e-01 0.003661315 7.001786e-01 0.002035714
@@ -435,7 +435,7 @@ Lecture Notes in Computer Science, 6065 LNCS: 184-195.</p>
                             <span class='kw'>smp.fun</span> <span class='kw'>=</span> <span class='no'>partition.kmeans</span>,
                             <span class='kw'>smp.args</span> <span class='kw'>=</span> <span class='fu'>list</span>(<span class='kw'>repetition</span> <span class='kw'>=</span> <span class='fl'>1</span>:<span class='fl'>5</span>, <span class='kw'>nfold</span> <span class='kw'>=</span> <span class='fl'>15</span>),
                             <span class='kw'>par.args</span> <span class='kw'>=</span> <span class='fu'>list</span>(<span class='kw'>par.units</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>par.mode</span> <span class='kw'>=</span> <span class='fl'>2</span>),
-                            <span class='kw'>error.rep</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>error.fold</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; Sun Feb  5 19:20:55 2017 Done.</div><div class='input'><span class='fu'>summary</span>(<span class='no'>par.sp.res</span>$<span class='no'>error.rep</span>)</div><div class='output co'>#&gt;                           mean          sd       median          IQR
+                            <span class='kw'>error.rep</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>error.fold</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; Sun Feb  5 20:17:20 2017 Done.</div><div class='input'><span class='fu'>summary</span>(<span class='no'>par.sp.res</span>$<span class='no'>error.rep</span>)</div><div class='output co'>#&gt;                           mean          sd       median          IQR
 #&gt; train.auroc       7.496999e-01 0.002542707 7.504402e-01 0.0007962092
 #&gt; train.error       2.956643e-01 0.001722932 2.948214e-01 0.0005357143
 #&gt; train.accuracy    7.043357e-01 0.001722932 7.051786e-01 0.0005357143
