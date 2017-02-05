@@ -23,14 +23,6 @@ r_github_packages:
   - jimhester/covr
   - hadley/testthat
   
-install:
-  - Rscript -e 'install.packages(c("devtools","roxygen2"))'
-  - |
-    R CMD build --no-build-vignettes .
-  
-script:
-  - Rscript -e "devtools::check(args = c('--no-vignettes'), build_args = c('--no-build-vignettes','--resave-data'))"
-
 notifications:
   slack: giscience-fsu:Wkbb0S8LMk9xdfVjweh8IDZx
   on_success: change # default: always
