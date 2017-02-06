@@ -57,7 +57,7 @@ containing the indices of training and test samples.
 }
 \section{Partition example}{
 
-\figure{plot_resampling.png}{Example Plot Title} \cr
+\figure{plotresampling.png}{Example Plot Title} \cr
 Fig. 1: Five-fold partitions created by \code{partition.cv()}. See examples.
 }
 
