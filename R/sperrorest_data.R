@@ -36,7 +36,7 @@
 #' par(xpd = TRUE)
 #' plot(fit, compress = TRUE, main = 'Muenchows landslide data set')
 #' text(fit, use.n = TRUE)
-"ecuador"
+NULL
 
 #' Maipo dataset from Marco Pena
 #' 
@@ -46,4 +46,4 @@
 #' @keywords datasets
 #' @keywords internal
 #'
-"maipo"
+NULL
