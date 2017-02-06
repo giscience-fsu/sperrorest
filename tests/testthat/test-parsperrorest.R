@@ -1,11 +1,14 @@
+context("sperrorest/parsperrorest.R")
+
 Sys.unsetenv("R_TESTS")
 
-test_that("check list output of rep and folds for par.mode = 2", {
+pacman::p_load(sperrorest, testthat, rpart, MASS, doParallel, foreach)
 
-  # testthat::skip_on_appveyor()
-  # testthat::skip_on_travis()
+# parsperrorest par.mode = 2 Mon Feb  6 23:24:11 2017 ------------------------------
+
+test_that("output type (= list) for different logical combinations of 
+          error.rep and error.fold for par.mode = 2 on LDA example", {
   testthat::skip_on_cran()
-  #testthat::skip("par.mode = 2 tests not working")
 
   lda.predfun <- function(object, newdata, fac = NULL) {
     library(nnet)
@@ -24,13 +27,6 @@ test_that("check list output of rep and folds for par.mode = 2", {
     if (!is.null(fac)) pred <- majority.filter(pred, newdata[,fac])
     return(pred)
   }
-
-  library(doParallel)
-  library(foreach)
-  library(sperrorest)
-  library(rpart)
-  library(testthat)
-  library(MASS)
 
   fo <- croptype ~ b12 + b13 + b14 + b15 + b16 + b17 + b22 + b23 + b24 +
     b25 + b26 + b27 + b32 + b33 + b34 + b35 + b36 + b37 + b42 +
@@ -79,29 +75,17 @@ test_that("check list output of rep and folds for par.mode = 2", {
 
   expect_equal(typeof(out$error.rep), "NULL")
   expect_equal(typeof(out$error.fold), "list")
-
 })
 
 
-test_that("check if length of list (error.fold) equals folds for par.mode = 2", {
-
-  # testthat::skip_on_appveyor()
-  # testthat::skip_on_travis()
+test_that("output length of list is correct for error.rep = TRUE and error.fold  = TRUE 
+          for par.mode = 2 on rpart example", {
+            
   testthat::skip_on_cran()
-  # testthat::skip("par.mode = 2 tests not working")
-
-  library(doParallel)
-  library(foreach)
-  library(sperrorest)
-  library(rpart)
-  library(testthat)
-  library(MASS)
 
   data(ecuador)
   fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
 
-  # Example of a classification tree fitted to this data:
-  library(rpart)
   mypred.rpart <- function(object, newdata) predict(object, newdata)[, 2]
   ctrl <- rpart.control(cp = 0.005) # show the effects of overfitting
   fit <- rpart(fo, data = ecuador, control = ctrl)
@@ -120,13 +104,13 @@ test_that("check if length of list (error.fold) equals folds for par.mode = 2", 
   expect_equal(length(par.nsp.res$error.fold[[1]]), 4)
 })
 
+# parsperrorest par.mode = 1 Mon Feb  6 23:25:08 2017 ------------------------------
 
-test_that("check list output of rep and folds for par.mode = 1", {
 
-  # testthat::skip_on_appveyor()
-  # testthat::skip_on_travis()
+test_that("output type (= list) for different logical combinations of 
+          error.rep and error.fold for par.mode = 1 on LDA example", {
+
   testthat::skip_on_cran()
-  # testthat::skip("par.mode = 2 tests not working")
 
   lda.predfun <- function(object, newdata, fac = NULL) {
     library(nnet)
@@ -145,11 +129,6 @@ test_that("check list output of rep and folds for par.mode = 1", {
     if (!is.null(fac)) pred <- majority.filter(pred, newdata[,fac])
     return(pred)
   }
-
-  library(sperrorest)
-  library(rpart)
-  library(testthat)
-  library(MASS)
 
   fo <- croptype ~ b12 + b13 + b14 + b15 + b16 + b17 + b22 + b23 + b24 +
     b25 + b26 + b27 + b32 + b33 + b34 + b35 + b36 + b37 + b42 +
@@ -201,23 +180,15 @@ test_that("check list output of rep and folds for par.mode = 1", {
 
 })
 
-
-test_that("check if length of list (error.fold) equals folds for par.mode = 1", {
+test_that("output length of list is correct for error.rep = TRUE and error.fold  = TRUE 
+          for par.mode = 1 on rpart example", {
   
-  # testthat::skip_on_appveyor()
-  # testthat::skip_on_travis()
   testthat::skip_on_cran()
-  
-  library(sperrorest)
-  library(rpart)
-  library(testthat)
-  library(MASS)
-  
+            
   data(ecuador) 
   fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
   
   # Example of a classification tree fitted to this data:
-  library(rpart)
   mypred.rpart <- function(object, newdata) predict(object, newdata)[, 2]
   ctrl <- rpart.control(cp = 0.005) # show the effects of overfitting
   fit <- rpart(fo, data = ecuador, control = ctrl)
