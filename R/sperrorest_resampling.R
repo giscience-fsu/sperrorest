@@ -31,7 +31,7 @@
 #' containing the indices of training and test samples.
 #' 
 #' @section Partition example:
-#' ![](plot_resampling.png "Example Plot Title") \cr
+#' ![](plotresampling.png "Example Plot Title") \cr
 #' Fig. 1: Five-fold partitions created by `partition.cv()`. See examples. 
 #' 
 #' @return If `return.factor = FALSE` (the default), a 
@@ -203,9 +203,6 @@ partition.factor <- function(data, coords = c("x", "y"), fac, return.factor = FA
   return(represmp)
 }
 
-
-
-
 #' Partition the data for a (non-spatial) k-fold cross-validation at the group 
 #' level
 #'
@@ -236,8 +233,8 @@ partition.factor <- function(data, coords = c("x", "y"), fac, return.factor = FA
 #' [partition.factor()], [as.resampling.factor()]
 #' 
 #' @export
-partition.factor.cv <- function(data, coords = c("x", "y"), fac, nfold = 10, repetition = 1, 
-                                seed1 = NULL, return.factor = FALSE)
+partition.factor.cv <- function(data, coords = c("x", "y"), fac, nfold = 10, 
+                                repetition = 1, seed1 = NULL, return.factor = FALSE)
 {
   if (length(fac) == 1 && is.character(fac)) 
     fac <- data[, fac]
@@ -263,11 +260,6 @@ partition.factor.cv <- function(data, coords = c("x", "y"), fac, nfold = 10, rep
     resampling <- as.represampling(resampling)
   return(resampling)
 }
-
-
-
-
-
 
 
 #' Partition the study area into rectangular tiles
@@ -698,21 +690,21 @@ partition.kmeans <- function(data, coords = c("x", "y"), nfold = 10, repetition 
 #' @param replace optional argument to [sample()]: sampling with or 
 #' without replacement?
 #' @param repetition see `partition.cv`; however, 
-#' see Note below: `repetition` should normally be `=1` in this function.
+#' see Note below: `repetition` should normally be `= 1` in this function.
 #' @param ... arguments to be passed to `partition.disc`
 #' 
 #' @return A [represampling()] object. 
 #' Contains `length(repetition)` `resampling` objects. 
 #' Each of these contains `ndisc` lists with indices of test and 
-#' (if `return.train=TRUE`) training sets.
+#' (if `return.train = TRUE`) training sets.
 #' 
 #' @note Test area discs are centered at (random) samples, not at general 
 #' random locations. Test area discs may (and likely will) overlap independently 
 #' of the value of `replace`. `replace` only controls the replacement 
 #' of the center point of discs when drawing center points from the samples. 
 #' 
-#' `radius<0` does leave-one-out resampling with an optional buffer. 
-#' `radius=0` is similar except that samples with identical coordinates 
+#' `radius < 0` does leave-one-out resampling with an optional buffer. 
+#' `radius = 0` is similar except that samples with identical coordinates 
 #' would fall within the test area disc.
 #' 
 #' @references Brenning, A. 2005. Spatial prediction models for landslide 
@@ -811,7 +803,6 @@ partition.loo <- function(data, ndisc = nrow(data), replace = FALSE, ...)
 {
   partition.disc(data = data, radius = -1, ndisc = ndisc, replace = replace, ...)
 }
-
 
 #' Non-spatial bootstrap resampling
 #'
