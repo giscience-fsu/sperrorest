@@ -31,8 +31,8 @@
 #' containing the indices of training and test samples.
 #' 
 #' @section Partition example:
-#' ![](plotresampling.png "Example Plot Title") \cr
-#' Fig. 1: Five-fold partitions created by `partition.cv()`. See examples. 
+#' # [](plotresampling.png "Example Plot Title") \cr
+#' # Fig. 1: Five-fold partitions created by `partition.cv()`. See examples. 
 #' 
 #' @return If `return.factor = FALSE` (the default), a 
 #' [represampling()] object. Specifically, this is a (named) list of 
