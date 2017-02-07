@@ -206,3 +206,31 @@ test_that("output length of list is correct for error.rep = TRUE and error.fold 
   
   expect_equal(length(par.nsp.res$error.fold[[1]]), 4)
 })
+
+# notify argument Tue Feb  7 13:45:45 2017 ------------------------------
+
+test_that("notify badge is working in parsperrorest()", {
+  
+  testthat::skip_on_cran()
+  
+  data(ecuador) 
+  fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
+  
+  # Example of a classification tree fitted to this data:
+  mypred.rpart <- function(object, newdata) predict(object, newdata)[, 2]
+  ctrl <- rpart.control(cp = 0.005) # show the effects of overfitting
+  fit <- rpart(fo, data = ecuador, control = ctrl)
+  
+  # Non-spatial 5-repeated 10-fold cross-validation:
+  mypred.rpart <- function(object, newdata) predict(object, newdata)[,2]
+  par.nsp.res <- parsperrorest(data = ecuador, formula = fo,
+                               model.fun = rpart, model.args = list(control = ctrl),
+                               pred.fun = mypred.rpart,
+                               progress = FALSE, 
+                               smp.fun = partition.cv,
+                               smp.args = list(repetition = 1:2, nfold = 4),
+                               par.args = list(par.mode = 1, par.units = 2),
+                               error.rep = TRUE, error.fold = TRUE, notify = TRUE)
+  
+  expect_equal(length(par.nsp.res$error.fold[[1]]), 4)
+})
