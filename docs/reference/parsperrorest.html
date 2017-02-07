@@ -89,8 +89,8 @@ assessment of spatial variable importance.</p>
   <span class='kw'>err.fun</span> <span class='kw'>=</span> <span class='no'>err.default</span>, <span class='kw'>error.fold</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>error.rep</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>err.train</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>imp.variables</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>imp.permutations</span> <span class='kw'>=</span> <span class='fl'>1000</span>,
   <span class='kw'>importance</span> <span class='kw'>=</span> !<span class='fu'>is.null</span>(<span class='no'>imp.variables</span>), <span class='kw'>distance</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>do.gc</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>do.try</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>out.progress</span> <span class='kw'>=</span> <span class='st'>""</span>, <span class='kw'>par.args</span> <span class='kw'>=</span> <span class='fu'>list</span>(),
-  <span class='kw'>benchmark</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)</pre>
+  <span class='kw'>do.try</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>out.progress</span> <span class='kw'>=</span> <span class='st'>""</span>, <span class='kw'>notify</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>par.args</span> <span class='kw'>=</span> <span class='fu'>list</span>(), <span class='kw'>benchmark</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <dl class="dl-horizontal">
@@ -190,10 +190,12 @@ percentage indicator (0% - 100%) are shown.
 information only (instead of repetition and fold).
 Set to <code>FALSE</code> for no progress information.</dd>
       <dt>out.progress</dt>
-      <dd>only used if <code>par.mode = 2</code>: Optional write progress output to a file instead of console output.
+      <dd>only used if <code>par.mode = 2</code>: Optionally write progress output to a file instead of console output.
 The default (<code>&#39;&#39;</code>) results in console output for Unix-systems and
 file output (&#39;parsperrorest.progress.txt&#39;) in the current working directory
 for Windows-systems.</dd>
+      <dt>notify</dt>
+      <dd>(optional) show a notification badge after <code>parsperrorest()</code> has finished.</dd>
       <dt>par.args</dt>
       <dd>list of parallelization parameters:
 <code>par.mode</code> (the parallelization mode),
@@ -227,7 +229,7 @@ While the <code><a href='http://www.rdocumentation.org/packages/rpart/topics/rpa
 encounter problems with other functions.</p>
     <p>For par.mode = 2, you may encounter missing repetitions in the results
 if repetitions finish to quickly. In this case, consider using
-<code>sperrorest::sperrorest()</code></p>
+<code><a href='sperrorest.html'>sperrorest()</a></code></p>
     <p>Known problems when being parallized: <code><a href='http://www.rdocumentation.org/packages/randomForest/topics/randomForest'>randomForest::randomForest()</a></code></p>
     
     <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
@@ -261,7 +263,7 @@ Lecture Notes in Computer Science, 6065 LNCS: 184-195.</p>
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <p><code>sperrorest::sperrorest()</code></p>
+    <p><code><a href='sperrorest.html'>sperrorest()</a></code></p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
@@ -283,90 +285,90 @@ Lecture Notes in Computer Science, 6065 LNCS: 184-195.</p>
                              <span class='kw'>smp.fun</span> <span class='kw'>=</span> <span class='no'>partition.cv</span>,
                              <span class='kw'>smp.args</span> <span class='kw'>=</span> <span class='fu'>list</span>(<span class='kw'>repetition</span> <span class='kw'>=</span> <span class='fl'>1</span>:<span class='fl'>5</span>, <span class='kw'>nfold</span> <span class='kw'>=</span> <span class='fl'>15</span>),
                              <span class='kw'>par.args</span> <span class='kw'>=</span> <span class='fu'>list</span>(<span class='kw'>par.units</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>par.mode</span> <span class='kw'>=</span> <span class='fl'>1</span>),
-                             <span class='kw'>error.rep</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>error.fold</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt;   |+++++++++++++++++                                 | 33% elapsed =03s, remaining ~07s  |++++++++++++++++++++++++++++++++++                | 67% elapsed =07s, remaining ~03s  |++++++++++++++++++++++++++++++++++++++++++++++++++| 100% elapsed =10s, remaining ~00s</div><div class='input'><span class='fu'>summary</span>(<span class='no'>par.nsp.res</span>$<span class='no'>error.rep</span>)</div><div class='output co'>#&gt;                           mean          sd       median         IQR
-#&gt; train.auroc       7.461321e-01 0.004305661 7.449589e-01 0.006860202
-#&gt; train.error       2.954571e-01 0.004188739 2.965714e-01 0.007500000
-#&gt; train.accuracy    7.045429e-01 0.004188739 7.034286e-01 0.007500000
-#&gt; train.sensitivity 6.741714e-01 0.009959177 6.702143e-01 0.008785714
-#&gt; train.specificity 7.349143e-01 0.004475671 7.366429e-01 0.007285714
-#&gt; train.fpr70       3.049571e-01 0.014314043 3.127143e-01 0.021785714
-#&gt; train.fpr80       4.820143e-01 0.005231235 4.813571e-01 0.006142857
-#&gt; train.fpr90       6.757714e-01 0.017353277 6.786429e-01 0.018571429
-#&gt; train.tpr80       5.629000e-01 0.008072629 5.630000e-01 0.004428571
-#&gt; train.tpr90       3.319857e-01 0.012892353 3.324286e-01 0.010928571
-#&gt; train.tpr95       1.858286e-01 0.006885470 1.888571e-01 0.009785714
-#&gt; train.events      1.400000e+04 0.000000000 1.400000e+04 0.000000000
-#&gt; train.count       2.800000e+04 0.000000000 2.800000e+04 0.000000000
-#&gt; test.auroc        6.568017e-01 0.006656371 6.572040e-01 0.009564500
-#&gt; test.error        3.704000e-01 0.004735504 3.700000e-01 0.006500000
-#&gt; test.accuracy     6.296000e-01 0.004735504 6.300000e-01 0.006500000
-#&gt; test.sensitivity  6.070000e-01 0.008888194 6.060000e-01 0.002000000
-#&gt; test.specificity  6.522000e-01 0.010232302 6.520000e-01 0.007000000
-#&gt; test.fpr70        4.854000e-01 0.017198837 4.920000e-01 0.024000000
-#&gt; test.fpr80        6.244000e-01 0.015208550 6.190000e-01 0.012000000
-#&gt; test.fpr90        7.954000e-01 0.018338484 8.030000e-01 0.007000000
-#&gt; test.tpr80        4.166000e-01 0.026959228 4.140000e-01 0.024000000
-#&gt; test.tpr90        2.062000e-01 0.035294475 2.000000e-01 0.038000000
-#&gt; test.tpr95        1.138000e-01 0.014149205 1.160000e-01 0.018000000
-#&gt; test.events       1.000000e+03 0.000000000 1.000000e+03 0.000000000
-#&gt; test.count        2.000000e+03 0.000000000 2.000000e+03 0.000000000</div><div class='input'><span class='fu'>summary</span>(<span class='no'>par.nsp.res</span>$<span class='no'>error.fold</span>)</div><div class='output co'>#&gt;                            mean         sd        median        IQR
-#&gt; train.auroc          0.74069858 0.01975086    0.74045063 0.02431138
-#&gt; train.error          0.29545768 0.01365486    0.29298340 0.02081320
-#&gt; train.accuracy       0.70454232 0.01365486    0.70701660 0.02081320
-#&gt; train.sensitivity    0.67417310 0.04964066    0.68172043 0.05849467
-#&gt; train.specificity    0.73491371 0.03552911    0.73791622 0.04160141
-#&gt; train.fpr70          0.43525430 0.18723445    0.36197637 0.18710477
-#&gt; train.fpr80          0.58893945 0.13383485    0.54516129 0.18019757
-#&gt; train.fpr90          0.76317736 0.09134966    0.77350427 0.15160635
-#&gt; train.tpr80          0.50687278 0.07557844    0.52192513 0.07752353
-#&gt; train.tpr90          0.16891784 0.11482780    0.13333333 0.19757996
-#&gt; train.tpr95          0.10087334 0.05088542    0.08732694 0.07484083
-#&gt; train.events       933.33333333 5.87788649  934.00000000 7.00000000
+                             <span class='kw'>error.rep</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>error.fold</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt;   |+++++++++++++++++                                 | 33% elapsed =05s, remaining ~09s  |++++++++++++++++++++++++++++++++++                | 67% elapsed =08s, remaining ~04s  |++++++++++++++++++++++++++++++++++++++++++++++++++| 100% elapsed =12s, remaining ~00s</div><div class='input'><span class='fu'>summary</span>(<span class='no'>par.nsp.res</span>$<span class='no'>error.rep</span>)</div><div class='output co'>#&gt;                           mean          sd       median          IQR
+#&gt; train.auroc       7.477260e-01 0.004307781 7.477084e-01 0.0016775765
+#&gt; train.error       2.940000e-01 0.002842821 2.941786e-01 0.0009285714
+#&gt; train.accuracy    7.060000e-01 0.002842821 7.058214e-01 0.0009285714
+#&gt; train.sensitivity 6.892857e-01 0.006391959 6.897857e-01 0.0100714286
+#&gt; train.specificity 7.227143e-01 0.005333998 7.228571e-01 0.0058571429
+#&gt; train.fpr70       2.946857e-01 0.008286115 2.955000e-01 0.0091428571
+#&gt; train.fpr80       4.652714e-01 0.011655712 4.677857e-01 0.0185000000
+#&gt; train.fpr90       6.627286e-01 0.012361519 6.647143e-01 0.0169285714
+#&gt; train.tpr80       5.576714e-01 0.004890797 5.580000e-01 0.0086428571
+#&gt; train.tpr90       3.324000e-01 0.008780283 3.375000e-01 0.0123571429
+#&gt; train.tpr95       1.864571e-01 0.009556572 1.899286e-01 0.0144285714
+#&gt; train.events      1.400000e+04 0.000000000 1.400000e+04 0.0000000000
+#&gt; train.count       2.800000e+04 0.000000000 2.800000e+04 0.0000000000
+#&gt; test.auroc        6.496042e-01 0.006930516 6.492120e-01 0.0119705000
+#&gt; test.error        3.769000e-01 0.006958807 3.780000e-01 0.0060000000
+#&gt; test.accuracy     6.231000e-01 0.006958807 6.220000e-01 0.0060000000
+#&gt; test.sensitivity  6.092000e-01 0.008378544 6.070000e-01 0.0040000000
+#&gt; test.specificity  6.370000e-01 0.011895377 6.370000e-01 0.0170000000
+#&gt; test.fpr70        4.944000e-01 0.014363147 4.940000e-01 0.0230000000
+#&gt; test.fpr80        6.236000e-01 0.014152738 6.190000e-01 0.0130000000
+#&gt; test.fpr90        8.018000e-01 0.012735776 8.000000e-01 0.0150000000
+#&gt; test.tpr80        4.108000e-01 0.018992104 4.160000e-01 0.0080000000
+#&gt; test.tpr90        1.786000e-01 0.033530583 1.750000e-01 0.0550000000
+#&gt; test.tpr95        9.400000e-02 0.019091883 1.020000e-01 0.0270000000
+#&gt; test.events       1.000000e+03 0.000000000 1.000000e+03 0.0000000000
+#&gt; test.count        2.000000e+03 0.000000000 2.000000e+03 0.0000000000</div><div class='input'><span class='fu'>summary</span>(<span class='no'>par.nsp.res</span>$<span class='no'>error.fold</span>)</div><div class='output co'>#&gt;                            mean         sd        median        IQR
+#&gt; train.auroc          0.74266922 0.01962958    0.74249000 0.02446968
+#&gt; train.error          0.29399965 0.01473394    0.29459025 0.01947401
+#&gt; train.accuracy       0.70600035 0.01473394    0.70540975 0.01947401
+#&gt; train.sensitivity    0.68925883 0.04763803    0.69222462 0.05980118
+#&gt; train.specificity    0.72270805 0.03666608    0.72299465 0.04720915
+#&gt; train.fpr70          0.38827964 0.16677238    0.32412327 0.09459671
+#&gt; train.fpr80          0.57186422 0.13799549    0.52173913 0.20849681
+#&gt; train.fpr90          0.76326664 0.08896734    0.75000000 0.13800998
+#&gt; train.tpr80          0.51033940 0.06228375    0.50693703 0.10501878
+#&gt; train.tpr90          0.14984975 0.10931665    0.10756124 0.14320438
+#&gt; train.tpr95          0.09534037 0.05518310    0.08396125 0.08329388
+#&gt; train.events       933.33333333 6.11673233  934.00000000 8.00000000
 #&gt; train.count       1866.66666667 0.47457900 1867.00000000 1.00000000
-#&gt; test.auroc           0.65535476 0.04664431    0.65027137 0.06405900
-#&gt; test.error           0.37040661 0.04074156    0.37313433 0.06015038
-#&gt; test.accuracy        0.62959339 0.04074156    0.62686567 0.06015038
-#&gt; test.sensitivity     0.60730946 0.07208398    0.60606061 0.10816179
-#&gt; test.specificity     0.65305878 0.07147906    0.65714286 0.09129537
-#&gt; test.fpr70           0.59614843 0.17173272    0.60317460 0.25250928
-#&gt; test.fpr80           0.71586695 0.12472014    0.71875000 0.19816833
-#&gt; test.fpr90           0.84108642 0.08257646    0.85507246 0.12308847
-#&gt; test.tpr80           0.34845528 0.15458436    0.38095238 0.22036537
-#&gt; test.tpr90           0.13485044 0.10790787    0.10000000 0.13177205
-#&gt; test.tpr95           0.06256676 0.04690469    0.05194805 0.06078322
-#&gt; test.events         66.66666667 5.87788649   66.00000000 7.00000000
+#&gt; test.auroc           0.65155662 0.05271383    0.64918415 0.06281768
+#&gt; test.error           0.37691318 0.04618071    0.37593985 0.06015038
+#&gt; test.accuracy        0.62308682 0.04618071    0.62406015 0.06015038
+#&gt; test.sensitivity     0.60979714 0.07380703    0.60563380 0.09915781
+#&gt; test.specificity     0.63805058 0.07080733    0.63750000 0.07993005
+#&gt; test.fpr70           0.57155570 0.15794539    0.53448276 0.18804732
+#&gt; test.fpr80           0.70217446 0.13261808    0.69333333 0.20792753
+#&gt; test.fpr90           0.84229112 0.08150689    0.84615385 0.12687039
+#&gt; test.tpr80           0.35752157 0.12384461    0.36231884 0.15488257
+#&gt; test.tpr90           0.09938714 0.08970172    0.07462687 0.07977185
+#&gt; test.tpr95           0.05341788 0.04329557    0.04347826 0.05064814
+#&gt; test.events         66.66666667 6.11673233   66.00000000 8.00000000
 #&gt; test.count         133.33333333 0.47457900  133.00000000 1.00000000
 #&gt; distance            -1.00000000 0.00000000   -1.00000000 0.00000000</div><div class='input'><span class='fu'>summary</span>(<span class='no'>par.nsp.res</span>$<span class='no'>represampling</span>)</div><div class='output co'>#&gt; $`1`
 #&gt;    n.train n.test
-#&gt; 1     1867    133
+#&gt; 1     1866    134
 #&gt; 2     1867    133
 #&gt; 3     1866    134
 #&gt; 4     1867    133
 #&gt; 5     1867    133
-#&gt; 6     1866    134
+#&gt; 6     1867    133
 #&gt; 7     1867    133
 #&gt; 8     1867    133
 #&gt; 9     1866    134
 #&gt; 10    1867    133
 #&gt; 11    1867    133
-#&gt; 12    1867    133
+#&gt; 12    1866    134
 #&gt; 13    1867    133
 #&gt; 14    1866    134
-#&gt; 15    1866    134
+#&gt; 15    1867    133
 #&gt; 
 #&gt; $`2`
 #&gt;    n.train n.test
 #&gt; 1     1867    133
 #&gt; 2     1867    133
-#&gt; 3     1867    133
+#&gt; 3     1866    134
 #&gt; 4     1867    133
-#&gt; 5     1867    133
-#&gt; 6     1866    134
+#&gt; 5     1866    134
+#&gt; 6     1867    133
 #&gt; 7     1867    133
-#&gt; 8     1866    134
-#&gt; 9     1867    133
+#&gt; 8     1867    133
+#&gt; 9     1866    134
 #&gt; 10    1867    133
-#&gt; 11    1866    134
+#&gt; 11    1867    133
 #&gt; 12    1866    134
 #&gt; 13    1867    133
 #&gt; 14    1866    134
@@ -374,16 +376,16 @@ Lecture Notes in Computer Science, 6065 LNCS: 184-195.</p>
 #&gt; 
 #&gt; $`3`
 #&gt;    n.train n.test
-#&gt; 1     1867    133
-#&gt; 2     1867    133
+#&gt; 1     1866    134
+#&gt; 2     1866    134
 #&gt; 3     1866    134
-#&gt; 4     1866    134
+#&gt; 4     1867    133
 #&gt; 5     1867    133
 #&gt; 6     1867    133
 #&gt; 7     1867    133
 #&gt; 8     1867    133
 #&gt; 9     1867    133
-#&gt; 10    1866    134
+#&gt; 10    1867    133
 #&gt; 11    1867    133
 #&gt; 12    1866    134
 #&gt; 13    1867    133
@@ -392,36 +394,36 @@ Lecture Notes in Computer Science, 6065 LNCS: 184-195.</p>
 #&gt; 
 #&gt; $`4`
 #&gt;    n.train n.test
-#&gt; 1     1866    134
+#&gt; 1     1867    133
 #&gt; 2     1867    133
-#&gt; 3     1867    133
+#&gt; 3     1866    134
 #&gt; 4     1867    133
-#&gt; 5     1867    133
+#&gt; 5     1866    134
 #&gt; 6     1867    133
-#&gt; 7     1867    133
+#&gt; 7     1866    134
 #&gt; 8     1867    133
 #&gt; 9     1867    133
-#&gt; 10    1866    134
+#&gt; 10    1867    133
 #&gt; 11    1867    133
 #&gt; 12    1866    134
 #&gt; 13    1867    133
 #&gt; 14    1866    134
-#&gt; 15    1866    134
+#&gt; 15    1867    133
 #&gt; 
 #&gt; $`5`
 #&gt;    n.train n.test
 #&gt; 1     1866    134
 #&gt; 2     1867    133
-#&gt; 3     1867    133
-#&gt; 4     1866    134
-#&gt; 5     1867    133
+#&gt; 3     1866    134
+#&gt; 4     1867    133
+#&gt; 5     1866    134
 #&gt; 6     1867    133
-#&gt; 7     1866    134
+#&gt; 7     1867    133
 #&gt; 8     1866    134
 #&gt; 9     1867    133
-#&gt; 10    1867    133
+#&gt; 10    1866    134
 #&gt; 11    1867    133
-#&gt; 12    1866    134
+#&gt; 12    1867    133
 #&gt; 13    1867    133
 #&gt; 14    1867    133
 #&gt; 15    1867    133
@@ -435,7 +437,7 @@ Lecture Notes in Computer Science, 6065 LNCS: 184-195.</p>
                             <span class='kw'>smp.fun</span> <span class='kw'>=</span> <span class='no'>partition.kmeans</span>,
                             <span class='kw'>smp.args</span> <span class='kw'>=</span> <span class='fu'>list</span>(<span class='kw'>repetition</span> <span class='kw'>=</span> <span class='fl'>1</span>:<span class='fl'>5</span>, <span class='kw'>nfold</span> <span class='kw'>=</span> <span class='fl'>15</span>),
                             <span class='kw'>par.args</span> <span class='kw'>=</span> <span class='fu'>list</span>(<span class='kw'>par.units</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>par.mode</span> <span class='kw'>=</span> <span class='fl'>2</span>),
-                            <span class='kw'>error.rep</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>error.fold</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; Sun Feb  5 23:42:25 2017 Done.</div><div class='input'><span class='fu'>summary</span>(<span class='no'>par.sp.res</span>$<span class='no'>error.rep</span>)</div><div class='output co'>#&gt;                           mean          sd       median          IQR
+                            <span class='kw'>error.rep</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>error.fold</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; Tue Feb  7 14:16:05 2017 Done.</div><div class='input'><span class='fu'>summary</span>(<span class='no'>par.sp.res</span>$<span class='no'>error.rep</span>)</div><div class='output co'>#&gt;                           mean          sd       median          IQR
 #&gt; train.auroc       7.496999e-01 0.002542707 7.504402e-01 0.0007962092
 #&gt; train.error       2.956643e-01 0.001722932 2.948214e-01 0.0005357143
 #&gt; train.accuracy    7.043357e-01 0.001722932 7.051786e-01 0.0005357143
