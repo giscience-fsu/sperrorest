@@ -1,36 +1,38 @@
-sperrorest 1.0.0 (11 Dec 2016)
+sperrorest 1.0.0 (Jan 2017)
 
-* add `parsperrorest()`: This function lets you exexute `sperrorest()` in parallel. 
+New features:
+  * add `parsperrorest()`: This function lets you exexute `sperrorest()` in parallel. It includes two modes (`par.mode = 1` and `par.mode = 2`) which use different   parallelization approaches in the background. See `?parsperrorest()` for more details.
+  
+  * add `partition.factor.cv()`: This resampling method enables partitioning based 
+  on a given factor variable. This can be used, for example, to resample 
+  agricultural data, that is grouped by fields, at the agricultural field level 
+  in order to preserve spatial autocorrelation within fields.
+  
+  * `sperorest()` and `parsperrorest()`: New `notify` argument which shows a notification badge once `sperrorest()` or `parsperrorest()` has finished.
+  
+  * `sperrorest()` and `parsperrorest()`: Add `benchmark` item to returned object giving information about execution time, used cores and other system details. 
+  
+Changes to functions: 
+  * `sperrorest`(): Change argument naming. `err.unpooled` is now `error.fold` and `err.pooled` is now `error.rep`
+  
+  * `sperrorest()` and `parsperrorest()`: Change order and naming of returned object
+      - class `sperrorestpoolederror` is now `sperrorestreperror`
+      - returned `sperrorest` list is now ordered as follows: 
+           1. error.rep
+           2. error.fold
+           3. importance
+           4. benchmarks
+           5. package.version  
 
-* add `partition.factor.cv()`: This resampling method enables partitioning based 
-on a given factor variable. This can be used, for example, to resample 
-agricultural data that is grouped by fields, at the agricultural field level 
-in order to preserve spatial autocorrelation within fields.
-
-* add `benchmark` item to returned `sperrorest()` and `parsperrorest()` object giving information about execution time, used cores and other system details. 
-
-* create github repo of `sperrorest` at 
-[https://github.com/pat-s/sperrorest/](https://github.com/pat-s/sperrorest/)
-
-* change params: `err.unpooled` to `error.fold` and `err.pooled` to `error.rep`
-
-* change order and naming of returned `sperrorest()` and `parsperrorest()` object
-    - class `sperrorestpoolederror` is now `sperrorestreperror`
-    - returned `sperrorest` object is now ordered as follows: 
-         1. error.rep
-         2. error.fold
-         3. importance
-         4. benchmarks
-         5. package.version  
-         
-* add `notify` argument: Shows a notification badge once `sperrorest()` or `parsperrorest()` has finished.
-
-* add package NEWS
-
-* add package vignette
-
-* package is now ByteCompiled
-
+Package related:
+  * add package NEWS
+  
+  * add package vignette
+  
+  * package is now ByteCompiled
+  
+  * Github repo of `sperrorest` now at 
+  [https://github.com/pat-s/sperrorest/](https://github.com/pat-s/sperrorest/)
 # sperrorest 0.2-1 (19 June 2012)
 
 * First release on CRAN
