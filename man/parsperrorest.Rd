@@ -11,8 +11,8 @@ parsperrorest(formula, data, coords = c("x", "y"), model.fun,
   err.fun = err.default, error.fold = TRUE, error.rep = TRUE,
   err.train = TRUE, imp.variables = NULL, imp.permutations = 1000,
   importance = !is.null(imp.variables), distance = FALSE, do.gc = 1,
-  do.try = FALSE, progress = 1, out.progress = "", par.args = list(),
-  benchmark = FALSE, ...)
+  do.try = FALSE, progress = 1, out.progress = "", notify = FALSE,
+  par.args = list(), benchmark = FALSE, ...)
 }
 \arguments{
 \item{formula}{A formula specifying the variables used by the \code{model}.
@@ -110,10 +110,12 @@ percentage indicator (0\% - 100\%) are shown.
 information only (instead of repetition and fold).
 Set to \code{FALSE} for no progress information.}
 
-\item{out.progress}{only used if \code{par.mode = 2}: Optional write progress output to a file instead of console output.
+\item{out.progress}{only used if \code{par.mode = 2}: Optionally write progress output to a file instead of console output.
 The default (\code{''}) results in console output for Unix-systems and
 file output ('parsperrorest.progress.txt') in the current working directory
 for Windows-systems.}
+
+\item{notify}{(optional) show a notification badge after \code{parsperrorest()} has finished.}
 
 \item{par.args}{list of parallelization parameters:
 \code{par.mode} (the parallelization mode),
@@ -166,7 +168,7 @@ encounter problems with other functions.
 
 For {par.mode = 2}, you may encounter missing repetitions in the results
 if repetitions finish to quickly. In this case, consider using
-\code{\link[sperrorest:sperrorest]{sperrorest::sperrorest()}}
+\code{\link[=sperrorest]{sperrorest()}}
 
 Known problems when being parallized: \code{\link[randomForest:randomForest]{randomForest::randomForest()}}
 }
@@ -251,5 +253,5 @@ IDA 2010, Tucson, AZ, USA, 19-21 May 2010.
 Lecture Notes in Computer Science, 6065 LNCS: 184-195.
 }
 \seealso{
-\code{\link[sperrorest:sperrorest]{sperrorest::sperrorest()}}
+\code{\link[=sperrorest]{sperrorest()}}
 }

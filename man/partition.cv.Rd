@@ -55,12 +55,6 @@ This function does not actually perform a cross-validation
 or partition the data set itself; it simply creates a data structure
 containing the indices of training and test samples.
 }
-\section{Partition example}{
-
-\figure{plotresampling.png}{Example Plot Title} \cr
-Fig. 1: Five-fold partitions created by \code{partition.cv()}. See examples.
-}
-
 \examples{
 data(ecuador)
 ## non-spatial cross-validation:

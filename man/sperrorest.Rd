@@ -13,7 +13,7 @@ sperrorest(formula, data, coords = c("x", "y"), model.fun,
   err.fun = err.default, error.fold = TRUE, error.rep = TRUE,
   err.train = TRUE, imp.variables = NULL, imp.permutations = 1000,
   importance = !is.null(imp.variables), distance = FALSE, do.gc = 1,
-  do.try = FALSE, progress = 1, benchmark = FALSE, ...)
+  do.try = FALSE, progress = 1, benchmark = FALSE, notify = FALSE, ...)
 }
 \arguments{
 \item{formula}{A formula specifying the variables used by the \code{model}.
@@ -112,6 +112,8 @@ Set to \code{FALSE} for no progress information.}
 \item{benchmark}{(optional) logical (default: \code{FALSE}): if \code{TRUE},
 perform benchmarking and return \code{sperrorestbenchmarks} object}
 
+\item{notify}{(optional) show a notification badge after \code{sperrorest()} has finished.}
+
 \item{...}{currently not used}
 }
 \value{
@@ -208,4 +210,7 @@ yield prediction in Precision Agriculture. In Advances in Intelligent
 Data Analysis IX, Proceedings, 9th International Symposium,
 IDA 2010, Tucson, AZ, USA, 19-21 May 2010.
 Lecture Notes in Computer Science, 6065 LNCS: 184-195.
+}
+\seealso{
+\code{\link[=parsperrorest]{parsperrorest()}}
 }
