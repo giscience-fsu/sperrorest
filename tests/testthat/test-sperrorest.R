@@ -1,0 +1,58 @@
+context("sperrorest.R")
+
+pacman::p_load(sperrorest, rpart, testthat)
+
+# sperrorest() binary response Wed Feb  8 21:40:49 2017 ------------------------------
+
+test_that("sperrorest() produces correct output for binary response", {
+  data(ecuador) # Muenchow et al. (2012), see ?ecuador
+  fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
+  
+  nspres <- sperrorest(data = ecuador, formula = fo,
+                       model.fun = glm, model.args = list(family = "binomial"),
+                       pred.fun = predict, pred.args = list(type = "response"),
+                       smp.fun = partition.cv, 
+                       smp.args = list(repetition = 1:2, nfold = 10),
+                       notify = TRUE, benchmark = TRUE,
+                       importance = TRUE, imp.permutations = 10)
+  summary.rep <- summary(nspres$error.rep)                    
+  summary.fold <- summary(nspres$error.fold)
+  summary.resampling <- summary(nspres$represampling)
+  
+  expect_equal(length(nspres$error.rep[[1]]), 2) # reps
+  expect_equal(length(nspres$error.fold[[1]]), 10) # folds
+  expect_equal(length(summary.rep), 4) # binary response
+  expect_equal(length(summary.fold), 4) # binary response
+  expect_equal(length(summary.resampling), 2) # resampling summary
+  expect_equal(length(nspres$importance[[1]]), 10) # import folds
+  expect_equal(length(nspres$importance), 2) # import reps
+  expect_equal(names(nspres$error.rep)[[1]], "train.auroc") # check for auroc existence
+})
+
+
+# sperorrest() continuous response Wed Feb  8 22:19:57 2017 ------------------------------
+
+test_that("sperrorest() produces correct output for binary response", {
+  data(ecuador) # Muenchow et al. (2012), see ?ecuador
+  fo <- slope ~ hcurv + vcurv + log.carea + cslope
+  
+  nspres <- sperrorest(data = ecuador, formula = fo,
+                       model.fun = glm,
+                       pred.fun = predict,
+                       smp.fun = partition.cv, 
+                       smp.args = list(repetition = 1:2, nfold = 10),
+                       notify = TRUE, benchmark = TRUE,
+                       importance = TRUE, imp.permutations = 10)
+  summary.rep <- summary(nspres$error.rep)                    
+  summary.fold <- summary(nspres$error.fold)
+  summary.resampling <- summary(nspres$represampling)
+  
+  expect_equal(length(nspres$error.rep[[1]]), 2) # reps
+  expect_equal(length(nspres$error.fold[[1]]), 10) # folds
+  expect_equal(length(summary.rep), 4) # binary response
+  expect_equal(length(summary.fold), 4) # binary response
+  expect_equal(length(summary.resampling), 2) # resampling summary
+  expect_equal(length(nspres$importance[[1]]), 10) # import folds
+  expect_equal(length(nspres$importance), 2) # import reps
+  expect_equal(names(nspres$error.rep)[[1]], "train.bias") # check for bias existence
+})
