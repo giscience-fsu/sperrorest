@@ -8,28 +8,28 @@ partition.cv.strat(data, coords = c("x", "y"), nfold = 10,
   return.factor = FALSE, repetition = 1, seed1 = NULL, strat)
 }
 \arguments{
-\item{data}{\code{data.frame} containing at least the columns specified 
+\item{data}{\code{data.frame} containing at least the columns specified
 by \code{coords}}
 
 \item{coords}{vector of length 2 defining the variables in \code{data} that 
 contain the x and y coordinates of sample locations}
 
-\item{nfold}{number of partitions (folds) in \code{nfold}-fold 
+\item{nfold}{number of partitions (folds) in \code{nfold}-fold
 cross-validation partitioning}
 
-\item{return.factor}{if \code{FALSE} (default), return a 
-\code{\link{represampling}} object; if \code{TRUE} (used internally by 
-other \code{sperrorest} functions), return a \code{list} containing factor 
+\item{return.factor}{if \code{FALSE} (default), return a
+\code{\link[=represampling]{represampling()}} object; if \code{TRUE} (used internally by
+other \code{sperrorest} functions), return a \code{list} containing factor
 vectors (see Value)}
 
-\item{repetition}{numeric vector: cross-validation repetitions 
-to be generated. Note that this is not the number of repetitions, 
-but the indices of these repetitions. E.g., use \code{repetition=c(1:100)} 
-to obtain (the 'first') 100 repetitions, and \code{repetition=c(101:200)} 
+\item{repetition}{numeric vector: cross-validation repetitions
+to be generated. Note that this is not the number of repetitions,
+but the indices of these repetitions. E.g., use \code{repetition = c(1:100)}
+to obtain (the 'first') 100 repetitions, and \code{repetition = c(101:200)}
 to obtain a different set of 100 repetitions.}
 
-\item{seed1}{\code{seed1+i} is the random seed that will be used by 
-\code{\link{set.seed}} in repetition \code{i} (\code{i} in \code{repetition}) 
+\item{seed1}{\code{seed1+i} is the random seed that will be used by
+\code{\link[=set.seed]{set.seed()}} in repetition \code{i} (\code{i} in \code{repetition})
 to initialize the random number generator before sampling from the data set.}
 
 \item{strat}{character: column in \code{data} containing a factor variable 

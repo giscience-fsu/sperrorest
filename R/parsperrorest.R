@@ -1,6 +1,6 @@
-#' Perform parallelized spatial error estimation and variable importance assessment
+#' Perform spatial error estimation and variable importance assessment
 #'
-#' \code{parsperrorest} is a flexible interface for multiple types of 
+#' `parsperrorest` is a flexible interface for multiple types of 
 #' parallelized spatial and non-spatial cross-validation 
 #' and bootstrap error estimation and parallelized permutation-based 
 #' assessment of spatial variable importance.
@@ -14,76 +14,77 @@
 #' @importFrom parallel detectCores clusterSetRNGStream mclapply
 #' @import foreach
 #' @import doParallel
+#' @import notifier
 #' 
-#' @param data a \code{data.frame} with predictor and response variables. 
-#' Training and test samples will be drawn from this data set by \code{train.fun} 
-#' and \code{test.fun}, respectively.
+#' @param data a `data.frame` with predictor and response variables. 
+#' Training and test samples will be drawn from this data set by `train.fun` 
+#' and `test.fun`, respectively.
 #' 
-#' @param formula A formula specifying the variables used by the \code{model}. 
+#' @param formula A formula specifying the variables used by the `model`. 
 #' Only simple formulas without interactions or nonlinear terms should 
-#' be used, e.g. \code{y~x1+x2+x3} but not \code{y~x1*x2+log(x3)}. 
+#' be used, e.g. `y~x1+x2+x3` but not `y~x1*x2+log(x3)`. 
 #' Formulas involving interaction and nonlinear terms may possibly work 
 #' for error estimation but not for variable importance assessment, 
 #' but should be used with caution.
 #' 
-#' @param coords vector of length 2 defining the variables in \code{data} that 
+#' @param coords vector of length 2 defining the variables in `data` that 
 #' contain the x and y coordinates of sample locations.
 #' 
-#' @param model.fun Function that fits a predictive model, such as \code{glm} 
-#' or \code{rpart}. The function must accept at least two arguments, the first 
+#' @param model.fun Function that fits a predictive model, such as `glm` 
+#' or `rpart`. The function must accept at least two arguments, the first 
 #' one being a formula and the second a data.frame with the learning sample.
-#' @param model.args Arguments to be passed to \code{model.fun} 
-#' (in addition to the \code{formula} and \code{data} argument, 
-#' which are provided by \code{sperrorest})
+#' @param model.args Arguments to be passed to `model.fun` 
+#' (in addition to the `formula` and `data` argument, 
+#' which are provided by `sperrorest`)
 #' 
 #' @param pred.fun Prediction function for a fitted model object created 
-#' by \code{model}. Must accept at least two arguments: the fitted 
-#' \code{object} and a \code{data.frame} \code{newdata} with data 
+#' by `model`. Must accept at least two arguments: the fitted 
+#' `object` and a `data.frame` `newdata` with data 
 #' on which to predict the outcome.
 #' 
-#' @param pred.args (optional) Arguments to \code{pred.fun} (in addition to the 
-#' fitted model object and the \code{newdata} argument, 
-#' which are provided by \code{sperrorest})
+#' @param pred.args (optional) Arguments to `pred.fun` (in addition to the 
+#' fitted model object and the `newdata` argument, 
+#' which are provided by `sperrorest`)
 #' 
 #' @param smp.fun A function for sampling training and test sets from 
-#' \code{data}. E.g., \code{\link{partition.kmeans}} for 
+#' `data`. E.g., [partition.kmeans()] for 
 #' spatial cross-validation using spatial \emph{k}-means clustering.
 #' 
-#' @param smp.args (optional) Arguments to be passed to \code{est.fun}
+#' @param smp.args (optional) Arguments to be passed to `est.fun`
 #' 
 #' @param train.fun (optional) A function for resampling or subsampling the 
 #' training sample in order to achieve, e.g., uniform sample sizes on all 
 #' training sets, or maintaining a certain ratio of positives and negatives 
 #' in training sets. 
-#' E.g., \code{\link{resample.uniform}} or \code{\link{resample.strat.uniform}}
+#' E.g., [resample.uniform()] or [resample.strat.uniform()]
 #' 
-#' @param train.param (optional) Arguments to be passed to \code{resample.fun}
+#' @param train.param (optional) Arguments to be passed to `resample.fun`
 #' 
-#' @param test.fun (optional) Like \code{train.fun} but for the test set.
+#' @param test.fun (optional) Like `train.fun` but for the test set.
 #' 
-#' @param test.param (optional) Arguments to be passed to \code{test.fun}
+#' @param test.param (optional) Arguments to be passed to `test.fun`
 #' 
 #' @param err.fun A function that calculates selected error measures from the 
-#' known responses in \code{data} and the model predictions delivered 
-#' by \code{pred.fun}. E.g., \code{\link{err.default}} (the default). 
+#' known responses in `data` and the model predictions delivered 
+#' by `pred.fun`. E.g., [err.default()] (the default). 
 #' See example and details below.
 #' 
-#' @param error.fold logical (default: \code{TRUE}) if \code{importance} is 
-#' \code{TRUE}, otherwise \code{FALSE}): calculate error measures on each fold 
+#' @param error.fold logical (default: `TRUE`) if `importance` is 
+#' `TRUE`, otherwise `FALSE`): calculate error measures on each fold 
 #' within a resampling repetition.
 #' 
-#' @param error.rep logical (default: \code{TRUE}): calculate error measures 
+#' @param error.rep logical (default: `TRUE`): calculate error measures 
 #' based on the pooled predictions of all folds within a resampling repetition.
 #' 
-#' @param err.train logical (default: \code{TRUE}): calculate error measures on 
+#' @param err.train logical (default: `TRUE`): calculate error measures on 
 #' the training set (in addition to the test set estimation).
 #' 
-#' @param imp.variables (optional; used if \code{importance = TRUE}) 
+#' @param imp.variables (optional; used if `importance = TRUE`) 
 #' Variables for which permutation-based variable importance assessment 
-#' is performed. If \code{importance = TRUE} and \code{imp.variables} is 
-#' \code{NULL}, all variables in \code{formula} will be used.
+#' is performed. If `importance = TRUE` and `imp.variables` is 
+#' `NULL`, all variables in `formula` will be used.
 #' 
-#' @param imp.permutations (optional; used if \code{importance = TRUE}) 
+#' @param imp.permutations (optional; used if `importance = TRUE`) 
 #' Number of permutations used for variable importance assessment.
 #' 
 #' @param importance logical: perform permutation-based variable 
@@ -91,75 +92,77 @@
 #' 
 #' @param ... currently not used
 #' 
-#' @param distance logical (default: \code{FALSE}): if \code{TRUE}, calculate 
+#' @param distance logical (default: `FALSE`): if `TRUE`, calculate 
 #' mean nearest-neighbour distances from test samples to training samples using 
-#' \code{\link{add.distance.represampling}}
+#' [add.distance.represampling()]
 #' 
 #' @param do.gc numeric (default: 1): defines frequency of memory garbage 
-#' collection by calling \code{\link{gc}}; if \code{<1}, no garbage collection; 
-#' if \code{>=1}, run a \code{gc()} after each repetition; 
-#' if \code{>=2}, after each fold
+#' collection by calling [gc()]; if `<1`, no garbage collection; 
+#' if `>=1`, run a `gc()` after each repetition; 
+#' if `>=2`, after each fold
 #' 
-#' @param do.try logical (default: \code{FALSE}): if \code{TRUE} [untested!!], 
-#' use \code{\link{try}} to robustify calls to \code{model.fun} and 
-#' \code{err.fun}; use with caution!
+#' @param do.try logical (default: `FALSE`): if `TRUE` (untested!!), 
+#' use [try()] to robustify calls to `model.fun` and 
+#' `err.fun`; use with caution!
 #' 
-#' @param progress numeric (default: \code{1}): Whether to show progress 
-#' information. For \code{par.mode = 1}, information about elapsed time, estimated time remaining and a 
+#' @param progress numeric (default: `1`): Whether to show progress 
+#' information. For `par.mode = 1`, information about elapsed time, estimated time remaining and a 
 #' percentage indicator (0\% - 100\%) are shown. 
-#' \code{progress = 2} only applies to \code{par.mode = 2} and shows repetition 
+#' `progress = 2` only applies to `par.mode = 2` and shows repetition 
 #' information only (instead of repetition and fold).
-#' Set to \code{FALSE} for no progress information. 
+#' Set to `FALSE` for no progress information. 
 #' 
-#' @param out.progress only used if \code{par.mode = 2}: Optional write progress output to a file instead of console output. 
-#' The default (\code{''}) results in console output for Unix-systems and
+#' @param out.progress only used if `par.mode = 2`: Optionally write progress output to a file instead of console output. 
+#' The default (`''`) results in console output for Unix-systems and
 #' file output ('parsperrorest.progress.txt') in the current working directory 
 #' for Windows-systems. 
 #' 
+#' @param notify (optional) show a notification badge after `parsperrorest()` has finished.
+#' 
 #' @param par.args list of parallelization parameters:
-#' \code{par.mode} (the parallelization mode),
-#' \code{par.units} (the number of parallel processing units), 
-#' \code{par.libs} (libraries to be loaded on cluster workers, character list).
+#' `par.mode` (the parallelization mode),
+#' `par.units` (the number of parallel processing units), 
+#' `par.libs` (libraries to be loaded on cluster workers, character list).
 #' See Details for more information.
 #' 
-#' @param benchmark (optional) logical (default: \code{FALSE}): if \code{TRUE}, 
-#' perform benchmarking and return \code{sperrorestbenchmarks} object
+#' @param benchmark (optional) logical (default: `FALSE`): if `TRUE`, 
+#' perform benchmarking and return `sperrorestbenchmarks` object
 #' 
-#' @return A list (object of class \code{sperrorest}) with (up to) six components:
-#' \item{error.rep}{a \code{sperrorestreperror} object containing 
+#' @return A list (object of class `sperrorest`) with (up to) six components:
+#' \item{error.rep}{a `sperrorestreperror` object containing 
 #' predictive performances at the repetition level}
-#' \item{error.fold}{a \code{sperroresterror} object containing predictive 
+#' \item{error.fold}{a `sperroresterror` object containing predictive 
 #' performances at the fold level}
-#' \item{represampling}{a \code{\link{represampling}} object}
-#' \item{importance}{a \code{sperrorestimportance} object containing 
+#' \item{represampling}{a [represampling()] object}
+#' \item{importance}{a `sperrorestimportance` object containing 
 #' permutation-based variable importances at the fold level}
-#' \item{benchmarks}{a \code{sperrorestbenchmarks} object containing 
+#' \item{benchmarks}{a `sperrorestbenchmarks` object containing 
 #' information on the system the code is running on, starting and 
 #' finishing times, number of available CPU cores, parallelization mode, 
 #' number of parallel units, and runtime performance}
-#' \item{package.version}{a \code{sperrorestpackageversion} object containing 
-#' information about the \code{sperrorest} package version}
+#' \item{package.version}{a `sperrorestpackageversion` object containing 
+#' information about the `sperrorest` package version}
 #' 
-#' @details Two \code{par.mode} options are availabe. The default mode is 
-#' \code{par.mode = 1}. Here, \code{\link[pbapply]{pblapply}} is used which 
-#' either calls \code{\link[parallel]{mclapply}} (on Unix-systems) or 
-#' \code{\link[parallel]{parApply}} (on Windows-systems). \code{par.mode = 2}
-#' uses \code{\link[foreach]{foreach}}. While this approach is not as efficient,
-#' it may work in cases in which \code{par.mode = 1} fails.
+#' @details Two `par.mode` options are availabe. The default mode is 
+#' `par.mode = 1`. Here, [pbapply::pblapply()] is used which 
+#' either calls [parallel::mclapply()] (on Unix-systems) or 
+#' [parallel::parApply()] (on Windows-systems). `par.mode = 2`
+#' uses [foreach::foreach()]. While this approach is not as efficient,
+#' it may work in cases in which `par.mode = 1` fails.
 #' 
-#' @details \code{par.libs} only applies to \code{par.mode = 1} on Windows-systems.
+#' @details `par.libs` only applies to `par.mode = 1` on Windows-systems.
 #' 
-#' @details This parallelized version of \code{\link{sperrorest}} may highly 
+#' @details This parallelized version of [sperrorest()] may highly 
 #' decrease computation time. However, please note that problems
 #' may occur depending on which function is used for cross-validation. 
-#' While the \code{\link[rpart]{rpart}} example (see Examples) here works fine, you may 
+#' While the [rpart::rpart()] example (see Examples) here works fine, you may 
 #' encounter problems with other functions. 
 #' 
 #' @details For {par.mode = 2}, you may encounter missing repetitions in the results
 #' if repetitions finish to quickly. In this case, consider using 
-#' \code{\link[sperrorest]{sperrorest}}
+#' [sperrorest()]
 #' 
-#' @details Known problems when being parallized: \code{\link[randomForest]{randomForest}}
+#' @details Known problems when being parallized: [randomForest::randomForest()]
 #' 
 #' 
 #' @note (1) Optionally save fitted models, training and test samples in the 
@@ -191,7 +194,7 @@
 #' IDA 2010, Tucson, AZ, USA, 19-21 May 2010.  
 #' Lecture Notes in Computer Science, 6065 LNCS: 184-195.
 #' 
-#' @seealso \code{\link[sperrorest]{sperrorest}}
+#' @seealso [sperrorest()]
 #' 
 #' @examples
 #' data(ecuador) # Muenchow et al. (2012), see ?ecuador
@@ -247,8 +250,8 @@ parsperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.
   train.fun = NULL, train.param = NULL, test.fun = NULL, test.param = NULL, err.fun = err.default, 
   error.fold = TRUE, error.rep = TRUE, err.train = TRUE, imp.variables = NULL, 
   imp.permutations = 1000, importance = !is.null(imp.variables), distance = FALSE, 
-  do.gc = 1, do.try = FALSE, progress = 1, out.progress = "", par.args = list(), 
-  benchmark = FALSE, ...)
+  do.gc = 1, do.try = FALSE, progress = 1, out.progress = "", notify = FALSE, 
+  par.args = list(), benchmark = FALSE, ...)
   {
   # if benchmark = TRUE, start clock
   if (benchmark) 
@@ -690,6 +693,18 @@ parsperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.
     } else my.bench <- NULL
     
     
+    if (notify == TRUE) {
+      if (benchmark == TRUE) {
+        msg <- paste0("Repetitions: ", length(smp.args$repetition), "; ", 
+                      "Folds: ", smp.args$nfold, "; ", "Total time: ", round(my.bench$runtime.performance, 
+                                                                             2))
+      } else (msg <- paste0("Repetitions: ", length(smp.args$repetition), "; ", 
+                            "Folds: ", smp.args$nfold))
+      
+      notify(title = "parsperrorest() finished successfully!", msg <- msg)
+    }
+    
+    
     RES <- list(error.rep = pooled.err, error.fold = res, represampling = resamp, 
       importance = impo, benchmarks = my.bench, package.version = packageVersion("sperrorest"))
     class(RES) <- "sperrorest"
@@ -1037,6 +1052,17 @@ parsperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.
         runtime.performance = end.time - start.time)
       class(my.bench) <- "sperrorestbenchmarks"
     } else my.bench <- NULL
+    
+    if (notify == TRUE) {
+      if (benchmark == TRUE) {
+        msg <- paste0("Repetitions: ", length(smp.args$repetition), "; ", 
+                      "Folds: ", smp.args$nfold, "; ", "Total time: ", round(my.bench$runtime.performance, 
+                                                                             2))
+      } else (msg <- paste0("Repetitions: ", length(smp.args$repetition), "; ", 
+                            "Folds: ", smp.args$nfold))
+      
+      notify(title = "parsperrorest() finished successfully!", msg <- msg)
+    }
     
     if (error.rep & error.fold)
     {

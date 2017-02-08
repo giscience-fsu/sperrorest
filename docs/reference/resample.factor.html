@@ -76,8 +76,8 @@
     </div>
 
     
-    <p><code>resample.factor</code> draws a random (sub)sample 
-(with or without replacement) of the groups or clusters identified by 
+    <p><code>resample.factor</code> draws a random (sub)sample
+(with or without replacement) of the groups or clusters identified by
 the <code>fac</code> argument.</p>
     
 
@@ -88,10 +88,10 @@ the <code>fac</code> argument.</p>
       <dt>data</dt>
       <dd>a <code>data.frame</code>, rows represent samples</dd>
       <dt>param</dt>
-      <dd>a list with the following components: <code>fac</code> is a factor 
-variable of length <code>nrow(data)</code> or the name of a factor variable 
-in <code>data</code>; <code>n</code> is a numeric value specifying the size of the 
-subsample (in terms of groups, not observations); <code>replace</code> determines 
+      <dd>a list with the following components: <code>fac</code> is a factor
+variable of length <code>nrow(data)</code> or the name of a factor variable
+in <code>data</code>; <code>n</code> is a numeric value specifying the size of the
+subsample (in terms of groups, not observations); <code>replace</code> determines
 if resampling of groups is to be done with or without replacement.</dd>
     </dl>
     
@@ -101,19 +101,19 @@ if resampling of groups is to be done with or without replacement.</dd>
     
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>If <code>param$replace=FALSE</code>, a subsample of 
-<code>min(param$n,nlevel(data[,fac]))</code> groups will be drawn from <code>data</code>. 
+    <p>If <code>param$replace=FALSE</code>, a subsample of
+<code>min(param$n,nlevel(data[,fac]))</code> groups will be drawn from <code>data</code>.
 If <code>param$replace=TRUE</code>, the number of groups to be drawn is <code>param$n</code>.</p>
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <p><code><a href='resample.strat.uniform.html'>resample.strat.uniform</a></code>, <code>sample</code></p>
+    <p><code><a href='resample.strat.uniform.html'>resample.strat.uniform()</a></code>, <code>sample()</code></p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'>data</span>(<span class='no'>ecuador</span>) <span class='co'># Muenchow et al. (2012), see ?ecuador</span>
 <span class='no'>d</span> <span class='kw'>=</span> <span class='fu'><a href='resample.uniform.html'>resample.uniform</a></span>(<span class='no'>ecuador</span>, <span class='kw'>param</span> <span class='kw'>=</span> <span class='fu'>list</span>(<span class='kw'>strat</span> <span class='kw'>=</span> <span class='st'>'slides'</span>, <span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>200</span>))
-<span class='fu'>nrow</span>(<span class='no'>d</span>) <span class='co'># == 200</span></div><div class='output co'>#&gt; [1] 200</div><div class='input'><span class='fu'>sum</span>(<span class='no'>d</span>$<span class='no'>slides</span> <span class='kw'>==</span> <span class='st'>'TRUE'</span>)</div><div class='output co'>#&gt; [1] 100</div><div class='input'>
+<span class='fu'>nrow</span>(<span class='no'>d</span>) <span class='co'># == 200</span></div><div class='output co'>#&gt; [1] 200</div><div class='input'><span class='fu'>sum</span>(<span class='no'>d</span>$<span class='no'>slides</span> <span class='kw'>==</span> <span class='st'>'TRUE'</span>)</div><div class='output co'>#&gt; [1] 104</div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

@@ -2,60 +2,60 @@
 % Please edit documentation in R/sperrorest_resampling.R
 \name{partition.factor.cv}
 \alias{partition.factor.cv}
-\title{Partition the data for a (non-spatial) k-fold cross-validation at the group 
+\title{Partition the data for a (non-spatial) k-fold cross-validation at the group
 level}
 \usage{
 partition.factor.cv(data, coords = c("x", "y"), fac, nfold = 10,
   repetition = 1, seed1 = NULL, return.factor = FALSE)
 }
 \arguments{
-\item{data}{\code{data.frame} containing at least the columns specified 
+\item{data}{\code{data.frame} containing at least the columns specified
 by \code{coords}}
 
-\item{coords}{vector of length 2 defining the variables in \code{data} 
+\item{coords}{vector of length 2 defining the variables in \code{data}
 that contain the x and y coordinates of sample locations.}
 
-\item{fac}{either the name of a variable (column) in \code{data}, or a 
-vector of type factor and length \code{nrow(data)} that defines groups or 
+\item{fac}{either the name of a variable (column) in \code{data}, or a
+vector of type factor and length \code{nrow(data)} that defines groups or
 clusters of observations.}
 
-\item{nfold}{number of partitions (folds) in \code{nfold}-fold 
+\item{nfold}{number of partitions (folds) in \code{nfold}-fold
 cross-validation partitioning}
 
-\item{repetition}{numeric vector: cross-validation repetitions 
-to be generated. Note that this is not the number of repetitions, 
-but the indices of these repetitions. E.g., use \code{repetition=c(1:100)} 
-to obtain (the 'first') 100 repetitions, and \code{repetition=c(101:200)} 
+\item{repetition}{numeric vector: cross-validation repetitions
+to be generated. Note that this is not the number of repetitions,
+but the indices of these repetitions. E.g., use \code{repetition = c(1:100)}
+to obtain (the 'first') 100 repetitions, and \code{repetition = c(101:200)}
 to obtain a different set of 100 repetitions.}
 
-\item{seed1}{\code{seed1+i} is the random seed that will be used by 
-\code{\link{set.seed}} in repetition \code{i} (\code{i} in \code{repetition}) 
+\item{seed1}{\code{seed1+i} is the random seed that will be used by
+\code{\link[=set.seed]{set.seed()}} in repetition \code{i} (\code{i} in \code{repetition})
 to initialize the random number generator before sampling from the data set.}
 
-\item{return.factor}{if \code{FALSE} (default), return a 
-\code{\link{represampling}} object; if \code{TRUE} (used internally by 
-other \code{sperrorest} functions), return a \code{list} containing factor 
+\item{return.factor}{if \code{FALSE} (default), return a
+\code{\link[=represampling]{represampling()}} object; if \code{TRUE} (used internally by
+other \code{sperrorest} functions), return a \code{list} containing factor
 vectors (see Value)}
 }
 \value{
-A \code{\link{represampling}} object, 
-see also \code{\link{partition.cv}} for details.
+A \code{\link[=represampling]{represampling()}} object,
+see also \code{\link[=partition.cv]{partition.cv()}} for details.
 }
 \description{
-\code{partition.factor.cv} creates a \code{\link{represampling}} object, 
+\code{partition.factor.cv} creates a \code{\link[=represampling]{represampling()}} object,
 i.e. a set of sample indices defining cross-validation test and training sets,
-where partitions are obtained by resampling at the level of groups of 
+where partitions are obtained by resampling at the level of groups of
 observations as defined by a given factor variable.
-This can be used, for example, to resample agricultural data that is grouped 
-by fields, at the agricultural field level in order to preserve 
+This can be used, for example, to resample agricultural data that is grouped
+by fields, at the agricultural field level in order to preserve
 spatial autocorrelation within fields.
 }
 \note{
-In this partitioning approach, the number of factor levels in 
-\code{fac} must be large enough for this factor-level resampling to make 
+In this partitioning approach, the number of factor levels in
+\code{fac} must be large enough for this factor-level resampling to make
 sense.
 }
 \seealso{
-\code{\link{sperrorest}}, \code{\link{partition.cv}}, 
-\code{\link{partition.factor}}, \code{\link{as.resampling.factor}}
+\code{\link[=sperrorest]{sperrorest()}}, \code{\link[=partition.cv]{partition.cv()}},
+\code{\link[=partition.factor]{partition.factor()}}, \code{\link[=as.resampling.factor]{as.resampling.factor()}}
 }

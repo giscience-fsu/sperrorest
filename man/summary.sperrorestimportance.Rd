@@ -8,15 +8,15 @@
   which = NULL, ...)
 }
 \arguments{
-\item{object}{\code{\link{sperrorestimportance}} object calculated by 
-\code{\link{sperrorest}} called with argument \code{importance=TRUE}}
+\item{object}{\code{\link[=sperrorestimportance]{sperrorestimportance()}} object calculated by
+\code{\link[=sperrorest]{sperrorest()}} called with argument \code{importance=TRUE}}
 
-\item{level}{Level at which errors are summarized: 
+\item{level}{Level at which errors are summarized:
 0: overall; 1: repetition; 2: fold}
 
-\item{na.rm}{Remove \code{NA} values? See \code{\link{mean}} etc.}
+\item{na.rm}{Remove \code{NA} values? See \code{\link[=mean]{mean()}} etc.}
 
-\item{which}{optional character vector specifying selected variables for 
+\item{which}{optional character vector specifying selected variables for
 which the importances should be summarized (to do: check implementation)}
 
 \item{...}{additional arguments (currently ignored)}
@@ -25,7 +25,7 @@ which the importances should be summarized (to do: check implementation)}
 a list or data.frame, depending on the \code{level} of aggregation
 }
 \description{
-\code{summary.sperrorestimportance} calculated mean, standard deviation, 
-median etc. of the calculated error measures at the specified level 
+\code{summary.sperrorestimportance} calculated mean, standard deviation,
+median etc. of the calculated error measures at the specified level
 (overall, repetition, or fold).
 }

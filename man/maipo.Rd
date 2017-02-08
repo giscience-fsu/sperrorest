@@ -4,10 +4,6 @@
 \name{maipo}
 \alias{maipo}
 \title{Maipo dataset from Marco Pena}
-\format{An object of class \code{data.frame} with 7713 rows and 68 columns.}
-\usage{
-maipo
-}
 \description{
 Maipo dataset from Marco Pena
 }

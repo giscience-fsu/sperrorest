@@ -1,50 +1,50 @@
 
 #' Partition the data for a (non-spatial) cross-validation
 #'
-#' \code{partition.cv} creates a \code{\link{represampling}} object for 
-#' \code{length(repetition)}-repeated \code{nfold}-fold cross-validation.
+#' `partition.cv` creates a [represampling()] object for 
+#' `length(repetition)`-repeated `nfold`-fold cross-validation.
 #' 
 #' @name partition.cv
 #' 
 #' @aliases partition.cv
 #' 
-#' @param data \code{data.frame} containing at least the columns specified 
-#' by \code{coords}
-#' @param coords (ignored by \code{partition.cv})
-#' @param nfold number of partitions (folds) in \code{nfold}-fold 
+#' @param data `data.frame` containing at least the columns specified 
+#' by `coords`
+#' @param coords (ignored by `partition.cv`)
+#' @param nfold number of partitions (folds) in `nfold`-fold 
 #' cross-validation partitioning
 #' @param repetition numeric vector: cross-validation repetitions 
 #' to be generated. Note that this is not the number of repetitions, 
-#' but the indices of these repetitions. E.g., use \code{repetition=c(1:100)} 
-#' to obtain (the 'first') 100 repetitions, and \code{repetition=c(101:200)} 
+#' but the indices of these repetitions. E.g., use `repetition = c(1:100)` 
+#' to obtain (the 'first') 100 repetitions, and `repetition = c(101:200)` 
 #' to obtain a different set of 100 repetitions.
-#' @param seed1 \code{seed1+i} is the random seed that will be used by 
-#' \code{\link{set.seed}} in repetition \code{i} (\code{i} in \code{repetition}) 
+#' @param seed1 `seed1+i` is the random seed that will be used by 
+#' [set.seed()] in repetition `i` (`i` in `repetition`) 
 #' to initialize the random number generator before sampling from the data set.
-#' @param return.factor if \code{FALSE} (default), return a 
-#' \code{\link{represampling}} object; if \code{TRUE} (used internally by 
-#' other \code{sperrorest} functions), return a \code{list} containing factor 
+#' @param return.factor if `FALSE` (default), return a 
+#' [represampling()] object; if `TRUE` (used internally by 
+#' other `sperrorest` functions), return a `list` containing factor 
 #' vectors (see Value)
 #' 
 #' @details This function does not actually perform a cross-validation 
 #' or partition the data set itself; it simply creates a data structure 
 #' containing the indices of training and test samples.
 #' 
-#' @return If \code{return.factor=FALSE} (the default), a 
-#' \code{\link{represampling}} object. Specifically, this is a (named) list of 
-#' \code{length(repetition)} \code{resampling} objects.
-#' Each of these \code{\link{resampling}} objects is a list of length 
-#' \code{nfold} corresponding to the folds.  
-#' Each fold is represented by a list of containing the components \code{train} 
-#' and \code{test}, specifying the indices of training and test samples 
-#' (row indices for \code{data}).
-#' If \code{return.factor=TRUE} (mainly used internally), a (named) list of 
-#' length \code{length(repetition)}. 
-#' Each component of this list is a vector of length \code{nrow(data)} of type 
-#' \code{factor}, specifying for each sample the fold to which it belongs. 
-#' The factor levels are \code{factor(1:nfold)}.
+#' @return If `return.factor = FALSE` (the default), a 
+#' [represampling()] object. Specifically, this is a (named) list of 
+#' `length(repetition)` `resampling` objects.
+#' Each of these [resampling()] objects is a list of length 
+#' `nfold` corresponding to the folds.  
+#' Each fold is represented by a list of containing the components `train` 
+#' and `test`, specifying the indices of training and test samples 
+#' (row indices for `data`).
+#' If `return.factor = TRUE` (mainly used internally), a (named) list of 
+#' length `length(repetition)`. 
+#' Each component of this list is a vector of length `nrow(data)` of type 
+#' `factor`, specifying for each sample the fold to which it belongs. 
+#' The factor levels are `factor(1:nfold)`.
 #' 
-#' @seealso \code{\link{sperrorest}}, \code{\link{represampling}}
+#' @seealso [sperrorest()], [represampling()]
 #' 
 #' @examples
 #' data(ecuador)
@@ -57,8 +57,8 @@
 #' ecuador[idx , ]
 #' @export
 partition.cv <- function(data, coords = c("x", "y"), nfold = 10, repetition = 1, 
-  seed1 = NULL, return.factor = FALSE)
-  {
+                         seed1 = NULL, return.factor = FALSE)
+{
   resampling <- list()
   
   for (cnt in repetition)
@@ -114,9 +114,10 @@ partition.cv <- function(data, coords = c("x", "y"), nfold = 10, repetition = 1,
 #' mean(ecuador$slides[idx] == 'TRUE') / mean(ecuador$slides == 'TRUE')
 #' # close to 1 because of large sample size, but with some random variation
 #' @export
+#' @noMd
 partition.cv.strat <- function(data, coords = c("x", "y"), nfold = 10, return.factor = FALSE, 
-  repetition = 1, seed1 = NULL, strat)
-  {
+                               repetition = 1, seed1 = NULL, strat)
+{
   repres <- list()
   
   stopifnot((length(strat) == 1) | (length(strat) == nrow(data)))
@@ -152,25 +153,25 @@ partition.cv.strat <- function(data, coords = c("x", "y"), nfold = 10, return.fa
 #' Partition the data for a (non-spatial) leave-one-factor-out cross-validation 
 #' based on a given, fixed partitioning
 #'
-#' \code{partition.factor} creates a \code{\link{represampling}} object, 
+#' `partition.factor` creates a [represampling()] object, 
 #' i.e. a set of sample indices defining cross-validation test and training sets.
 #' 
 #' @inheritParams partition.cv
 #' 
-#' @param coords vector of length 2 defining the variables in \code{data} that 
+#' @param coords vector of length 2 defining the variables in `data` that 
 #' contain the x and y coordinates of sample locations.
-#' @param fac either the name of a variable (column) in \code{data}, or a vector
-#' of type factor and length \code{nrow(data)} that contains the partitions 
+#' @param fac either the name of a variable (column) in `data`, or a vector
+#' of type factor and length `nrow(data)` that contains the partitions 
 #' to be used for defining training and test samples.
 #' 
-#' @return A \code{\link{represampling}} object, 
-#' see also \code{\link{partition.cv}} for details.
+#' @return A [represampling()] object, 
+#' see also [partition.cv()] for details.
 #' 
-#' @note In this partitioning approach, all \code{repetition}s are identical and
+#' @note In this partitioning approach, all `repetition`s are identical and
 #' therefore pseudo-replications.
 #' 
-#' @seealso \code{\link{sperrorest}}, \code{\link{partition.cv}}, 
-#' \code{\link{as.resampling.factor}}
+#' @seealso [sperrorest()], [partition.cv()], 
+#' [as.resampling.factor()]
 #' 
 #' @examples 
 #' data(ecuador)
@@ -184,8 +185,8 @@ partition.cv.strat <- function(data, coords = c("x", "y"), nfold = 10, return.fa
 #' summary(parti)
 #' @export
 partition.factor <- function(data, coords = c("x", "y"), fac, return.factor = FALSE, 
-  repetition = 1)
-  {
+                             repetition = 1)
+{
   if (length(fac) == 1 && is.character(fac)) 
     fac <- data[, fac]
   fac <- factor(fac)
@@ -198,13 +199,10 @@ partition.factor <- function(data, coords = c("x", "y"), fac, return.factor = FA
   return(represmp)
 }
 
-
-
-
 #' Partition the data for a (non-spatial) k-fold cross-validation at the group 
 #' level
 #'
-#' \code{partition.factor.cv} creates a \code{\link{represampling}} object, 
+#' `partition.factor.cv` creates a [represampling()] object, 
 #' i.e. a set of sample indices defining cross-validation test and training sets,
 #' where partitions are obtained by resampling at the level of groups of 
 #' observations as defined by a given factor variable.
@@ -214,26 +212,26 @@ partition.factor <- function(data, coords = c("x", "y"), fac, return.factor = FA
 #' 
 #' @inheritParams partition.cv
 #' 
-#' @param coords vector of length 2 defining the variables in \code{data} 
+#' @param coords vector of length 2 defining the variables in `data` 
 #' that contain the x and y coordinates of sample locations.
-#' @param fac either the name of a variable (column) in \code{data}, or a 
-#' vector of type factor and length \code{nrow(data)} that defines groups or 
+#' @param fac either the name of a variable (column) in `data`, or a 
+#' vector of type factor and length `nrow(data)` that defines groups or 
 #' clusters of observations.
 #' 
-#' @return A \code{\link{represampling}} object, 
-#' see also \code{\link{partition.cv}} for details.
+#' @return A [represampling()] object, 
+#' see also [partition.cv()] for details.
 #' 
 #' @note In this partitioning approach, the number of factor levels in 
-#' \code{fac} must be large enough for this factor-level resampling to make 
+#' `fac` must be large enough for this factor-level resampling to make 
 #' sense.
 #' 
-#' @seealso \code{\link{sperrorest}}, \code{\link{partition.cv}}, 
-#' \code{\link{partition.factor}}, \code{\link{as.resampling.factor}}
+#' @seealso [sperrorest()], [partition.cv()], 
+#' [partition.factor()], [as.resampling.factor()]
 #' 
 #' @export
-partition.factor.cv <- function(data, coords = c("x", "y"), fac, nfold = 10, repetition = 1, 
-  seed1 = NULL, return.factor = FALSE)
-  {
+partition.factor.cv <- function(data, coords = c("x", "y"), fac, nfold = 10, 
+                                repetition = 1, seed1 = NULL, return.factor = FALSE)
+{
   if (length(fac) == 1 && is.character(fac)) 
     fac <- data[, fac]
   fac <- factor(fac)
@@ -260,76 +258,71 @@ partition.factor.cv <- function(data, coords = c("x", "y"), fac, nfold = 10, rep
 }
 
 
-
-
-
-
-
 #' Partition the study area into rectangular tiles
 #'
-#' \code{partition.tiles} divides the study area into a specified number of 
+#' `partition.tiles` divides the study area into a specified number of 
 #' rectangular tiles. Optionally small partitions can be merged with adjacent 
 #' tiles to achieve a minimum number or percentage of samples in each tile.
 #' 
 #' @inheritParams partition.cv
 #' 
-#' @param coords vector of length 2 defining the variables in \code{data} that 
+#' @param coords vector of length 2 defining the variables in `data` that 
 #' contain the x and y coordinates of sample locations
 #' @param dsplit optional vector of length 2: equidistance of splits in 
-#' (possibly rotated) x direction (\code{dsplit[1]}) and y direction 
-#' (\code{dsplit[2]}) used to define tiles. If \code{dsplit} is of length 1, 
-#' its value is recycled. Either \code{dsplit} or \code{nsplit} must be specified.
+#' (possibly rotated) x direction (`dsplit[1]`) and y direction 
+#' (`dsplit[2]`) used to define tiles. If `dsplit` is of length 1, 
+#' its value is recycled. Either `dsplit` or `nsplit` must be specified.
 #' @param nsplit optional vector of length 2: number of splits in 
-#' (possibly rotated) x direction (\code{nsplit[1]}) and y direction 
-#' (\code{nsplit[2]}) used to define tiles. If \code{nsplit} is of length 1, 
+#' (possibly rotated) x direction (`nsplit[1]`) and y direction 
+#' (`nsplit[2]`) used to define tiles. If `nsplit` is of length 1, 
 #' its value is recycled.
 #' @param rotation indicates whether and how the rectangular grid should 
-#' be rotated; random rotation is only between \code{-45} and \code{+45} degrees.
-#' @param user.rotation if \code{rotation='user'}, angles (in degrees) by which 
+#' be rotated; random rotation is only between `-45` and `+45` degrees.
+#' @param user.rotation if `rotation='user'`, angles (in degrees) by which 
 #' the rectangular grid is to be rotated in each repetition. Either a vector of 
-#' same length as \code{repetition}, or a single number that will be replicated 
-#' \code{length(repetition)} times.
+#' same length as `repetition`, or a single number that will be replicated 
+#' `length(repetition)` times.
 #' @param offset indicates whether and how the rectangular grid should be 
 #' shifted by an offset.
-#' @param user.offset if \code{offset='user'}, a list (or vector) of two 
+#' @param user.offset if `offset='user'`, a list (or vector) of two 
 #' components specifying a shift of the rectangular grid in (possibly rotated) x 
-#' and y direction. The offset values are relative values, a value of \code{0.5} 
+#' and y direction. The offset values are relative values, a value of `0.5` 
 #' resulting in a one-half tile shift towards the left, or upward. 
 #' If this is a list, its first (second) component refers to the rotated x (y) 
-#' direction, and both components must have same length as \code{repetition} 
+#' direction, and both components must have same length as `repetition` 
 #' (or length 1). If a vector of length 2 (or list components have length 1), 
 #' the two values will be interpreted as relative shifts in (rotated) x and y 
 #' direction, respectively, and will therefore be recycled as needed 
-#' (\code{length(repetition)} times each).
-#' @param reassign logical (default \code{TRUE}): if \code{TRUE}, 'small' tiles 
-#' (as per \code{min.frac} and \code{min.n} arguments and 
-#' \code{\link{get.small.tiles}}) are merged with (smallest) adjacent tiles. 
-#' If \code{FALSE}, small tiles are 'eliminated', i.e. set to \code{NA}.
+#' (`length(repetition)` times each).
+#' @param reassign logical (default `TRUE`): if `TRUE`, 'small' tiles 
+#' (as per `min.frac` and `min.n` arguments and 
+#' [get.small.tiles()]) are merged with (smallest) adjacent tiles. 
+#' If `FALSE`, small tiles are 'eliminated', i.e. set to `NA`.
 #' @param min.frac numeric >=0, <1: minimum relative size of partition as 
-#' percentage of sample; argument passed to \code{\link{get.small.tiles}}. 
-#' Will be ignored if \code{NULL}.
+#' percentage of sample; argument passed to [get.small.tiles()]. 
+#' Will be ignored if `NULL`.
 #' @param min.n integer >=0: minimum number of samples per partition; 
-#' argument passed to \code{\link{get.small.tiles}}. 
-#' Will be ignored if \code{NULL}.
-#' @param iterate argument to be passed to \code{\link{tile.neighbors}}
+#' argument passed to [get.small.tiles()]. 
+#' Will be ignored if `NULL`.
+#' @param iterate argument to be passed to [tile.neighbors()]
 #' 
-#' @return A \code{\link{represampling}} object. 
-#' Contains \code{length(repetition)} \code{\link{resampling}} objects as 
+#' @return A [represampling()] object. 
+#' Contains `length(repetition)` [resampling()] objects as 
 #' repetitions. The exact number of folds / test-set tiles within each 
-#' \code{\link{resampling}} objects depends on the spatial configuration of 
-#' the data set and possible cleaning steps (see \code{min.frac}, \code{min.n}).
+#' [resampling()] objects depends on the spatial configuration of 
+#' the data set and possible cleaning steps (see `min.frac`, `min.n`).
 #' 
 #' @note Default parameter settings may change in future releases. 
 #' This function, especially the rotation and shifting part of it and the 
 #' algorithm for cleaning up small tiles is still a bit experimental. 
 #' Use with caution.
-#' For non-zero offsets (\code{offset!='none')}), the number of tiles may 
-#' actually be greater than \code{nsplit[1]*nsplit[2]} because of fractional 
-#' tiles lurking into the study region. \code{reassign=TRUE} with suitable 
+#' For non-zero offsets (`offset!='none')`), the number of tiles may 
+#' actually be greater than `nsplit[1]*nsplit[2]` because of fractional 
+#' tiles lurking into the study region. `reassign=TRUE` with suitable 
 #' thresholds is therefore recommended for non-zero (including random) offsets.
 #' 
-#' @seealso \code{\link{sperrorest}}, \code{\link{as.resampling.factor}}, 
-#' \code{\link{get.small.tiles}}, \code{\link{tile.neighbors}}
+#' @seealso [sperrorest()], [as.resampling.factor()], 
+#' [get.small.tiles()], [tile.neighbors()]
 #' 
 #' @examples
 #' data(ecuador)
@@ -350,10 +343,10 @@ partition.factor.cv <- function(data, coords = c("x", "y"), fac, nfold = 10, rep
 #' summary(parti3)
 #' @export
 partition.tiles <- function(data, coords = c("x", "y"), dsplit = NULL, nsplit = NULL, 
-  rotation = c("none", "random", "user"), user.rotation, offset = c("none", "random", 
-    "user"), user.offset, reassign = TRUE, min.frac = 0.025, min.n = 5, iterate = 1, 
-  return.factor = FALSE, repetition = 1, seed1 = NULL)
-  {
+                            rotation = c("none", "random", "user"), user.rotation, offset = c("none", "random", 
+                                                                                              "user"), user.offset, reassign = TRUE, min.frac = 0.025, min.n = 5, iterate = 1, 
+                            return.factor = FALSE, repetition = 1, seed1 = NULL)
+{
   # Some basic argument checks:
   stopifnot(is.numeric(min.frac) && length(min.frac) == 1)
   stopifnot(is.numeric(min.n) && length(min.n) == 1)
@@ -527,18 +520,18 @@ partition.tiles <- function(data, coords = c("x", "y"), dsplit = NULL, nsplit = 
           nbrs <- tile.neighbors(s.tiles[1], tileset = levels(tile), iterate = iterate)
           if (length(nbrs) == 0)
           {
-          ignore <- c(ignore, as.character(s.tiles[1]))
+            ignore <- c(ignore, as.character(s.tiles[1]))
           } else
           {
-          # Merge tile with smallest neighbour to keep tile sizes balanced:
-          n.tile <- tapply(tile, tile, length)
-          s.nbr <- nbrs[which.min(n.tile[nbrs])]
-          tile[tile == s.tiles[1]] <- s.nbr
-          tile <- factor(as.character(tile))
+            # Merge tile with smallest neighbour to keep tile sizes balanced:
+            n.tile <- tapply(tile, tile, length)
+            s.nbr <- nbrs[which.min(n.tile[nbrs])]
+            tile[tile == s.tiles[1]] <- s.nbr
+            tile <- factor(as.character(tile))
           }
           # Update small tiles list:
           s.tiles <- get.small.tiles(tile, min.n = min.n, min.frac = min.frac, 
-          ignore = ignore)
+                                     ignore = ignore)
         }
       } else
       {
@@ -568,33 +561,33 @@ partition.tiles <- function(data, coords = c("x", "y"), dsplit = NULL, nsplit = 
 
 #' Partition samples spatially using k-means clustering of the coordinates
 #'
-#' \code{partition.kmeans} divides the study area into irregularly shaped 
-#' spatial partitions based on \emph{k}-means (\code{\link{kmeans}}) clustering 
+#' `partition.kmeans` divides the study area into irregularly shaped 
+#' spatial partitions based on \emph{k}-means ([kmeans()]) clustering 
 #' of spatial coordinates.
 #' 
 #' @inheritParams partition.cv
 #' 
-#' @param coords vector of length 2 defining the variables in \code{data} that 
+#' @param coords vector of length 2 defining the variables in `data` that 
 #' contain the x and y coordinates of sample locations.
 #' 
 #' @param nfold number of cross-validation folds, i.e. parameter \emph{k} in 
 #' \emph{k}-means clustering. 
 #' 
-#' @param balancing.steps if \code{> 1}, perform \code{nfold}-means clustering 
-#' \code{balancing.steps} times, and pick the clustering that minimizes the Gini 
+#' @param balancing.steps if `> 1`, perform `nfold`-means clustering 
+#' `balancing.steps` times, and pick the clustering that minimizes the Gini 
 #' index of the sample size distribution among the partitions. The idea is that 
 #' 'degenerate' partitions will be avoided, but this also has the side effect of 
 #' reducing variation among partitioning repetitions. More meaningful 
 #' constraints (e.g., minimum number of positive and negative samples within 
 #' each partition should be added in the future.
 #' 
-#' @param order.clusters if \code{TRUE}, clusters are ordered by increasing x 
+#' @param order.clusters if `TRUE`, clusters are ordered by increasing x 
 #' coordinate of center point.
 #' 
-#' @param ... additional arguments to \code{\link{kmeans}}.
+#' @param ... additional arguments to [kmeans()].
 #'  
-#' @return A \code{\link{represampling}} object, see also 
-#' \code{\link{partition.cv}} for details.
+#' @return A [represampling()] object, see also 
+#' [partition.cv()] for details.
 #' 
 #' @note Default parameter settings may change in future releases.
 #' 
@@ -608,9 +601,9 @@ partition.tiles <- function(data, coords = c("x", "y"), dsplit = NULL, nsplit = 
 #' IPMU 2010; Dortmund; 28 June - 2 July 2010.  
 #' Lecture Notes in Computer Science, 6178 LNAI: 350-359.
 #' 
-#' @seealso \code{\link{sperrorest}}, \code{\link{partition.cv}}, 
-#' \code{\link{partition.disc}}, \code{\link{partition.tiles}}, 
-#' \code{\link{kmeans}}
+#' @seealso [sperrorest()], [partition.cv()], 
+#' [partition.disc()], [partition.tiles()], 
+#' [kmeans()]
 #' 
 #' @examples
 #' data(ecuador)
@@ -619,13 +612,13 @@ partition.tiles <- function(data, coords = c("x", "y"), dsplit = NULL, nsplit = 
 #' 
 #' @export
 partition.kmeans <- function(data, coords = c("x", "y"), nfold = 10, repetition = 1, 
-  seed1 = NULL, return.factor = FALSE, balancing.steps = 1, order.clusters = TRUE, 
-  ...)
-  {
+                             seed1 = NULL, return.factor = FALSE, balancing.steps = 1, order.clusters = TRUE, 
+                             ...)
+{
   if (any(names(list(...)) == "kfold"))
   {
     warning("argument 'kfold' has been renamed to 'nfold' in 
-        'partition.kmeans'")
+            'partition.kmeans'")
     nfold <- list(...)$kfold
   }
   balancing.steps <- max(1, balancing.steps)
@@ -637,7 +630,7 @@ partition.kmeans <- function(data, coords = c("x", "y"), nfold = 10, repetition 
       set.seed(seed1 + cnt)
     kms <- list()
     for (i in 1:balancing.steps) kms[[i]] <- kmeans(data[, coords], centers = nfold, 
-      ...)
+                                                    ...)
     kmgini <- function(x)
     {
       p <- x$size/sum(x$size)
@@ -667,17 +660,17 @@ partition.kmeans <- function(data, coords = c("x", "y"), nfold = 10, repetition 
 
 #' Leave-one-disc-out cross-validation and leave-one-out cross-validation
 #'
-#' \code{partition.disc} partitions the sample into training and tests set by 
+#' `partition.disc` partitions the sample into training and tests set by 
 #' selecting circular test areas (possibly surrounded by an exclusion buffer) 
 #' and using the remaining samples as training samples (leave-one-disc-out 
-#' cross-validation). \code{partition.loo} creates training and test sets for
+#' cross-validation). `partition.loo` creates training and test sets for
 #' leave-one-out cross-validation with (optional) buffer.
 #' 
 #' @name partition.disc
 #' 
 #' @inheritParams partition.cv
 #' 
-#' @param coords vector of length 2 defining the variables in \code{data} that 
+#' @param coords vector of length 2 defining the variables in `data` that 
 #' contain the x and y coordinates of sample locations.
 #' @param radius radius of test area discs; performs leave-one-out resampling 
 #' if radius <0.
@@ -685,37 +678,37 @@ partition.kmeans <- function(data, coords = c("x", "y"), nfold = 10, repetition 
 #' that is excluded from training and test sets; defaults to 0, 
 #' i.e. all samples are either in the test area or in the training area.
 #' @param ndisc Number of discs to be randomly selected; each disc constitutes 
-#' a separate test set. Defaults to \code{nrow(data)}, i.e. one disc around 
+#' a separate test set. Defaults to `nrow(data)`, i.e. one disc around 
 #' each sample.
-#' @param return.train If \code{FALSE}, returns only test sample; 
-#' if \code{TRUE}, also the training area.
-#' @param prob optional argument to \code{\link{sample}}.
-#' @param replace optional argument to \code{\link{sample}}: sampling with or 
+#' @param return.train If `FALSE`, returns only test sample; 
+#' if `TRUE`, also the training area.
+#' @param prob optional argument to [sample()].
+#' @param replace optional argument to [sample()]: sampling with or 
 #' without replacement?
-#' @param repetition see \code{partition.cv}; however, 
-#' see Note below: \code{repetition} should normally be \code{=1} in this function.
-#' @param ... arguments to be passed to \code{partition.disc}
+#' @param repetition see `partition.cv`; however, 
+#' see Note below: `repetition` should normally be `= 1` in this function.
+#' @param ... arguments to be passed to `partition.disc`
 #' 
-#' @return A \code{\link{represampling}} object. 
-#' Contains \code{length(repetition)} \code{resampling} objects. 
-#' Each of these contains \code{ndisc} lists with indices of test and 
-#' (if \code{return.train=TRUE}) training sets.
+#' @return A [represampling()] object. 
+#' Contains `length(repetition)` `resampling` objects. 
+#' Each of these contains `ndisc` lists with indices of test and 
+#' (if `return.train = TRUE`) training sets.
 #' 
 #' @note Test area discs are centered at (random) samples, not at general 
 #' random locations. Test area discs may (and likely will) overlap independently 
-#' of the value of \code{replace}. \code{replace} only controls the replacement 
+#' of the value of `replace`. `replace` only controls the replacement 
 #' of the center point of discs when drawing center points from the samples. 
 #' 
-#' \code{radius<0} does leave-one-out resampling with an optional buffer. 
-#' \code{radius=0} is similar except that samples with identical coordinates 
+#' `radius < 0` does leave-one-out resampling with an optional buffer. 
+#' `radius = 0` is similar except that samples with identical coordinates 
 #' would fall within the test area disc.
 #' 
 #' @references Brenning, A. 2005. Spatial prediction models for landslide 
 #' hazards: review, comparison and evaluation. Natural Hazards and Earth System 
 #' Sciences, 5(6): 853-862.
 #' 
-#' @seealso \code{\link{sperrorest}}, \code{\link{partition.cv}}, 
-#' \code{\link{partition.kmeans}}
+#' @seealso [sperrorest()], [partition.cv()], 
+#' [partition.kmeans()]
 #' 
 #' @examples
 #' data(ecuador)
@@ -729,8 +722,8 @@ partition.kmeans <- function(data, coords = c("x", "y"), nfold = 10, repetition 
 #' summary(parti)
 #' @export
 partition.disc <- function(data, coords = c("x", "y"), radius, buffer = NULL, ndisc = nrow(data), 
-  seed1 = NULL, return.train = TRUE, prob = NULL, replace = FALSE, repetition = 1)
-  {
+                           seed1 = NULL, return.train = TRUE, prob = NULL, replace = FALSE, repetition = 1)
+{
   posbuf <- buffer
   if (is.null(buffer))
   {
@@ -761,7 +754,7 @@ partition.disc <- function(data, coords = c("x", "y"), radius, buffer = NULL, nd
       if (!is.null(buffer) | radius >= 0)
       {
         di <- sqrt((data[, coords[1]] - data[i, coords[1]])^2 + (data[, coords[2]] - 
-          data[i, coords[2]])^2)
+                                                                   data[i, coords[2]])^2)
       }
       train.sel <- numeric()
       if (radius >= 0)
@@ -778,23 +771,23 @@ partition.disc <- function(data, coords = c("x", "y"), radius, buffer = NULL, nd
         {
           if (is.null(buffer))
           {
-          train.sel <- c(1:nrow(data))[-i]
+            train.sel <- c(1:nrow(data))[-i]
           } else train.sel <- which(di > posbuf)
         }
       }
       if (return.train & (length(train.sel) == 0))
       {
         warning("empty training set in 'partition.disc': 'buffer' 
-            and/or 'radius' too large?")
+                and/or 'radius' too large?")
       }
       res[[as.character(i)]] <- list(train = train.sel, test = test.sel)
-    }
+      }
     resample[[as.character(cnt)]] <- res
   }
   repres <- as.represampling(resample)
   
   return(repres)
-}
+  }
 
 
 #' @rdname partition.disc
@@ -807,26 +800,25 @@ partition.loo <- function(data, ndisc = nrow(data), replace = FALSE, ...)
   partition.disc(data = data, radius = -1, ndisc = ndisc, replace = replace, ...)
 }
 
-
 #' Non-spatial bootstrap resampling
 #'
-#' \code{represampling.bootstrap} draws a bootstrap random sample 
-#' (with replacement) from \code{data}.
+#' `represampling.bootstrap` draws a bootstrap random sample 
+#' (with replacement) from `data`.
 #' 
 #' @inheritParams partition.cv
 #' 
-#' @param coords vector of length 2 defining the variables in \code{data} that 
+#' @param coords vector of length 2 defining the variables in `data` that 
 #' contain the x and y coordinates of sample locations.
 #' @param nboot Size of bootstrap sample
-#' @param oob logical (default \code{FALSE}): if \code{TRUE}, use the out-of-bag 
-#' sample as the test sample; if \code{FALSE}, draw a second bootstrap sample of
-#' size \code{nboot} independently to obtain a test sample.
+#' @param oob logical (default `FALSE`): if `TRUE`, use the out-of-bag 
+#' sample as the test sample; if `FALSE`, draw a second bootstrap sample of
+#' size `nboot` independently to obtain a test sample.
 #' 
-#' @return A \code{\link{represampling}} object. This is a (named) list 
-#' containing \code{length(repetition)}.
-#' \code{\link{resampling}} objects. Each of these contains only one list with 
-#' indices of \code{train}ing and \code{test} samples. 
-#' Indices are row indices for \code{data}.
+#' @return A [represampling()] object. This is a (named) list 
+#' containing `length(repetition)`.
+#' [resampling()] objects. Each of these contains only one list with 
+#' indices of `train`ing and `test` samples. 
+#' Indices are row indices for `data`.
 #' 
 #' @examples
 #' data(ecuador)
@@ -837,8 +829,8 @@ partition.loo <- function(data, ndisc = nrow(data), replace = FALSE, ...)
 #' # the test sample (possibly even multiple times)
 #' @export
 represampling.bootstrap <- function(data, coords = c("x", "y"), nboot = nrow(data), 
-  repetition = 1, seed1 = NULL, oob = FALSE)
-  {
+                                    repetition = 1, seed1 = NULL, oob = FALSE)
+{
   resample <- list()
   for (cnt in repetition)
   {
@@ -862,42 +854,42 @@ represampling.bootstrap <- function(data, coords = c("x", "y"), nboot = nrow(dat
 
 #' Bootstrap at an aggregated level
 #'
-#' \code{represampling.factor.bootstrap} resamples partitions defined by a 
+#' `represampling.factor.bootstrap` resamples partitions defined by a 
 #' factor variable. This can be used for non-overlapping block bootstraps and 
 #' similar.
 #' 
 #' @inheritParams represampling.bootstrap
 #' 
-#' @param fac defines a grouping or partitioning of the samples in \code{data}; 
+#' @param fac defines a grouping or partitioning of the samples in `data`; 
 #' three possible types: 
-#' (1) the name of a variable in \code{data} (coerced to factor if not already 
+#' (1) the name of a variable in `data` (coerced to factor if not already 
 #' a factor variable); 
 #' (2) a factor variable (or a vector that can be coerced to factor); 
 #' (3) a list of factor variables (or vectors that can be coerced to factor); 
-#' this list must be of length \code{length(repetition)}, and if it is named, 
-#' the names must be equal to \code{as.character(repetition)}; this list will 
-#' typically be generated by a \code{partition.*} function with 
-#' \code{return.factor = TRUE} (see Examples below)
+#' this list must be of length `length(repetition)`, and if it is named, 
+#' the names must be equal to `as.character(repetition)`; this list will 
+#' typically be generated by a `partition.*` function with 
+#' `return.factor = TRUE` (see Examples below)
 #' 
 #' @param nboot number of bootstrap replications used for generating the 
-#' bootstrap training sample (\code{nboot[1]}) and the test sample 
-#' (\code{nboot[2]}); \code{nboot[2]} is ignored (with a warning) if 
-#' \code{oob = TRUE}. A value of \code{-1} will be substituted with the number 
+#' bootstrap training sample (`nboot[1]`) and the test sample 
+#' (`nboot[2]`); `nboot[2]` is ignored (with a warning) if 
+#' `oob = TRUE`. A value of `-1` will be substituted with the number 
 #' of levels of the factor variable, corresponding to an \emph{n} out of 
-#' \emph{n} bootstrap at the grouping level defined by \code{fac}.
+#' \emph{n} bootstrap at the grouping level defined by `fac`.
 #' 
-#' @param oob if \code{TRUE}, the test sample will be the out-of-bag sample; 
-#' if \code{FALSE} (default), the test sample is an independently drawn 
-#' bootstrap sample of size \code{nboot[2]}.
+#' @param oob if `TRUE`, the test sample will be the out-of-bag sample; 
+#' if `FALSE` (default), the test sample is an independently drawn 
+#' bootstrap sample of size `nboot[2]`.
 #' 
-#' @details \code{nboot} refers to the number of groups 
+#' @details `nboot` refers to the number of groups 
 #' (as defined by the factors) to be drawn with replacement from the set of 
-#' groups. I.e., if \code{fac} is a factor variable, \code{nboot} would normally 
-#' not be greater than \code{nlevels(fac)}, \code{nlevels(fac)} being the 
-#' default as per \code{nboot = -1}.
+#' groups. I.e., if `fac` is a factor variable, `nboot` would normally 
+#' not be greater than `nlevels(fac)`, `nlevels(fac)` being the 
+#' default as per `nboot = -1`.
 #' 
-#' @seealso \code{\link{represampling.disc.bootstrap}}, 
-#' \code{\link{represampling.tile.bootstrap}}
+#' @seealso [represampling.disc.bootstrap()], 
+#' [represampling.tile.bootstrap()]
 #' 
 #' @examples
 #' data(ecuador)
@@ -916,8 +908,8 @@ represampling.bootstrap <- function(data, coords = c("x", "y"), nboot = nrow(dat
 #' 
 #' @export
 represampling.factor.bootstrap <- function(data, fac, repetition = 1, nboot = -1, 
-  seed1 = NULL, oob = FALSE)
-  {
+                                           seed1 = NULL, oob = FALSE)
+{
   if (oob && length(nboot) > 1) 
     warning("nboot[2] ignored because 'oob=TRUE'")
   if (is.list(fac))
@@ -972,7 +964,7 @@ represampling.factor.bootstrap <- function(data, fac, repetition = 1, nboot = -1
     test <- unlist(sapply(test, function(x) which(the.fac == x)), use.names = FALSE)
     # Compile training and test indices into a resampling object:
     resample[[as.character(cnt)]] <- as.resampling(list(`1` = list(train = train, 
-      test = test)))
+                                                                   test = test)))
   }
   
   resample <- as.represampling(resample)
@@ -982,75 +974,75 @@ represampling.factor.bootstrap <- function(data, fac, repetition = 1, nboot = -1
 
 #' Spatial block bootstrap using rectangular blocks
 #'
-#' \code{represampling.tile.bootstrap} performs a non-overlapping spatial 
+#' `represampling.tile.bootstrap` performs a non-overlapping spatial 
 #' block bootstrap by resampling at the level of rectangular partitions or 
-#' 'tiles' generated by \code{\link{partition.tiles}}.
+#' 'tiles' generated by [partition.tiles()].
 #' 
 #' @inheritParams represampling.bootstrap
 #' 
-#' @param nboot see \code{\link{represampling.factor.bootstrap}}
-#' @param oob see \code{\link{represampling.factor.bootstrap}}
-#' @param ... additional arguments to be passed to \code{\link{partition.tiles}}
+#' @param nboot see [represampling.factor.bootstrap()]
+#' @param oob see [represampling.factor.bootstrap()]
+#' @param ... additional arguments to be passed to [partition.tiles()]
 #' 
 #' @export
 represampling.tile.bootstrap <- function(data, coords = c("x", "y"), repetition = 1, 
-  nboot = -1, seed1 = NULL, oob = FALSE, ...)
-  {
+                                         nboot = -1, seed1 = NULL, oob = FALSE, ...)
+{
   parti <- partition.tiles(data = data, coords = coords, repetition = repetition, 
-    seed1 = seed1, return.factor = TRUE, ...)
+                           seed1 = seed1, return.factor = TRUE, ...)
   repres <- represampling.factor.bootstrap(data = data, fac = parti, repetition = repetition, 
-    seed1 = seed1, nboot = nboot, oob = oob)
+                                           seed1 = seed1, nboot = nboot, oob = oob)
   return(repres)
 }
 
 
 #' Spatial block bootstrap at the level of spatial k-means clusters
 #'
-#' \code{represampling.kmeans.bootstrap} performs a non-overlapping spatial 
+#' `represampling.kmeans.bootstrap` performs a non-overlapping spatial 
 #' block bootstrap by resampling at the level of irregularly-shaped partitions 
-#' generated by \code{\link{partition.kmeans}}.
+#' generated by [partition.kmeans()].
 #' 
 #' @inheritParams represampling.bootstrap
 #' 
-#' @param nfold see \code{\link{partition.kmeans}}
-#' @param nboot see \code{\link{represampling.factor.bootstrap}}
-#' @param oob see \code{\link{represampling.factor.bootstrap}}
-#' @param ... additional arguments to be passed to \code{\link{partition.kmeans}}
+#' @param nfold see [partition.kmeans()]
+#' @param nboot see [represampling.factor.bootstrap()]
+#' @param oob see [represampling.factor.bootstrap()]
+#' @param ... additional arguments to be passed to [partition.kmeans()]
 #' 
 #' @export
 represampling.kmeans.bootstrap <- function(data, coords = c("x", "y"), repetition = 1, 
-  nfold = 10, nboot = nfold, seed1 = NULL, oob = FALSE, ...)
-  {
+                                           nfold = 10, nboot = nfold, seed1 = NULL, oob = FALSE, ...)
+{
   parti <- partition.tiles(data = data, coords = coords, repetition = repetition, 
-    seed1 = seed1, return.factor = TRUE, ...)
+                           seed1 = seed1, return.factor = TRUE, ...)
   repres <- represampling.factor.bootstrap(data = data, fac = parti, repetition = repetition, 
-    seed1 = seed1, nboot = nboot, oob = oob)
+                                           seed1 = seed1, nboot = nboot, oob = oob)
   return(repres)
 }
 
 
 #' Overlapping spatial block bootstrap using circular blocks
 #'
-#' \code{represampling.disc.bootstrap} performs a spatial block bootstrap by 
+#' `represampling.disc.bootstrap` performs a spatial block bootstrap by 
 #' resampling at the level of rectangular partitions or 'tiles' generated by 
-#' \code{partition.tiles}.
+#' `partition.tiles`.
 #' 
 #' @inheritParams represampling.bootstrap
 #' 
-#' @param oob logical (default \code{FALSE}): if \code{TRUE}, use the out-of-bag 
-#' sample as the test sample (the complement of the \code{nboot[1]} test set 
-#' discs, minus the buffer area as specified in the \code{...} arguments to 
-#' \code{\link{partition.disc}}); if \code{FALSE}, draw a second bootstrap 
-#' sample of size \code{nboot} independently to obtain a test sample 
+#' @param oob logical (default `FALSE`): if `TRUE`, use the out-of-bag 
+#' sample as the test sample (the complement of the `nboot[1]` test set 
+#' discs, minus the buffer area as specified in the `...` arguments to 
+#' [partition.disc()]); if `FALSE`, draw a second bootstrap 
+#' sample of size `nboot` independently to obtain a test sample 
 #' (sets of overlapping discs drawn with replacement).
 #' @param nboot number of bootstrap samples; you may specify different values 
-#' for the training sample (\code{nboot[1]}) and for the test sample 
-#' (\code{nboot[2]}).
-#' @param ... additional arguments to be passed to \code{\link{partition.disc}}; 
-#' note that a \code{buffer} argument has not effect if \code{oob=FALSE}; 
+#' for the training sample (`nboot[1]`) and for the test sample 
+#' (`nboot[2]`).
+#' @param ... additional arguments to be passed to [partition.disc()]; 
+#' note that a `buffer` argument has not effect if `oob=FALSE`; 
 #' see example below
 #' 
-#' @note Performs \code{nboot} out of \code{nrow(data)} resampling of circular 
+#' @note Performs `nboot` out of `nrow(data)` resampling of circular 
 #' discs. This is an \emph{overlapping} spatial block bootstrap where the 
 #' blocks are circular.
 #' 
@@ -1070,8 +1062,8 @@ represampling.kmeans.bootstrap <- function(data, coords = c("x", "y"), repetitio
 #' 
 #' @export
 represampling.disc.bootstrap <- function(data, coords = c("x", "y"), nboot, repetition = 1, 
-  seed1 = NULL, oob = FALSE, ...)
-  {
+                                         seed1 = NULL, oob = FALSE, ...)
+{
   if (oob && length(nboot) > 1) 
     warning("nboot[2] ignored because oob=TRUE")
   if (length(nboot) == 1) 
@@ -1085,7 +1077,7 @@ represampling.disc.bootstrap <- function(data, coords = c("x", "y"), nboot, repe
       if (!is.null(seed1)) 
         set.seed(seed1 + cnt)
       train <- partition.disc(data = data, coords = coords, repetition = c(1:nboot[1]), 
-        replace = TRUE, ndisc = 1, seed1 = NULL, return.train = TRUE, ...)
+                              replace = TRUE, ndisc = 1, seed1 = NULL, return.train = TRUE, ...)
       test <- c(1:nrow(data))
       for (i in 1:nboot[1])
       {
@@ -1094,7 +1086,7 @@ represampling.disc.bootstrap <- function(data, coords = c("x", "y"), nboot, repe
       }
       if (length(test) == 0) 
         warning("empty test set in 'partition.disc.bootstrap':\n'buffer' 
-        and/or 'radius' and/or 'nboot' too large?")
+                and/or 'radius' and/or 'nboot' too large?")
       train <- unname(unlist(train))
       resample[[as.character(cnt)]] <- list(`1` = list(train = train, test = test))
     }
@@ -1106,10 +1098,10 @@ represampling.disc.bootstrap <- function(data, coords = c("x", "y"), nboot, repe
       if (!is.null(seed1)) 
         set.seed(seed1 + cnt)
       train <- partition.disc(data = data, coords = coords, repetition = c(1:nboot[1]), 
-        seed1 = NULL, replace = TRUE, ndisc = 1, return.train = FALSE, ...)
+                              seed1 = NULL, replace = TRUE, ndisc = 1, return.train = FALSE, ...)
       train <- unname(unlist(train))
       test <- partition.disc(data = data, coords = coords, repetition = c(1:nboot[2]), 
-        seed1 = NULL, replace = TRUE, ndisc = 1, return.train = FALSE, ...)
+                             seed1 = NULL, replace = TRUE, ndisc = 1, return.train = FALSE, ...)
       test <- unname(unlist(test))
       resample[[as.character(cnt)]] <- list(`1` = list(train = train, test = test))
     }
@@ -1123,24 +1115,24 @@ represampling.disc.bootstrap <- function(data, coords = c("x", "y"), nboot, repe
 
 #' Plot spatial resampling objects
 #'
-#' \code{plot.represampling} displays the partitions or samples corresponding 
+#' `plot.represampling` displays the partitions or samples corresponding 
 #' arising from the resampling of a data set.
 #' 
 #' @method plot represampling
 #' 
 #' @name plot.represampling
 #' 
-#' @param x a \code{\link{represampling}} resp. \code{\link{resampling}} object.
-#' @param data a \code{data.frame} of samples containing at least the x and y 
-#' coordinates of samples as specified by \code{coords}.
-#' @param coords vector of length 2 defining the variables in \code{data} that 
+#' @param x a [represampling()] resp. [resampling()] object.
+#' @param data a `data.frame` of samples containing at least the x and y 
+#' coordinates of samples as specified by `coords`.
+#' @param coords vector of length 2 defining the variables in `data` that 
 #' contain the x and y coordinates of sample locations.
-#' @param pch point symbold (to be passed to \code{\link{points}}).
+#' @param pch point symbold (to be passed to [points()]).
 #' @param wiggle.sd 'wiggle' the point locations in x and y direction to avoid 
 #' overplotting of samples drawn multiple times by bootstrap methods;
 #' this is a standard deviation (in the units of the x/y coordinates) of a 
 #' normal distribution and defaults to 0 (no wiggling).
-#' @param ... additional arguments to \code{\link{plot}}.
+#' @param ... additional arguments to [plot()].
 #' 
 #' @note This function is not intended for samples obtained by resampling with 
 #' replacement (e.g., bootstrap) because training and test points will be 
@@ -1159,8 +1151,8 @@ represampling.disc.bootstrap <- function(data, coords = c("x", "y"), nboot, repe
 #' 
 #' @export
 plot.represampling <- function(x, data, coords = c("x", "y"), pch = "+", wiggle.sd = 0, 
-  ...)
-  {
+                               ...)
+{
   if (missing(data)) 
     stop("'data' argument missing")
   stopifnot(wiggle.sd >= 0)
@@ -1176,7 +1168,7 @@ plot.represampling <- function(x, data, coords = c("x", "y"), pch = "+", wiggle.
             Trying anyway...")
   op <- par(no.readonly = TRUE)
   par(mfrow = c(nr, nc), mar = c(2, 2, 3, 0.5), mgp = c(2, 0.7, 0), tcl = -0.3, 
-    cex = 0.5)
+      cex = 0.5)
   for (i in 1:length(resample))
   {
     for (j in 1:length(resample[[i]]))
@@ -1185,15 +1177,15 @@ plot.represampling <- function(x, data, coords = c("x", "y"), pch = "+", wiggle.
       seltest <- resample[[i]][[j]]$test
       main <- paste("Repetition ", names(resample)[i], ", Fold ", j)
       plot(data[, coords[1]], data[, coords[2]], pch = ".", type = "n", main = main, 
-        xlab = "", ylab = "", ...)  # xlab=coords[1], ylab=coords[2])
+           xlab = "", ylab = "", ...)  # xlab=coords[1], ylab=coords[2])
       wxtrain <- rnorm(length(seltrain), sd = wiggle.sd)
       wytrain <- rnorm(length(seltrain), sd = wiggle.sd)
       wxtest <- rnorm(length(seltest), sd = wiggle.sd)
       wytest <- rnorm(length(seltest), sd = wiggle.sd)
       points(data[seltrain, coords[1]] + wxtrain, data[seltrain, coords[2]] + 
-        wytrain, pch = pch)
+               wytrain, pch = pch)
       points(data[seltest, coords[1]] + wxtest, data[seltest, coords[2]] + 
-        wxtest, pch = pch, col = "red")
+               wxtest, pch = pch, col = "red")
     }
   }
   par(op)

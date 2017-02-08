@@ -76,7 +76,7 @@
     </div>
 
     
-    <p><code>partition.cv</code> creates a <code><a href='as.represampling.html'>represampling</a></code> object for 
+    <p><code>partition.cv</code> creates a <code><a href='as.represampling.html'>represampling()</a></code> object for
 <code>length(repetition)</code>-repeated <code>nfold</code>-fold cross-validation.</p>
     
 
@@ -86,55 +86,55 @@
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <dl class="dl-horizontal">
       <dt>data</dt>
-      <dd><code>data.frame</code> containing at least the columns specified 
+      <dd><code>data.frame</code> containing at least the columns specified
 by <code>coords</code></dd>
       <dt>coords</dt>
       <dd>(ignored by <code>partition.cv</code>)</dd>
       <dt>nfold</dt>
-      <dd>number of partitions (folds) in <code>nfold</code>-fold 
+      <dd>number of partitions (folds) in <code>nfold</code>-fold
 cross-validation partitioning</dd>
       <dt>repetition</dt>
-      <dd>numeric vector: cross-validation repetitions 
-to be generated. Note that this is not the number of repetitions, 
-but the indices of these repetitions. E.g., use <code>repetition=c(1:100)</code> 
-to obtain (the &#39;first&#39;) 100 repetitions, and <code>repetition=c(101:200)</code> 
+      <dd>numeric vector: cross-validation repetitions
+to be generated. Note that this is not the number of repetitions,
+but the indices of these repetitions. E.g., use <code>repetition = c(1:100)</code>
+to obtain (the &#39;first&#39;) 100 repetitions, and <code>repetition = c(101:200)</code>
 to obtain a different set of 100 repetitions.</dd>
       <dt>seed1</dt>
-      <dd><code>seed1+i</code> is the random seed that will be used by 
-<code>set.seed</code> in repetition <code>i</code> (<code>i</code> in <code>repetition</code>) 
+      <dd><code>seed1+i</code> is the random seed that will be used by
+<code>set.seed()</code> in repetition <code>i</code> (<code>i</code> in <code>repetition</code>)
 to initialize the random number generator before sampling from the data set.</dd>
       <dt>return.factor</dt>
-      <dd>if <code>FALSE</code> (default), return a 
-<code><a href='as.represampling.html'>represampling</a></code> object; if <code>TRUE</code> (used internally by 
-other <code>sperrorest</code> functions), return a <code>list</code> containing factor 
+      <dd>if <code>FALSE</code> (default), return a
+<code><a href='as.represampling.html'>represampling()</a></code> object; if <code>TRUE</code> (used internally by
+other <code>sperrorest</code> functions), return a <code>list</code> containing factor
 vectors (see Value)</dd>
     </dl>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>If <code>return.factor=FALSE</code> (the default), a 
-<code><a href='as.represampling.html'>represampling</a></code> object. Specifically, this is a (named) list of 
+    <p>If <code>return.factor = FALSE</code> (the default), a
+<code><a href='as.represampling.html'>represampling()</a></code> object. Specifically, this is a (named) list of
 <code>length(repetition)</code> <code>resampling</code> objects.
-Each of these <code><a href='as.resampling.html'>resampling</a></code> objects is a list of length 
-<code>nfold</code> corresponding to the folds.  
-Each fold is represented by a list of containing the components <code>train</code> 
-and <code>test</code>, specifying the indices of training and test samples 
+Each of these <code><a href='as.resampling.html'>resampling()</a></code> objects is a list of length
+<code>nfold</code> corresponding to the folds.
+Each fold is represented by a list of containing the components <code>train</code>
+and <code>test</code>, specifying the indices of training and test samples
 (row indices for <code>data</code>).
-If <code>return.factor=TRUE</code> (mainly used internally), a (named) list of 
-length <code>length(repetition)</code>. 
-Each component of this list is a vector of length <code>nrow(data)</code> of type 
-<code>factor</code>, specifying for each sample the fold to which it belongs. 
+If <code>return.factor = TRUE</code> (mainly used internally), a (named) list of
+length <code>length(repetition)</code>.
+Each component of this list is a vector of length <code>nrow(data)</code> of type
+<code>factor</code>, specifying for each sample the fold to which it belongs.
 The factor levels are <code>factor(1:nfold)</code>.</p>
     
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>This function does not actually perform a cross-validation 
-or partition the data set itself; it simply creates a data structure 
+    <p>This function does not actually perform a cross-validation
+or partition the data set itself; it simply creates a data structure
 containing the indices of training and test samples.</p>
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <p><code><a href='sperrorest.html'>sperrorest</a></code>, <code><a href='as.represampling.html'>represampling</a></code></p>
+    <p><code><a href='sperrorest.html'>sperrorest()</a></code>, <code><a href='as.represampling.html'>represampling()</a></code></p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>

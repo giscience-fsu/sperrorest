@@ -76,7 +76,7 @@
     </div>
 
     
-    <p><code>resample.uniform</code> draws a random (sub)sample 
+    <p><code>resample.uniform</code> draws a random (sub)sample
 (with or without replacement) from the samples in <code>data</code>.</p>
     
 
@@ -87,8 +87,8 @@
       <dt>data</dt>
       <dd>a <code>data.frame</code>, rows represent samples</dd>
       <dt>param</dt>
-      <dd>a list with the following components: <code>n</code> is a numeric 
-value specifying the size of the subsample; <code>replace</code> determines if 
+      <dd>a list with the following components: <code>n</code> is a numeric
+value specifying the size of the subsample; <code>replace</code> determines if
 sampling is with or without replacement</dd>
     </dl>
     
@@ -98,19 +98,19 @@ sampling is with or without replacement</dd>
     
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>If <code>param$replace=FALSE</code>, a subsample of size 
-<code>min(param$n,nrow(data))</code> will be drawn from <code>data</code>. 
+    <p>If <code>param$replace=FALSE</code>, a subsample of size
+<code>min(param$n,nrow(data))</code> will be drawn from <code>data</code>.
 If <code>param$replace=TRUE</code>, the size of the subsample is <code>param$n</code>.</p>
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <p><code><a href='resample.strat.uniform.html'>resample.strat.uniform</a></code>, <code>sample</code></p>
+    <p><code><a href='resample.strat.uniform.html'>resample.strat.uniform()</a></code>, <code>sample()</code></p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'>data</span>(<span class='no'>ecuador</span>) <span class='co'># Muenchow et al. (2012), see ?ecuador</span>
 <span class='no'>d</span> <span class='kw'>=</span> <span class='fu'>resample.uniform</span>(<span class='no'>ecuador</span>, <span class='kw'>param</span> <span class='kw'>=</span> <span class='fu'>list</span>(<span class='kw'>strat</span> <span class='kw'>=</span> <span class='st'>'slides'</span>, <span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>200</span>))
-<span class='fu'>nrow</span>(<span class='no'>d</span>) <span class='co'># == 200</span></div><div class='output co'>#&gt; [1] 200</div><div class='input'><span class='fu'>sum</span>(<span class='no'>d</span>$<span class='no'>slides</span> <span class='kw'>==</span> <span class='st'>'TRUE'</span>)</div><div class='output co'>#&gt; [1] 87</div><div class='input'>
+<span class='fu'>nrow</span>(<span class='no'>d</span>) <span class='co'># == 200</span></div><div class='output co'>#&gt; [1] 200</div><div class='input'><span class='fu'>sum</span>(<span class='no'>d</span>$<span class='no'>slides</span> <span class='kw'>==</span> <span class='st'>'TRUE'</span>)</div><div class='output co'>#&gt; [1] 102</div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

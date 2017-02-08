@@ -2,40 +2,40 @@
 % Please edit documentation in R/sperrorest_resampling.R
 \name{partition.factor}
 \alias{partition.factor}
-\title{Partition the data for a (non-spatial) leave-one-factor-out cross-validation 
+\title{Partition the data for a (non-spatial) leave-one-factor-out cross-validation
 based on a given, fixed partitioning}
 \usage{
 partition.factor(data, coords = c("x", "y"), fac, return.factor = FALSE,
   repetition = 1)
 }
 \arguments{
-\item{data}{\code{data.frame} containing at least the columns specified 
+\item{data}{\code{data.frame} containing at least the columns specified
 by \code{coords}}
 
-\item{coords}{vector of length 2 defining the variables in \code{data} that 
+\item{coords}{vector of length 2 defining the variables in \code{data} that
 contain the x and y coordinates of sample locations.}
 
 \item{fac}{either the name of a variable (column) in \code{data}, or a vector
-of type factor and length \code{nrow(data)} that contains the partitions 
+of type factor and length \code{nrow(data)} that contains the partitions
 to be used for defining training and test samples.}
 
-\item{return.factor}{if \code{FALSE} (default), return a 
-\code{\link{represampling}} object; if \code{TRUE} (used internally by 
-other \code{sperrorest} functions), return a \code{list} containing factor 
+\item{return.factor}{if \code{FALSE} (default), return a
+\code{\link[=represampling]{represampling()}} object; if \code{TRUE} (used internally by
+other \code{sperrorest} functions), return a \code{list} containing factor
 vectors (see Value)}
 
-\item{repetition}{numeric vector: cross-validation repetitions 
-to be generated. Note that this is not the number of repetitions, 
-but the indices of these repetitions. E.g., use \code{repetition=c(1:100)} 
-to obtain (the 'first') 100 repetitions, and \code{repetition=c(101:200)} 
+\item{repetition}{numeric vector: cross-validation repetitions
+to be generated. Note that this is not the number of repetitions,
+but the indices of these repetitions. E.g., use \code{repetition = c(1:100)}
+to obtain (the 'first') 100 repetitions, and \code{repetition = c(101:200)}
 to obtain a different set of 100 repetitions.}
 }
 \value{
-A \code{\link{represampling}} object, 
-see also \code{\link{partition.cv}} for details.
+A \code{\link[=represampling]{represampling()}} object,
+see also \code{\link[=partition.cv]{partition.cv()}} for details.
 }
 \description{
-\code{partition.factor} creates a \code{\link{represampling}} object, 
+\code{partition.factor} creates a \code{\link[=represampling]{represampling()}} object,
 i.e. a set of sample indices defining cross-validation test and training sets.
 }
 \note{
@@ -54,6 +54,6 @@ parti <- partition.factor(ecuador, fac = 'zclass')
 summary(parti)
 }
 \seealso{
-\code{\link{sperrorest}}, \code{\link{partition.cv}}, 
-\code{\link{as.resampling.factor}}
+\code{\link[=sperrorest]{sperrorest()}}, \code{\link[=partition.cv]{partition.cv()}},
+\code{\link[=as.resampling.factor]{as.resampling.factor()}}
 }

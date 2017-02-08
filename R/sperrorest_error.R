@@ -8,8 +8,8 @@
 #' 
 #' @param obs factor, logical, or numeric vector with observations
 #' @param pred factor, logical, or numeric vector with predictions. Must be of 
-#' same type as \code{obs} with the exception that \code{pred} may be numeric 
-#' if \code{obs} is \code{factor} or \code{logical} ('soft' classification).
+#' same type as `obs` with the exception that `pred` may be numeric 
+#' if `obs` is `factor` or `logical` ('soft' classification).
 #' 
 #' @return A list with (currently) the following components, depending on the 
 #' type of prediction problem:
@@ -22,10 +22,10 @@
 #' at 70, 80 and 90 percent sensitivity, true-positive rate (sensitivity) 
 #' at 80, 90 and 95 percent specificity}
 #' \item{regression}{bias, standard deviation, mean squared error, 
-#' MAD (\code{\link{mad}}), median, interquartile range (\code{\link{IQR}}) 
+#' MAD ([mad()]), median, interquartile range ([IQR()]) 
 #' of residuals}
 #' 
-#' @note \code{NA} values are currently not handled by this function, 
+#' @note `NA` values are currently not handled by this function, 
 #' i.e. they will result in an error.
 #' 
 #' @seealso \pkg{ROCR}

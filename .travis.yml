@@ -10,6 +10,9 @@ warnings_are_errors: false
 r_build_args: "--no-build-vignettes"
 r_check_args: "--no-vignettes"
 
+before_install: 
+  - sudo apt-get install libnotify-bin
+
 
 r_packages: 
   - lda
@@ -27,6 +30,6 @@ notifications:
   slack: giscience-fsu:Wkbb0S8LMk9xdfVjweh8IDZx
   on_success: change # default: always
   on_failure: change # default: always
-    
+  email: false
 after_success:
   - Rscript -e 'covr::codecov()'

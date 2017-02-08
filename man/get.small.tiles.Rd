@@ -7,24 +7,24 @@
 get.small.tiles(tile, min.n = NULL, min.frac = 0, ignore = c())
 }
 \arguments{
-\item{tile}{factor: tile/partition names for all samples; names must be 
-coercible to class \code{\link{tilename}}, i.e. of the form \code{'X4:Y2'} etc.}
+\item{tile}{factor: tile/partition names for all samples; names must be
+coercible to class \code{\link[=tilename]{tilename()}}, i.e. of the form \code{'X4:Y2'} etc.}
 
 \item{min.n}{integer (optional): minimum number of samples per partition.}
 
-\item{min.frac}{numeric >0, <1: minimum relative size of partition as 
+\item{min.frac}{numeric >0, <1: minimum relative size of partition as
 percentage of sample.}
 
-\item{ignore}{character vector: names of tiles to be ignored, i.e. to be 
+\item{ignore}{character vector: names of tiles to be ignored, i.e. to be
 retained even if the inclusion criteria are not met.}
 }
 \value{
-character vector: names of tiles that are considered 'small' 
+character vector: names of tiles that are considered 'small'
 according to these criteria
 }
 \description{
-\code{get.small.tiles} identifies partitions (tiles) that are too small 
-according to some defined criterion / criteria (minimum number of samples in 
+\code{get.small.tiles} identifies partitions (tiles) that are too small
+according to some defined criterion / criteria (minimum number of samples in
 tile and/or minimum fraction of entire dataset).
 }
 \examples{
@@ -42,5 +42,5 @@ parti2 <- partition.tiles(ecuador, nsplit = c(10, 10), reassign = TRUE,
 length(parti2[[1]]) # < length(parti[[1]])
 }
 \seealso{
-\code{\link{partition.tiles}}, \code{\link{tilename}}
+\code{\link[=partition.tiles]{partition.tiles()}}, \code{\link[=tilename]{tilename()}}
 }

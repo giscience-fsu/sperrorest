@@ -86,28 +86,28 @@ to cross-validation test and training sets.</p>
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <dl class="dl-horizontal">
       <dt>data</dt>
-      <dd><code>data.frame</code> containing at least the columns specified 
+      <dd><code>data.frame</code> containing at least the columns specified
 by <code>coords</code></dd>
       <dt>coords</dt>
       <dd>vector of length 2 defining the variables in <code>data</code> that 
 contain the x and y coordinates of sample locations</dd>
       <dt>nfold</dt>
-      <dd>number of partitions (folds) in <code>nfold</code>-fold 
+      <dd>number of partitions (folds) in <code>nfold</code>-fold
 cross-validation partitioning</dd>
       <dt>return.factor</dt>
-      <dd>if <code>FALSE</code> (default), return a 
-<code><a href='as.represampling.html'>represampling</a></code> object; if <code>TRUE</code> (used internally by 
-other <code>sperrorest</code> functions), return a <code>list</code> containing factor 
+      <dd>if <code>FALSE</code> (default), return a
+<code><a href='as.represampling.html'>represampling()</a></code> object; if <code>TRUE</code> (used internally by
+other <code>sperrorest</code> functions), return a <code>list</code> containing factor
 vectors (see Value)</dd>
       <dt>repetition</dt>
-      <dd>numeric vector: cross-validation repetitions 
-to be generated. Note that this is not the number of repetitions, 
-but the indices of these repetitions. E.g., use <code>repetition=c(1:100)</code> 
-to obtain (the &#39;first&#39;) 100 repetitions, and <code>repetition=c(101:200)</code> 
+      <dd>numeric vector: cross-validation repetitions
+to be generated. Note that this is not the number of repetitions,
+but the indices of these repetitions. E.g., use <code>repetition = c(1:100)</code>
+to obtain (the &#39;first&#39;) 100 repetitions, and <code>repetition = c(101:200)</code>
 to obtain a different set of 100 repetitions.</dd>
       <dt>seed1</dt>
-      <dd><code>seed1+i</code> is the random seed that will be used by 
-<code>set.seed</code> in repetition <code>i</code> (<code>i</code> in <code>repetition</code>) 
+      <dd><code>seed1+i</code> is the random seed that will be used by
+<code>set.seed()</code> in repetition <code>i</code> (<code>i</code> in <code>repetition</code>)
 to initialize the random number generator before sampling from the data set.</dd>
       <dt>strat</dt>
       <dd>character: column in <code>data</code> containing a factor variable 
