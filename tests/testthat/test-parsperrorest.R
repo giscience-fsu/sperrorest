@@ -370,3 +370,67 @@ test_that("notify without benchmark = TRUE", {
   
   expect_equal(length(par.nsp.res$error.fold[[1]]), 4)
 })
+
+# parsperrorest warnings Thu Feb  9 22:34:08 2017 ------------------------------
+
+test_that("importance = T and err.fold = F", { 
+  data(ecuador) # Muenchow et al. (2012), see ?ecuador
+  fo <- slope ~ hcurv + vcurv + log.carea + cslope
+  
+  expect_warning(parsperrorest(data = ecuador, formula = fo,
+                            model.fun = glm,
+                            pred.fun = predict,
+                            smp.fun = partition.cv, 
+                            smp.args = list(repetition = 1:2, nfold = 2),
+                            par.args = list(par.mode = 1, par.units = 2),
+                            importance = TRUE, error.fold = FALSE))
+  
+  expect_warning(parsperrorest(data = ecuador, formula = fo,
+                            model.fun = glm,
+                            pred.fun = predict,
+                            smp.fun = partition.cv, 
+                            smp.args = list(repetition = 1:2, nfold = 2),
+                            par.args = list(par.mode = 1, par.units = 2),
+                            someargument = NULL))
+})
+
+# parsperrorest depr. args Thu Feb  9 22:42:48 2017 ------------------------------
+
+test_that("deprecated args", { 
+  data(ecuador) # Muenchow et al. (2012), see ?ecuador
+  fo <- slope ~ hcurv + vcurv + log.carea + cslope
+  
+  expect_error(parsperrorest(data = ecuador, formula = fo,
+                          model.fun = glm,
+                          pred.fun = predict,
+                          smp.fun = partition.cv, 
+                          smp.args = list(repetition = 1:2, nfold = 2),
+                          predfun = NULL))
+  
+  expect_error(parsperrorest(data = ecuador, formula = fo,
+                          model.fun = glm,
+                          pred.fun = predict,
+                          smp.fun = partition.cv, 
+                          smp.args = list(repetition = 1:2, nfold = 10),
+                          model = NULL))
+  
+  expect_error(parsperrorest(data = ecuador, formula = fo,
+                          model.fun = glm,
+                          pred.fun = predict,
+                          smp.fun = partition.cv, 
+                          smp.args = list(repetition = 1:2, nfold = 10),
+                          silent = NULL))
+  
+  expect_error(parsperrorest(data = ecuador, formula = fo,
+                          model.fun = glm,
+                          pred.fun = predict,
+                          smp.fun = partition.cv, 
+                          smp.args = list(repetition = 1:2, nfold = 10),
+                          err.pooled = NULL))
+  expect_error(parsperrorest(data = ecuador, formula = fo,
+                          model.fun = glm,
+                          pred.fun = predict,
+                          smp.fun = partition.cv, 
+                          smp.args = list(repetition = 1:2, nfold = 10),
+                          err.unpooled = NULL))
+})
