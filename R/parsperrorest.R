@@ -309,10 +309,6 @@ parsperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.
     {
       stop("sorry: argument names have changed; 'predfun' is now 'pred.fun'")
     }
-    if (any(names(dots.args) == "model"))
-    {
-      stop("sorry: argument names have changed; 'model' is now 'model.fun'")
-    }
     if (any(names(dots.args) == "silent"))
     {
       stop("sorry: argument names have changed; 'silent' is now 'progress'")

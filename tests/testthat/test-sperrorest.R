@@ -150,13 +150,6 @@ test_that("deprecated args", {
                           pred.fun = predict,
                           smp.fun = partition.cv, 
                           smp.args = list(repetition = 1:2, nfold = 10),
-                          model = NULL))
-  
-  expect_error(sperrorest(data = ecuador, formula = fo,
-                          model.fun = glm,
-                          pred.fun = predict,
-                          smp.fun = partition.cv, 
-                          smp.args = list(repetition = 1:2, nfold = 10),
                           silent = NULL))
   
   expect_error(sperrorest(data = ecuador, formula = fo,
