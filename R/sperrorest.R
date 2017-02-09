@@ -572,8 +572,8 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
   {
     if (!error.fold)
     {
-      warning("'importance=TRUE' currently only supported with 
-          'error.fold=TRUE'.\nUsing 'importance=FALSE'")
+      warning("'importance = TRUE' currently only supported with 
+          'error.fold = TRUE'.\nUsing 'importance = FALSE'")
       importance <- FALSE
     }
     stopifnot(is.numeric(imp.permutations))
@@ -611,9 +611,6 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
     {
       stop("sorry: argument names have changed; 'model' is now 'model.fun'")
     }
-    warning("'...' arguments currently not supported:\n
-        use 'model.args' to pass list of additional 
-        arguments to 'model.fun'")
     if (any(names(dots.args) == "silent"))
     {
       stop("sorry: argument names have changed; 'silent' is now 'progress'")
@@ -626,6 +623,9 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
     {
       stop("sorry: argument names have changed; 'err.unpooled' is now 'error.fold'")
     }
+    warning("'...' arguments currently not supported:\n
+        use 'model.args' to pass list of additional 
+            arguments to 'model.fun'")
   }
   
   # Name of response variable:
