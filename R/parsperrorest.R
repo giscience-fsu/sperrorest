@@ -309,13 +309,6 @@ parsperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.
     {
       stop("sorry: argument names have changed; 'predfun' is now 'pred.fun'")
     }
-    if (any(names(dots.args) == "model"))
-    {
-      stop("sorry: argument names have changed; 'model' is now 'model.fun'")
-    }
-    warning("'...' arguments currently not supported:\n
-      use 'model.args' to pass list of additional 
-      arguments to 'model.fun'")
     if (any(names(dots.args) == "silent"))
     {
       stop("sorry: argument names have changed; 'silent' is now 'progress'")
@@ -328,6 +321,9 @@ parsperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.
     {
       stop("sorry: argument names have changed; 'err.unpooled' is now 'error.fold'")
     }
+    warning("'...' arguments currently not supported:\n
+      use 'model.args' to pass list of additional 
+            arguments to 'model.fun'")
   }
   
   # Name of response variable:

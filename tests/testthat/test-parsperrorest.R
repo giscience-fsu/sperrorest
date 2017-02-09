@@ -62,7 +62,7 @@ test_that("output type (= list) for different logical combinations of
                                  smp.args = list(repetition = 1:2, nfold = 5),
                                  par.args = list(par.mode = 2, par.units = 2),
                                  error.rep = TRUE, error.fold = FALSE,
-                                 benchmark = TRUE, progress = FALSE)
+                                 benchmark = TRUE, progress = TRUE)
             
             expect_equal(typeof(out$error.rep), "list")
             expect_equal(typeof(out$error.fold), "NULL")
@@ -132,10 +132,28 @@ test_that("output length of list is correct for error.rep = TRUE and error.fold 
 test_that("parsperrorest() produces correct output for binary response", {
   data(ecuador) # Muenchow et al. (2012), see ?ecuador
   fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
-
+  
   nspres <- parsperrorest(data = ecuador, formula = fo,
                           model.fun = glm, model.args = list(family = "binomial"),
                           pred.fun = predict, pred.args = list(type = "response"),
+                          smp.fun = partition.cv,
+                          smp.args = list(repetition = 1:2, nfold = 10),
+                          par.args = list(par.mode = 2, par.units = 2),
+                          notify = TRUE, benchmark = TRUE,
+                          importance = TRUE, imp.permutations = 10)
+  summary.rep <- summary(nspres$error.rep)
+  summary.fold <- summary(nspres$error.fold)
+  summary.resampling <- summary(nspres$represampling)
+  expect_equal(names(nspres$error.rep)[[1]], "train.auroc") # check for train.auroc for binary response
+})
+
+test_that("parsperrorest() when pred.fun = NULL", {
+  data(ecuador) # Muenchow et al. (2012), see ?ecuador
+  fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
+  
+  nspres <- parsperrorest(data = ecuador, formula = fo,
+                          model.fun = glm, model.args = list(family = "binomial"),
+                          pred.args = list(type = "response"),
                           smp.fun = partition.cv,
                           smp.args = list(repetition = 1:2, nfold = 10),
                           par.args = list(par.mode = 2, par.units = 2),
@@ -224,6 +242,54 @@ test_that("output type (= list) for different logical combinations of
             
           })
 
+test_that("do.try argument", {
+  
+  testthat::skip_on_cran()
+  
+  lda.predfun <- function(object, newdata, fac = NULL) {
+    library(nnet)
+    majority <- function(x) {
+      levels(x)[which.is.max(table(x))]
+    }
+    
+    majority.filter <- function(x, fac) {
+      for (lev in levels(fac)) {
+        x[ fac == lev ] <- majority(x[ fac == lev ])
+      }
+      x
+    }
+    
+    pred <- predict(object, newdata = newdata)$class
+    if (!is.null(fac)) pred <- majority.filter(pred, newdata[,fac])
+    return(pred)
+  }
+  
+  fo <- croptype ~ b12 + b13 + b14 + b15 + b16 + b17 + b22 + b23 + b24 +
+    b25 + b26 + b27 + b32 + b33 + b34 + b35 + b36 + b37 + b42 +
+    b43 + b44 + b45 + b46 + b47 + b52 + b53 + b54 + b55 + b56 +
+    b57 + b62 + b63 + b64 + b65 + b66 + b67 + b72 + b73 + b74 +
+    b75 + b76 + b77 + b82 + b83 + b84 + b85 + b86 + b87 + ndvi01 +
+    ndvi02 + ndvi03 + ndvi04 + ndvi05 + ndvi06 + ndvi07 + ndvi08 +
+    ndwi01 + ndwi02 + ndwi03 + ndwi04 + ndwi05 + ndwi06 + ndwi07 +
+    ndwi08
+  
+  # err.rep = TRUE, err.fold = TRUE
+  out <- parsperrorest(fo, data = maipo, coords = c("utmx","utmy"),
+                       model.fun = lda,
+                       pred.fun = lda.predfun,
+                       smp.fun = partition.cv,
+                       smp.args = list(repetition = 1:2, nfold = 5),
+                       par.args = list(par.mode = 1, par.units = 2),
+                       error.rep = TRUE, error.fold = TRUE,
+                       benchmark = TRUE, progress = FALSE,
+                       do.try = T)
+  
+  expect_equal(typeof(out$error.rep), "list")
+  expect_equal(typeof(out$error.fold), "list")
+  expect_equal(names(out$error.rep)[[1]], "train.error") # check for train.error existence
+  
+})
+
 test_that("output length of list is correct for error.rep = TRUE and error.fold  = TRUE 
           for par.mode = 1 on rpart example", {
             
@@ -277,4 +343,87 @@ test_that("notify badge is working in parsperrorest()", {
                                error.rep = TRUE, error.fold = TRUE, notify = TRUE)
   
   expect_equal(length(par.nsp.res$error.fold[[1]]), 4)
+})
+
+test_that("notify without benchmark = TRUE", {
+  
+  testthat::skip_on_cran()
+  
+  data(ecuador) 
+  fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
+  
+  # Example of a classification tree fitted to this data:
+  mypred.rpart <- function(object, newdata) predict(object, newdata)[, 2]
+  ctrl <- rpart.control(cp = 0.005) # show the effects of overfitting
+  fit <- rpart(fo, data = ecuador, control = ctrl)
+  
+  # Non-spatial 5-repeated 10-fold cross-validation:
+  mypred.rpart <- function(object, newdata) predict(object, newdata)[,2]
+  par.nsp.res <- parsperrorest(data = ecuador, formula = fo,
+                               model.fun = rpart, model.args = list(control = ctrl),
+                               pred.fun = mypred.rpart,
+                               progress = FALSE, 
+                               smp.fun = partition.cv, benchmark = FALSE,
+                               smp.args = list(repetition = 1:2, nfold = 4),
+                               par.args = list(par.mode = 1, par.units = 2),
+                               error.rep = TRUE, error.fold = TRUE, notify = TRUE)
+  
+  expect_equal(length(par.nsp.res$error.fold[[1]]), 4)
+})
+
+# parsperrorest warnings Thu Feb  9 22:34:08 2017 ------------------------------
+
+test_that("importance = T and err.fold = F", { 
+  data(ecuador) # Muenchow et al. (2012), see ?ecuador
+  fo <- slope ~ hcurv + vcurv + log.carea + cslope
+  
+  expect_warning(parsperrorest(data = ecuador, formula = fo,
+                            model.fun = glm,
+                            pred.fun = predict,
+                            smp.fun = partition.cv, 
+                            smp.args = list(repetition = 1:2, nfold = 2),
+                            par.args = list(par.mode = 1, par.units = 2),
+                            importance = TRUE, error.fold = FALSE))
+  
+  expect_warning(parsperrorest(data = ecuador, formula = fo,
+                            model.fun = glm,
+                            pred.fun = predict,
+                            smp.fun = partition.cv, 
+                            smp.args = list(repetition = 1:2, nfold = 2),
+                            par.args = list(par.mode = 1, par.units = 2),
+                            someargument = NULL))
+})
+
+# parsperrorest depr. args Thu Feb  9 22:42:48 2017 ------------------------------
+
+test_that("deprecated args", { 
+  data(ecuador) # Muenchow et al. (2012), see ?ecuador
+  fo <- slope ~ hcurv + vcurv + log.carea + cslope
+  
+  expect_error(parsperrorest(data = ecuador, formula = fo,
+                          model.fun = glm,
+                          pred.fun = predict,
+                          smp.fun = partition.cv, 
+                          smp.args = list(repetition = 1:2, nfold = 2),
+                          predfun = NULL))
+  
+  expect_error(parsperrorest(data = ecuador, formula = fo,
+                          model.fun = glm,
+                          pred.fun = predict,
+                          smp.fun = partition.cv, 
+                          smp.args = list(repetition = 1:2, nfold = 10),
+                          silent = NULL))
+  
+  expect_error(parsperrorest(data = ecuador, formula = fo,
+                          model.fun = glm,
+                          pred.fun = predict,
+                          smp.fun = partition.cv, 
+                          smp.args = list(repetition = 1:2, nfold = 10),
+                          err.pooled = NULL))
+  expect_error(parsperrorest(data = ecuador, formula = fo,
+                          model.fun = glm,
+                          pred.fun = predict,
+                          smp.fun = partition.cv, 
+                          smp.args = list(repetition = 1:2, nfold = 10),
+                          err.unpooled = NULL))
 })
