@@ -57,6 +57,20 @@ test_that("sperrorest() produces correct output for binary response", {
   expect_equal(names(nspres$error.rep)[[1]], "train.bias") # check for bias existence
 })
 
+# pred.fun = NULL response Wed Feb  8 22:19:57 2017 ------------------------------
+
+test_that("sperrorest() produces correct output for binary response", {
+  data(ecuador) # Muenchow et al. (2012), see ?ecuador
+  fo <- slope ~ hcurv + vcurv + log.carea + cslope
+  
+  nspres <- sperrorest(data = ecuador, formula = fo,
+                       model.fun = glm,
+                       smp.fun = partition.cv, 
+                       smp.args = list(repetition = 1:2, nfold = 10))
+  
+  expect_equal(length(nspres$error.rep[[1]]), 2) # reps
+})
+
 
 # summary.sperroresterror() Thu Feb  9 22:10:15 2017 ------------------------------
 
