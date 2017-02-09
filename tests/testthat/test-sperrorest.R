@@ -56,3 +56,43 @@ test_that("sperrorest() produces correct output for binary response", {
   expect_equal(length(nspres$importance), 2) # import reps
   expect_equal(names(nspres$error.rep)[[1]], "train.bias") # check for bias existence
 })
+
+
+# summary.sperroresterror() Thu Feb  9 22:10:15 2017 ------------------------------
+
+test_that("summary.sperroresterror() produces correct output for binary response", {
+  data(ecuador) # Muenchow et al. (2012), see ?ecuador
+  fo <- slope ~ hcurv + vcurv + log.carea + cslope
+  
+  nspres <- sperrorest(data = ecuador, formula = fo,
+                       model.fun = glm,
+                       pred.fun = predict,
+                       smp.fun = partition.cv, 
+                       smp.args = list(repetition = 1:2, nfold = 10))
+  
+  summary.rep1 <- summary(nspres$error.rep, pooled = FALSE)                    
+  summary.fold1 <- summary(nspres$error.fold, pooled = FALSE)
+  summary.rep <- summary(nspres$error.rep, pooled = TRUE)                    
+  summary.fold <- summary(nspres$error.fold, pooled = TRUE)
+  
+  expect_equal(length(summary.rep), 4) # binary response
+  expect_equal(length(summary.fold), 4) # binary response
+})
+
+# summary.sperrorestimportance() Thu Feb  9 22:17:15 2017 ------------------------------
+
+test_that("summary.sperroresterror() with pooled = FALSE produces correct output for binary response", {
+  data(ecuador) # Muenchow et al. (2012), see ?ecuador
+  fo <- slope ~ hcurv + vcurv + log.carea + cslope
+  
+  nspres <- sperrorest(data = ecuador, formula = fo,
+                       model.fun = glm,
+                       pred.fun = predict,
+                       smp.fun = partition.cv, 
+                       smp.args = list(repetition = 1:2, nfold = 10),
+                       importance = TRUE, imp.permutations = 10)
+  
+  summary.imp <- summary(nspres$importance)        
+  
+  expect_equal(length(summary.imp), 28)
+})
