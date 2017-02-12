@@ -155,11 +155,11 @@ summary.sperrorestimportance <- function(object, level = 0, na.rm = TRUE, which 
         c(2, 3), sd, na.rm = na.rm), median = apply(arr, c(2, 3), median, 
         na.rm = na.rm), IQR = apply(arr, c(2, 3), IQR, na.rm = na.rm))
     } else
-    {
-      arr <- arr[, , which]
-      arr <- data.frame(mean = apply(arr, 2, mean, na.rm = na.rm), sd = apply(arr, 
-        2, sd, na.rm = na.rm), median = apply(arr, 2, median, na.rm = na.rm), 
-        IQR = apply(arr, 2, IQR, na.rm = na.rm))
+    { # when does this happen?
+      arr <- arr[, , which] # nocov
+      arr <- data.frame(mean = apply(arr, 2, mean, na.rm = na.rm), sd = apply(arr, # nocov
+        2, sd, na.rm = na.rm), median = apply(arr, 2, median, na.rm = na.rm), # nocov
+        IQR = apply(arr, 2, IQR, na.rm = na.rm)) # nocov
     }
   }
   return(arr)
@@ -742,20 +742,20 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
         fit <- try(do.call(model.fun, args = margs), silent = silent)
         
         # Error handling:
-        if (class(fit) == "try-error")
+        if (class(fit) == "try-error") # when does this happen?
         {
-          fit <- NULL
-          if (error.fold)
-          {
-          if (err.train) 
-            res[[i]][[j]]$train <- NULL
-          res[[i]][[j]]$test <- NULL
-          if (importance) 
-            impo[[i]][[j]] <- c()  # ???
-          }
-          if (do.gc >= 2) 
-          gc()
-          next  # skip this fold
+          fit <- NULL # nocov
+          if (error.fold) # nocov
+          { # nocov
+          if (err.train) # nocov
+            res[[i]][[j]]$train <- NULL # nocov
+          res[[i]][[j]]$test <- NULL # nocov
+          if (importance) # nocov
+            impo[[i]][[j]] <- c()  # nocov # ???
+          } # nocov
+          if (do.gc >= 2) # nocov
+          gc() # nocov
+          next  # nocov # skip this fold
         }
         
       } else
@@ -829,7 +829,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
           err.try <- try(err.fun(nd[, response], pred.test), silent = silent)
           if (class(err.try) == "try-error")
           {
-          err.try <- NULL  # ???
+          err.try <- NULL # nocov (previous: '???')
           }
           res[[i]][[j]]$test <- err.try
         } else
@@ -847,13 +847,13 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
       if (importance & error.fold)
       {
         
-        if (is.null(res[[i]][[j]]$test))
+        if (is.null(res[[i]][[j]]$test)) # does this ever happen?
         {
-          impo[[i]][[j]] <- c()
-          if (progress == 1 | progress == 2)
-          {
-          cat(date(), "-- skipping variable importance\n")
-          }
+          impo[[i]][[j]] <- c() #nocov
+          if (progress == 1 | progress == 2) #nocov
+          { # nocov
+          cat(date(), "-- skipping variable importance\n") #nocov
+          } #nocov
         } else
         {
           
@@ -902,7 +902,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
             permut.err <- try(err.fun(nd[, response], pred.test), silent = silent)
             if (class(permut.err) == "try-error")
             {
-              imp.temp[[vnm]][[cnt]] <- c()  # ???
+              imp.temp[[vnm]][[cnt]] <- c() # nocov (previous: '???')
             } else
             {
               imp.temp[[vnm]][[cnt]] <- as.list(unlist(res[[i]][[j]]$test) - 
@@ -935,14 +935,15 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
         if (is.factor(data[, response]))
         {
           lev <- levels(data[, response])
-          if (err.train) 
-          pooled.obs.train <- factor(lev[pooled.obs.train], levels = lev)
-          pooled.obs.test <- factor(lev[pooled.obs.test], levels = lev)
-          if (is.factor.prediction)
-          {
-          if (err.train) 
-            pooled.pred.train <- factor(lev[pooled.pred.train], levels = lev)
-          pooled.pred.test <- factor(lev[pooled.pred.test], levels = lev)
+          if (err.train) {
+            pooled.obs.train <- factor(lev[pooled.obs.train], levels = lev)
+            pooled.obs.test <- factor(lev[pooled.obs.test], levels = lev)
+          }
+          if (is.factor.prediction) {
+            if (err.train) {
+              pooled.pred.train <- factor(lev[pooled.pred.train], levels = lev)
+              pooled.pred.test <- factor(lev[pooled.pred.test], levels = lev)
+            }
           }
         }
         pooled.err.train <- NULL
