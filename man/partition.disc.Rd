@@ -42,7 +42,7 @@ if \code{TRUE}, also the training area.}
 without replacement?}
 
 \item{repetition}{see \code{partition.cv}; however,
-see Note below: \code{repetition} should normally be \code{= 1} in this function.}
+see Note below: \code{repetition} should normally be \code{=1} in this function.}
 
 \item{...}{arguments to be passed to \code{partition.disc}}
 }
@@ -50,7 +50,7 @@ see Note below: \code{repetition} should normally be \code{= 1} in this function
 A \code{\link[=represampling]{represampling()}} object.
 Contains \code{length(repetition)} \code{resampling} objects.
 Each of these contains \code{ndisc} lists with indices of test and
-(if \code{return.train = TRUE}) training sets.
+(if \code{return.train=TRUE}) training sets.
 }
 \description{
 \code{partition.disc} partitions the sample into training and tests set by
@@ -65,8 +65,8 @@ random locations. Test area discs may (and likely will) overlap independently
 of the value of \code{replace}. \code{replace} only controls the replacement
 of the center point of discs when drawing center points from the samples.
 
-\code{radius < 0} does leave-one-out resampling with an optional buffer.
-\code{radius = 0} is similar except that samples with identical coordinates
+\code{radius<0} does leave-one-out resampling with an optional buffer.
+\code{radius=0} is similar except that samples with identical coordinates
 would fall within the test area disc.
 }
 \examples{

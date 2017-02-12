@@ -32,7 +32,7 @@ other \code{sperrorest} functions), return a \code{list} containing factor
 vectors (see Value)}
 }
 \value{
-If \code{return.factor = FALSE} (the default), a
+If \code{return.factor=FALSE} (the default), a
 \code{\link[=represampling]{represampling()}} object. Specifically, this is a (named) list of
 \code{length(repetition)} \code{resampling} objects.
 Each of these \code{\link[=resampling]{resampling()}} objects is a list of length
@@ -55,6 +55,12 @@ This function does not actually perform a cross-validation
 or partition the data set itself; it simply creates a data structure
 containing the indices of training and test samples.
 }
+\section{Partition example}{
+
+\figure{plot_resampling.png}{Example Plot Title} \cr
+Figure 1: 5-fold partitions created by \code{partition.cv()}. See examples.
+}
+
 \examples{
 data(ecuador)
 ## non-spatial cross-validation:

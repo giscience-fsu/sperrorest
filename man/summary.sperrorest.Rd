@@ -7,6 +7,8 @@
 \alias{print.sperroresterror}
 \alias{print.sperrorestreperror}
 \alias{print.sperrorest}
+\alias{print.sperrorestbenchmarks}
+\alias{print.sperrorestpackageversion}
 \title{Summary and print methods for sperrorest results}
 \usage{
 \method{summary}{sperrorestreperror}(object, level = 0, na.rm = TRUE, ...)
@@ -20,6 +22,10 @@
 \method{print}{sperrorestreperror}(x, ...)
 
 \method{print}{sperrorest}(x, ...)
+
+\method{print}{sperrorestbenchmarks}(x, ...)
+
+\method{print}{sperrorestpackageversion}(x, ...)
 }
 \arguments{
 \item{object}{a \code{\link[=sperrorest]{sperrorest()}} object}
