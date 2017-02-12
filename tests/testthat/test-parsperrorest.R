@@ -45,8 +45,8 @@ test_that("output type (= list) for different logical combinations of
                                  model.fun = lda,
                                  pred.fun = lda.predfun,
                                  smp.fun = partition.cv,
-                                 smp.args = list(repetition = 1:2, nfold = 5),
-                                 par.args = list(par.mode = 2, par.units = 1),
+                                 smp.args = list(repetition = 1:2, nfold = 2),
+                                 par.args = list(par.mode = 2, par.units = 2),
                                  error.rep = TRUE, error.fold = TRUE,
                                  benchmark = TRUE, progress = FALSE)
             
@@ -59,7 +59,7 @@ test_that("output type (= list) for different logical combinations of
                                  model.fun = lda,
                                  pred.fun = lda.predfun,
                                  smp.fun = partition.cv,
-                                 smp.args = list(repetition = 1:2, nfold = 5),
+                                 smp.args = list(repetition = 1:2, nfold = 2),
                                  par.args = list(par.mode = 2, par.units = 2),
                                  error.rep = TRUE, error.fold = FALSE,
                                  benchmark = TRUE, progress = TRUE)
@@ -72,7 +72,7 @@ test_that("output type (= list) for different logical combinations of
                                  model.fun = lda,
                                  pred.fun = lda.predfun,
                                  smp.fun = partition.cv,
-                                 smp.args = list(repetition = 1:2, nfold = 5),
+                                 smp.args = list(repetition = 1:2, nfold = 2),
                                  par.args = list(par.mode = 2, par.units = 2),
                                  error.rep = FALSE, error.fold = TRUE,
                                  benchmark = TRUE, progress = FALSE)
@@ -101,11 +101,11 @@ test_that("output length of list is correct for error.rep = TRUE and error.fold 
                                          pred.fun = mypred.rpart,
                                          progress = FALSE,
                                          smp.fun = partition.cv,
-                                         smp.args = list(repetition = 1:2, nfold = 4),
+                                         smp.args = list(repetition = 1:2, nfold = 2),
                                          par.args = list(par.mode = 2, par.units = 2),
                                          error.rep = TRUE, error.fold = TRUE)
             
-            expect_equal(length(par.nsp.res$error.fold[[1]]), 4)
+            expect_equal(length(par.nsp.res$error.fold[[1]]), 2)
           })
 
 # parsperrorest() variable importance Wed Feb  8 21:59:03 2017 ------------------------------
@@ -137,10 +137,10 @@ test_that("parsperrorest() produces correct output for binary response", {
                           model.fun = glm, model.args = list(family = "binomial"),
                           pred.fun = predict, pred.args = list(type = "response"),
                           smp.fun = partition.cv,
-                          smp.args = list(repetition = 1:2, nfold = 10),
+                          smp.args = list(repetition = 1:2, nfold = 2),
                           par.args = list(par.mode = 2, par.units = 2),
                           notify = TRUE, benchmark = TRUE,
-                          importance = TRUE, imp.permutations = 10)
+                          importance = TRUE, imp.permutations = 2)
   summary.rep <- summary(nspres$error.rep)
   summary.fold <- summary(nspres$error.fold)
   summary.resampling <- summary(nspres$represampling)
@@ -155,10 +155,10 @@ test_that("parsperrorest() when pred.fun = NULL", {
                           model.fun = glm, model.args = list(family = "binomial"),
                           pred.args = list(type = "response"),
                           smp.fun = partition.cv,
-                          smp.args = list(repetition = 1:2, nfold = 10),
+                          smp.args = list(repetition = 1:2, nfold = 2),
                           par.args = list(par.mode = 2, par.units = 2),
                           notify = TRUE, benchmark = TRUE,
-                          importance = TRUE, imp.permutations = 10)
+                          importance = TRUE, imp.permutations = 2)
   summary.rep <- summary(nspres$error.rep)
   summary.fold <- summary(nspres$error.fold)
   summary.resampling <- summary(nspres$represampling)
@@ -205,7 +205,7 @@ test_that("output type (= list) for different logical combinations of
                                  model.fun = lda,
                                  pred.fun = lda.predfun,
                                  smp.fun = partition.cv,
-                                 smp.args = list(repetition = 1:2, nfold = 5),
+                                 smp.args = list(repetition = 1:2, nfold = 2),
                                  par.args = list(par.mode = 1, par.units = 2),
                                  error.rep = TRUE, error.fold = TRUE,
                                  benchmark = TRUE, progress = FALSE)
@@ -219,7 +219,7 @@ test_that("output type (= list) for different logical combinations of
                                  model.fun = lda,
                                  pred.fun = lda.predfun,
                                  smp.fun = partition.cv,
-                                 smp.args = list(repetition = 1:2, nfold = 5),
+                                 smp.args = list(repetition = 1:2, nfold = 2),
                                  par.args = list(par.mode = 1, par.units = 2),
                                  error.rep = TRUE, error.fold = FALSE,
                                  benchmark = TRUE, progress = FALSE)
@@ -232,7 +232,7 @@ test_that("output type (= list) for different logical combinations of
                                  model.fun = lda,
                                  pred.fun = lda.predfun,
                                  smp.fun = partition.cv,
-                                 smp.args = list(repetition = 1:2, nfold = 5),
+                                 smp.args = list(repetition = 1:2, nfold = 2),
                                  par.args = list(par.mode = 1, par.units = 2),
                                  error.rep = FALSE, error.fold = TRUE,
                                  benchmark = TRUE, progress = FALSE)
@@ -278,7 +278,7 @@ test_that("do.try argument", {
                        model.fun = lda,
                        pred.fun = lda.predfun,
                        smp.fun = partition.cv,
-                       smp.args = list(repetition = 1:2, nfold = 5),
+                       smp.args = list(repetition = 1:2, nfold = 2),
                        par.args = list(par.mode = 1, par.units = 2),
                        error.rep = TRUE, error.fold = TRUE,
                        benchmark = TRUE, progress = FALSE,
@@ -310,11 +310,11 @@ test_that("output length of list is correct for error.rep = TRUE and error.fold 
                                          pred.fun = mypred.rpart,
                                          progress = FALSE, 
                                          smp.fun = partition.cv,
-                                         smp.args = list(repetition = 1:2, nfold = 4),
+                                         smp.args = list(repetition = 1:2, nfold = 2),
                                          par.args = list(par.mode = 1, par.units = 2),
                                          error.rep = TRUE, error.fold = TRUE)
             
-            expect_equal(length(par.nsp.res$error.fold[[1]]), 4)
+            expect_equal(length(par.nsp.res$error.fold[[1]]), 2)
           })
 
 # notify argument Tue Feb  7 13:45:45 2017 ------------------------------
@@ -338,11 +338,11 @@ test_that("notify badge is working in parsperrorest()", {
                                pred.fun = mypred.rpart,
                                progress = FALSE, 
                                smp.fun = partition.cv,
-                               smp.args = list(repetition = 1:2, nfold = 4),
+                               smp.args = list(repetition = 1:2, nfold = 2),
                                par.args = list(par.mode = 1, par.units = 2),
                                error.rep = TRUE, error.fold = TRUE, notify = TRUE)
   
-  expect_equal(length(par.nsp.res$error.fold[[1]]), 4)
+  expect_equal(length(par.nsp.res$error.fold[[1]]), 2)
 })
 
 test_that("notify without benchmark = TRUE", {
@@ -364,11 +364,11 @@ test_that("notify without benchmark = TRUE", {
                                pred.fun = mypred.rpart,
                                progress = FALSE, 
                                smp.fun = partition.cv, benchmark = FALSE,
-                               smp.args = list(repetition = 1:2, nfold = 4),
+                               smp.args = list(repetition = 1:2, nfold = 2),
                                par.args = list(par.mode = 1, par.units = 2),
                                error.rep = TRUE, error.fold = TRUE, notify = TRUE)
   
-  expect_equal(length(par.nsp.res$error.fold[[1]]), 4)
+  expect_equal(length(par.nsp.res$error.fold[[1]]), 2)
 })
 
 # parsperrorest warnings Thu Feb  9 22:34:08 2017 ------------------------------
@@ -411,19 +411,19 @@ test_that("deprecated args", {
                           model.fun = glm,
                           pred.fun = predict,
                           smp.fun = partition.cv, 
-                          smp.args = list(repetition = 1:2, nfold = 10),
+                          smp.args = list(repetition = 1:2, nfold = 2),
                           silent = NULL))
   
   expect_error(parsperrorest(data = ecuador, formula = fo,
                           model.fun = glm,
                           pred.fun = predict,
                           smp.fun = partition.cv, 
-                          smp.args = list(repetition = 1:2, nfold = 10),
+                          smp.args = list(repetition = 1:2, nfold = 2),
                           err.pooled = NULL))
   expect_error(parsperrorest(data = ecuador, formula = fo,
                           model.fun = glm,
                           pred.fun = predict,
                           smp.fun = partition.cv, 
-                          smp.args = list(repetition = 1:2, nfold = 10),
+                          smp.args = list(repetition = 1:2, nfold = 2),
                           err.unpooled = NULL))
 })

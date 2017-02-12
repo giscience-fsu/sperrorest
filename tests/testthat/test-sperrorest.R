@@ -12,19 +12,19 @@ test_that("sperrorest() produces correct output for binary response", {
                        model.fun = glm, model.args = list(family = "binomial"),
                        pred.fun = predict, pred.args = list(type = "response"),
                        smp.fun = partition.cv, 
-                       smp.args = list(repetition = 1:2, nfold = 10),
+                       smp.args = list(repetition = 1:2, nfold = 2),
                        notify = TRUE, benchmark = TRUE,
-                       importance = TRUE, imp.permutations = 10)
+                       importance = TRUE, imp.permutations = 2)
   summary.rep <- summary(nspres$error.rep)                    
   summary.fold <- summary(nspres$error.fold)
   summary.resampling <- summary(nspres$represampling)
   
   expect_equal(length(nspres$error.rep[[1]]), 2) # reps
-  expect_equal(length(nspres$error.fold[[1]]), 10) # folds
+  expect_equal(length(nspres$error.fold[[1]]), 2) # folds
   expect_equal(length(summary.rep), 4) # binary response
   expect_equal(length(summary.fold), 4) # binary response
   expect_equal(length(summary.resampling), 2) # resampling summary
-  expect_equal(length(nspres$importance[[1]]), 10) # import folds
+  expect_equal(length(nspres$importance[[1]]), 2) # import folds
   expect_equal(length(nspres$importance), 2) # import reps
   expect_equal(names(nspres$error.rep)[[1]], "train.auroc") # check for auroc existence
 })
@@ -40,19 +40,19 @@ test_that("sperrorest() produces correct output for binary response", {
                        model.fun = glm,
                        pred.fun = predict,
                        smp.fun = partition.cv, 
-                       smp.args = list(repetition = 1:2, nfold = 10),
+                       smp.args = list(repetition = 1:2, nfold = 2),
                        notify = TRUE, benchmark = TRUE, 
-                       importance = TRUE, imp.permutations = 10)
+                       importance = TRUE, imp.permutations = 2)
   summary.rep <- summary(nspres$error.rep)                    
   summary.fold <- summary(nspres$error.fold)
   summary.resampling <- summary(nspres$represampling)
   
   expect_equal(length(nspres$error.rep[[1]]), 2) # reps
-  expect_equal(length(nspres$error.fold[[1]]), 10) # folds
+  expect_equal(length(nspres$error.fold[[1]]), 2) # folds
   expect_equal(length(summary.rep), 4) # binary response
   expect_equal(length(summary.fold), 4) # binary response
   expect_equal(length(summary.resampling), 2) # resampling summary
-  expect_equal(length(nspres$importance[[1]]), 10) # import folds
+  expect_equal(length(nspres$importance[[1]]), 2) # import folds
   expect_equal(length(nspres$importance), 2) # import reps
   expect_equal(names(nspres$error.rep)[[1]], "train.bias") # check for bias existence
 })
@@ -66,7 +66,7 @@ test_that("sperrorest() produces correct output for binary response", {
   nspres <- sperrorest(data = ecuador, formula = fo,
                        model.fun = glm,
                        smp.fun = partition.cv, 
-                       smp.args = list(repetition = 1:2, nfold = 10),
+                       smp.args = list(repetition = 1:2, nfold = 2),
                        importance = TRUE, imp.permutations = 2)
   
   expect_equal(length(nspres$error.rep[[1]]), 2) # reps
@@ -83,7 +83,7 @@ test_that("summary.sperroresterror() produces correct output for binary response
                        model.fun = glm,
                        pred.fun = predict,
                        smp.fun = partition.cv, 
-                       smp.args = list(repetition = 1:2, nfold = 10))
+                       smp.args = list(repetition = 1:2, nfold = 2))
   
   summary.rep1 <- summary(nspres$error.rep, pooled = FALSE)                    
   summary.fold1 <- summary(nspres$error.fold, pooled = FALSE)
@@ -104,8 +104,8 @@ test_that("summary.sperroresterror() with pooled = FALSE produces correct output
                        model.fun = glm,
                        pred.fun = predict,
                        smp.fun = partition.cv, 
-                       smp.args = list(repetition = 1:2, nfold = 10),
-                       importance = TRUE, imp.permutations = 10,
+                       smp.args = list(repetition = 1:2, nfold = 2),
+                       importance = TRUE, imp.permutations = 2,
                        do.try = TRUE)
   
   summary.imp <- summary(nspres$importance)        
@@ -144,27 +144,27 @@ test_that("deprecated args", {
                           model.fun = glm,
                           pred.fun = predict,
                           smp.fun = partition.cv, 
-                          smp.args = list(repetition = 1:2, nfold = 10),
+                          smp.args = list(repetition = 1:2, nfold = 2),
                           predfun = NULL))
   
   expect_error(sperrorest(data = ecuador, formula = fo,
                           model.fun = glm,
                           pred.fun = predict,
                           smp.fun = partition.cv, 
-                          smp.args = list(repetition = 1:2, nfold = 10),
+                          smp.args = list(repetition = 1:2, nfold = 2),
                           silent = NULL))
   
   expect_error(sperrorest(data = ecuador, formula = fo,
                           model.fun = glm,
                           pred.fun = predict,
                           smp.fun = partition.cv, 
-                          smp.args = list(repetition = 1:2, nfold = 10),
+                          smp.args = list(repetition = 1:2, nfold = 2),
                           err.pooled = NULL))
   expect_error(sperrorest(data = ecuador, formula = fo,
                           model.fun = glm,
                           pred.fun = predict,
                           smp.fun = partition.cv, 
-                          smp.args = list(repetition = 1:2, nfold = 10),
+                          smp.args = list(repetition = 1:2, nfold = 2),
                           err.unpooled = NULL))
 })
 
@@ -182,7 +182,7 @@ test_that("sperrorest() produces correct output for binary response for non-defa
                        smp.fun = partition.cv, 
                        smp.args = list(repetition = 1:2, nfold = 2),
                        notify = F, benchmark = F,
-                       importance = TRUE, imp.permutations = 10,
+                       importance = TRUE, imp.permutations = 2,
                        do.try = TRUE, err.train = T, do.gc = 2)
   
   expect_equal(length(nspres$error.rep[[1]]), 2) # reps
@@ -203,7 +203,7 @@ test_that("summary.sperrorest() works correctly", {
                     pred.fun = predict,
                     smp.fun = partition.cv, 
                     smp.args = list(repetition = 1:2, nfold = 2),
-                    importance = T, imp.permutations = 10,
+                    importance = T, imp.permutations = 2,
                     error.fold = T, 
                     benchmark = T)
   
