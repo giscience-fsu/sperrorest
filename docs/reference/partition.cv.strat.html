@@ -76,7 +76,7 @@
     </div>
 
     
-    <p><code>partition.cv.strat</code> creates a set of sample indices corresponding 
+    <p><code>partition.cv.strat</code> creates a set of sample indices corresponding
 to cross-validation test and training sets.</p>
     
 
@@ -89,7 +89,7 @@ to cross-validation test and training sets.</p>
       <dd><code>data.frame</code> containing at least the columns specified
 by <code>coords</code></dd>
       <dt>coords</dt>
-      <dd>vector of length 2 defining the variables in <code>data</code> that 
+      <dd>vector of length 2 defining the variables in <code>data</code> that
 contain the x and y coordinates of sample locations</dd>
       <dt>nfold</dt>
       <dd>number of partitions (folds) in <code>nfold</code>-fold
@@ -110,24 +110,26 @@ to obtain a different set of 100 repetitions.</dd>
 <code>set.seed()</code> in repetition <code>i</code> (<code>i</code> in <code>repetition</code>)
 to initialize the random number generator before sampling from the data set.</dd>
       <dt>strat</dt>
-      <dd>character: column in <code>data</code> containing a factor variable 
-over which the partitioning should be stratified; or factor vector of length 
+      <dd>character: column in <code>data</code> containing a factor variable
+over which the partitioning should be stratified; or factor vector of length
 <code>nrow(data)</code>: variable over which to stratify</dd>
     </dl>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A <code><a href='as.represampling.html'>represampling</a></code> object, see also 
-<code><a href='partition.cv.html'>partition.cv</a></code>. <code>partition.strat.cv</code>, however, 
-stratified with respect to the variable <code>data[,strat]</code>; 
-i.e., cross-validation partitioning is done within each set 
-<code>data[data[,strat]==i,]</code> (<code>i</code> in <code>levels(data[,strat])</code>), and 
+    <p>A <code><a href='as.represampling.html'>represampling()</a></code> object, see also
+<code><a href='partition.cv.html'>partition.cv()</a></code>. <code>partition.strat.cv</code>, however,
+stratified with respect to the variable <code>data[,strat]</code>;
+i.e., cross-validation partitioning is done within each set
+<code>data[data[,strat]==i,]</code> (<code>i</code> in <code>levels(data[,strat])</code>), and
 the <code>i</code>th folds of all levels are combined into one cross-validation fold.</p>
+    <p>[data,strat: R:data[,strat
+,strat: R:,strat</p>
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <p><code><a href='sperrorest.html'>sperrorest</a></code>, <code><a href='as.resampling.html'>as.resampling</a></code>, 
-<code><a href='resample.strat.uniform.html'>resample.strat.uniform</a></code></p>
+    <p><code><a href='sperrorest.html'>sperrorest()</a></code>, <code><a href='as.resampling.html'>as.resampling()</a></code>,
+<code><a href='resample.strat.uniform.html'>resample.strat.uniform()</a></code></p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
@@ -138,7 +140,7 @@ the <code>i</code>th folds of all levels are combined into one cross-validation 
 <span class='co'># Non-stratified cross-validation:</span>
 <span class='no'>parti</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition.cv.html'>partition.cv</a></span>(<span class='no'>ecuador</span>, <span class='kw'>nfold</span> <span class='kw'>=</span> <span class='fl'>5</span>, <span class='kw'>repetition</span> <span class='kw'>=</span> <span class='fl'>1</span>)
 <span class='no'>idx</span> <span class='kw'>&lt;-</span> <span class='no'>parti</span><span class='kw'>[[</span><span class='st'>'1'</span>]]<span class='kw'>[[</span><span class='fl'>1</span>]]$<span class='no'>train</span>
-<span class='fu'>mean</span>(<span class='no'>ecuador</span>$<span class='no'>slides</span>[<span class='no'>idx</span>] <span class='kw'>==</span> <span class='st'>'TRUE'</span>) / <span class='fu'>mean</span>(<span class='no'>ecuador</span>$<span class='no'>slides</span> <span class='kw'>==</span> <span class='st'>'TRUE'</span>)</div><div class='output co'>#&gt; [1] 0.965</div><div class='input'><span class='co'># close to 1 because of large sample size, but with some random variation</span></div></pre>
+<span class='fu'>mean</span>(<span class='no'>ecuador</span>$<span class='no'>slides</span>[<span class='no'>idx</span>] <span class='kw'>==</span> <span class='st'>'TRUE'</span>) / <span class='fu'>mean</span>(<span class='no'>ecuador</span>$<span class='no'>slides</span> <span class='kw'>==</span> <span class='st'>'TRUE'</span>)</div><div class='output co'>#&gt; [1] 1.02625</div><div class='input'><span class='co'># close to 1 because of large sample size, but with some random variation</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
