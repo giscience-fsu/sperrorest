@@ -722,10 +722,10 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
           next  # skip this fold
         }
         
-      } else
-      {
-        fit <- do.call(model.fun, args = margs)
-      }
+      } else 
+      {  
+        fit <- do.call(model.fun, args = margs) 
+      } 
       
       if (err.train)
       {
@@ -759,12 +759,12 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
           pooled.obs.train <- c(pooled.obs.train, nd[, response])
           pooled.pred.train <- c(pooled.pred.train, pred.train)
         }
-      } else
-      {
-        if (error.fold)
-        {
-          res[[i]][[j]]$train <- NULL
-        }
+      } else # nocov ## does this work at all? all runs with err.train = F error
+      { 
+        if (error.fold) # nocov
+        { # nocov
+          res[[i]][[j]]$train <- NULL # nocov
+        } # nocov
       }
       
       # Create test sample:
@@ -810,14 +810,14 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
       ### Permutation-based variable importance assessment:
       if (importance & error.fold)
       {
-        
+        # when does this case occur? 
         if (is.null(res[[i]][[j]]$test))
         {
-          impo[[i]][[j]] <- c()
-          if (progress == 1 | progress == 2)
-          {
-          cat(date(), "-- skipping variable importance\n")
-          }
+          impo[[i]][[j]] <- c() #nocov
+          if (progress == 1 | progress == 2) #nocov
+          { #nocov
+          cat(date(), "-- skipping variable importance\n") #nocov
+          } #nocov
         } else
         {
           
@@ -894,41 +894,39 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
     }
     
     # Put the results from the pooled estimation into the pooled.err data structure:
-    if (error.rep) 
-      {
-        if (is.factor(data[, response]))
-        {
-          lev <- levels(data[, response])
-          if (err.train) 
+    if (error.rep) {
+      if (is.factor(data[, response])) {
+        lev <- levels(data[, response])
+        if (err.train) {
           pooled.obs.train <- factor(lev[pooled.obs.train], levels = lev)
-          pooled.obs.test <- factor(lev[pooled.obs.test], levels = lev)
-          if (is.factor.prediction)
-          {
-          if (err.train) 
-            pooled.pred.train <- factor(lev[pooled.pred.train], levels = lev)
-          pooled.pred.test <- factor(lev[pooled.pred.test], levels = lev)
-          }
         }
-        pooled.err.train <- NULL
-        if (err.train)
-        {
-          pooled.err.train <- err.fun(pooled.obs.train, pooled.pred.train)
+        pooled.obs.test <- factor(lev[pooled.obs.test], levels = lev)
+        if (is.factor.prediction) {
+          if (err.train) { #nocov
+            pooled.pred.train <- factor(lev[pooled.pred.train], levels = lev) #nocov
+          } #nocov
         }
-        if (i == 1)
-        {
-          pooled.err <- t(unlist(list(train = pooled.err.train, test = err.fun(pooled.obs.test, 
-          pooled.pred.test))))
-        } else
-        {
-          pooled.err <- rbind(pooled.err, unlist(list(train = pooled.err.train, 
-          test = err.fun(pooled.obs.test, pooled.pred.test))))
-        }
-        
-        if (do.gc >= 2)
-        {
-          gc()
-        }
-      }  # end for each fold
+      }
+      pooled.err.train <- NULL
+      if (err.train)
+      {
+        pooled.err.train <- err.fun(pooled.obs.train, pooled.pred.train)
+      }
+      if (i == 1)
+      {
+        pooled.err <- t(unlist(list(train = pooled.err.train, test = err.fun(pooled.obs.test, 
+                                                                             pooled.pred.test))))
+      } else
+      {
+        pooled.err <- rbind(pooled.err, unlist(list(train = pooled.err.train, 
+                                                    test = err.fun(pooled.obs.test, pooled.pred.test))))
+      }
+      
+      if (do.gc >= 2)
+      {
+        gc()
+      }
+    }  # end for each fold
     
     if ((do.gc >= 1) & (do.gc < 2))
     {
