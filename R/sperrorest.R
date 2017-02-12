@@ -171,8 +171,9 @@ summary.sperrorestimportance <- function(object, level = 0, na.rm = TRUE, which 
 #' used cores and system information
 #' @name summary.sperrorestbenchmarks
 #' @method summary sperrorestbenchmarks
+#' @inheritParams summary.sperroresterror
 #' 
-#' @param object [sperrorestbenchmarks()] object returned class by 
+#' @param object `sperrorestbenchmarks` object returned class by 
 #' [sperrorest()] 
 #' @return List of length seven
 #' 
@@ -190,8 +191,9 @@ summary.sperrorestbenchmarks <- function(object, ...) {
 #' `summary.sperrorestpackageversion` returns the package version of sperrorest
 #' @name summary.sperrorestpackageversion
 #' @method summary sperrorestpackageversion
+#' @inheritParams summary.sperroresterror
 #' 
-#' @param object [sperrorestpackageversion()] object calculated by 
+#' @param object `sperrorestpackageversion` object calculated by 
 #' [sperrorest()] 
 #' @return character vector of length one
 #' 
