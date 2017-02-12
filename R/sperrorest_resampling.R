@@ -30,7 +30,11 @@
 #' or partition the data set itself; it simply creates a data structure 
 #' containing the indices of training and test samples.
 #' 
-#' @return If `return.factor = FALSE` (the default), a 
+#' @section Partition example:
+#' ![](plot_resampling.png "Example Plot Title") \cr
+#' Figure 1: 5-fold partitions created by `partition.cv()`. See examples. 
+#' 
+#' @return If `return.factor=FALSE` (the default), a 
 #' [represampling()] object. Specifically, this is a (named) list of 
 #' `length(repetition)` `resampling` objects.
 #' Each of these [resampling()] objects is a list of length 
@@ -57,8 +61,8 @@
 #' ecuador[idx , ]
 #' @export
 partition.cv <- function(data, coords = c("x", "y"), nfold = 10, repetition = 1, 
-                         seed1 = NULL, return.factor = FALSE)
-{
+  seed1 = NULL, return.factor = FALSE)
+  {
   resampling <- list()
   
   for (cnt in repetition)
@@ -80,27 +84,27 @@ partition.cv <- function(data, coords = c("x", "y"), nfold = 10, repetition = 1,
 
 #' Partition the data for a stratified (non-spatial) cross-validation
 #'
-#' \code{partition.cv.strat} creates a set of sample indices corresponding 
+#' `partition.cv.strat` creates a set of sample indices corresponding 
 #' to cross-validation test and training sets.
 #' 
 #' @name partition.cv.strat
 #' @inheritParams partition.cv
 #' 
-#' @param coords vector of length 2 defining the variables in \code{data} that 
+#' @param coords vector of length 2 defining the variables in `data` that 
 #' contain the x and y coordinates of sample locations
-#' @param strat character: column in \code{data} containing a factor variable 
+#' @param strat character: column in `data` containing a factor variable 
 #' over which the partitioning should be stratified; or factor vector of length 
-#' \code{nrow(data)}: variable over which to stratify
+#' `nrow(data)`: variable over which to stratify
 #' 
-#' @return A \code{\link{represampling}} object, see also 
-#' \code{\link{partition.cv}}. \code{partition.strat.cv}, however, 
-#' stratified with respect to the variable \code{data[,strat]}; 
+#' @return A [represampling()] object, see also 
+#' [partition.cv()]. `partition.strat.cv`, however, 
+#' stratified with respect to the variable `data[,strat]`; 
 #' i.e., cross-validation partitioning is done within each set 
-#' \code{data[data[,strat]==i,]} (\code{i} in \code{levels(data[,strat])}), and 
-#' the \code{i}th folds of all levels are combined into one cross-validation fold.
+#' `data[data[,strat]==i,]` (`i` in `levels(data[,strat])`), and 
+#' the `i`th folds of all levels are combined into one cross-validation fold.
 #' 
-#' @seealso \code{\link{sperrorest}}, \code{\link{as.resampling}}, 
-#' \code{\link{resample.strat.uniform}}
+#' @seealso [sperrorest()], [as.resampling()], 
+#' [resample.strat.uniform()]
 #' 
 #' @examples
 #' data(ecuador)
@@ -114,10 +118,9 @@ partition.cv <- function(data, coords = c("x", "y"), nfold = 10, repetition = 1,
 #' mean(ecuador$slides[idx] == 'TRUE') / mean(ecuador$slides == 'TRUE')
 #' # close to 1 because of large sample size, but with some random variation
 #' @export
-#' @noMd
 partition.cv.strat <- function(data, coords = c("x", "y"), nfold = 10, return.factor = FALSE, 
-                               repetition = 1, seed1 = NULL, strat)
-{
+  repetition = 1, seed1 = NULL, strat)
+  {
   repres <- list()
   
   stopifnot((length(strat) == 1) | (length(strat) == nrow(data)))
@@ -185,8 +188,8 @@ partition.cv.strat <- function(data, coords = c("x", "y"), nfold = 10, return.fa
 #' summary(parti)
 #' @export
 partition.factor <- function(data, coords = c("x", "y"), fac, return.factor = FALSE, 
-                             repetition = 1)
-{
+  repetition = 1)
+  {
   if (length(fac) == 1 && is.character(fac)) 
     fac <- data[, fac]
   fac <- factor(fac)
@@ -198,6 +201,9 @@ partition.factor <- function(data, coords = c("x", "y"), fac, return.factor = FA
     represmp <- as.represampling(represmp)
   return(represmp)
 }
+
+
+
 
 #' Partition the data for a (non-spatial) k-fold cross-validation at the group 
 #' level
@@ -229,9 +235,9 @@ partition.factor <- function(data, coords = c("x", "y"), fac, return.factor = FA
 #' [partition.factor()], [as.resampling.factor()]
 #' 
 #' @export
-partition.factor.cv <- function(data, coords = c("x", "y"), fac, nfold = 10, 
-                                repetition = 1, seed1 = NULL, return.factor = FALSE)
-{
+partition.factor.cv <- function(data, coords = c("x", "y"), fac, nfold = 10, repetition = 1, 
+  seed1 = NULL, return.factor = FALSE)
+  {
   if (length(fac) == 1 && is.character(fac)) 
     fac <- data[, fac]
   fac <- factor(fac)
@@ -256,6 +262,11 @@ partition.factor.cv <- function(data, coords = c("x", "y"), fac, nfold = 10,
     resampling <- as.represampling(resampling)
   return(resampling)
 }
+
+
+
+
+
 
 
 #' Partition the study area into rectangular tiles
@@ -343,10 +354,10 @@ partition.factor.cv <- function(data, coords = c("x", "y"), fac, nfold = 10,
 #' summary(parti3)
 #' @export
 partition.tiles <- function(data, coords = c("x", "y"), dsplit = NULL, nsplit = NULL, 
-                            rotation = c("none", "random", "user"), user.rotation, offset = c("none", "random", 
-                                                                                              "user"), user.offset, reassign = TRUE, min.frac = 0.025, min.n = 5, iterate = 1, 
-                            return.factor = FALSE, repetition = 1, seed1 = NULL)
-{
+  rotation = c("none", "random", "user"), user.rotation, offset = c("none", "random", 
+    "user"), user.offset, reassign = TRUE, min.frac = 0.025, min.n = 5, iterate = 1, 
+  return.factor = FALSE, repetition = 1, seed1 = NULL)
+  {
   # Some basic argument checks:
   stopifnot(is.numeric(min.frac) && length(min.frac) == 1)
   stopifnot(is.numeric(min.n) && length(min.n) == 1)
@@ -520,18 +531,18 @@ partition.tiles <- function(data, coords = c("x", "y"), dsplit = NULL, nsplit = 
           nbrs <- tile.neighbors(s.tiles[1], tileset = levels(tile), iterate = iterate)
           if (length(nbrs) == 0)
           {
-            ignore <- c(ignore, as.character(s.tiles[1]))
+          ignore <- c(ignore, as.character(s.tiles[1]))
           } else
           {
-            # Merge tile with smallest neighbour to keep tile sizes balanced:
-            n.tile <- tapply(tile, tile, length)
-            s.nbr <- nbrs[which.min(n.tile[nbrs])]
-            tile[tile == s.tiles[1]] <- s.nbr
-            tile <- factor(as.character(tile))
+          # Merge tile with smallest neighbour to keep tile sizes balanced:
+          n.tile <- tapply(tile, tile, length)
+          s.nbr <- nbrs[which.min(n.tile[nbrs])]
+          tile[tile == s.tiles[1]] <- s.nbr
+          tile <- factor(as.character(tile))
           }
           # Update small tiles list:
           s.tiles <- get.small.tiles(tile, min.n = min.n, min.frac = min.frac, 
-                                     ignore = ignore)
+          ignore = ignore)
         }
       } else
       {
@@ -612,13 +623,13 @@ partition.tiles <- function(data, coords = c("x", "y"), dsplit = NULL, nsplit = 
 #' 
 #' @export
 partition.kmeans <- function(data, coords = c("x", "y"), nfold = 10, repetition = 1, 
-                             seed1 = NULL, return.factor = FALSE, balancing.steps = 1, order.clusters = TRUE, 
-                             ...)
-{
+  seed1 = NULL, return.factor = FALSE, balancing.steps = 1, order.clusters = TRUE, 
+  ...)
+  {
   if (any(names(list(...)) == "kfold"))
   {
     warning("argument 'kfold' has been renamed to 'nfold' in 
-            'partition.kmeans'")
+        'partition.kmeans'")
     nfold <- list(...)$kfold
   }
   balancing.steps <- max(1, balancing.steps)
@@ -630,7 +641,7 @@ partition.kmeans <- function(data, coords = c("x", "y"), nfold = 10, repetition 
       set.seed(seed1 + cnt)
     kms <- list()
     for (i in 1:balancing.steps) kms[[i]] <- kmeans(data[, coords], centers = nfold, 
-                                                    ...)
+      ...)
     kmgini <- function(x)
     {
       p <- x$size/sum(x$size)
@@ -686,21 +697,21 @@ partition.kmeans <- function(data, coords = c("x", "y"), nfold = 10, repetition 
 #' @param replace optional argument to [sample()]: sampling with or 
 #' without replacement?
 #' @param repetition see `partition.cv`; however, 
-#' see Note below: `repetition` should normally be `= 1` in this function.
+#' see Note below: `repetition` should normally be `=1` in this function.
 #' @param ... arguments to be passed to `partition.disc`
 #' 
 #' @return A [represampling()] object. 
 #' Contains `length(repetition)` `resampling` objects. 
 #' Each of these contains `ndisc` lists with indices of test and 
-#' (if `return.train = TRUE`) training sets.
+#' (if `return.train=TRUE`) training sets.
 #' 
 #' @note Test area discs are centered at (random) samples, not at general 
 #' random locations. Test area discs may (and likely will) overlap independently 
 #' of the value of `replace`. `replace` only controls the replacement 
 #' of the center point of discs when drawing center points from the samples. 
 #' 
-#' `radius < 0` does leave-one-out resampling with an optional buffer. 
-#' `radius = 0` is similar except that samples with identical coordinates 
+#' `radius<0` does leave-one-out resampling with an optional buffer. 
+#' `radius=0` is similar except that samples with identical coordinates 
 #' would fall within the test area disc.
 #' 
 #' @references Brenning, A. 2005. Spatial prediction models for landslide 
@@ -722,8 +733,8 @@ partition.kmeans <- function(data, coords = c("x", "y"), nfold = 10, repetition 
 #' summary(parti)
 #' @export
 partition.disc <- function(data, coords = c("x", "y"), radius, buffer = NULL, ndisc = nrow(data), 
-                           seed1 = NULL, return.train = TRUE, prob = NULL, replace = FALSE, repetition = 1)
-{
+  seed1 = NULL, return.train = TRUE, prob = NULL, replace = FALSE, repetition = 1)
+  {
   posbuf <- buffer
   if (is.null(buffer))
   {
@@ -754,7 +765,7 @@ partition.disc <- function(data, coords = c("x", "y"), radius, buffer = NULL, nd
       if (!is.null(buffer) | radius >= 0)
       {
         di <- sqrt((data[, coords[1]] - data[i, coords[1]])^2 + (data[, coords[2]] - 
-                                                                   data[i, coords[2]])^2)
+          data[i, coords[2]])^2)
       }
       train.sel <- numeric()
       if (radius >= 0)
@@ -771,23 +782,23 @@ partition.disc <- function(data, coords = c("x", "y"), radius, buffer = NULL, nd
         {
           if (is.null(buffer))
           {
-            train.sel <- c(1:nrow(data))[-i]
+          train.sel <- c(1:nrow(data))[-i]
           } else train.sel <- which(di > posbuf)
         }
       }
       if (return.train & (length(train.sel) == 0))
       {
         warning("empty training set in 'partition.disc': 'buffer' 
-                and/or 'radius' too large?")
+            and/or 'radius' too large?")
       }
       res[[as.character(i)]] <- list(train = train.sel, test = test.sel)
-      }
+    }
     resample[[as.character(cnt)]] <- res
   }
   repres <- as.represampling(resample)
   
   return(repres)
-  }
+}
 
 
 #' @rdname partition.disc
@@ -799,6 +810,7 @@ partition.loo <- function(data, ndisc = nrow(data), replace = FALSE, ...)
 {
   partition.disc(data = data, radius = -1, ndisc = ndisc, replace = replace, ...)
 }
+
 
 #' Non-spatial bootstrap resampling
 #'
@@ -829,8 +841,8 @@ partition.loo <- function(data, ndisc = nrow(data), replace = FALSE, ...)
 #' # the test sample (possibly even multiple times)
 #' @export
 represampling.bootstrap <- function(data, coords = c("x", "y"), nboot = nrow(data), 
-                                    repetition = 1, seed1 = NULL, oob = FALSE)
-{
+  repetition = 1, seed1 = NULL, oob = FALSE)
+  {
   resample <- list()
   for (cnt in repetition)
   {
@@ -908,8 +920,8 @@ represampling.bootstrap <- function(data, coords = c("x", "y"), nboot = nrow(dat
 #' 
 #' @export
 represampling.factor.bootstrap <- function(data, fac, repetition = 1, nboot = -1, 
-                                           seed1 = NULL, oob = FALSE)
-{
+  seed1 = NULL, oob = FALSE)
+  {
   if (oob && length(nboot) > 1) 
     warning("nboot[2] ignored because 'oob=TRUE'")
   if (is.list(fac))
@@ -964,7 +976,7 @@ represampling.factor.bootstrap <- function(data, fac, repetition = 1, nboot = -1
     test <- unlist(sapply(test, function(x) which(the.fac == x)), use.names = FALSE)
     # Compile training and test indices into a resampling object:
     resample[[as.character(cnt)]] <- as.resampling(list(`1` = list(train = train, 
-                                                                   test = test)))
+      test = test)))
   }
   
   resample <- as.represampling(resample)
@@ -986,12 +998,12 @@ represampling.factor.bootstrap <- function(data, fac, repetition = 1, nboot = -1
 #' 
 #' @export
 represampling.tile.bootstrap <- function(data, coords = c("x", "y"), repetition = 1, 
-                                         nboot = -1, seed1 = NULL, oob = FALSE, ...)
-{
+  nboot = -1, seed1 = NULL, oob = FALSE, ...)
+  {
   parti <- partition.tiles(data = data, coords = coords, repetition = repetition, 
-                           seed1 = seed1, return.factor = TRUE, ...)
+    seed1 = seed1, return.factor = TRUE, ...)
   repres <- represampling.factor.bootstrap(data = data, fac = parti, repetition = repetition, 
-                                           seed1 = seed1, nboot = nboot, oob = oob)
+    seed1 = seed1, nboot = nboot, oob = oob)
   return(repres)
 }
 
@@ -1011,12 +1023,12 @@ represampling.tile.bootstrap <- function(data, coords = c("x", "y"), repetition 
 #' 
 #' @export
 represampling.kmeans.bootstrap <- function(data, coords = c("x", "y"), repetition = 1, 
-                                           nfold = 10, nboot = nfold, seed1 = NULL, oob = FALSE, ...)
-{
+  nfold = 10, nboot = nfold, seed1 = NULL, oob = FALSE, ...)
+  {
   parti <- partition.tiles(data = data, coords = coords, repetition = repetition, 
-                           seed1 = seed1, return.factor = TRUE, ...)
+    seed1 = seed1, return.factor = TRUE, ...)
   repres <- represampling.factor.bootstrap(data = data, fac = parti, repetition = repetition, 
-                                           seed1 = seed1, nboot = nboot, oob = oob)
+    seed1 = seed1, nboot = nboot, oob = oob)
   return(repres)
 }
 
@@ -1062,8 +1074,8 @@ represampling.kmeans.bootstrap <- function(data, coords = c("x", "y"), repetitio
 #' 
 #' @export
 represampling.disc.bootstrap <- function(data, coords = c("x", "y"), nboot, repetition = 1, 
-                                         seed1 = NULL, oob = FALSE, ...)
-{
+  seed1 = NULL, oob = FALSE, ...)
+  {
   if (oob && length(nboot) > 1) 
     warning("nboot[2] ignored because oob=TRUE")
   if (length(nboot) == 1) 
@@ -1077,7 +1089,7 @@ represampling.disc.bootstrap <- function(data, coords = c("x", "y"), nboot, repe
       if (!is.null(seed1)) 
         set.seed(seed1 + cnt)
       train <- partition.disc(data = data, coords = coords, repetition = c(1:nboot[1]), 
-                              replace = TRUE, ndisc = 1, seed1 = NULL, return.train = TRUE, ...)
+        replace = TRUE, ndisc = 1, seed1 = NULL, return.train = TRUE, ...)
       test <- c(1:nrow(data))
       for (i in 1:nboot[1])
       {
@@ -1086,7 +1098,7 @@ represampling.disc.bootstrap <- function(data, coords = c("x", "y"), nboot, repe
       }
       if (length(test) == 0) 
         warning("empty test set in 'partition.disc.bootstrap':\n'buffer' 
-                and/or 'radius' and/or 'nboot' too large?")
+        and/or 'radius' and/or 'nboot' too large?")
       train <- unname(unlist(train))
       resample[[as.character(cnt)]] <- list(`1` = list(train = train, test = test))
     }
@@ -1098,10 +1110,10 @@ represampling.disc.bootstrap <- function(data, coords = c("x", "y"), nboot, repe
       if (!is.null(seed1)) 
         set.seed(seed1 + cnt)
       train <- partition.disc(data = data, coords = coords, repetition = c(1:nboot[1]), 
-                              seed1 = NULL, replace = TRUE, ndisc = 1, return.train = FALSE, ...)
+        seed1 = NULL, replace = TRUE, ndisc = 1, return.train = FALSE, ...)
       train <- unname(unlist(train))
       test <- partition.disc(data = data, coords = coords, repetition = c(1:nboot[2]), 
-                             seed1 = NULL, replace = TRUE, ndisc = 1, return.train = FALSE, ...)
+        seed1 = NULL, replace = TRUE, ndisc = 1, return.train = FALSE, ...)
       test <- unname(unlist(test))
       resample[[as.character(cnt)]] <- list(`1` = list(train = train, test = test))
     }
@@ -1151,8 +1163,8 @@ represampling.disc.bootstrap <- function(data, coords = c("x", "y"), nboot, repe
 #' 
 #' @export
 plot.represampling <- function(x, data, coords = c("x", "y"), pch = "+", wiggle.sd = 0, 
-                               ...)
-{
+  ...)
+  {
   if (missing(data)) 
     stop("'data' argument missing")
   stopifnot(wiggle.sd >= 0)
@@ -1168,7 +1180,7 @@ plot.represampling <- function(x, data, coords = c("x", "y"), pch = "+", wiggle.
             Trying anyway...")
   op <- par(no.readonly = TRUE)
   par(mfrow = c(nr, nc), mar = c(2, 2, 3, 0.5), mgp = c(2, 0.7, 0), tcl = -0.3, 
-      cex = 0.5)
+    cex = 0.5)
   for (i in 1:length(resample))
   {
     for (j in 1:length(resample[[i]]))
@@ -1177,15 +1189,15 @@ plot.represampling <- function(x, data, coords = c("x", "y"), pch = "+", wiggle.
       seltest <- resample[[i]][[j]]$test
       main <- paste("Repetition ", names(resample)[i], ", Fold ", j)
       plot(data[, coords[1]], data[, coords[2]], pch = ".", type = "n", main = main, 
-           xlab = "", ylab = "", ...)  # xlab=coords[1], ylab=coords[2])
+        xlab = "", ylab = "", ...)  # xlab=coords[1], ylab=coords[2])
       wxtrain <- rnorm(length(seltrain), sd = wiggle.sd)
       wytrain <- rnorm(length(seltrain), sd = wiggle.sd)
       wxtest <- rnorm(length(seltest), sd = wiggle.sd)
       wytest <- rnorm(length(seltest), sd = wiggle.sd)
       points(data[seltrain, coords[1]] + wxtrain, data[seltrain, coords[2]] + 
-               wytrain, pch = pch)
+        wytrain, pch = pch)
       points(data[seltest, coords[1]] + wxtest, data[seltest, coords[2]] + 
-               wxtest, pch = pch, col = "red")
+        wxtest, pch = pch, col = "red")
     }
   }
   par(op)
