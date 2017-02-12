@@ -165,11 +165,29 @@ summary.sperrorestimportance <- function(object, level = 0, na.rm = TRUE, which 
   return(arr)
 }
 
+#' Summarize benchmark information obtained by `sperrorest`
+#' 
+#' `summary.sperrorestbenchmarks` shows information on runtime performance, 
+#' used cores and system information
+#' @name summary.sperrorestbenchmarks
+#' @method summary sperrorestbenchmarks
+#' 
+#' @param object [sperrorestbenchmarks()] object returned class by 
+#' [sperrorest()] 
+#' @return List of length seven
+#' 
+#' @export
+summary.sperrorestbenchmarks <- function(object, ...) {
+  class(object) <- NULL
+  object <- unlist(object)
+  object <- as.matrix(object)
+  colnames(object) <- "benchmarks"
+  return(object)
+}
+
 #' Summarize package version information obtained by `sperrorest`
 #' 
-#' `summary.sperrorestpackageversion` calculated mean, standard deviation, 
-#' median etc. of the calculated error measures at the specified level 
-#' (overall, repetition, or fold).
+#' `summary.sperrorestpackageversion` returns the package version of sperrorest
 #' @name summary.sperrorestpackageversion
 #' @method summary sperrorestpackageversion
 #' 
@@ -1055,10 +1073,10 @@ print.sperrorestreperror <- function(x, ...) print(unclass(summary(x, level = In
 print.sperrorest <- function(x, ...) print(unclass(summary(x, level = Inf, ...)))
 
 #' @rdname summary.sperrorest
-#' @name print.sperrorestbenchmark
-#' @method print sperrorestbenchmark
+#' @name print.sperrorestbenchmarks
+#' @method print sperrorestbenchmarks
 #' @export
-print.sperrorestbenchmark <- function(x, ...) print(unclass(summary(x, level = Inf, ...)))
+print.sperrorestbenchmarks <- function(x, ...) print(summary(x), ...)
 
 #' @rdname summary.sperrorest
 #' @name print.sperrorestpackageversion
