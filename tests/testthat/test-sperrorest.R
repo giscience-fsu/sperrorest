@@ -199,13 +199,15 @@ test_that("summary.sperrorest() works correctly", {
   fo <- slope ~ hcurv + vcurv + log.carea + cslope
   
   out <- sperrorest(data = ecuador, formula = fo,
-                            model.fun = glm,
-                            pred.fun = predict,
-                            smp.fun = partition.cv, 
-                            smp.args = list(repetition = 1:2, nfold = 2),
-                            importance = F, error.fold = T)
+                    model.fun = glm,
+                    pred.fun = predict,
+                    smp.fun = partition.cv, 
+                    smp.args = list(repetition = 1:2, nfold = 2),
+                    importance = T, imp.permutations = 10,
+                    error.fold = T, 
+                    benchmark = T)
   
   smry.out <- summary(out)
   
-  expect_equal(length(smry.out), 4)
+  expect_equal(length(smry.out), 6)
 })
