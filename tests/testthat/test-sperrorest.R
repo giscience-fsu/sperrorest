@@ -41,7 +41,7 @@ test_that("sperrorest() produces correct output for binary response", {
                        pred.fun = predict,
                        smp.fun = partition.cv, 
                        smp.args = list(repetition = 1:2, nfold = 10),
-                       notify = TRUE, benchmark = TRUE,
+                       notify = TRUE, benchmark = TRUE, 
                        importance = TRUE, imp.permutations = 10)
   summary.rep <- summary(nspres$error.rep)                    
   summary.fold <- summary(nspres$error.fold)
@@ -66,7 +66,8 @@ test_that("sperrorest() produces correct output for binary response", {
   nspres <- sperrorest(data = ecuador, formula = fo,
                        model.fun = glm,
                        smp.fun = partition.cv, 
-                       smp.args = list(repetition = 1:2, nfold = 10))
+                       smp.args = list(repetition = 1:2, nfold = 10),
+                       importance = TRUE, imp.permutations = 2)
   
   expect_equal(length(nspres$error.rep[[1]]), 2) # reps
 })
@@ -104,7 +105,8 @@ test_that("summary.sperroresterror() with pooled = FALSE produces correct output
                        pred.fun = predict,
                        smp.fun = partition.cv, 
                        smp.args = list(repetition = 1:2, nfold = 10),
-                       importance = TRUE, imp.permutations = 10)
+                       importance = TRUE, imp.permutations = 10,
+                       do.try = TRUE)
   
   summary.imp <- summary(nspres$importance)        
   
@@ -164,4 +166,46 @@ test_that("deprecated args", {
                           smp.fun = partition.cv, 
                           smp.args = list(repetition = 1:2, nfold = 10),
                           err.unpooled = NULL))
+})
+
+# sperrorest() various non default arguments Fri Feb 10 19:09:01 2017 ------------------------------
+
+# does not work with err.train = F and importance = T
+
+test_that("sperrorest() produces correct output for binary response for non-default arguments", {
+  data(ecuador) # Muenchow et al. (2012), see ?ecuador
+  fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
+  
+  nspres <- sperrorest(data = ecuador, formula = fo,
+                       model.fun = glm, model.args = list(family = "binomial"),
+                       pred.fun = predict, pred.args = list(type = "response"),
+                       smp.fun = partition.cv, 
+                       smp.args = list(repetition = 1:2, nfold = 2),
+                       notify = F, benchmark = F,
+                       importance = TRUE, imp.permutations = 10,
+                       do.try = TRUE, err.train = T, do.gc = 2)
+  
+  expect_equal(length(nspres$error.rep[[1]]), 2) # reps
+  expect_equal(length(nspres$error.fold[[1]]), 2) # folds
+  expect_equal(length(nspres$importance[[1]]), 2) # import folds
+  expect_equal(length(nspres$importance), 2) # import reps
+})
+
+
+# summary.sperrorest() Sun Feb 12 11:56:13 2017 ------------------------------
+
+test_that("summary.sperrorest() works correctly", {
+  data(ecuador) # Muenchow et al. (2012), see ?ecuador
+  fo <- slope ~ hcurv + vcurv + log.carea + cslope
+  
+  out <- sperrorest(data = ecuador, formula = fo,
+                            model.fun = glm,
+                            pred.fun = predict,
+                            smp.fun = partition.cv, 
+                            smp.args = list(repetition = 1:2, nfold = 2),
+                            importance = F, error.fold = T)
+  
+  smry.out <- summary(out)
+  
+  expect_equal(length(smry.out), 4)
 })
