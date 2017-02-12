@@ -11,7 +11,7 @@ partition.cv.strat(data, coords = c("x", "y"), nfold = 10,
 \item{data}{\code{data.frame} containing at least the columns specified
 by \code{coords}}
 
-\item{coords}{vector of length 2 defining the variables in \code{data} that
+\item{coords}{vector of length 2 defining the variables in \code{data} that 
 contain the x and y coordinates of sample locations}
 
 \item{nfold}{number of partitions (folds) in \code{nfold}-fold
@@ -32,23 +32,20 @@ to obtain a different set of 100 repetitions.}
 \code{\link[=set.seed]{set.seed()}} in repetition \code{i} (\code{i} in \code{repetition})
 to initialize the random number generator before sampling from the data set.}
 
-\item{strat}{character: column in \code{data} containing a factor variable
-over which the partitioning should be stratified; or factor vector of length
+\item{strat}{character: column in \code{data} containing a factor variable 
+over which the partitioning should be stratified; or factor vector of length 
 \code{nrow(data)}: variable over which to stratify}
 }
 \value{
-A \code{\link[=represampling]{represampling()}} object, see also
-\code{\link[=partition.cv]{partition.cv()}}. \code{partition.strat.cv}, however,
-stratified with respect to the variable \code{data[,strat]};
-i.e., cross-validation partitioning is done within each set
-\code{data[data[,strat]==i,]} (\code{i} in \code{levels(data[,strat])}), and
+A \code{\link{represampling}} object, see also 
+\code{\link{partition.cv}}. \code{partition.strat.cv}, however, 
+stratified with respect to the variable \code{data[,strat]}; 
+i.e., cross-validation partitioning is done within each set 
+\code{data[data[,strat]==i,]} (\code{i} in \code{levels(data[,strat])}), and 
 the \code{i}th folds of all levels are combined into one cross-validation fold.
-
-[data\link{,strat}: R:data[,strat
-\link{,strat}: R:,strat
 }
 \description{
-\code{partition.cv.strat} creates a set of sample indices corresponding
+\code{partition.cv.strat} creates a set of sample indices corresponding 
 to cross-validation test and training sets.
 }
 \examples{
@@ -64,6 +61,6 @@ mean(ecuador$slides[idx] == 'TRUE') / mean(ecuador$slides == 'TRUE')
 # close to 1 because of large sample size, but with some random variation
 }
 \seealso{
-\code{\link[=sperrorest]{sperrorest()}}, \code{\link[=as.resampling]{as.resampling()}},
-\code{\link[=resample.strat.uniform]{resample.strat.uniform()}}
+\code{\link{sperrorest}}, \code{\link{as.resampling}}, 
+\code{\link{resample.strat.uniform}}
 }

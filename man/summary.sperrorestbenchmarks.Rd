@@ -7,8 +7,10 @@
 \method{summary}{sperrorestbenchmarks}(object, ...)
 }
 \arguments{
-\item{object}{\code{\link[=sperrorestbenchmarks]{sperrorestbenchmarks()}} object returned class by
+\item{object}{\code{sperrorestbenchmarks} object returned class by
 \code{\link[=sperrorest]{sperrorest()}}}
+
+\item{...}{additional arguments (currently ignored)}
 }
 \value{
 List of length seven

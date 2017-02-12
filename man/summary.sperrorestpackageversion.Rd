@@ -7,8 +7,10 @@
 \method{summary}{sperrorestpackageversion}(object, ...)
 }
 \arguments{
-\item{object}{\code{\link[=sperrorestpackageversion]{sperrorestpackageversion()}} object calculated by
+\item{object}{\code{sperrorestpackageversion} object calculated by
 \code{\link[=sperrorest]{sperrorest()}}}
+
+\item{...}{additional arguments (currently ignored)}
 }
 \value{
 character vector of length one
