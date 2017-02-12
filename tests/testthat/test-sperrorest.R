@@ -211,3 +211,21 @@ test_that("summary.sperrorest() works correctly", {
   
   expect_equal(length(smry.out), 6)
 })
+
+# sperrorest() error.rep = F & do.try = T Sun Feb 12 23:05:30 2017 ------------------------------
+
+test_that("sperrorest() error.rep = F & do.try = T", {
+  data(ecuador) # Muenchow et al. (2012), see ?ecuador
+  fo <- slope ~ hcurv + vcurv + log.carea + cslope
+  
+  out <- sperrorest(data = ecuador, formula = fo,
+                    model.fun = glm,
+                    pred.fun = predict,
+                    smp.fun = partition.cv, 
+                    smp.args = list(repetition = 1:2, nfold = 2),
+                    error.rep = F, do.try = T)
+  
+  smry.out <- summary(out)
+  
+  expect_equal(length(smry.out), 6)
+})
