@@ -165,6 +165,22 @@ summary.sperrorestimportance <- function(object, level = 0, na.rm = TRUE, which 
   return(arr)
 }
 
+#' Summarize package version information obtained by `sperrorest`
+#' 
+#' `summary.sperrorestpackageversion` calculated mean, standard deviation, 
+#' median etc. of the calculated error measures at the specified level 
+#' (overall, repetition, or fold).
+#' @name summary.sperrorestpackageversion
+#' @method summary sperrorestpackageversion
+#' 
+#' @param object [sperrorestpackageversion()] object calculated by 
+#' [sperrorest()] 
+#' @return character vector of length one
+#' 
+#' @export
+summary.sperrorestpackageversion <- function(object, ...) {
+  paste(object[[1]], collapse = ".")
+}
 
 #' Draw stratified random sample
 #'
@@ -696,7 +712,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
       nd <- data[resamp[[i]][[j]]$train, ]
       if (!is.null(train.fun))
       {
-        nd <- train.fun(data = nd, param = train.param)
+        nd <- train.fun(data = nd, param = train.param) # nocov
       }
       # Train model on training sample:
       margs <- c(list(formula = formula, data = nd), model.args)
@@ -722,10 +738,10 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
           next  # skip this fold
         }
         
-      } else 
-      {  
-        fit <- do.call(model.fun, args = margs) 
-      } 
+      } else
+      {
+        fit <- do.call(model.fun, args = margs)
+      }
       
       if (err.train)
       {
@@ -759,12 +775,12 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
           pooled.obs.train <- c(pooled.obs.train, nd[, response])
           pooled.pred.train <- c(pooled.pred.train, pred.train)
         }
-      } else # nocov ## does this work at all? all runs with err.train = F error
-      { 
-        if (error.fold) # nocov
-        { # nocov
-          res[[i]][[j]]$train <- NULL # nocov
-        } # nocov
+      } else
+      {
+        if (error.fold)
+        {
+          res[[i]][[j]]$train <- NULL
+        }
       }
       
       # Create test sample:
@@ -810,14 +826,14 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
       ### Permutation-based variable importance assessment:
       if (importance & error.fold)
       {
-        # when does this case occur? 
+        
         if (is.null(res[[i]][[j]]$test))
         {
-          impo[[i]][[j]] <- c() #nocov
-          if (progress == 1 | progress == 2) #nocov
-          { #nocov
-          cat(date(), "-- skipping variable importance\n") #nocov
-          } #nocov
+          impo[[i]][[j]] <- c()
+          if (progress == 1 | progress == 2)
+          {
+          cat(date(), "-- skipping variable importance\n")
+          }
         } else
         {
           
@@ -894,39 +910,41 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
     }
     
     # Put the results from the pooled estimation into the pooled.err data structure:
-    if (error.rep) {
-      if (is.factor(data[, response])) {
-        lev <- levels(data[, response])
-        if (err.train) {
+    if (error.rep) 
+      {
+        if (is.factor(data[, response]))
+        {
+          lev <- levels(data[, response])
+          if (err.train) 
           pooled.obs.train <- factor(lev[pooled.obs.train], levels = lev)
+          pooled.obs.test <- factor(lev[pooled.obs.test], levels = lev)
+          if (is.factor.prediction)
+          {
+          if (err.train) 
+            pooled.pred.train <- factor(lev[pooled.pred.train], levels = lev)
+          pooled.pred.test <- factor(lev[pooled.pred.test], levels = lev)
+          }
         }
-        pooled.obs.test <- factor(lev[pooled.obs.test], levels = lev)
-        if (is.factor.prediction) {
-          if (err.train) { #nocov
-            pooled.pred.train <- factor(lev[pooled.pred.train], levels = lev) #nocov
-          } #nocov
+        pooled.err.train <- NULL
+        if (err.train)
+        {
+          pooled.err.train <- err.fun(pooled.obs.train, pooled.pred.train)
         }
-      }
-      pooled.err.train <- NULL
-      if (err.train)
-      {
-        pooled.err.train <- err.fun(pooled.obs.train, pooled.pred.train)
-      }
-      if (i == 1)
-      {
-        pooled.err <- t(unlist(list(train = pooled.err.train, test = err.fun(pooled.obs.test, 
-                                                                             pooled.pred.test))))
-      } else
-      {
-        pooled.err <- rbind(pooled.err, unlist(list(train = pooled.err.train, 
-                                                    test = err.fun(pooled.obs.test, pooled.pred.test))))
-      }
-      
-      if (do.gc >= 2)
-      {
-        gc()
-      }
-    }  # end for each fold
+        if (i == 1)
+        {
+          pooled.err <- t(unlist(list(train = pooled.err.train, test = err.fun(pooled.obs.test, 
+          pooled.pred.test))))
+        } else
+        {
+          pooled.err <- rbind(pooled.err, unlist(list(train = pooled.err.train, 
+          test = err.fun(pooled.obs.test, pooled.pred.test))))
+        }
+        
+        if (do.gc >= 2)
+        {
+          gc()
+        }
+      }  # end for each fold
     
     if ((do.gc >= 1) & (do.gc < 2))
     {
@@ -972,8 +990,11 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
     notify(title = "sperrorest() finished successfully!", msg <- msg)
   }
   
+  package.version <- packageVersion("sperrorest")
+  class(package.version) <- "sperrorestpackageversion"
+  
   RES <- list(error.rep = pooled.err, error.fold = res, represampling = resamp, 
-    importance = impo, benchmarks = my.bench, package.version = packageVersion("sperrorest"))
+              importance = impo, benchmarks = my.bench, package.version = package.version)
   class(RES) <- "sperrorest"
   
   return(RES)
@@ -1004,7 +1025,7 @@ summary.sperrorest <- function(object, ...)
 {
   list(error.rep = summary(object$error.rep, ...), error.fold = summary(object$error.fold, 
     ...), represampling = summary(object$represampling, ...), importance = summary(object$importance, 
-    ...))
+    ...), benchmark = summary(object$benchmark, ...), packageVersion = summary(object$package.version, ...))
 }
 
 #' @rdname summary.sperrorest
@@ -1032,3 +1053,18 @@ print.sperrorestreperror <- function(x, ...) print(unclass(summary(x, level = In
 #' @method print sperrorest
 #' @export
 print.sperrorest <- function(x, ...) print(unclass(summary(x, level = Inf, ...)))
+
+#' @rdname summary.sperrorest
+#' @name print.sperrorestbenchmark
+#' @method print sperrorestbenchmark
+#' @export
+print.sperrorestbenchmark <- function(x, ...) print(unclass(summary(x, level = Inf, ...)))
+
+#' @rdname summary.sperrorest
+#' @name print.sperrorestpackageversion
+#' @method print sperrorestpackageversion
+#' @export
+print.sperrorestpackageversion <- function(x, ...) print(summary(x))
+
+
+
