@@ -26,5 +26,5 @@ test_that("resample.uniform() produces correct output", {
 test_that("resample.uniform() produces correct output", {
   data(ecuador) # Muenchow et al. (2012), see ?ecuador
   d <- resample.uniform(ecuador, param = list(strat = 'slides', n = 200))
-  expect_equal(nrow(d), 400) # == 400
+  expect_equal(nrow(d), 200) # == 400
 })
