@@ -4,8 +4,8 @@
 #' (with or without replacement) from the samples in `data`. 
 #' Stratification is over the levels of `data[,param$response]`. 
 #' The same number of samples is drawn within each level.
-#' @import sp coordinates
-#' @import raster plot
+#' @importFrom sp coordinates
+#' @importFrom raster plot
 #' 
 #' @param data a `data.frame`, rows represent samples
 #' @param param a list with the following components: `strat` is either 
@@ -84,8 +84,8 @@ resample.strat.uniform <- function(data, param = list(strat = "class", nstrat = 
 #'
 #' `resample.uniform` draws a random (sub)sample 
 #' (with or without replacement) from the samples in `data`.
-#' @import sp coordinates
-#' @import raster plot
+#' @importFrom sp coordinates
+#' @importFrom raster plot
 #' 
 #' 
 #' @param data a `data.frame`, rows represent samples
@@ -132,8 +132,8 @@ resample.uniform <- function(data, param = list(n = Inf, replace = FALSE))
 #' `resample.factor` draws a random (sub)sample 
 #' (with or without replacement) of the groups or clusters identified by 
 #' the `fac` argument.
-#' @import sp coordinates
-#' @import raster plot
+#' @importFrom sp coordinates
+#' @importFrom raster plot
 #' 
 #' 
 #' @param data a `data.frame`, rows represent samples
