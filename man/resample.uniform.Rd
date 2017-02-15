@@ -30,8 +30,6 @@ data(ecuador) # Muenchow et al. (2012), see ?ecuador
 d = resample.uniform(ecuador, param = list(strat = 'slides', n = 200))
 nrow(d) # == 200
 sum(d$slides == 'TRUE')
-coordinates(d) <- 1:2
-plot(d)
 
 }
 \seealso{

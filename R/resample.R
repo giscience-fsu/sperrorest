@@ -4,8 +4,6 @@
 #' (with or without replacement) from the samples in `data`. 
 #' Stratification is over the levels of `data[,param$response]`. 
 #' The same number of samples is drawn within each level.
-#' @importFrom sp coordinates
-#' @importFrom raster plot
 #' 
 #' @param data a `data.frame`, rows represent samples
 #' @param param a list with the following components: `strat` is either 
@@ -28,8 +26,6 @@
 #'                             param = list(strat = 'slides', nstrat = 100))
 #' nrow(d) # == 200
 #' sum(d$slides == 'TRUE') # == 100
-#' coordinates(d) <- 1:2
-#' plot(d)
 #' 
 #' @export
 resample.strat.uniform <- function(data, param = list(strat = "class", nstrat = Inf, 
@@ -84,8 +80,6 @@ resample.strat.uniform <- function(data, param = list(strat = "class", nstrat = 
 #'
 #' `resample.uniform` draws a random (sub)sample 
 #' (with or without replacement) from the samples in `data`.
-#' @importFrom sp coordinates
-#' @importFrom raster plot
 #' 
 #' 
 #' @param data a `data.frame`, rows represent samples
@@ -106,8 +100,6 @@ resample.strat.uniform <- function(data, param = list(strat = "class", nstrat = 
 #' d = resample.uniform(ecuador, param = list(strat = 'slides', n = 200))
 #' nrow(d) # == 200
 #' sum(d$slides == 'TRUE')
-#' coordinates(d) <- 1:2
-#' plot(d)
 #' 
 #' @export
 resample.uniform <- function(data, param = list(n = Inf, replace = FALSE))
@@ -132,9 +124,6 @@ resample.uniform <- function(data, param = list(n = Inf, replace = FALSE))
 #' `resample.factor` draws a random (sub)sample 
 #' (with or without replacement) of the groups or clusters identified by 
 #' the `fac` argument.
-#' @importFrom sp coordinates
-#' @importFrom raster plot
-#' 
 #' 
 #' @param data a `data.frame`, rows represent samples
 #' @param param a list with the following components: `fac` is a factor 
@@ -156,8 +145,6 @@ resample.uniform <- function(data, param = list(n = Inf, replace = FALSE))
 #' d <- resample.uniform(ecuador, param = list(strat = 'slides', n = 200))
 #' nrow(d) # == 200
 #' sum(d$slides == 'TRUE')
-#' coordinates(d) <- 1:2
-#' plot(d)
 #' 
 #' @export
 resample.factor <- function(data, param = list(fac = "class", n = Inf, replace = FALSE))

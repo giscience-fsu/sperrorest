@@ -36,8 +36,6 @@ d <- resample.strat.uniform(ecuador,
                             param = list(strat = 'slides', nstrat = 100))
 nrow(d) # == 200
 sum(d$slides == 'TRUE') # == 100
-coordinates(d) <- 1:2
-plot(d)
 
 }
 \seealso{
