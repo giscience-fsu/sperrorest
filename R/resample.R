@@ -34,11 +34,10 @@ resample.strat.uniform <- function(data, param = list(strat = "class", nstrat = 
   # Old version:
   if (!is.null(param$response))
   {
-    warning("'param$response' argument in 'resample.strat.uniform' renamed 
-            to 'strat';\n modify your code accordingly")
-    if (is.null(param$strat)) 
-      param$strat <- param$response
-  }
+    warning("'param$response' argument in 'resample.strat.uniform' renamed to 'strat';\n modify your code accordingly") # nocov
+    if (is.null(param$strat)) # nocov
+      param$strat <- param$response # nocov
+  } 
   
   # Use defaults if not specified:
   if (is.null(param$strat)) 
