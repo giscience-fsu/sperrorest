@@ -1,6 +1,6 @@
 context("sperrorest.R")
 
-pacman::p_load(sperrorest, rpart, testthat)
+pacman::p_load(sperrorest, rpart, testthat, MASS)
 
 # sperrorest() binary response Wed Feb  8 21:40:49 2017 ------------------------------
 
@@ -229,3 +229,51 @@ test_that("sperrorest() error.rep = F & do.try = T", {
   
   expect_equal(length(smry.out), 6)
 })
+
+
+
+test_that("is.factor.prediction object for classification models", {
+            testthat::skip_on_cran()
+            
+            lda.predfun <- function(object, newdata, fac = NULL) {
+              library(nnet)
+              majority <- function(x) {
+                levels(x)[which.is.max(table(x))]
+              }
+              
+              majority.filter <- function(x, fac) {
+                for (lev in levels(fac)) {
+                  x[ fac == lev ] <- majority(x[ fac == lev ])
+                }
+                x
+              }
+              
+              pred <- predict(object, newdata = newdata)$class
+              if (!is.null(fac)) pred <- majority.filter(pred, newdata[,fac])
+              return(pred)
+            }
+            
+            fo <- croptype ~ b12 + b13 + b14 + b15 + b16 + b17 + b22 + b23 + b24 +
+              b25 + b26 + b27 + b32 + b33 + b34 + b35 + b36 + b37 + b42 +
+              b43 + b44 + b45 + b46 + b47 + b52 + b53 + b54 + b55 + b56 +
+              b57 + b62 + b63 + b64 + b65 + b66 + b67 + b72 + b73 + b74 +
+              b75 + b76 + b77 + b82 + b83 + b84 + b85 + b86 + b87 + ndvi01 +
+              ndvi02 + ndvi03 + ndvi04 + ndvi05 + ndvi06 + ndvi07 + ndvi08 +
+              ndwi01 + ndwi02 + ndwi03 + ndwi04 + ndwi05 + ndwi06 + ndwi07 +
+              ndwi08
+            
+            data(maipo)
+            
+            # err.rep = TRUE, err.fold = TRUE
+            out <- sperrorest(fo, data = maipo, coords = c("utmx","utmy"),
+                                 model.fun = lda,
+                                 pred.fun = lda.predfun,
+                                 smp.fun = partition.cv,
+                                 smp.args = list(repetition = 1:2, nfold = 2),
+                                 error.rep = TRUE, error.fold = TRUE,
+                                 benchmark = FALSE, progress = FALSE)
+            
+            smry.out <- summary(out)
+            
+            expect_equal(length(smry.out), 6)
+          })
