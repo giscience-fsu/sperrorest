@@ -32,4 +32,4 @@ notifications:
   on_failure: change # default: always
   email: false
 after_success:
-  - Rscript -e 'covr::codecov(function_exclusions = "print\\.")'
+  - Rscript -e 'covr::codecov(quiet = FALSE, function_exclusions = "print\\.")'
