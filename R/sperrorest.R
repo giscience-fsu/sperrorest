@@ -620,12 +620,12 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
           pooled.obs.train <- c(pooled.obs.train, nd[, response])
           pooled.pred.train <- c(pooled.pred.train, pred.train)
         }
-      } else
+      } else # does this ever happen? 'err.train=F' always errors
       {
-        if (error.fold)
-        {
-          res[[i]][[j]]$train <- NULL
-        }
+        if (error.fold) # nocov
+        { # nocov
+          res[[i]][[j]]$train <- NULL # nocov
+        } # nocov
       }
       
       # Create test sample:
@@ -667,6 +667,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
         pooled.obs.test <- c(pooled.obs.test, nd[, response])
         pooled.pred.test <- c(pooled.pred.test, pred.test)
         is.factor.prediction <- is.factor(pred.test)
+        
       }
       ### Permutation-based variable importance assessment:
       if (importance & error.fold)
