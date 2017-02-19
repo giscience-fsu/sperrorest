@@ -166,11 +166,16 @@ may occur depending on which function is used for cross-validation.
 While the \code{\link[rpart:rpart]{rpart::rpart()}} example (see Examples) here works fine, you may
 encounter problems with other functions.
 
-For {par.mode = 2}, you may encounter missing repetitions in the results
+For \code{par.mode = 2}, you may encounter missing repetitions in the results
 if repetitions finish to quickly. In this case, consider using
 \code{\link[=sperrorest]{sperrorest()}}
 
 Known problems when being parallized: \code{\link[randomForest:randomForest]{randomForest::randomForest()}}
+
+If you define a custom \code{pred.fun} which conists of multiple custom
+defined child functions, make sure to define \code{pred.fun} and all child
+functions in one call. Otherwise you will encounter errors in \code{par.mode = 2}
+caused by how \code{foreach} loads the parent environment
 }
 \note{
 (1) Optionally save fitted models, training and test samples in the
