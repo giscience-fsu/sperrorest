@@ -3,7 +3,7 @@ context("parsperrorest.R")
 # Sys.unsetenv("R_TESTS")
 Sys.setenv(R_TESTS="")
 
-pacman::p_load(sperrorest, testthat, rpart, MASS, doParallel, foreach)
+pacman::p_load(sperrorest, testthat, rpart, MASS, doParallel, foreach, ipred)
 
 # parsperrorest par.mode = 2 Mon Feb  6 23:24:11 2017 ------------------------------
 
@@ -426,4 +426,44 @@ test_that("deprecated args", {
                           smp.fun = partition.cv, 
                           smp.args = list(repetition = 1:2, nfold = 2),
                           err.unpooled = NULL))
+})
+
+# partition.factor.cv mit custom pred.fun Sun Feb 19 09:36:26 2017 ------------------------------
+
+test_that("partition.factor.cv works (LDA)", {
+  
+  lda.predfun <- function(object, newdata, fac = NULL) {
+    library(nnet)
+    majority <- function(x) {
+      levels(x)[which.is.max(table(x))]
+    }
+    
+    majority.filter <- function(x, fac) {
+      for (lev in levels(fac)) {
+        x[ fac == lev ] <- majority(x[ fac == lev ])
+      }
+      x
+    }
+    
+    pred <- predict(object, newdata = newdata)$class
+    if (!is.null(fac)) pred <- majority.filter(pred, newdata[,fac])
+    return(pred)
+  }
+  
+  data("maipo", package = "sperrorest")
+  
+  predictors <- colnames(maipo)[5:ncol(maipo)]
+  # Construct a formula:
+  fo <- as.formula(paste("croptype ~", paste(predictors, collapse = "+")))
+  
+  res.lda.sp.par <- parsperrorest(fo, data = maipo, coords = c("utmx","utmy"),
+                                  model.fun = lda,
+                                  pred.fun = lda.predfun,
+                                  pred.args = list(fac = "field"),
+                                  smp.fun = partition.factor.cv,
+                                  smp.args = list(fac = "field", repetition = 1:2, nfold = 2),
+                                  par.args = list(par.units = 2, par.mode = 2),
+                                  error.rep = TRUE, error.fold = TRUE,
+                                  benchmark = TRUE)
+  
 })
