@@ -2,12 +2,14 @@
 title: "sperrorest vignette: Spatial modeling using statistical learning techniques"
 author: "Alexander Brenning, Patrick Schratz"
 date: "`r Sys.Date()`"
-bibliography: "../Biblio.bib"
+bibliography: "~/Google Drive/Github/sperrorest/Biblio.bib"
 biblio-style: apalike
 link-citations: true
 output: 
     rmarkdown::html_vignette:
       toc: true
+    pdf_document:
+      number_sections: yes
 vignette: >
   %\VignetteIndexEntry{sperrorest-vignette}
   %\VignetteEngine{knitr::rmarkdown}
@@ -24,12 +26,11 @@ opts_chunk$set(cache = TRUE,
 opts_knit$set(width = 125)
 ```
 
-
 # Introduction
 
-Geospatial data scientists often make use of a variety of statistical and machine learning techniques for spatial prediction in applications such as landslide susceptibility modelling (Goetz et al., 2015 in Computers and Geosciences) or habitat modelling (one of the Knudby et al 2010 papers). Novel and often more flexible techniques promise improved predictive performances as they are better able to represent nonlinear relationships or higher-order interactions between predictors than less flexible linear models.
+Geospatial data scientists often make use of a variety of statistical and machine learning techniques for spatial prediction in applications such as landslide susceptibility modeling [@Goetz2015] or habitat modeling [@Knudby2010]. Novel and often more flexible techniques promise improved predictive performances as they are better able to represent nonlinear relationships or higher-order interactions between predictors than less flexible linear models.
 
-Nevertheless, this increased flexibility comes with the risk of possible over-fitting to the training data. Since nearby spatial observations often tend to be more similar than distant ones, traditional random cross-validation is unable to detect this over-fitting whenever spatial observations are close to each other (e.g., Brenning, 2005 in Natural Hazards and Earth System Sciences). Spatial cross-validation addresses this by resampling the data not completely randomly, but using larger spatial regions. In some cases, spatial data is grouped, e.g. in remotely-sensed land use mapping grid cells belonging to the same field share the same management procedures and cultivation history, making them more similar to each other than to pixels from other fields with the same crop type.
+Nevertheless, this increased flexibility comes with the risk of possible over-fitting to the training data. Since nearby spatial observations often tend to be more similar than distant ones, traditional random cross-validation is unable to detect this over-fitting whenever spatial observations are close to each other (e.g. @Brenning2005). Spatial cross-validation addresses this by resampling the data not completely randomly, but using larger spatial regions. In some cases, spatial data is grouped, e.g. in remotely-sensed land use mapping grid cells belonging to the same field share the same management procedures and cultivation history, making them more similar to each other than to pixels from other fields with the same crop type.
 
 This package provides a customizable toolkit for cross-validation (and bootstrap) estimation using a variety of spatial resampling schemes. More so, this toolkit can even be extended to spatio-temporal data or other complex data structures. This vignette will walk you through a simple case study, crop classification in central Chile [@Pena2015].
 
@@ -70,7 +71,6 @@ predictors <- colnames(maipo)[5:ncol(maipo)]
 fo <- as.formula(paste("croptype ~", paste(predictors, collapse = "+")))
 ```
 
-
 # Modeling
 
 Here we will take a look at a few classification methods with varying degrees of computational complexity and flexibility. This should give you an idea of how different models are handled by `sperrorest`, depending on the characteristics of their fitting and prediction methods. Please refer to [@James2013] for background information on the models used here.
@@ -78,6 +78,7 @@ Here we will take a look at a few classification methods with varying degrees of
 ## Linear Discriminant Analysis (LDA)
 
 LDA is simple and fast, and often performs surprisingly well if the problem at hand is 'linear enough'. As a start, let's fit a model with all predictors and using all available data:
+
 ```{r}
 p_load(MASS)
 fit <- lda(fo, data = maipo)
@@ -117,12 +118,12 @@ Again, predict the croptype with the fitted model and calculate the average MER:
 pred <- predict(fit, newdata = maipo, type = "class")
 mean(pred != maipo$croptype)
 ```
-Here the `predict` call is slightly different. Again, we could calculate a confusion matrix.
 
+Here the `predict` call is slightly different. Again, we could calculate a confusion matrix.
 
 ## Bagging (ipred)
 
-Bagging, bundling and random forests build upon the CART technique by fitting many trees on bootstrap resamples of the original data set [@Breiman1996] [@Breiman2001] CITE HOTHORN and LAUSEN 2001 BUNDLING PAPER. They differ in that random forest also samples from the predictors, and bundling adds an ancillary classifier for improved classification. We will use the simpler bagging technique [@Breiman1996]. (For some reason the `randomForest()` implementation causes problems when using the parallelized code later; it does work with the sequential version of `sperrorest()` though.)
+Bagging, bundling and random forests build upon the CART technique by fitting many trees on bootstrap resamples of the original data set [@Breiman1996] [@Breiman2001] [@Hothorn2005]. They differ in that random forest also samples from the predictors, and bundling adds an ancillary classifier for improved classification. We will use the simpler bagging technique [@Breiman1996]. (For some reason the `randomForest()` implementation causes problems when using the parallelized code later; it does work with the sequential version of `sperrorest()` though.)
 
 ```{r, message=FALSE}
 library(ipred)
@@ -132,6 +133,7 @@ library(ipred)
 fit <- bagging(fo, data = maipo, coob = TRUE)
 fit
 ```
+
 Let's take a look at the  MER achieved on the training sample: 
 ```{r}
 pred <- predict(fit, newdata = maipo, type = "class")
@@ -282,14 +284,13 @@ You can of course increase the number of cores depending on your hardware.
 Note that we will not use any console outputs in this vignette to keep it tidy.
 However you can change this setting using the `progress` argument. 
 
-#### Details of par.mode
+**Details of argument `par.mode`**
 
-The advantage of `par.mode = 1` compared to `par.mode = 2` is its speed. However `par.mode = 1` is less stable. `par.mode = 1` uses either a `parallel::mclapply()` (Unix) or `parallel::parApply()` (Windows) while `par.mode = 2` is running on a `foreach` backend. 
+The advantage of `par.mode = 1` compared to `par.mode = 2` is its speed. However, `par.mode = 1` is less stable. This means that `par.mode = 1` will throws errors for models which `par.mode = 2` will execute properly. `par.mode = 1` uses either a `parallel::mclapply()` (Unix) or `parallel::parApply()` (Windows) while `par.mode = 2` is running on a `foreach` backend. 
 
-While traditional `mclapply()` approaches had the downside that no progress report could be given, the `pbapply` package implemented in `parsperrorest()` provides console output and does even work cross-platform.
+While traditional `mclapply()` approaches have the downside that no progress report can be printed, the `pbapply` package implemented in `parsperrorest()` provides console output and does even work cross-platform.
 
 ```{r}
-
 res.bagg.sp.par <- parsperrorest(fo, data = maipo, coords = c("utmx","utmy"), 
                                  model.fun = bagging,
                                  pred.fun = bagg.predfun,
