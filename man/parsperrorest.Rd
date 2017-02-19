@@ -175,7 +175,7 @@ Known problems when being parallized: \code{\link[randomForest:randomForest]{ran
 If you define a custom \code{pred.fun} which conists of multiple custom
 defined child functions, make sure to define \code{pred.fun} and all child
 functions in one call. Otherwise you will encounter errors in \code{par.mode = 2}
-caused by how \code{foreach} loads the parent environment
+caused by how \code{foreach} loads the parent environment.
 }
 \note{
 (1) Optionally save fitted models, training and test samples in the
