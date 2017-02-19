@@ -111,119 +111,119 @@ i.e. they will result in an error.</p>
     <pre class="examples"><div class='input'><span class='no'>obs</span> <span class='kw'>&lt;-</span> <span class='fu'>rnorm</span>(<span class='fl'>1000</span>)
 <span class='co'># Two mock (soft) classification examples:</span>
 <span class='fu'>err.default</span>( <span class='no'>obs</span> <span class='kw'>&gt;</span> <span class='fl'>0</span>, <span class='fu'>rnorm</span>(<span class='fl'>1000</span>) ) <span class='co'># just noise</span></div><div class='output co'>#&gt; $auroc
-#&gt; [1] 0.4935626
+#&gt; [1] 0.5110304
 #&gt; 
 #&gt; $error
-#&gt; [1] 0.509
+#&gt; [1] 0.487
 #&gt; 
 #&gt; $accuracy
-#&gt; [1] 0.491
+#&gt; [1] 0.513
 #&gt; 
 #&gt; $sensitivity
-#&gt; [1] 0.3205374
+#&gt; [1] 0.3258197
 #&gt; 
 #&gt; $specificity
-#&gt; [1] 0.6764092
+#&gt; [1] 0.6914062
 #&gt; 
 #&gt; $fpr70
-#&gt; [1] 0.7181628
+#&gt; [1] 0.7070312
 #&gt; 
 #&gt; $fpr80
-#&gt; [1] 0.8434238
+#&gt; [1] 0.8085938
 #&gt; 
 #&gt; $fpr90
-#&gt; [1] 0.9060543
+#&gt; [1] 0.8789062
 #&gt; 
 #&gt; $tpr80
-#&gt; [1] 0.2207294
+#&gt; [1] 0.2192623
 #&gt; 
 #&gt; $tpr90
-#&gt; [1] 0.1362764
+#&gt; [1] 0.1086066
 #&gt; 
 #&gt; $tpr95
-#&gt; [1] 0.06142035
+#&gt; [1] 0.05942623
 #&gt; 
 #&gt; $events
-#&gt; [1] 521
+#&gt; [1] 488
 #&gt; 
 #&gt; $count
 #&gt; [1] 1000
 #&gt; </div><div class='input'><span class='fu'>err.default</span>( <span class='no'>obs</span> <span class='kw'>&gt;</span> <span class='fl'>0</span>, <span class='no'>obs</span> + <span class='fu'>rnorm</span>(<span class='fl'>1000</span>) ) <span class='co'># some discrimination</span></div><div class='output co'>#&gt; $auroc
-#&gt; [1] 0.8417529
+#&gt; [1] 0.8284932
 #&gt; 
 #&gt; $error
-#&gt; [1] 0.277
+#&gt; [1] 0.271
 #&gt; 
 #&gt; $accuracy
-#&gt; [1] 0.723
+#&gt; [1] 0.729
 #&gt; 
 #&gt; $sensitivity
-#&gt; [1] 0.5738964
+#&gt; [1] 0.5840164
 #&gt; 
 #&gt; $specificity
-#&gt; [1] 0.8851775
+#&gt; [1] 0.8671875
 #&gt; 
 #&gt; $fpr70
-#&gt; [1] 0.1983299
+#&gt; [1] 0.2167969
 #&gt; 
 #&gt; $fpr80
-#&gt; [1] 0.2964509
+#&gt; [1] 0.2871094
 #&gt; 
 #&gt; $fpr90
-#&gt; [1] 0.4634656
+#&gt; [1] 0.4707031
 #&gt; 
 #&gt; $tpr80
-#&gt; [1] 0.7024952
+#&gt; [1] 0.6721311
 #&gt; 
 #&gt; $tpr90
-#&gt; [1] 0.5412668
+#&gt; [1] 0.5020492
 #&gt; 
 #&gt; $tpr95
-#&gt; [1] 0.4644914
+#&gt; [1] 0.3790984
 #&gt; 
 #&gt; $events
-#&gt; [1] 521
+#&gt; [1] 488
 #&gt; 
 #&gt; $count
 #&gt; [1] 1000
 #&gt; </div><div class='input'><span class='co'># Three mock regression examples:</span>
 <span class='fu'>err.default</span>( <span class='no'>obs</span>, <span class='fu'>rnorm</span>(<span class='fl'>1000</span>) ) <span class='co'># just noise, but no bias</span></div><div class='output co'>#&gt; $bias
-#&gt; [1] 0.01665322
+#&gt; [1] 0.01099858
 #&gt; 
 #&gt; $stddev
-#&gt; [1] 1.388829
+#&gt; [1] 1.440359
 #&gt; 
 #&gt; $mse
-#&gt; [1] 1.927196
+#&gt; [1] 2.072681
 #&gt; 
 #&gt; $mad
-#&gt; [1] 1.392276
+#&gt; [1] 1.474853
 #&gt; 
 #&gt; $median
-#&gt; [1] -0.01502064
+#&gt; [1] -0.002950082
 #&gt; 
 #&gt; $iqr
-#&gt; [1] 1.879338
+#&gt; [1] 1.979819
 #&gt; 
 #&gt; $count
 #&gt; [1] 1000
 #&gt; </div><div class='input'><span class='fu'>err.default</span>( <span class='no'>obs</span>, <span class='no'>obs</span> + <span class='fu'>rnorm</span>(<span class='fl'>1000</span>) ) <span class='co'># some association, no bias</span></div><div class='output co'>#&gt; $bias
-#&gt; [1] 0.002175692
+#&gt; [1] -0.004363188
 #&gt; 
 #&gt; $stddev
-#&gt; [1] 0.9893763
+#&gt; [1] 1.006188
 #&gt; 
 #&gt; $mse
-#&gt; [1] 0.9778914
+#&gt; [1] 1.011421
 #&gt; 
 #&gt; $mad
-#&gt; [1] 1.074292
+#&gt; [1] 1.011651
 #&gt; 
 #&gt; $median
-#&gt; [1] -0.005034918
+#&gt; [1] -0.01567457
 #&gt; 
 #&gt; $iqr
-#&gt; [1] 1.439094
+#&gt; [1] 1.363846
 #&gt; 
 #&gt; $count
 #&gt; [1] 1000
@@ -231,7 +231,7 @@ i.e. they will result in an error.</p>
 #&gt; [1] -1
 #&gt; 
 #&gt; $stddev
-#&gt; [1] 6.419493e-17
+#&gt; [1] 6.063671e-17
 #&gt; 
 #&gt; $mse
 #&gt; [1] 1

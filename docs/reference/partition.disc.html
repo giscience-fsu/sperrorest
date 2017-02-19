@@ -122,7 +122,7 @@ if <code>TRUE</code>, also the training area.</dd>
 without replacement?</dd>
       <dt>repetition</dt>
       <dd>see <code>partition.cv</code>; however,
-see Note below: <code>repetition</code> should normally be <code>=1</code> in this function.</dd>
+see Note below: <code>repetition</code> should normally be <code>= 1</code> in this function.</dd>
       <dt>...</dt>
       <dd>arguments to be passed to <code>partition.disc</code></dd>
     </dl>
@@ -132,7 +132,7 @@ see Note below: <code>repetition</code> should normally be <code>=1</code> in th
     <p>A <code><a href='as.represampling.html'>represampling()</a></code> object.
 Contains <code>length(repetition)</code> <code>resampling</code> objects.
 Each of these contains <code>ndisc</code> lists with indices of test and
-(if <code>return.train=TRUE</code>) training sets.</p>
+(if <code>return.train = TRUE</code>) training sets.</p>
     
     <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
 
@@ -140,8 +140,8 @@ Each of these contains <code>ndisc</code> lists with indices of test and
 random locations. Test area discs may (and likely will) overlap independently
 of the value of <code>replace</code>. <code>replace</code> only controls the replacement
 of the center point of discs when drawing center points from the samples.</p>
-    <p><code>radius&lt;0</code> does leave-one-out resampling with an optional buffer.
-<code>radius=0</code> is similar except that samples with identical coordinates
+    <p><code>radius &lt; 0</code> does leave-one-out resampling with an optional buffer.
+<code>radius = 0</code> is similar except that samples with identical coordinates
 would fall within the test area disc.</p>
     
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
@@ -163,37 +163,37 @@ Sciences, 5(6): 853-862.</p>
 <span class='co'># plot(parti,ecuador)</span>
 <span class='fu'>summary</span>(<span class='no'>parti</span>)</div><div class='output co'>#&gt; $`1`
 #&gt;      n.train n.test
-#&gt; 1552    1919     17
-#&gt; 1766    1946      7
-#&gt; 303     1929     14
-#&gt; 888     1953     22
-#&gt; 395     1943     17
+#&gt; 1609    1901     22
+#&gt; 72      1886     32
+#&gt; 573     1937     15
+#&gt; 410     1966     14
+#&gt; 194     1938     24
 #&gt; 
 #&gt; $`2`
 #&gt;      n.train n.test
-#&gt; 1151    1944     19
-#&gt; 547     1956     17
-#&gt; 1045    1915     37
-#&gt; 102     1896     13
-#&gt; 556     1929     24
+#&gt; 913     1888     37
+#&gt; 1206    1919     26
+#&gt; 1060    1946     18
+#&gt; 1987    1897     18
+#&gt; 1372    1910     22
 #&gt; </div><div class='input'>
 <span class='co'># leave-one-out with buffer:</span>
 <span class='no'>parti.loo</span> <span class='kw'>&lt;-</span> <span class='fu'>partition.loo</span>(<span class='no'>ecuador</span>, <span class='kw'>buffer</span> <span class='kw'>=</span> <span class='fl'>200</span>)
 <span class='fu'>summary</span>(<span class='no'>parti</span>)</div><div class='output co'>#&gt; $`1`
 #&gt;      n.train n.test
-#&gt; 1552    1919     17
-#&gt; 1766    1946      7
-#&gt; 303     1929     14
-#&gt; 888     1953     22
-#&gt; 395     1943     17
+#&gt; 1609    1901     22
+#&gt; 72      1886     32
+#&gt; 573     1937     15
+#&gt; 410     1966     14
+#&gt; 194     1938     24
 #&gt; 
 #&gt; $`2`
 #&gt;      n.train n.test
-#&gt; 1151    1944     19
-#&gt; 547     1956     17
-#&gt; 1045    1915     37
-#&gt; 102     1896     13
-#&gt; 556     1929     24
+#&gt; 913     1888     37
+#&gt; 1206    1919     26
+#&gt; 1060    1946     18
+#&gt; 1987    1897     18
+#&gt; 1372    1910     22
 #&gt; </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
