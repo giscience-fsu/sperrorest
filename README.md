@@ -2,7 +2,7 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 #### General
 
-[![Build Status](https://travis-ci.org/pat-s/sperrorest.svg?branch=master)](https://travis-ci.org/pat-s/sperrorest) [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/pat-s/sperrorest?branch=master&svg=true)](https://ci.appveyor.com/project/pat-s/sperrorest) [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active) [![codecov](https://codecov.io/gh/pat-s/sperrorest/branch/master/graph/badge.svg)](https://codecov.io/gh/pat-s/sperrorest) [![minimal R version](https://img.shields.io/badge/R%3E%3D-2.10-6666ff.svg)](https://cran.r-project.org/) [![Last-changedate](https://img.shields.io/badge/last%20change-2017--02--05-yellowgreen.svg)](/commits/master)
+[![Build Status](https://travis-ci.org/pat-s/sperrorest.svg?branch=master)](https://travis-ci.org/pat-s/sperrorest) [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/pat-s/sperrorest?branch=master&svg=true)](https://ci.appveyor.com/project/pat-s/sperrorest) [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active) [![codecov](https://codecov.io/gh/pat-s/sperrorest/branch/master/graph/badge.svg)](https://codecov.io/gh/pat-s/sperrorest) [![minimal R version](https://img.shields.io/badge/R%3E%3D-2.10-6666ff.svg)](https://cran.r-project.org/) [![Last-changedate](https://img.shields.io/badge/last%20change-2017--02--19-yellowgreen.svg)](/commits/master)
 
 #### CRAN
 

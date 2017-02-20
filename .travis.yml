@@ -27,9 +27,9 @@ r_github_packages:
   - hadley/testthat
   
 notifications:
-  slack: giscience-fsu:Wkbb0S8LMk9xdfVjweh8IDZx#sperrorest
+  slack: giscience-fsu:fIBUkXTIX9Jz70o1gIwiATYE#sperrorest
   on_success: change # default: always
   on_failure: change # default: always
   email: false
 after_success:
-  - Rscript -e 'covr::codecov()'
+  - Rscript -e 'covr::codecov(quiet = FALSE, function_exclusions = "print\\.")'

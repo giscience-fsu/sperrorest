@@ -158,11 +158,16 @@
 #' While the [rpart::rpart()] example (see Examples) here works fine, you may 
 #' encounter problems with other functions. 
 #' 
-#' @details For {par.mode = 2}, you may encounter missing repetitions in the results
+#' @details For `par.mode = 2`, you may encounter missing repetitions in the results
 #' if repetitions finish to quickly. In this case, consider using 
 #' [sperrorest()]
 #' 
 #' @details Known problems when being parallized: [randomForest::randomForest()]
+#' 
+#' @details If you define a custom `pred.fun` which conists of multiple custom 
+#' defined child functions, make sure to define `pred.fun` and all child 
+#' functions in one call. Otherwise you will encounter errors in `par.mode = 2`
+#' caused by how `foreach` loads the parent environment.
 #' 
 #' 
 #' @note (1) Optionally save fitted models, training and test samples in the 
@@ -700,9 +705,11 @@ parsperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.
       notify(title = "parsperrorest() finished successfully!", msg <- msg)
     }
     
+    package.version <- packageVersion("sperrorest")
+    class(package.version) <- "sperrorestpackageversion"
     
     RES <- list(error.rep = pooled.err, error.fold = res, represampling = resamp, 
-      importance = impo, benchmarks = my.bench, package.version = packageVersion("sperrorest"))
+      importance = impo, benchmarks = my.bench, package.version = package.version)
     class(RES) <- "sperrorest"
     
     return(RES)
@@ -1063,27 +1070,33 @@ parsperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.
     if (error.rep & error.fold)
     {
       class(err.fold) <- "sperroresterror"
+      package.version <- packageVersion("sperrorest")
+      class(package.version) <- "sperrorestpackageversion"
       # this 'class' converts from data.frame to list (sperrorestreperror)
       class(foreach.out[[1]][[1]]) <- "sperrorestreperror"
       RES <- list(error.rep = foreach.out[[1]][[1]], error.fold = err.fold, 
         represampling = resamp, importance = impo, benchmarks = my.bench, 
-        package.version = packageVersion("sperrorest"))
+        package.version = package.version)
       class(RES) <- "sperrorest"
       return(RES)
     }
     if (error.rep & !error.fold)
     {
       class(rep.err) <- "sperrorestreperror"
+      package.version <- packageVersion("sperrorest")
+      class(package.version) <- "sperrorestpackageversion"
       RES <- list(error.rep = rep.err, error.fold = NULL, represampling = resamp, 
-        importance = impo, benchmarks = my.bench, package.version = packageVersion("sperrorest"))
+        importance = impo, benchmarks = my.bench, package.version = package.version)
       class(RES) <- "sperrorest"
       return(RES)
     }
     if (!error.rep & error.fold)
     {
       class(foreach.out) <- "sperroresterror"
+      package.version <- packageVersion("sperrorest")
+      class(package.version) <- "sperrorestpackageversion"
       RES <- list(error.rep = NULL, error.fold = foreach.out, represampling = resamp, 
-        importance = impo, benchmarks = my.bench, package.version = packageVersion("sperrorest"))
+        importance = impo, benchmarks = my.bench, package.version = package.version)
       class(RES) <- "sperrorest"
       return(RES)
     }

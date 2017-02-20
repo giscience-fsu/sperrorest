@@ -248,115 +248,115 @@ Lecture Notes in Computer Science, 6065 LNCS: 184-195.</p>
                      <span class='kw'>model.fun</span> <span class='kw'>=</span> <span class='no'>rpart</span>, <span class='kw'>model.args</span> <span class='kw'>=</span> <span class='fu'>list</span>(<span class='kw'>control</span> <span class='kw'>=</span> <span class='no'>ctrl</span>),
                      <span class='kw'>pred.fun</span> <span class='kw'>=</span> <span class='no'>mypred.rpart</span>,
                      <span class='kw'>smp.fun</span> <span class='kw'>=</span> <span class='no'>partition.cv</span>,
-                     <span class='kw'>smp.args</span> <span class='kw'>=</span> <span class='fu'>list</span>(<span class='kw'>repetition</span> <span class='kw'>=</span> <span class='fl'>1</span>:<span class='fl'>5</span>, <span class='kw'>nfold</span> <span class='kw'>=</span> <span class='fl'>10</span>))</div><div class='output co'>#&gt; Tue Feb  7 14:16:07 2017 Repetition 1 
-#&gt; Tue Feb  7 14:16:07 2017 - Fold 1 
-#&gt; Tue Feb  7 14:16:08 2017 - Fold 2 
-#&gt; Tue Feb  7 14:16:08 2017 - Fold 3 
-#&gt; Tue Feb  7 14:16:08 2017 - Fold 4 
-#&gt; Tue Feb  7 14:16:08 2017 - Fold 5 
-#&gt; Tue Feb  7 14:16:08 2017 - Fold 6 
-#&gt; Tue Feb  7 14:16:08 2017 - Fold 7 
-#&gt; Tue Feb  7 14:16:08 2017 - Fold 8 
-#&gt; Tue Feb  7 14:16:08 2017 - Fold 9 
-#&gt; Tue Feb  7 14:16:09 2017 - Fold 10 
-#&gt; Tue Feb  7 14:16:10 2017 Repetition 2 
-#&gt; Tue Feb  7 14:16:10 2017 - Fold 1 
-#&gt; Tue Feb  7 14:16:10 2017 - Fold 2 
-#&gt; Tue Feb  7 14:16:10 2017 - Fold 3 
-#&gt; Tue Feb  7 14:16:10 2017 - Fold 4 
-#&gt; Tue Feb  7 14:16:10 2017 - Fold 5 
-#&gt; Tue Feb  7 14:16:10 2017 - Fold 6 
-#&gt; Tue Feb  7 14:16:10 2017 - Fold 7 
-#&gt; Tue Feb  7 14:16:10 2017 - Fold 8 
-#&gt; Tue Feb  7 14:16:10 2017 - Fold 9 
-#&gt; Tue Feb  7 14:16:10 2017 - Fold 10 
-#&gt; Tue Feb  7 14:16:12 2017 Repetition 3 
-#&gt; Tue Feb  7 14:16:12 2017 - Fold 1 
-#&gt; Tue Feb  7 14:16:12 2017 - Fold 2 
-#&gt; Tue Feb  7 14:16:12 2017 - Fold 3 
-#&gt; Tue Feb  7 14:16:12 2017 - Fold 4 
-#&gt; Tue Feb  7 14:16:12 2017 - Fold 5 
-#&gt; Tue Feb  7 14:16:12 2017 - Fold 6 
-#&gt; Tue Feb  7 14:16:12 2017 - Fold 7 
-#&gt; Tue Feb  7 14:16:13 2017 - Fold 8 
-#&gt; Tue Feb  7 14:16:13 2017 - Fold 9 
-#&gt; Tue Feb  7 14:16:13 2017 - Fold 10 
-#&gt; Tue Feb  7 14:16:14 2017 Repetition 4 
-#&gt; Tue Feb  7 14:16:14 2017 - Fold 1 
-#&gt; Tue Feb  7 14:16:14 2017 - Fold 2 
-#&gt; Tue Feb  7 14:16:14 2017 - Fold 3 
-#&gt; Tue Feb  7 14:16:14 2017 - Fold 4 
-#&gt; Tue Feb  7 14:16:14 2017 - Fold 5 
-#&gt; Tue Feb  7 14:16:14 2017 - Fold 6 
-#&gt; Tue Feb  7 14:16:14 2017 - Fold 7 
-#&gt; Tue Feb  7 14:16:14 2017 - Fold 8 
-#&gt; Tue Feb  7 14:16:14 2017 - Fold 9 
-#&gt; Tue Feb  7 14:16:14 2017 - Fold 10 
-#&gt; Tue Feb  7 14:16:16 2017 Repetition 5 
-#&gt; Tue Feb  7 14:16:16 2017 - Fold 1 
-#&gt; Tue Feb  7 14:16:16 2017 - Fold 2 
-#&gt; Tue Feb  7 14:16:16 2017 - Fold 3 
-#&gt; Tue Feb  7 14:16:16 2017 - Fold 4 
-#&gt; Tue Feb  7 14:16:16 2017 - Fold 5 
-#&gt; Tue Feb  7 14:16:16 2017 - Fold 6 
-#&gt; Tue Feb  7 14:16:16 2017 - Fold 7 
-#&gt; Tue Feb  7 14:16:16 2017 - Fold 8 
-#&gt; Tue Feb  7 14:16:16 2017 - Fold 9 
-#&gt; Tue Feb  7 14:16:16 2017 - Fold 10 
-#&gt; Tue Feb  7 14:16:17 2017 Done.</div><div class='input'><span class='fu'>summary</span>(<span class='no'>nspres</span>$<span class='no'>error.rep</span>)</div><div class='output co'>#&gt;                           mean          sd       median          IQR
-#&gt; train.auroc       7.472716e-01 0.004277245 7.479835e-01 0.0019938333
-#&gt; train.error       2.945667e-01 0.004479962 2.945000e-01 0.0002222222
-#&gt; train.accuracy    7.054333e-01 0.004479962 7.055000e-01 0.0002222222
-#&gt; train.sensitivity 6.829778e-01 0.017383901 6.763333e-01 0.0216666667
-#&gt; train.specificity 7.278889e-01 0.010551754 7.332222e-01 0.0172222222
-#&gt; train.fpr70       2.997778e-01 0.015919745 2.993333e-01 0.0092222222
-#&gt; train.fpr80       4.687556e-01 0.024571940 4.701111e-01 0.0236666667
-#&gt; train.fpr90       6.647556e-01 0.012259891 6.592222e-01 0.0010000000
-#&gt; train.tpr80       5.589111e-01 0.007400534 5.566667e-01 0.0132222222
-#&gt; train.tpr90       3.252889e-01 0.012120180 3.287778e-01 0.0184444444
-#&gt; train.tpr95       1.846444e-01 0.009841773 1.838889e-01 0.0135555556
-#&gt; train.events      9.000000e+03 0.000000000 9.000000e+03 0.0000000000
-#&gt; train.count       1.800000e+04 0.000000000 1.800000e+04 0.0000000000
-#&gt; test.auroc        6.502489e-01 0.011390730 6.451865e-01 0.0131995000
-#&gt; test.error        3.762000e-01 0.015385058 3.825000e-01 0.0215000000
-#&gt; test.accuracy     6.238000e-01 0.015385058 6.175000e-01 0.0215000000
-#&gt; test.sensitivity  6.046000e-01 0.018447222 6.050000e-01 0.0170000000
-#&gt; test.specificity  6.430000e-01 0.028956864 6.370000e-01 0.0220000000
-#&gt; test.fpr70        5.000000e-01 0.037188708 5.120000e-01 0.0540000000
-#&gt; test.fpr80        6.400000e-01 0.023075962 6.360000e-01 0.0280000000
-#&gt; test.fpr90        7.964000e-01 0.021547622 7.840000e-01 0.0320000000
-#&gt; test.tpr80        3.928000e-01 0.025449951 3.860000e-01 0.0170000000
-#&gt; test.tpr90        1.838000e-01 0.021300235 1.830000e-01 0.0190000000
-#&gt; test.tpr95        7.480000e-02 0.016161683 7.100000e-02 0.0120000000
-#&gt; test.events       1.000000e+03 0.000000000 1.000000e+03 0.0000000000
-#&gt; test.count        2.000000e+03 0.000000000 2.000000e+03 0.0000000000</div><div class='input'><span class='fu'>summary</span>(<span class='no'>nspres</span>$<span class='no'>error.fold</span>)</div><div class='output co'>#&gt;                            mean         sd        median        IQR
-#&gt; train.auroc          0.74221460 0.01915497    0.74443909 0.02169907
-#&gt; train.error          0.29456667 0.01351971    0.29416667 0.01736111
-#&gt; train.accuracy       0.70543333 0.01351971    0.70583333 0.01736111
-#&gt; train.sensitivity    0.68295508 0.05308884    0.69243140 0.08162716
-#&gt; train.specificity    0.72787384 0.04092559    0.73543910 0.05820976
-#&gt; train.fpr70          0.43069108 0.20480576    0.33481646 0.19810242
-#&gt; train.fpr80          0.58963789 0.15094091    0.51911081 0.20622525
-#&gt; train.fpr90          0.74728107 0.08381107    0.74857106 0.15411993
-#&gt; train.tpr80          0.50924991 0.07073053    0.51804049 0.08080711
-#&gt; train.tpr90          0.14435308 0.09725691    0.11466498 0.08903157
-#&gt; train.tpr95          0.10679527 0.05150344    0.10475532 0.05833854
-#&gt; train.events       900.00000000 6.14451805  900.00000000 8.00000000
-#&gt; train.count       1800.00000000 0.00000000 1800.00000000 0.00000000
-#&gt; test.auroc           0.64900506 0.03458457    0.64739445 0.04287726
-#&gt; test.error           0.37620000 0.02926933    0.37750000 0.04000000
-#&gt; test.accuracy        0.62380000 0.02926933    0.62250000 0.04000000
-#&gt; test.sensitivity     0.60465951 0.07057920    0.59807692 0.07664996
-#&gt; test.specificity     0.64266408 0.06824941    0.65240275 0.09187511
-#&gt; test.fpr70           0.62369998 0.16127893    0.57297352 0.23727491
-#&gt; test.fpr80           0.72436521 0.12099176    0.71776912 0.19888114
-#&gt; test.fpr90           0.82725454 0.07197629    0.82126845 0.12519062
-#&gt; test.tpr80           0.35444742 0.12882387    0.39482831 0.08878706
-#&gt; test.tpr90           0.10210100 0.08544656    0.08338941 0.06531795
-#&gt; test.tpr95           0.05334693 0.04008048    0.05181486 0.05128959
-#&gt; test.events        100.00000000 6.14451805  100.00000000 8.00000000
-#&gt; test.count         200.00000000 0.00000000  200.00000000 0.00000000
-#&gt; distance            -1.00000000 0.00000000   -1.00000000 0.00000000</div><div class='input'><span class='fu'>summary</span>(<span class='no'>nspres</span>$<span class='no'>represampling</span>)</div><div class='output co'>#&gt; $`1`
+                     <span class='kw'>smp.args</span> <span class='kw'>=</span> <span class='fu'>list</span>(<span class='kw'>repetition</span> <span class='kw'>=</span> <span class='fl'>1</span>:<span class='fl'>5</span>, <span class='kw'>nfold</span> <span class='kw'>=</span> <span class='fl'>10</span>))</div><div class='output co'>#&gt; Sun Feb 19 21:31:09 2017 Repetition 1 
+#&gt; Sun Feb 19 21:31:09 2017 - Fold 1 
+#&gt; Sun Feb 19 21:31:09 2017 - Fold 2 
+#&gt; Sun Feb 19 21:31:09 2017 - Fold 3 
+#&gt; Sun Feb 19 21:31:09 2017 - Fold 4 
+#&gt; Sun Feb 19 21:31:10 2017 - Fold 5 
+#&gt; Sun Feb 19 21:31:10 2017 - Fold 6 
+#&gt; Sun Feb 19 21:31:10 2017 - Fold 7 
+#&gt; Sun Feb 19 21:31:10 2017 - Fold 8 
+#&gt; Sun Feb 19 21:31:10 2017 - Fold 9 
+#&gt; Sun Feb 19 21:31:10 2017 - Fold 10 
+#&gt; Sun Feb 19 21:31:11 2017 Repetition 2 
+#&gt; Sun Feb 19 21:31:11 2017 - Fold 1 
+#&gt; Sun Feb 19 21:31:11 2017 - Fold 2 
+#&gt; Sun Feb 19 21:31:11 2017 - Fold 3 
+#&gt; Sun Feb 19 21:31:11 2017 - Fold 4 
+#&gt; Sun Feb 19 21:31:11 2017 - Fold 5 
+#&gt; Sun Feb 19 21:31:12 2017 - Fold 6 
+#&gt; Sun Feb 19 21:31:12 2017 - Fold 7 
+#&gt; Sun Feb 19 21:31:12 2017 - Fold 8 
+#&gt; Sun Feb 19 21:31:12 2017 - Fold 9 
+#&gt; Sun Feb 19 21:31:12 2017 - Fold 10 
+#&gt; Sun Feb 19 21:31:13 2017 Repetition 3 
+#&gt; Sun Feb 19 21:31:13 2017 - Fold 1 
+#&gt; Sun Feb 19 21:31:13 2017 - Fold 2 
+#&gt; Sun Feb 19 21:31:13 2017 - Fold 3 
+#&gt; Sun Feb 19 21:31:13 2017 - Fold 4 
+#&gt; Sun Feb 19 21:31:13 2017 - Fold 5 
+#&gt; Sun Feb 19 21:31:13 2017 - Fold 6 
+#&gt; Sun Feb 19 21:31:13 2017 - Fold 7 
+#&gt; Sun Feb 19 21:31:14 2017 - Fold 8 
+#&gt; Sun Feb 19 21:31:14 2017 - Fold 9 
+#&gt; Sun Feb 19 21:31:14 2017 - Fold 10 
+#&gt; Sun Feb 19 21:31:15 2017 Repetition 4 
+#&gt; Sun Feb 19 21:31:15 2017 - Fold 1 
+#&gt; Sun Feb 19 21:31:15 2017 - Fold 2 
+#&gt; Sun Feb 19 21:31:15 2017 - Fold 3 
+#&gt; Sun Feb 19 21:31:15 2017 - Fold 4 
+#&gt; Sun Feb 19 21:31:15 2017 - Fold 5 
+#&gt; Sun Feb 19 21:31:15 2017 - Fold 6 
+#&gt; Sun Feb 19 21:31:15 2017 - Fold 7 
+#&gt; Sun Feb 19 21:31:15 2017 - Fold 8 
+#&gt; Sun Feb 19 21:31:15 2017 - Fold 9 
+#&gt; Sun Feb 19 21:31:15 2017 - Fold 10 
+#&gt; Sun Feb 19 21:31:16 2017 Repetition 5 
+#&gt; Sun Feb 19 21:31:16 2017 - Fold 1 
+#&gt; Sun Feb 19 21:31:17 2017 - Fold 2 
+#&gt; Sun Feb 19 21:31:17 2017 - Fold 3 
+#&gt; Sun Feb 19 21:31:17 2017 - Fold 4 
+#&gt; Sun Feb 19 21:31:17 2017 - Fold 5 
+#&gt; Sun Feb 19 21:31:17 2017 - Fold 6 
+#&gt; Sun Feb 19 21:31:17 2017 - Fold 7 
+#&gt; Sun Feb 19 21:31:17 2017 - Fold 8 
+#&gt; Sun Feb 19 21:31:17 2017 - Fold 9 
+#&gt; Sun Feb 19 21:31:17 2017 - Fold 10 
+#&gt; Sun Feb 19 21:31:18 2017 Done.</div><div class='input'><span class='fu'>summary</span>(<span class='no'>nspres</span>$<span class='no'>error.rep</span>)</div><div class='output co'>#&gt;                           mean          sd       median         IQR
+#&gt; train.auroc       7.487850e-01 0.010260547 7.499008e-01 0.010163988
+#&gt; train.error       2.941333e-01 0.008119440 2.952778e-01 0.008944444
+#&gt; train.accuracy    7.058667e-01 0.008119440 7.047222e-01 0.008944444
+#&gt; train.sensitivity 6.784667e-01 0.030209904 6.778889e-01 0.048111111
+#&gt; train.specificity 7.332667e-01 0.016032105 7.274444e-01 0.028111111
+#&gt; train.fpr70       3.018222e-01 0.027160429 3.050000e-01 0.024222222
+#&gt; train.fpr80       4.704667e-01 0.042487137 4.696667e-01 0.024555556
+#&gt; train.fpr90       6.642222e-01 0.022104968 6.607778e-01 0.035888889
+#&gt; train.tpr80       5.662444e-01 0.011906633 5.698889e-01 0.008444444
+#&gt; train.tpr90       3.280444e-01 0.017781354 3.206667e-01 0.022333333
+#&gt; train.tpr95       1.845778e-01 0.018511658 1.794444e-01 0.022111111
+#&gt; train.events      9.000000e+03 0.000000000 9.000000e+03 0.000000000
+#&gt; train.count       1.800000e+04 0.000000000 1.800000e+04 0.000000000
+#&gt; test.auroc        6.441383e-01 0.001090248 6.435630e-01 0.001760500
+#&gt; test.error        3.784000e-01 0.006904709 3.795000e-01 0.006000000
+#&gt; test.accuracy     6.216000e-01 0.006904709 6.205000e-01 0.006000000
+#&gt; test.sensitivity  5.954000e-01 0.020549939 5.890000e-01 0.024000000
+#&gt; test.specificity  6.478000e-01 0.023530831 6.370000e-01 0.025000000
+#&gt; test.fpr70        5.016000e-01 0.021007142 5.010000e-01 0.009000000
+#&gt; test.fpr80        6.566000e-01 0.030549959 6.450000e-01 0.001000000
+#&gt; test.fpr90        8.164000e-01 0.023212066 8.170000e-01 0.017000000
+#&gt; test.tpr80        3.992000e-01 0.014446453 3.990000e-01 0.019000000
+#&gt; test.tpr90        1.772000e-01 0.018579559 1.880000e-01 0.032000000
+#&gt; test.tpr95        8.520000e-02 0.014754660 8.800000e-02 0.025000000
+#&gt; test.events       1.000000e+03 0.000000000 1.000000e+03 0.000000000
+#&gt; test.count        2.000000e+03 0.000000000 2.000000e+03 0.000000000</div><div class='input'><span class='fu'>summary</span>(<span class='no'>nspres</span>$<span class='no'>error.fold</span>)</div><div class='output co'>#&gt;                            mean         sd        median         IQR
+#&gt; train.auroc          0.74321427 0.02474586    0.74930539  0.02571436
+#&gt; train.error          0.29413333 0.01821879    0.29194444  0.02166667
+#&gt; train.accuracy       0.70586667 0.01821879    0.70805556  0.02166667
+#&gt; train.sensitivity    0.67849549 0.06050419    0.68886363  0.08570120
+#&gt; train.specificity    0.73324269 0.04290137    0.73158400  0.05950818
+#&gt; train.fpr70          0.43113706 0.20340171    0.33575605  0.19872038
+#&gt; train.fpr80          0.58225951 0.15278612    0.54040965  0.23553985
+#&gt; train.fpr90          0.72669846 0.09446432    0.69923977  0.16933477
+#&gt; train.tpr80          0.52268197 0.06312166    0.53669243  0.09173833
+#&gt; train.tpr90          0.15959015 0.11174132    0.13643975  0.13918061
+#&gt; train.tpr95          0.10262918 0.06095902    0.08775793  0.09462404
+#&gt; train.events       900.00000000 7.37618894  899.00000000 10.50000000
+#&gt; train.count       1800.00000000 0.00000000 1800.00000000  0.00000000
+#&gt; test.auroc           0.64464275 0.03303863    0.64310000  0.03378576
+#&gt; test.error           0.37840000 0.02802040    0.38000000  0.04000000
+#&gt; test.accuracy        0.62160000 0.02802040    0.62000000  0.04000000
+#&gt; test.sensitivity     0.59502935 0.06651896    0.59896907  0.08879098
+#&gt; test.specificity     0.64747465 0.06149653    0.64466089  0.07088723
+#&gt; test.fpr70           0.61891638 0.15614910    0.57287032  0.19757348
+#&gt; test.fpr80           0.73956862 0.11608691    0.73539353  0.16399123
+#&gt; test.fpr90           0.84136832 0.07232780    0.85142689  0.11550325
+#&gt; test.tpr80           0.32443371 0.13691147    0.36559140  0.14288910
+#&gt; test.tpr90           0.10290722 0.08476413    0.09112586  0.08357111
+#&gt; test.tpr95           0.05053111 0.03411585    0.04397729  0.04836650
+#&gt; test.events        100.00000000 7.37618894  101.00000000 10.50000000
+#&gt; test.count         200.00000000 0.00000000  200.00000000  0.00000000
+#&gt; distance            -1.00000000 0.00000000   -1.00000000  0.00000000</div><div class='input'><span class='fu'>summary</span>(<span class='no'>nspres</span>$<span class='no'>represampling</span>)</div><div class='output co'>#&gt; $`1`
 #&gt;    n.train n.test
 #&gt; 1     1800    200
 #&gt; 2     1800    200
@@ -427,151 +427,151 @@ Lecture Notes in Computer Science, 6065 LNCS: 184-195.</p>
                     <span class='kw'>model.fun</span> <span class='kw'>=</span> <span class='no'>rpart</span>, <span class='kw'>model.args</span> <span class='kw'>=</span> <span class='fu'>list</span>(<span class='kw'>control</span> <span class='kw'>=</span> <span class='no'>ctrl</span>),
                     <span class='kw'>pred.fun</span> <span class='kw'>=</span> <span class='no'>mypred.rpart</span>,
                     <span class='kw'>smp.fun</span> <span class='kw'>=</span> <span class='no'>partition.kmeans</span>,
-                    <span class='kw'>smp.args</span> <span class='kw'>=</span> <span class='fu'>list</span>(<span class='kw'>repetition</span> <span class='kw'>=</span> <span class='fl'>1</span>:<span class='fl'>5</span>, <span class='kw'>nfold</span> <span class='kw'>=</span> <span class='fl'>10</span>))</div><div class='output co'>#&gt; Tue Feb  7 14:16:17 2017 Repetition 1 
-#&gt; Tue Feb  7 14:16:17 2017 - Fold 1 
-#&gt; Tue Feb  7 14:16:17 2017 - Fold 2 
-#&gt; Tue Feb  7 14:16:17 2017 - Fold 3 
-#&gt; Tue Feb  7 14:16:17 2017 - Fold 4 
-#&gt; Tue Feb  7 14:16:18 2017 - Fold 5 
-#&gt; Tue Feb  7 14:16:18 2017 - Fold 6 
-#&gt; Tue Feb  7 14:16:18 2017 - Fold 7 
-#&gt; Tue Feb  7 14:16:18 2017 - Fold 8 
-#&gt; Tue Feb  7 14:16:18 2017 - Fold 9 
-#&gt; Tue Feb  7 14:16:18 2017 - Fold 10 
-#&gt; Tue Feb  7 14:16:19 2017 Repetition 2 
-#&gt; Tue Feb  7 14:16:19 2017 - Fold 1 
-#&gt; Tue Feb  7 14:16:19 2017 - Fold 2 
-#&gt; Tue Feb  7 14:16:19 2017 - Fold 3 
-#&gt; Tue Feb  7 14:16:19 2017 - Fold 4 
-#&gt; Tue Feb  7 14:16:19 2017 - Fold 5 
-#&gt; Tue Feb  7 14:16:19 2017 - Fold 6 
-#&gt; Tue Feb  7 14:16:19 2017 - Fold 7 
-#&gt; Tue Feb  7 14:16:20 2017 - Fold 8 
-#&gt; Tue Feb  7 14:16:20 2017 - Fold 9 
-#&gt; Tue Feb  7 14:16:20 2017 - Fold 10 
-#&gt; Tue Feb  7 14:16:21 2017 Repetition 3 
-#&gt; Tue Feb  7 14:16:21 2017 - Fold 1 
-#&gt; Tue Feb  7 14:16:21 2017 - Fold 2 
-#&gt; Tue Feb  7 14:16:21 2017 - Fold 3 
-#&gt; Tue Feb  7 14:16:21 2017 - Fold 4 
-#&gt; Tue Feb  7 14:16:21 2017 - Fold 5 
-#&gt; Tue Feb  7 14:16:21 2017 - Fold 6 
-#&gt; Tue Feb  7 14:16:21 2017 - Fold 7 
-#&gt; Tue Feb  7 14:16:21 2017 - Fold 8 
-#&gt; Tue Feb  7 14:16:21 2017 - Fold 9 
-#&gt; Tue Feb  7 14:16:21 2017 - Fold 10 
-#&gt; Tue Feb  7 14:16:22 2017 Repetition 4 
-#&gt; Tue Feb  7 14:16:22 2017 - Fold 1 
-#&gt; Tue Feb  7 14:16:22 2017 - Fold 2 
-#&gt; Tue Feb  7 14:16:22 2017 - Fold 3 
-#&gt; Tue Feb  7 14:16:23 2017 - Fold 4 
-#&gt; Tue Feb  7 14:16:23 2017 - Fold 5 
-#&gt; Tue Feb  7 14:16:23 2017 - Fold 6 
-#&gt; Tue Feb  7 14:16:23 2017 - Fold 7 
-#&gt; Tue Feb  7 14:16:23 2017 - Fold 8 
-#&gt; Tue Feb  7 14:16:23 2017 - Fold 9 
-#&gt; Tue Feb  7 14:16:23 2017 - Fold 10 
-#&gt; Tue Feb  7 14:16:24 2017 Repetition 5 
-#&gt; Tue Feb  7 14:16:24 2017 - Fold 1 
-#&gt; Tue Feb  7 14:16:24 2017 - Fold 2 
-#&gt; Tue Feb  7 14:16:24 2017 - Fold 3 
-#&gt; Tue Feb  7 14:16:24 2017 - Fold 4 
-#&gt; Tue Feb  7 14:16:24 2017 - Fold 5 
-#&gt; Tue Feb  7 14:16:24 2017 - Fold 6 
-#&gt; Tue Feb  7 14:16:24 2017 - Fold 7 
-#&gt; Tue Feb  7 14:16:24 2017 - Fold 8 
-#&gt; Tue Feb  7 14:16:25 2017 - Fold 9 
-#&gt; Tue Feb  7 14:16:25 2017 - Fold 10 
-#&gt; Tue Feb  7 14:16:26 2017 Done.</div><div class='input'><span class='fu'>summary</span>(<span class='no'>spres</span>$<span class='no'>error.rep</span>)</div><div class='output co'>#&gt;                           mean          sd       median         IQR
-#&gt; train.auroc       7.549125e-01 0.003835574 7.557232e-01 0.001652568
-#&gt; train.error       2.897889e-01 0.003181593 2.892778e-01 0.001833333
-#&gt; train.accuracy    7.102111e-01 0.003181593 7.107222e-01 0.001833333
-#&gt; train.sensitivity 6.983778e-01 0.011791816 7.062222e-01 0.014333333
-#&gt; train.specificity 7.220444e-01 0.006640969 7.217778e-01 0.010444444
-#&gt; train.fpr70       2.881111e-01 0.011595284 2.852222e-01 0.019000000
-#&gt; train.fpr80       4.543111e-01 0.019378523 4.548889e-01 0.033444444
-#&gt; train.fpr90       6.493333e-01 0.016398585 6.475556e-01 0.026444444
-#&gt; train.tpr80       5.529111e-01 0.005408841 5.547778e-01 0.007666667
-#&gt; train.tpr90       3.529556e-01 0.006965789 3.505556e-01 0.004666667
-#&gt; train.tpr95       1.064889e-01 0.020277945 1.005556e-01 0.008444444
-#&gt; train.events      9.000000e+03 0.000000000 9.000000e+03 0.000000000
-#&gt; train.count       1.800000e+04 0.000000000 1.800000e+04 0.000000000
-#&gt; test.auroc        5.581284e-01 0.011996500 5.521745e-01 0.015978500
-#&gt; test.error        4.515000e-01 0.018910976 4.570000e-01 0.035000000
-#&gt; test.accuracy     5.485000e-01 0.018910976 5.430000e-01 0.035000000
-#&gt; test.sensitivity  4.686000e-01 0.034616470 4.670000e-01 0.038000000
-#&gt; test.specificity  6.284000e-01 0.037433942 6.190000e-01 0.023000000
-#&gt; test.fpr70        6.528000e-01 0.026118959 6.520000e-01 0.012000000
-#&gt; test.fpr80        7.476000e-01 0.016164777 7.570000e-01 0.029000000
-#&gt; test.fpr90        8.676000e-01 0.015868207 8.650000e-01 0.016000000
-#&gt; test.tpr80        2.754000e-01 0.052180456 2.930000e-01 0.074000000
-#&gt; test.tpr90        1.234000e-01 0.049540892 1.250000e-01 0.096000000
-#&gt; test.tpr95        4.120000e-02 0.028717590 4.500000e-02 0.045000000
-#&gt; test.events       1.000000e+03 0.000000000 1.000000e+03 0.000000000
-#&gt; test.count        2.000000e+03 0.000000000 2.000000e+03 0.000000000</div><div class='input'><span class='fu'>summary</span>(<span class='no'>spres</span>$<span class='no'>represampling</span>)</div><div class='output co'>#&gt; $`1`
+                    <span class='kw'>smp.args</span> <span class='kw'>=</span> <span class='fu'>list</span>(<span class='kw'>repetition</span> <span class='kw'>=</span> <span class='fl'>1</span>:<span class='fl'>5</span>, <span class='kw'>nfold</span> <span class='kw'>=</span> <span class='fl'>10</span>))</div><div class='output co'>#&gt; Sun Feb 19 21:31:19 2017 Repetition 1 
+#&gt; Sun Feb 19 21:31:19 2017 - Fold 1 
+#&gt; Sun Feb 19 21:31:19 2017 - Fold 2 
+#&gt; Sun Feb 19 21:31:19 2017 - Fold 3 
+#&gt; Sun Feb 19 21:31:19 2017 - Fold 4 
+#&gt; Sun Feb 19 21:31:19 2017 - Fold 5 
+#&gt; Sun Feb 19 21:31:19 2017 - Fold 6 
+#&gt; Sun Feb 19 21:31:19 2017 - Fold 7 
+#&gt; Sun Feb 19 21:31:19 2017 - Fold 8 
+#&gt; Sun Feb 19 21:31:19 2017 - Fold 9 
+#&gt; Sun Feb 19 21:31:19 2017 - Fold 10 
+#&gt; Sun Feb 19 21:31:20 2017 Repetition 2 
+#&gt; Sun Feb 19 21:31:20 2017 - Fold 1 
+#&gt; Sun Feb 19 21:31:20 2017 - Fold 2 
+#&gt; Sun Feb 19 21:31:20 2017 - Fold 3 
+#&gt; Sun Feb 19 21:31:21 2017 - Fold 4 
+#&gt; Sun Feb 19 21:31:21 2017 - Fold 5 
+#&gt; Sun Feb 19 21:31:21 2017 - Fold 6 
+#&gt; Sun Feb 19 21:31:21 2017 - Fold 7 
+#&gt; Sun Feb 19 21:31:21 2017 - Fold 8 
+#&gt; Sun Feb 19 21:31:21 2017 - Fold 9 
+#&gt; Sun Feb 19 21:31:21 2017 - Fold 10 
+#&gt; Sun Feb 19 21:31:22 2017 Repetition 3 
+#&gt; Sun Feb 19 21:31:22 2017 - Fold 1 
+#&gt; Sun Feb 19 21:31:22 2017 - Fold 2 
+#&gt; Sun Feb 19 21:31:22 2017 - Fold 3 
+#&gt; Sun Feb 19 21:31:22 2017 - Fold 4 
+#&gt; Sun Feb 19 21:31:22 2017 - Fold 5 
+#&gt; Sun Feb 19 21:31:22 2017 - Fold 6 
+#&gt; Sun Feb 19 21:31:23 2017 - Fold 7 
+#&gt; Sun Feb 19 21:31:23 2017 - Fold 8 
+#&gt; Sun Feb 19 21:31:23 2017 - Fold 9 
+#&gt; Sun Feb 19 21:31:23 2017 - Fold 10 
+#&gt; Sun Feb 19 21:31:24 2017 Repetition 4 
+#&gt; Sun Feb 19 21:31:24 2017 - Fold 1 
+#&gt; Sun Feb 19 21:31:24 2017 - Fold 2 
+#&gt; Sun Feb 19 21:31:24 2017 - Fold 3 
+#&gt; Sun Feb 19 21:31:24 2017 - Fold 4 
+#&gt; Sun Feb 19 21:31:24 2017 - Fold 5 
+#&gt; Sun Feb 19 21:31:24 2017 - Fold 6 
+#&gt; Sun Feb 19 21:31:24 2017 - Fold 7 
+#&gt; Sun Feb 19 21:31:24 2017 - Fold 8 
+#&gt; Sun Feb 19 21:31:24 2017 - Fold 9 
+#&gt; Sun Feb 19 21:31:24 2017 - Fold 10 
+#&gt; Sun Feb 19 21:31:25 2017 Repetition 5 
+#&gt; Sun Feb 19 21:31:25 2017 - Fold 1 
+#&gt; Sun Feb 19 21:31:26 2017 - Fold 2 
+#&gt; Sun Feb 19 21:31:26 2017 - Fold 3 
+#&gt; Sun Feb 19 21:31:26 2017 - Fold 4 
+#&gt; Sun Feb 19 21:31:26 2017 - Fold 5 
+#&gt; Sun Feb 19 21:31:26 2017 - Fold 6 
+#&gt; Sun Feb 19 21:31:26 2017 - Fold 7 
+#&gt; Sun Feb 19 21:31:26 2017 - Fold 8 
+#&gt; Sun Feb 19 21:31:26 2017 - Fold 9 
+#&gt; Sun Feb 19 21:31:26 2017 - Fold 10 
+#&gt; Sun Feb 19 21:31:27 2017 Done.</div><div class='input'><span class='fu'>summary</span>(<span class='no'>spres</span>$<span class='no'>error.rep</span>)</div><div class='output co'>#&gt;                           mean          sd       median          IQR
+#&gt; train.auroc       7.518698e-01 0.001742309 7.516471e-01 0.0001501358
+#&gt; train.error       2.932000e-01 0.001521249 2.937222e-01 0.0003888889
+#&gt; train.accuracy    7.068000e-01 0.001521249 7.062778e-01 0.0003888889
+#&gt; train.sensitivity 6.961333e-01 0.008647914 6.916667e-01 0.0028888889
+#&gt; train.specificity 7.174667e-01 0.005752831 7.191111e-01 0.0021111111
+#&gt; train.fpr70       2.943111e-01 0.003003496 2.926667e-01 0.0021111111
+#&gt; train.fpr80       4.600000e-01 0.006838526 4.578889e-01 0.0023333333
+#&gt; train.fpr90       6.594444e-01 0.016055459 6.637778e-01 0.0188888889
+#&gt; train.tpr80       5.574667e-01 0.006523651 5.585556e-01 0.0100000000
+#&gt; train.tpr90       3.425333e-01 0.008682464 3.447778e-01 0.0045555556
+#&gt; train.tpr95       1.724222e-01 0.009467749 1.760000e-01 0.0181111111
+#&gt; train.events      9.000000e+03 0.000000000 9.000000e+03 0.0000000000
+#&gt; train.count       1.800000e+04 0.000000000 1.800000e+04 0.0000000000
+#&gt; test.auroc        5.613221e-01 0.005606086 5.635500e-01 0.0047010000
+#&gt; test.error        4.416000e-01 0.016648574 4.350000e-01 0.0175000000
+#&gt; test.accuracy     5.584000e-01 0.016648574 5.650000e-01 0.0175000000
+#&gt; test.sensitivity  4.896000e-01 0.010237187 4.910000e-01 0.0080000000
+#&gt; test.specificity  6.272000e-01 0.033951436 6.510000e-01 0.0490000000
+#&gt; test.fpr70        6.462000e-01 0.015106290 6.400000e-01 0.0110000000
+#&gt; test.fpr80        7.520000e-01 0.019493589 7.410000e-01 0.0100000000
+#&gt; test.fpr90        8.656000e-01 0.008354639 8.610000e-01 0.0130000000
+#&gt; test.tpr80        2.618000e-01 0.028525427 2.470000e-01 0.0230000000
+#&gt; test.tpr90        1.208000e-01 0.040288956 1.100000e-01 0.0560000000
+#&gt; test.tpr95        3.480000e-02 0.023815961 2.500000e-02 0.0030000000
+#&gt; test.events       1.000000e+03 0.000000000 1.000000e+03 0.0000000000
+#&gt; test.count        2.000000e+03 0.000000000 2.000000e+03 0.0000000000</div><div class='input'><span class='fu'>summary</span>(<span class='no'>spres</span>$<span class='no'>represampling</span>)</div><div class='output co'>#&gt; $`1`
 #&gt;    n.train n.test
-#&gt; 1     1811    189
-#&gt; 2     1825    175
-#&gt; 3     1787    213
+#&gt; 1     1784    216
+#&gt; 2     1787    213
+#&gt; 3     1799    201
 #&gt; 4     1853    147
-#&gt; 5     1747    253
-#&gt; 6     1836    164
-#&gt; 7     1806    194
-#&gt; 8     1769    231
-#&gt; 9     1790    210
-#&gt; 10    1776    224
+#&gt; 5     1835    165
+#&gt; 6     1775    225
+#&gt; 7     1809    191
+#&gt; 8     1770    230
+#&gt; 9     1794    206
+#&gt; 10    1794    206
 #&gt; 
 #&gt; $`2`
 #&gt;    n.train n.test
-#&gt; 1     1744    256
-#&gt; 2     1755    245
-#&gt; 3     1743    257
-#&gt; 4     1800    200
-#&gt; 5     1835    165
-#&gt; 6     1815    185
-#&gt; 7     1799    201
-#&gt; 8     1847    153
-#&gt; 9     1824    176
-#&gt; 10    1838    162
+#&gt; 1     1812    188
+#&gt; 2     1825    175
+#&gt; 3     1784    216
+#&gt; 4     1764    236
+#&gt; 5     1851    149
+#&gt; 6     1825    175
+#&gt; 7     1830    170
+#&gt; 8     1794    206
+#&gt; 9     1716    284
+#&gt; 10    1799    201
 #&gt; 
 #&gt; $`3`
 #&gt;    n.train n.test
-#&gt; 1     1744    256
-#&gt; 2     1820    180
-#&gt; 3     1763    237
-#&gt; 4     1778    222
-#&gt; 5     1841    159
-#&gt; 6     1855    145
-#&gt; 7     1771    229
-#&gt; 8     1770    230
-#&gt; 9     1794    206
-#&gt; 10    1864    136
+#&gt; 1     1812    188
+#&gt; 2     1825    175
+#&gt; 3     1783    217
+#&gt; 4     1764    236
+#&gt; 5     1850    150
+#&gt; 6     1825    175
+#&gt; 7     1830    170
+#&gt; 8     1794    206
+#&gt; 9     1713    287
+#&gt; 10    1804    196
 #&gt; 
 #&gt; $`4`
 #&gt;    n.train n.test
-#&gt; 1     1744    256
-#&gt; 2     1816    184
-#&gt; 3     1762    238
-#&gt; 4     1795    205
-#&gt; 5     1835    165
-#&gt; 6     1833    167
-#&gt; 7     1770    230
-#&gt; 8     1824    176
-#&gt; 9     1812    188
-#&gt; 10    1809    191
+#&gt; 1     1812    188
+#&gt; 2     1825    175
+#&gt; 3     1784    216
+#&gt; 4     1764    236
+#&gt; 5     1851    149
+#&gt; 6     1825    175
+#&gt; 7     1830    170
+#&gt; 8     1794    206
+#&gt; 9     1716    284
+#&gt; 10    1799    201
 #&gt; 
 #&gt; $`5`
 #&gt;    n.train n.test
-#&gt; 1     1784    216
-#&gt; 2     1791    209
-#&gt; 3     1790    210
-#&gt; 4     1845    155
-#&gt; 5     1826    174
-#&gt; 6     1788    212
-#&gt; 7     1836    164
+#&gt; 1     1744    256
+#&gt; 2     1818    182
+#&gt; 3     1763    237
+#&gt; 4     1783    217
+#&gt; 5     1836    164
+#&gt; 6     1838    162
+#&gt; 7     1803    197
 #&gt; 8     1860    140
-#&gt; 9     1714    286
-#&gt; 10    1766    234
+#&gt; 9     1727    273
+#&gt; 10    1828    172
 #&gt; </div><div class='input'><span class='co'># plot(spres$represampling, ecuador)</span>
 
 <span class='no'>smry</span> <span class='kw'>&lt;-</span> <span class='fu'>data.frame</span>(

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Draw uniform random (sub)sample at the group level — resample.factor • sperrorest</title>
+<title>Summarize benchmark information obtained by  — summary.sperrorestbenchmarks • sperrorest</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -72,49 +72,31 @@
       <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Draw uniform random (sub)sample at the group level</h1>
+    <h1>Summarize benchmark information obtained by </h1>
     </div>
 
     
-    <p><code>resample.factor</code> draws a random (sub)sample
-(with or without replacement) of the groups or clusters identified by
-the <code>fac</code> argument.</p>
+    <p><code>summary.sperrorestbenchmarks</code> shows information on runtime performance,
+used cores and system information</p>
     
 
-    <pre><span class='fu'>resample.factor</span>(<span class='no'>data</span>, <span class='kw'>param</span> <span class='kw'>=</span> <span class='fu'>list</span>(<span class='kw'>fac</span> <span class='kw'>=</span> <span class='st'>"class"</span>, <span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>Inf</span>, <span class='kw'>replace</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>))</pre>
+    <pre><span class='co'># S3 method for sperrorestbenchmarks</span>
+<span class='fu'>summary</span>(<span class='no'>object</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <dl class="dl-horizontal">
-      <dt>data</dt>
-      <dd>a <code>data.frame</code>, rows represent samples</dd>
-      <dt>param</dt>
-      <dd>a list with the following components: <code>fac</code> is a factor
-variable of length <code>nrow(data)</code> or the name of a factor variable
-in <code>data</code>; <code>n</code> is a numeric value specifying the size of the
-subsample (in terms of groups, not observations); <code>replace</code> determines
-if resampling of groups is to be done with or without replacement.</dd>
+      <dt>object</dt>
+      <dd><code>sperrorestbenchmarks</code> object returned class by
+<code><a href='sperrorest.html'>sperrorest()</a></code></dd>
+      <dt>...</dt>
+      <dd>additional arguments (currently ignored)</dd>
     </dl>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>a <code>data.frame</code> containing a subset of the rows of <code>data</code>.</p>
-    
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
-    <p>If <code>param$replace=FALSE</code>, a subsample of
-<code>min(param$n,nlevel(data[,fac]))</code> groups will be drawn from <code>data</code>.
-If <code>param$replace=TRUE</code>, the number of groups to be drawn is <code>param$n</code>.</p>
-    
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
-    <p><code><a href='resample.strat.uniform.html'>resample.strat.uniform()</a></code>, <code>sample()</code></p>
+    <p>List of length seven</p>
     
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>data</span>(<span class='no'>ecuador</span>) <span class='co'># Muenchow et al. (2012), see ?ecuador</span>
-<span class='no'>d</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='resample.uniform.html'>resample.uniform</a></span>(<span class='no'>ecuador</span>, <span class='kw'>param</span> <span class='kw'>=</span> <span class='fu'>list</span>(<span class='kw'>strat</span> <span class='kw'>=</span> <span class='st'>'slides'</span>, <span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>200</span>))
-<span class='fu'>nrow</span>(<span class='no'>d</span>) <span class='co'># == 200</span></div><div class='output co'>#&gt; [1] 200</div><div class='input'><span class='fu'>sum</span>(<span class='no'>d</span>$<span class='no'>slides</span> <span class='kw'>==</span> <span class='st'>'TRUE'</span>)</div><div class='output co'>#&gt; [1] 100</div><div class='input'>
-</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -122,13 +104,7 @@ If <code>param$replace=TRUE</code>, the number of groups to be drawn is <code>pa
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
-
-      <li><a href="#details">Details</a></li>
-
-      <li><a href="#see-also">See also</a></li>
-      
-      <li><a href="#examples">Examples</a></li>
-    </ul>
+          </ul>
 
   </div>
 </div>

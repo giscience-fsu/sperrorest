@@ -155,190 +155,51 @@ summary.sperrorestimportance <- function(object, level = 0, na.rm = TRUE, which 
         c(2, 3), sd, na.rm = na.rm), median = apply(arr, c(2, 3), median, 
         na.rm = na.rm), IQR = apply(arr, c(2, 3), IQR, na.rm = na.rm))
     } else
-    {
-      arr <- arr[, , which]
-      arr <- data.frame(mean = apply(arr, 2, mean, na.rm = na.rm), sd = apply(arr, 
-        2, sd, na.rm = na.rm), median = apply(arr, 2, median, na.rm = na.rm), 
-        IQR = apply(arr, 2, IQR, na.rm = na.rm))
+    { # when does this happen?
+      arr <- arr[, , which] # nocov
+      arr <- data.frame(mean = apply(arr, 2, mean, na.rm = na.rm), sd = apply(arr, # nocov
+        2, sd, na.rm = na.rm), median = apply(arr, 2, median, na.rm = na.rm), # nocov
+        IQR = apply(arr, 2, IQR, na.rm = na.rm)) # nocov
     }
   }
   return(arr)
 }
 
-
-#' Draw stratified random sample
-#'
-#' `resample.strat.uniform` draws a stratified random sample 
-#' (with or without replacement) from the samples in `data`. 
-#' Stratification is over the levels of `data[,param$response]`. 
-#' The same number of samples is drawn within each level.
+#' Summarize benchmark information obtained by `sperrorest`
 #' 
-#' @param data a `data.frame`, rows represent samples
-#' @param param a list with the following components: `strat` is either 
-#' the name of a factor variable in `data` that defines the stratification
-#'  levels, or a vector of type factor and length `nrow(data)`; 
-#'  `n` is a numeric value specifying the size of the subsample; 
-#'  `replace` determines if sampling is with or without replacement
-#'  
-#' @return a `data.frame` containing a subset of the rows of `data`.
+#' `summary.sperrorestbenchmarks` shows information on runtime performance, 
+#' used cores and system information
+#' @name summary.sperrorestbenchmarks
+#' @method summary sperrorestbenchmarks
+#' @inheritParams summary.sperroresterror
 #' 
-#' @details If `param$replace=FALSE`, a subsample of size 
-#' `min(param$n,nrow(data))` will be drawn from `data`. 
-#' If `param$replace=TRUE`, the size of the subsample is `param$n`.
-#' 
-#' @seealso [resample.uniform()], [sample()]
-#' 
-#' @examples
-#' data(ecuador) # Muenchow et al. (2012), see ?ecuador
-#' d = resample.strat.uniform(ecuador, 
-#'                            param = list(strat = 'slides', nstrat = 100))
-#' nrow(d) # == 200
-#' sum(d$slides == 'TRUE') # == 100
+#' @param object `sperrorestbenchmarks` object returned class by 
+#' [sperrorest()] 
+#' @return List of length seven
 #' 
 #' @export
-resample.strat.uniform <- function(data, param = list(strat = "class", nstrat = Inf, 
-  replace = FALSE))
-  {
-  # Old version:
-  if (!is.null(param$response))
-  {
-    warning("'param$response' argument in 'resample.strat.uniform' renamed 
-        to 'strat';\n modify your code accordingly")
-    if (is.null(param$strat)) 
-      param$strat <- param$response
-  }
-  
-  # Use defaults if not specified:
-  if (is.null(param$strat)) 
-    param$strat <- "class"
-  if (is.null(param$nstrat)) 
-    param$nstrat <- Inf
-  if (is.null(param$replace)) 
-    param$replace <- FALSE
-  
-  stopifnot((length(param$strat) == 1) | (length(param$strat) == nrow(data)))
-  if (length(param$strat == 1))
-  {
-    strat <- data[, param$strat]
-  } else strat <- param$strat
-  if (!is.factor(strat)) 
-    stop("'strat' must either be a vector of factor type, or the name of 
-       a factor variable in 'data'")
-  # Each factor level must have at least one sample, otherwise sampling within this
-  # level is impossible:
-  minstrat <- min(tapply(strat, strat, length))
-  stopifnot(minstrat >= 1)
-  # might want to change this to a warning.???
-  
-  if (!param$replace) 
-    param$nstrat <- min(param$nstrat, minstrat)
-  
-  # Uniform sampling within each stratum:
-  sel <- c()
-  for (lev in levels(strat))
-  {
-    wh <- sample(which(strat == lev), size = param$nstrat, replace = param$replace)
-    sel <- c(sel, wh)
-  }
-  return(data[sel, ])
-}
-# To do: allow nstrat to be a named vector
-
-
-#' Draw uniform random (sub)sample
-#'
-#' `resample.uniform` draws a random (sub)sample 
-#' (with or without replacement) from the samples in `data`.
-#' 
-#' @param data a `data.frame`, rows represent samples
-#' @param param a list with the following components: `n` is a numeric 
-#' value specifying the size of the subsample; `replace` determines if 
-#' sampling is with or without replacement
-#' 
-#' @return a `data.frame` containing a subset of the rows of `data`.
-#' 
-#' @details If `param$replace=FALSE`, a subsample of size 
-#' `min(param$n,nrow(data))` will be drawn from `data`. 
-#' If `param$replace=TRUE`, the size of the subsample is `param$n`.
-#' 
-#' @seealso [resample.strat.uniform()], [sample()]
-#' 
-#' @examples
-#' data(ecuador) # Muenchow et al. (2012), see ?ecuador
-#' d = resample.uniform(ecuador, param = list(strat = 'slides', n = 200))
-#' nrow(d) # == 200
-#' sum(d$slides == 'TRUE')
-#' 
-#' @export
-resample.uniform <- function(data, param = list(n = Inf, replace = FALSE))
-{
-  # Apply defaults if missing from parameter list:
-  if (is.null(param$n)) 
-    param$n <- Inf
-  if (is.null(param$replace)) 
-    param$replace <- FALSE
-  
-  if (!param$replace) 
-    param$n <- min(param$n, nrow(data))
-  
-  # Uniform sampling with or without replacement:
-  sel <- sample(nrow(data), size = param$n, replace = param$replace)
-  
-  return(data[sel, ])
+summary.sperrorestbenchmarks <- function(object, ...) {
+  class(object) <- NULL
+  object <- unlist(object)
+  object <- as.matrix(object)
+  colnames(object) <- "benchmarks"
+  return(object)
 }
 
-
-
-#' Draw uniform random (sub)sample at the group level
-#'
-#' `resample.factor` draws a random (sub)sample 
-#' (with or without replacement) of the groups or clusters identified by 
-#' the `fac` argument.
+#' Summarize package version information obtained by `sperrorest`
 #' 
-#' @param data a `data.frame`, rows represent samples
-#' @param param a list with the following components: `fac` is a factor 
-#' variable of length `nrow(data)` or the name of a factor variable 
-#' in `data`; `n` is a numeric value specifying the size of the 
-#' subsample (in terms of groups, not observations); `replace` determines 
-#' if resampling of groups is to be done with or without replacement.
+#' `summary.sperrorestpackageversion` returns the package version of sperrorest
+#' @name summary.sperrorestpackageversion
+#' @method summary sperrorestpackageversion
+#' @inheritParams summary.sperroresterror
 #' 
-#' @return a `data.frame` containing a subset of the rows of `data`.
-#' 
-#' @details If `param$replace=FALSE`, a subsample of 
-#' `min(param$n,nlevel(data[,fac]))` groups will be drawn from `data`. 
-#' If `param$replace=TRUE`, the number of groups to be drawn is `param$n`.
-#' 
-#' @seealso [resample.strat.uniform()], [sample()]
-#' 
-#' @examples
-#' data(ecuador) # Muenchow et al. (2012), see ?ecuador
-#' d = resample.uniform(ecuador, param = list(strat = 'slides', n = 200))
-#' nrow(d) # == 200
-#' sum(d$slides == 'TRUE')
+#' @param object `sperrorestpackageversion` object calculated by 
+#' [sperrorest()] 
+#' @return character vector of length one
 #' 
 #' @export
-resample.factor <- function(data, param = list(fac = "class", n = Inf, replace = FALSE))
-{
-  if (is.null(param$fac)) 
-    param$fac <- "class"
-  if (is.null(param$replace)) 
-    param$replace <- FALSE
-  stopifnot((length(param$fac) == 1) || (length(param$fac) == nrow(data)))
-  if (length(param$fac == 1))
-  {
-    fac <- data[, param$fac]
-  } else fac <- param$fac
-  if (!is.factor(fac)) 
-    stop("'fac' must either be a vector of factor type, or the name of a 
-     factor variable in 'data'")
-  fac <- factor(fac)
-  if (is.null(param$n) || is.infinite(param$n)) 
-    param$n <- nlevels(fac)
-  if (!param$replace) 
-    param$n <- min(param$n, nrow(data))
-  sel <- sample(levels(fac), size = param$n, replace = param$replace)
-  sel <- fac %in% sel
-  return(data[sel, ])
+summary.sperrorestpackageversion <- function(object, ...) {
+  paste(object[[1]], collapse = ".")
 }
 
 #' Perform spatial error estimation and variable importance assessment
@@ -696,7 +557,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
       nd <- data[resamp[[i]][[j]]$train, ]
       if (!is.null(train.fun))
       {
-        nd <- train.fun(data = nd, param = train.param)
+        nd <- train.fun(data = nd, param = train.param) # nocov
       }
       # Train model on training sample:
       margs <- c(list(formula = formula, data = nd), model.args)
@@ -706,20 +567,20 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
         fit <- try(do.call(model.fun, args = margs), silent = silent)
         
         # Error handling:
-        if (class(fit) == "try-error")
+        if (class(fit) == "try-error") # when does this happen?
         {
-          fit <- NULL
-          if (error.fold)
-          {
-          if (err.train) 
-            res[[i]][[j]]$train <- NULL
-          res[[i]][[j]]$test <- NULL
-          if (importance) 
-            impo[[i]][[j]] <- c()  # ???
-          }
-          if (do.gc >= 2) 
-          gc()
-          next  # skip this fold
+          fit <- NULL # nocov
+          if (error.fold) # nocov
+          { # nocov
+          if (err.train) # nocov
+            res[[i]][[j]]$train <- NULL # nocov
+          res[[i]][[j]]$test <- NULL # nocov
+          if (importance) # nocov
+            impo[[i]][[j]] <- c()  # nocov # ???
+          } # nocov
+          if (do.gc >= 2) # nocov
+          gc() # nocov
+          next  # nocov # skip this fold
         }
         
       } else
@@ -759,12 +620,12 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
           pooled.obs.train <- c(pooled.obs.train, nd[, response])
           pooled.pred.train <- c(pooled.pred.train, pred.train)
         }
-      } else
+      } else # does this ever happen? 'err.train=F' always errors
       {
-        if (error.fold)
-        {
-          res[[i]][[j]]$train <- NULL
-        }
+        if (error.fold) # nocov
+        { # nocov
+          res[[i]][[j]]$train <- NULL # nocov
+        } # nocov
       }
       
       # Create test sample:
@@ -793,7 +654,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
           err.try <- try(err.fun(nd[, response], pred.test), silent = silent)
           if (class(err.try) == "try-error")
           {
-          err.try <- NULL  # ???
+          err.try <- NULL # nocov (previous: '???')
           }
           res[[i]][[j]]$test <- err.try
         } else
@@ -806,18 +667,19 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
         pooled.obs.test <- c(pooled.obs.test, nd[, response])
         pooled.pred.test <- c(pooled.pred.test, pred.test)
         is.factor.prediction <- is.factor(pred.test)
+        
       }
       ### Permutation-based variable importance assessment:
       if (importance & error.fold)
       {
         
-        if (is.null(res[[i]][[j]]$test))
+        if (is.null(res[[i]][[j]]$test)) # does this ever happen?
         {
-          impo[[i]][[j]] <- c()
-          if (progress == 1 | progress == 2)
-          {
-          cat(date(), "-- skipping variable importance\n")
-          }
+          impo[[i]][[j]] <- c() #nocov
+          if (progress == 1 | progress == 2) #nocov
+          { # nocov
+          cat(date(), "-- skipping variable importance\n") #nocov
+          } #nocov
         } else
         {
           
@@ -866,7 +728,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
             permut.err <- try(err.fun(nd[, response], pred.test), silent = silent)
             if (class(permut.err) == "try-error")
             {
-              imp.temp[[vnm]][[cnt]] <- c()  # ???
+              imp.temp[[vnm]][[cnt]] <- c() # nocov (previous: '???')
             } else
             {
               imp.temp[[vnm]][[cnt]] <- as.list(unlist(res[[i]][[j]]$test) - 
@@ -899,14 +761,15 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
         if (is.factor(data[, response]))
         {
           lev <- levels(data[, response])
-          if (err.train) 
-          pooled.obs.train <- factor(lev[pooled.obs.train], levels = lev)
-          pooled.obs.test <- factor(lev[pooled.obs.test], levels = lev)
-          if (is.factor.prediction)
-          {
-          if (err.train) 
-            pooled.pred.train <- factor(lev[pooled.pred.train], levels = lev)
-          pooled.pred.test <- factor(lev[pooled.pred.test], levels = lev)
+          if (err.train) {
+            pooled.obs.train <- factor(lev[pooled.obs.train], levels = lev)
+            pooled.obs.test <- factor(lev[pooled.obs.test], levels = lev)
+          }
+          if (is.factor.prediction) {
+            if (err.train) {
+              pooled.pred.train <- factor(lev[pooled.pred.train], levels = lev)
+              pooled.pred.test <- factor(lev[pooled.pred.test], levels = lev)
+            }
           }
         }
         pooled.err.train <- NULL
@@ -974,8 +837,11 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
     notify(title = "sperrorest() finished successfully!", msg <- msg)
   }
   
+  package.version <- packageVersion("sperrorest")
+  class(package.version) <- "sperrorestpackageversion"
+  
   RES <- list(error.rep = pooled.err, error.fold = res, represampling = resamp, 
-    importance = impo, benchmarks = my.bench, package.version = packageVersion("sperrorest"))
+              importance = impo, benchmarks = my.bench, package.version = package.version)
   class(RES) <- "sperrorest"
   
   return(RES)
@@ -1006,7 +872,7 @@ summary.sperrorest <- function(object, ...)
 {
   list(error.rep = summary(object$error.rep, ...), error.fold = summary(object$error.fold, 
     ...), represampling = summary(object$represampling, ...), importance = summary(object$importance, 
-    ...))
+    ...), benchmark = summary(object$benchmark, ...), packageVersion = summary(object$package.version, ...))
 }
 
 #' @rdname summary.sperrorest
@@ -1034,3 +900,18 @@ print.sperrorestreperror <- function(x, ...) print(unclass(summary(x, level = In
 #' @method print sperrorest
 #' @export
 print.sperrorest <- function(x, ...) print(unclass(summary(x, level = Inf, ...)))
+
+#' @rdname summary.sperrorest
+#' @name print.sperrorestbenchmarks
+#' @method print sperrorestbenchmarks
+#' @export
+print.sperrorestbenchmarks <- function(x, ...) print(summary(x), ...)
+
+#' @rdname summary.sperrorest
+#' @name print.sperrorestpackageversion
+#' @method print sperrorestpackageversion
+#' @export
+print.sperrorestpackageversion <- function(x, ...) print(summary(x))
+
+
+
