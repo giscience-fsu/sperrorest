@@ -970,14 +970,14 @@ parsperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.
           gc()
         }
       }
-      # write debug impo object -> kommt hier korrekt an! 
-      # str(impo)
       
       if (error.rep & error.fold)
       {
-        
-        foreach.out <- list(rep.err, res, impo)
-        foreach.out <- list(foreach.out)
+        if (importance) {
+          foreach.out <- list(rep.err, res, impo)
+        } else {
+          foreach.out <- list(foreach.out)
+        }
         return(foreach.out)
       }
       if (error.rep & !error.fold)
@@ -987,7 +987,12 @@ parsperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.
       }
       if (!error.rep & error.fold)
       {
-        foreach.out <- res
+        if (importance) {
+          foreach.out <- list(res, impo)
+          foreach.out <- list(foreach.out)
+        } else {
+          foreach.out <- res
+        }
         return(foreach.out)
       }
     }
@@ -1056,11 +1061,44 @@ parsperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.
     
     if (!error.rep & error.fold)
     {
-      # multiple (unnecessary) lists are written in foreach loop. Reason unknown.
-      # Subset to important lists only containing fold error measures
-      for (i in seq_along(resamp))
-      {
-        foreach.out[[i]] <- foreach.out[[i]][i, ]
+      if (importance) { 
+        # make backup for impo
+        foreach.out.imp <- foreach.out
+        
+        # extract error.fold objects
+        foreach.out.error.fold <- list()
+        for (i in seq_along(resamp))
+        {
+          foreach.out.error.fold[[i]] <- foreach.out[[1]][[i]]
+        }
+        # extract only error.fold information and ignore resamp stats
+        for (i in seq_along(resamp))
+        {
+          foreach.out.error.fold[[i]] <- foreach.out.error.fold[[i]][[i]]
+        }
+        foreach.out <- foreach.out.error.fold
+        
+        # impo: remove error.fold information (static i here -> always remove first list item on every call)
+        for (i in seq_along(resamp))
+        {
+          foreach.out.imp[[1]][[1]] <- NULL
+        }
+        # shorten list
+        foreach.out.imp <- foreach.out.imp[[1]]
+        # extract only imp information and ignore resamp stats
+        for (i in seq_along(resamp))
+        {
+          foreach.out.imp[[i]] <- foreach.out.imp[[i]][[i]]
+        }
+        impo <- foreach.out.imp
+        
+      } else {
+        # multiple (unnecessary) lists are written in foreach loop. Reason unknown.
+        # Subset to important lists only containing fold error measures
+        for (i in seq_along(resamp))
+        {
+          foreach.out[[i]] <- foreach.out[[i]][i, ]
+        }
       }
     }
     
