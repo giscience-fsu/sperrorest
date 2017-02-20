@@ -1000,13 +1000,6 @@ parsperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.
     
     # end foreach() ------
     
-    
-    # debug mode: set all unecessary lists to NULL
-    #foreach.out[[1]] <- NULL
-    #foreach.out[[2]] <- NULL
-    #foreach.out[[4]] <- NULL
-    #foreach.out[[5]] <- NULL
-    #foreach.out[[6]] <- NULL
     if (error.rep & !error.fold)
     {
       rep.err <- as.data.frame(foreach.out)
