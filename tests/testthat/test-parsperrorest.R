@@ -110,22 +110,35 @@ test_that("output length of list is correct for error.rep = TRUE and error.fold 
 
 # parsperrorest() variable importance Wed Feb  8 21:59:03 2017 ------------------------------
 
-# test_that("parsperrorest() produces correct output for binary response", {
-#   data(ecuador) # Muenchow et al. (2012), see ?ecuador
-#   fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
-#   
-#   nspres <- parsperrorest(data = ecuador, formula = fo,
-#                           model.fun = glm, model.args = list(family = "binomial"),
-#                           pred.fun = predict, pred.args = list(type = "response"),
-#                           smp.fun = partition.cv, 
-#                           smp.args = list(repetition = 1:2, nfold = 10),
-#                           par.args = list(par.mode = 2, par.units = 2),
-#                           notify = TRUE, benchmark = TRUE,
-#                           importance = TRUE, imp.permutations = 10)
-#   summary.rep <- summary(nspres$error.rep)                    
-#   summary.fold <- summary(nspres$error.fold)
-#   summary.resampling <- summary(nspres$represampling)
-# })
+test_that("parsperrorest() variable importance with error.rep = T and error.fold = T", {
+  data(ecuador) # Muenchow et al. (2012), see ?ecuador
+  fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
+
+  nspres <- parsperrorest(data = ecuador, formula = fo,
+                          model.fun = glm, model.args = list(family = "binomial"),
+                          pred.fun = predict, pred.args = list(type = "response"),
+                          smp.fun = partition.cv,
+                          smp.args = list(repetition = 1:2, nfold = 4),
+                          par.args = list(par.mode = 2, par.units = 2),
+                          notify = FALSE, benchmark = TRUE, 
+                          importance = TRUE, imp.permutations = 10)
+  expect_equal(class(nspres$importance[[1]][[1]]), "data.frame")
+})
+
+test_that("parsperrorest() variable importance with error.rep = F and error.fold = T", {
+  data(ecuador) # Muenchow et al. (2012), see ?ecuador
+  fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
+  
+  nspres <- parsperrorest(data = ecuador, formula = fo,
+                          model.fun = glm, model.args = list(family = "binomial"),
+                          pred.fun = predict, pred.args = list(type = "response"),
+                          smp.fun = partition.cv,
+                          smp.args = list(repetition = 1:2, nfold = 4),
+                          par.args = list(par.mode = 2, par.units = 2),
+                          notify = FALSE, benchmark = TRUE, error.rep = F, 
+                          importance = TRUE, imp.permutations = 10)
+  expect_equal(class(nspres$importance[[1]][[1]]), "data.frame")
+})
 
 # parsperrorest() binary response Wed Feb  8 22:43:12 2017 ------------------------------
 
@@ -139,8 +152,8 @@ test_that("parsperrorest() produces correct output for binary response", {
                           smp.fun = partition.cv,
                           smp.args = list(repetition = 1:2, nfold = 2),
                           par.args = list(par.mode = 2, par.units = 2),
-                          notify = TRUE, benchmark = TRUE,
-                          importance = TRUE, imp.permutations = 2)
+                          notify = TRUE, benchmark = TRUE, error.rep = F, 
+                          importance = F, imp.permutations = 2)
   summary.rep <- summary(nspres$error.rep)
   summary.fold <- summary(nspres$error.fold)
   summary.resampling <- summary(nspres$represampling)
