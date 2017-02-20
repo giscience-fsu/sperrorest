@@ -1,4 +1,4 @@
-sperrorest 1.0.0 (Jan 2017)
+# sperrorest 1.0.0 (Jan 2017)
 
 New features:
   * add `parsperrorest()`: This function lets you exexute `sperrorest()` in parallel. It includes two modes (`par.mode = 1` and `par.mode = 2`) which use different   parallelization approaches in the background. See `?parsperrorest()` for more details.
@@ -27,12 +27,13 @@ Changes to functions:
 Package related:
   * add package NEWS
   
-  * add package vignette
+  * add package vignette -> `vignette("sperrorest-and-parsperrorest", package = "sperrorest")`
   
   * package is now ByteCompiled
   
   * Github repo of `sperrorest` now at 
   [https://github.com/pat-s/sperrorest/](https://github.com/pat-s/sperrorest/)
+  
 # sperrorest 0.2-1 (19 June 2012)
 
 * First release on CRAN
