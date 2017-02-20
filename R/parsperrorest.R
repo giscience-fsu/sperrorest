@@ -743,7 +743,7 @@ parsperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.
     registerDoParallel(cl)
     
     foreach.out <- foreach(i = 1:length(resamp), .packages = (.packages()), .errorhandling = "remove", 
-      .combine = "comb", .multicombine = TRUE, .verbose = FALSE) %dopar% {
+      .combine = "comb", .multicombine = TRUE, .verbose = T) %dopar% {
       
       # reset rep.err otherwise duplicates are introduced
       rep.err <- NULL
@@ -970,11 +970,13 @@ parsperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.
           gc()
         }
       }
+      # write debug impo object -> kommt hier korrekt an! 
+      # str(impo)
       
       if (error.rep & error.fold)
       {
         
-        foreach.out <- list(rep.err, res)
+        foreach.out <- list(rep.err, res, impo)
         foreach.out <- list(foreach.out)
         return(foreach.out)
       }
@@ -992,6 +994,14 @@ parsperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.
     stopCluster(cl)
     
     # end foreach() ------
+    
+    
+    # debug mode: set all unecessary lists to NULL
+    #foreach.out[[1]] <- NULL
+    #foreach.out[[2]] <- NULL
+    #foreach.out[[4]] <- NULL
+    #foreach.out[[5]] <- NULL
+    #foreach.out[[6]] <- NULL
     if (error.rep & !error.fold)
     {
       rep.err <- as.data.frame(foreach.out)
@@ -1019,13 +1029,29 @@ parsperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.
         i <- i + 1
       }
       
+      # create copy to work on folds
       foreach.out.tmp <- foreach.out[[1]]
+      # remove error.rep to concentrace on error.fold
       foreach.out.tmp[[1]] <- NULL
+      # extract only error.fold statistics and ignore resamp stats
       for (i in seq_along(resamp))
       {
         foreach.out.tmp[[i]] <- foreach.out.tmp[[i]][[i]]
       }
       err.fold <- foreach.out.tmp
+      
+      # create copy#2 to work on impo
+      foreach.out.impo <- foreach.out.tmp
+      # remove err.fold information (loop over number of reps)
+      for (i in seq_along(resamp)) {
+        foreach.out.impo[[1]] <- NULL
+      }
+      # extract only impo information and ignore resamp stats
+      for (i in seq_along(resamp))
+      {
+        foreach.out.impo[[i]] <- foreach.out.impo[[i]][[i]]
+      }
+      impo <- foreach.out.impo
     }
     
     if (!error.rep & error.fold)
