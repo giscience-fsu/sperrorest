@@ -152,7 +152,7 @@ test_that("parsperrorest() produces correct output for binary response", {
                           smp.fun = partition.cv,
                           smp.args = list(repetition = 1:2, nfold = 2),
                           par.args = list(par.mode = 2, par.units = 2),
-                          notify = TRUE, benchmark = TRUE, error.rep = F, 
+                          notify = TRUE, benchmark = TRUE, 
                           importance = F, imp.permutations = 2)
   summary.rep <- summary(nspres$error.rep)
   summary.fold <- summary(nspres$error.fold)
@@ -168,14 +168,16 @@ test_that("parsperrorest() when pred.fun = NULL", {
                           model.fun = glm, model.args = list(family = "binomial"),
                           pred.args = list(type = "response"),
                           smp.fun = partition.cv,
-                          smp.args = list(repetition = 1:2, nfold = 2),
+                          smp.args = list(repetition = 1:2, nfold = 4),
                           par.args = list(par.mode = 2, par.units = 2),
-                          notify = TRUE, benchmark = TRUE,
+                          notify = FALSE, benchmark = TRUE,
                           importance = TRUE, imp.permutations = 2)
   summary.rep <- summary(nspres$error.rep)
   summary.fold <- summary(nspres$error.fold)
   summary.resampling <- summary(nspres$represampling)
+  summary.impo <- summary(nspres$importance)
   expect_equal(names(nspres$error.rep)[[1]], "train.auroc") # check for train.auroc for binary response
+  expect_equal(class(nspres$importance[[1]][[1]]), "data.frame") # check for importance object
 })
 
 # parsperrorest par.mode = 1 Mon Feb  6 23:25:08 2017 ------------------------------
