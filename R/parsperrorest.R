@@ -449,26 +449,26 @@ parsperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.
           rm(pargs)
           
           # Calculate error measures on training sample:
-          if (error.fold) 
-          if (do.try)
-          {
-            err.try <- try(err.fun(nd[, response], pred.train))
-            if (class(err.try) == "try-error") 
-            err.try <- NULL
-            currentRes[[j]]$train <- err.try  #res[[i]][[j]]$train = err.try
-          } else
-          {
-            currentRes[[j]]$train <- err.fun(nd[, response], pred.train)  #res[[i]][[j]]$train = err.fun(nd[,response], pred.train)
+          if (error.fold == TRUE) {
+            if (do.try)
+            {
+              err.try <- try(err.fun(nd[, response], pred.train))
+              if (class(err.try) == "try-error") {
+                err.try <- NULL
+              }
+              currentRes[[j]]$train <- err.try  #res[[i]][[j]]$train = err.try
+            } else {
+              currentRes[[j]]$train <- err.fun(nd[, response], pred.train)  #res[[i]][[j]]$train = err.fun(nd[,response], pred.train)
+            }
           }
-          if (error.rep)
-          {
-          pooled.obs.train <- c(pooled.obs.train, nd[, response])
-          pooled.pred.train <- c(pooled.pred.train, pred.train)
+          if (error.rep == TRUE) {
+            pooled.obs.train <- c(pooled.obs.train, nd[, response])
+            pooled.pred.train <- c(pooled.pred.train, pred.train)
+          } else {
+            if (error.fold == TRUE) { 
+              currentRes[[j]]$train <- NULL  #res[[i]][[j]]$train = NULL
+            }
           }
-        } else
-        {
-          if (error.fold) 
-          currentRes[[j]]$train <- NULL  #res[[i]][[j]]$train = NULL
         }
         
         # Create test sample:
@@ -743,7 +743,7 @@ parsperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.
     registerDoParallel(cl)
     
     foreach.out <- foreach(i = 1:length(resamp), .packages = (.packages()), .errorhandling = "remove", 
-      .combine = "comb", .multicombine = TRUE, .verbose = T) %dopar% {
+      .combine = "comb", .multicombine = TRUE, .verbose = FALSE) %dopar% {
       
       # reset rep.err otherwise duplicates are introduced
       rep.err <- NULL
@@ -976,8 +976,9 @@ parsperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.
         if (importance) {
           foreach.out <- list(rep.err, res, impo)
         } else {
-          foreach.out <- list(foreach.out)
+          foreach.out <- list(rep.err, res)
         }
+        foreach.out <- list(foreach.out)
         return(foreach.out)
       }
       if (error.rep & !error.fold)
@@ -1037,19 +1038,20 @@ parsperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.
         foreach.out.tmp[[i]] <- foreach.out.tmp[[i]][[i]]
       }
       err.fold <- foreach.out.tmp
-      
-      # create copy#2 to work on impo
-      foreach.out.impo <- foreach.out.tmp
-      # remove err.fold information (loop over number of reps)
-      for (i in seq_along(resamp)) {
-        foreach.out.impo[[1]] <- NULL
+      if (importance) {
+        # create copy#2 to work on impo
+        foreach.out.impo <- foreach.out.tmp
+        # remove err.fold information (loop over number of reps)
+        for (i in seq_along(resamp)) {
+          foreach.out.impo[[1]] <- NULL
+        }
+        # extract only impo information and ignore resamp stats
+        for (i in seq_along(resamp))
+        {
+          foreach.out.impo[[i]] <- foreach.out.impo[[i]][[i]]
+        }
+        impo <- foreach.out.impo
       }
-      # extract only impo information and ignore resamp stats
-      for (i in seq_along(resamp))
-      {
-        foreach.out.impo[[i]] <- foreach.out.impo[[i]][[i]]
-      }
-      impo <- foreach.out.impo
     }
     
     if (!error.rep & error.fold)
@@ -1084,7 +1086,6 @@ parsperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.
           foreach.out.imp[[i]] <- foreach.out.imp[[i]][[i]]
         }
         impo <- foreach.out.imp
-        
       } else {
         # multiple (unnecessary) lists are written in foreach loop. Reason unknown.
         # Subset to important lists only containing fold error measures
