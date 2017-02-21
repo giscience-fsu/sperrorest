@@ -332,6 +332,30 @@ test_that("output length of list is correct for error.rep = TRUE and error.fold 
             expect_equal(length(par.nsp.res$error.fold[[1]]), 2)
           })
 
+# par.mode = 1 variable importance Tue Feb 21 22:15:41 2017 ------------------------------
+
+test_that("par.mode = 1 works with var.imp", {
+  data(ecuador) # Muenchow et al. (2012), see ?ecuador
+  fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
+  
+  nspres <- parsperrorest(data = ecuador, formula = fo,
+                          model.fun = glm, model.args = list(family = "binomial"),
+                          pred.args = list(type = "response"),
+                          smp.fun = partition.cv,
+                          smp.args = list(repetition = 1:2, nfold = 4),
+                          par.args = list(par.mode = 1, par.units = 2),
+                          notify = FALSE, benchmark = TRUE,
+                          importance = TRUE, imp.permutations = 2)
+  summary.rep <- summary(nspres$error.rep)
+  summary.fold <- summary(nspres$error.fold)
+  summary.resampling <- summary(nspres$represampling)
+  summary.impo <- summary(nspres$importance)
+  expect_equal(names(nspres$error.rep)[[1]], "train.auroc") # check for train.auroc for binary response
+  expect_equal(class(nspres$importance[[1]][[1]]), "data.frame") # check for importance object
+})
+
+### manual
+
 # notify argument Tue Feb  7 13:45:45 2017 ------------------------------
 
 test_that("notify badge is working in parsperrorest()", {
