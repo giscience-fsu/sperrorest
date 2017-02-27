@@ -642,7 +642,11 @@ parsperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.
     # is an integer. Showing the progress bar increases the communication overhead
     # between the main process and nodes / child processes compared to the parallel
     # equivalents of the functions without the progress bar.  see ?pblapply
-    pboptions(style = 1, type = "timer")
+    if (progress == FALSE) {
+      pboptions(type = "none")
+    } else {
+      pboptions(style = 1, type = "timer")
+    }
     myRes <- pblapply(cl = par.cl, X = resamp, FUN = runreps)
     
     # transfer results of lapply() to respective data objects
@@ -741,7 +745,7 @@ parsperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.
                                {
                                  cat(date(), "Repetition", names(resamp)[i], "- Fold", j, "\n")
                                }
-                               if (progress == 2)
+                               if (progress == TRUE | progress == 2)
                                {
                                  cat(date(), "Repetition", names(resamp)[i], "\n")
                                }
