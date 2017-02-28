@@ -363,6 +363,7 @@ summary.sperrorestpackageversion <- function(object, ...) {
 #' @seealso [parsperrorest()] 
 #' 
 #' @examples
+#' \dontrun{
 #' data(ecuador) # Muenchow et al. (2012), see ?ecuador
 #' fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
 #' 
@@ -404,6 +405,7 @@ summary.sperrorestpackageversion <- function(object, ...) {
 #' boxplot(smry, col = c('red','red','red','green'), 
 #'         main = 'Training vs. test, nonspatial vs. spatial',
 #'         ylab = 'Area under the ROC curve')
+#' }
 sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.args = list(), 
   pred.fun = NULL, pred.args = list(), smp.fun = partition.loo, smp.args = list(), 
   train.fun = NULL, train.param = NULL, test.fun = NULL, test.param = NULL, err.fun = err.default, 

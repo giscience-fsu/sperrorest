@@ -10,8 +10,7 @@
 #' @import pbapply
 #' @import rpart
 #' @importFrom utils packageVersion 
-#' @import snow
-#' @importFrom parallel detectCores clusterSetRNGStream mclapply
+#' @import parallel
 #' @import foreach
 #' @import doParallel
 #' @import notifier
@@ -199,6 +198,7 @@
 #' @seealso [sperrorest()]
 #' 
 #' @examples
+#' \dontrun{
 #' data(ecuador) # Muenchow et al. (2012), see ?ecuador
 #' fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
 #' 
@@ -245,7 +245,7 @@
 #' boxplot(smry, col = c('red','red','red','green'), 
 #'     main = 'Training vs. test, nonspatial vs. spatial',
 #'     ylab = 'Area under the ROC curve')
-#'     
+#' }    
 #' @export
 parsperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.args = list(), 
   pred.fun = NULL, pred.args = list(), smp.fun = partition.loo, smp.args = list(), 
