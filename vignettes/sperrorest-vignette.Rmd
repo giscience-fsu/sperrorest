@@ -8,8 +8,6 @@ link-citations: true
 output: 
     rmarkdown::html_vignette:
       toc: true
-    # pdf_document:
-    #   number_sections: yes
 vignette: >
   %\VignetteIndexEntry{Spatial Modeling Using Statistical Learning Techniques}
   %\VignetteEngine{knitr::rmarkdown}
@@ -25,9 +23,6 @@ opts_chunk$set(cache = TRUE,
                fig.height = 5)
 opts_knit$set(width = 125)
 options(digits = 3)
-# Sys.setenv(TEXINPUTS=getwd(),
-#            BIBINPUTS=getwd(),
-#            BSTINPUTS=getwd())
 ```
 
 # Introduction
@@ -107,8 +102,8 @@ table(pred = pred, obs = maipo$croptype)
 ```
 
 ```
-##        obs
-## pred    crop1 crop2 crop3 crop4
+##         obs
+##   pred  crop1 crop2 crop3 crop4
 ##   crop1  1294     8     4    37
 ##   crop2    50  1054     4    44
 ##   crop3     0     0  1935     6
@@ -281,17 +276,19 @@ To run a spatial cross-validation at the field level, we can use `partition.fact
 
 To take a look where our training and tests sets will be partitioned on each fold, we can plot them. The red colored points represent the test set in each fold, the black colored points the training set. Note that because we plotted over 7000 points, overplotting occurs and since the red crosses are plotted after the black ones, it seems visually that way more than ~20% of red points exist than it is really the case. 
 
-```{r }
-png(filename = "../inst/figure/resamp-plot.png", width = 7, height = 4, units = "in", res = 300)
+```{r , echo = FALSE}
+png(filename = "../inst/figure/resamp-plot.png", width = 7, height = 3, units = "in", res = 90)
 resamp <- partition.factor.cv(maipo, nfold = 5, repetition = 1:1, fac = "field")
 plot(resamp, maipo, coords = c("utmx","utmy"))
 dev.off()
 ```
 
-
-```{r, eval = TRUE, fig_width=3}
-knitr::include_graphics("../inst/figure/resamp-plot.png")
+```{r }
+resamp <- partition.factor.cv(maipo, nfold = 5, repetition = 1:1, fac = "field")
+plot(resamp, maipo, coords = c("utmx","utmy"))
 ```
+
+![](../inst/figure/resamp-plot.png)
 
 Subsequently, we have to specify the location of the fields (`fac = "field"`) in the prediction arguments (`pred.args`) and sampling arguments (`smp.args`) in `sperrorest()`.
 
