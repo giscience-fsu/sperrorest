@@ -987,7 +987,6 @@ parsperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.
     {
       
       ## error.rep output as matrix -> conver to dataframe and merge all repetitions
-      ## convert matrix to data.frame (error.rep) hier nur länge reps!! (toDo)
       for (i in 1:length(resamp))
       {
         foreach.out[[1]][[i]] <- as.data.frame(foreach.out[[1]][[i]])
