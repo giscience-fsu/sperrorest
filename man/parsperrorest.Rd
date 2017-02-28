@@ -183,6 +183,7 @@ was interrupted. (3) Optionally have sperrorest dump the result of each
 repetition into a file, and to skip repetitions for which a file already exists.
 }
 \examples{
+\dontrun{
 data(ecuador) # Muenchow et al. (2012), see ?ecuador
 fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
 
@@ -229,7 +230,7 @@ smry <- data.frame(
 boxplot(smry, col = c('red','red','red','green'), 
     main = 'Training vs. test, nonspatial vs. spatial',
     ylab = 'Area under the ROC curve')
-    
+}    
 }
 \references{
 Brenning, A. 2012. Spatial cross-validation and bootstrap for
