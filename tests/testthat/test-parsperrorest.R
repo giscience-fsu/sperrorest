@@ -120,7 +120,7 @@ test_that("parsperrorest() variable importance with error.rep = T and error.fold
                           smp.fun = partition.cv,
                           smp.args = list(repetition = 1:2, nfold = 4),
                           par.args = list(par.mode = 2, par.units = 2),
-                          notify = FALSE, benchmark = TRUE, 
+                          benchmark = TRUE, 
                           importance = TRUE, imp.permutations = 10)
   expect_equal(class(nspres$importance[[1]][[1]]), "data.frame")
 })
@@ -135,7 +135,7 @@ test_that("parsperrorest() variable importance with error.rep = F and error.fold
                           smp.fun = partition.cv,
                           smp.args = list(repetition = 1:2, nfold = 4),
                           par.args = list(par.mode = 2, par.units = 2),
-                          notify = FALSE, benchmark = TRUE, error.rep = F, 
+                          benchmark = TRUE, error.rep = FALSE, 
                           importance = TRUE, imp.permutations = 10)
   expect_equal(class(nspres$importance[[1]][[1]]), "data.frame")
 })
@@ -152,8 +152,8 @@ test_that("parsperrorest() produces correct output for binary response", {
                           smp.fun = partition.cv,
                           smp.args = list(repetition = 1:2, nfold = 2),
                           par.args = list(par.mode = 2, par.units = 2),
-                          notify = FALSE, benchmark = TRUE, 
-                          importance = F, imp.permutations = 2)
+                          benchmark = TRUE, 
+                          importance = FALSE, imp.permutations = 2)
   summary.rep <- summary(nspres$error.rep)
   summary.fold <- summary(nspres$error.fold)
   summary.resampling <- summary(nspres$represampling)
@@ -170,7 +170,7 @@ test_that("parsperrorest() when pred.fun = NULL", {
                           smp.fun = partition.cv,
                           smp.args = list(repetition = 1:2, nfold = 4),
                           par.args = list(par.mode = 2, par.units = 2),
-                          notify = FALSE, benchmark = TRUE,
+                          benchmark = TRUE,
                           importance = TRUE, imp.permutations = 2)
   summary.rep <- summary(nspres$error.rep)
   summary.fold <- summary(nspres$error.fold)
@@ -342,7 +342,7 @@ test_that("par.mode = 1 works with var.imp", {
                           smp.fun = partition.cv,
                           smp.args = list(repetition = 1:2, nfold = 4),
                           par.args = list(par.mode = 1, par.units = 2),
-                          notify = FALSE, benchmark = TRUE,
+                          benchmark = TRUE,
                           importance = TRUE, imp.permutations = 2)
   summary.rep <- summary(nspres$error.rep)
   summary.fold <- summary(nspres$error.fold)
@@ -357,54 +357,55 @@ test_that("par.mode = 1 works with var.imp", {
 # notify argument Tue Feb  7 13:45:45 2017 ------------------------------
 
 test_that("notify badge is working in parsperrorest()", {
-  
+
   testthat::skip_on_cran() # "because of 'notify=TRUE'"
-  
-  data(ecuador) 
+  testthat::skip("notifier integration removed")
+
+  data(ecuador)
   fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
-  
+
   # Example of a classification tree fitted to this data:
   mypred.rpart <- function(object, newdata) predict(object, newdata)[, 2]
   ctrl <- rpart.control(cp = 0.005) # show the effects of overfitting
   fit <- rpart(fo, data = ecuador, control = ctrl)
-  
+
   # Non-spatial 5-repeated 10-fold cross-validation:
   mypred.rpart <- function(object, newdata) predict(object, newdata)[,2]
   par.nsp.res <- parsperrorest(data = ecuador, formula = fo,
                                model.fun = rpart, model.args = list(control = ctrl),
                                pred.fun = mypred.rpart,
-                               progress = FALSE, 
+                               progress = FALSE,
                                smp.fun = partition.cv,
                                smp.args = list(repetition = 1:2, nfold = 2),
                                par.args = list(par.mode = 1, par.units = 2),
                                error.rep = TRUE, error.fold = TRUE, notify = TRUE)
-  
+
   expect_equal(length(par.nsp.res$error.fold[[1]]), 2)
 })
 
 test_that("notify without benchmark = TRUE", {
   
-  testthat::skip_on_cran() # "because of 'notify=TRUE'"
-  
-  data(ecuador) 
+  testthat::skip("notifier integration removed")
+
+  data(ecuador)
   fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
-  
+
   # Example of a classification tree fitted to this data:
   mypred.rpart <- function(object, newdata) predict(object, newdata)[, 2]
   ctrl <- rpart.control(cp = 0.005) # show the effects of overfitting
   fit <- rpart(fo, data = ecuador, control = ctrl)
-  
+
   # Non-spatial 5-repeated 10-fold cross-validation:
   mypred.rpart <- function(object, newdata) predict(object, newdata)[,2]
   par.nsp.res <- parsperrorest(data = ecuador, formula = fo,
                                model.fun = rpart, model.args = list(control = ctrl),
                                pred.fun = mypred.rpart,
-                               progress = FALSE, 
+                               progress = FALSE,
                                smp.fun = partition.cv, benchmark = FALSE,
                                smp.args = list(repetition = 1:2, nfold = 2),
                                par.args = list(par.mode = 1, par.units = 2),
                                error.rep = TRUE, error.fold = TRUE, notify = TRUE)
-  
+
   expect_equal(length(par.nsp.res$error.fold[[1]]), 2)
 })
 
