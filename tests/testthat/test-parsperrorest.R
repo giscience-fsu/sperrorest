@@ -186,7 +186,6 @@ test_that("parsperrorest() when pred.fun = NULL", {
 test_that("output type (= list) for different logical combinations of 
           error.rep and error.fold for par.mode = 1 on LDA example", {
             
-            testthat::skip_on_cran()
             testthat::skip("par.mode = 1 not working with LDA")
             
             lda.predfun <- function(object, newdata, fac = NULL) {
@@ -260,7 +259,6 @@ test_that("output type (= list) for different logical combinations of
 
 test_that("do.try argument", {
   
-  testthat::skip_on_cran()
   testthat::skip("par.mode = 1 not working with LDA")
   
   lda.predfun <- function(object, newdata, fac = NULL) {
@@ -309,8 +307,6 @@ test_that("do.try argument", {
 
 test_that("output length of list is correct for error.rep = TRUE and error.fold  = TRUE 
           for par.mode = 1 on rpart example", {
-            
-            testthat::skip_on_cran()
             
             data(ecuador) 
             fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
@@ -362,7 +358,7 @@ test_that("par.mode = 1 works with var.imp", {
 
 test_that("notify badge is working in parsperrorest()", {
   
-  testthat::skip_on_cran("because of 'notify=TRUE'")
+  testthat::skip_on_cran() # "because of 'notify=TRUE'"
   
   data(ecuador) 
   fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
@@ -388,7 +384,7 @@ test_that("notify badge is working in parsperrorest()", {
 
 test_that("notify without benchmark = TRUE", {
   
-  testthat::skip_on_cran("because of 'notify=TRUE'")
+  testthat::skip_on_cran() # "because of 'notify=TRUE'"
   
   data(ecuador) 
   fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope

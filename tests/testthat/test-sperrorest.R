@@ -6,7 +6,7 @@ pacman::p_load(sperrorest, rpart, testthat, MASS)
 
 test_that("sperrorest() produces correct output for binary response", {
   
-  skip_on_cran("because of 'notify=TRUE'")
+  testthat::skip_on_cran() # "because of 'notify=TRUE'"
   
   data(ecuador) # Muenchow et al. (2012), see ?ecuador
   fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
