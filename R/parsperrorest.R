@@ -13,7 +13,6 @@
 #' @import parallel
 #' @import foreach
 #' @import doParallel
-#' @import notifier
 #' 
 #' @param data a `data.frame` with predictor and response variables. 
 #' Training and test samples will be drawn from this data set by `train.fun` 
