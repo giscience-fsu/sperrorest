@@ -116,8 +116,6 @@
 #' file output ('parsperrorest.progress.txt') in the current working directory 
 #' for Windows-systems. 
 #' 
-#' @param notify (optional) show a notification badge after `parsperrorest()` has finished.
-#' 
 #' @param par.args list of parallelization parameters:
 #' `par.mode` (the parallelization mode),
 #' `par.units` (the number of parallel processing units), 
@@ -252,7 +250,7 @@ parsperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.
   train.fun = NULL, train.param = NULL, test.fun = NULL, test.param = NULL, err.fun = err.default, 
   error.fold = TRUE, error.rep = TRUE, err.train = TRUE, imp.variables = NULL, 
   imp.permutations = 1000, importance = !is.null(imp.variables), distance = FALSE, 
-  do.gc = 1, do.try = FALSE, progress = 1, out.progress = "", notify = FALSE, 
+  do.gc = 1, do.try = FALSE, progress = 1, out.progress = "", # notify = FALSE, 
   par.args = list(), benchmark = FALSE, ...) {
   # if benchmark = TRUE, start clock
   if (benchmark) 
@@ -684,16 +682,16 @@ parsperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.
       my.bench <- NULL
     }
     
-    if (notify == TRUE) {
-      if (benchmark == TRUE) {
-        msg <- paste0("Repetitions: ", length(smp.args$repetition), "; ", 
-                      "Folds: ", smp.args$nfold, "; ", "Total time: ", round(my.bench$runtime.performance, 
-                                                                             2))
-      } else (msg <- paste0("Repetitions: ", length(smp.args$repetition), "; ", 
-                            "Folds: ", smp.args$nfold))
-      
-      notify(title = "parsperrorest() finished successfully!", msg <- msg)
-    }
+    # if (notify == TRUE) {
+    #   if (benchmark == TRUE) {
+    #     msg <- paste0("Repetitions: ", length(smp.args$repetition), "; ", 
+    #                   "Folds: ", smp.args$nfold, "; ", "Total time: ", round(my.bench$runtime.performance, 
+    #                                                                          2))
+    #   } else (msg <- paste0("Repetitions: ", length(smp.args$repetition), "; ", 
+    #                         "Folds: ", smp.args$nfold))
+    #   
+    #   notify(title = "parsperrorest() finished successfully!", msg <- msg)
+    # }
     
     package.version <- packageVersion("sperrorest")
     class(package.version) <- "sperrorestpackageversion"
@@ -1101,16 +1099,16 @@ parsperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.
       class(my.bench) <- "sperrorestbenchmarks"
     } else my.bench <- NULL
     
-    if (notify == TRUE) {
-      if (benchmark == TRUE) {
-        msg <- paste0("Repetitions: ", length(smp.args$repetition), "; ", 
-                      "Folds: ", smp.args$nfold, "; ", "Total time: ", round(my.bench$runtime.performance, 
-                                                                             2))
-      } else (msg <- paste0("Repetitions: ", length(smp.args$repetition), "; ", 
-                            "Folds: ", smp.args$nfold))
-      
-      notify(title = "parsperrorest() finished successfully!", msg <- msg)
-    }
+    # if (notify == TRUE) {
+    #   if (benchmark == TRUE) {
+    #     msg <- paste0("Repetitions: ", length(smp.args$repetition), "; ", 
+    #                   "Folds: ", smp.args$nfold, "; ", "Total time: ", round(my.bench$runtime.performance, 
+    #                                                                          2))
+    #   } else (msg <- paste0("Repetitions: ", length(smp.args$repetition), "; ", 
+    #                         "Folds: ", smp.args$nfold))
+    #   
+    #   notify(title = "parsperrorest() finished successfully!", msg <- msg)
+    # }
     
     if (error.rep & error.fold)
     {

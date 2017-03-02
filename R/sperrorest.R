@@ -307,8 +307,6 @@ summary.sperrorestpackageversion <- function(object, ...) {
 #' If `progress = 2`, only repetition information is shown. 
 #' Set to `FALSE` for no progress information. 
 #' 
-#' @param notify (optional) show a notification badge after `sperrorest()` has finished.
-#' 
 #' @param benchmark (optional) logical (default: `FALSE`): if `TRUE`, 
 #' perform benchmarking and return `sperrorestbenchmarks` object
 #' 
@@ -411,7 +409,8 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
   train.fun = NULL, train.param = NULL, test.fun = NULL, test.param = NULL, err.fun = err.default, 
   error.fold = TRUE, error.rep = TRUE, err.train = TRUE, imp.variables = NULL, 
   imp.permutations = 1000, importance = !is.null(imp.variables), distance = FALSE, 
-  do.gc = 1, do.try = FALSE, progress = 1, benchmark = FALSE, notify = FALSE, ...)
+  do.gc = 1, do.try = FALSE, progress = 1, benchmark = FALSE, # notify = FALSE, 
+  ...)
   {
   
   # if benchmark = TRUE, start clock
@@ -828,16 +827,16 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
     class(my.bench) <- "sperrorestbenchmarks"
   } else my.bench <- NULL
   
-  if (notify == TRUE) {
-    if (benchmark == TRUE) {
-      msg <- paste0("Repetitions: ", length(smp.args$repetition), "; ", 
-                    "Folds: ", smp.args$nfold, "; ", "Total time: ", round(my.bench$runtime.performance, 
-                                                                           2))
-    } else (msg <- paste0("Repetitions: ", length(smp.args$repetition), "; ", 
-                          "Folds: ", smp.args$nfold))
-  
-    notify(title = "sperrorest() finished successfully!", msg <- msg)
-  }
+  # if (notify == TRUE) {
+  #   if (benchmark == TRUE) {
+  #     msg <- paste0("Repetitions: ", length(smp.args$repetition), "; ", 
+  #                   "Folds: ", smp.args$nfold, "; ", "Total time: ", round(my.bench$runtime.performance, 
+  #                                                                          2))
+  #   } else (msg <- paste0("Repetitions: ", length(smp.args$repetition), "; ", 
+  #                         "Folds: ", smp.args$nfold))
+  # 
+  #   notify(title = "sperrorest() finished successfully!", msg <- msg)
+  # }
   
   package.version <- packageVersion("sperrorest")
   class(package.version) <- "sperrorestpackageversion"
