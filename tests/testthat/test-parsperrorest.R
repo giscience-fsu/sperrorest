@@ -3,7 +3,7 @@ context("parsperrorest.R")
 # Sys.unsetenv("R_TESTS")
 Sys.setenv(R_TESTS="")
 
-pacman::p_load(sperrorest, testthat, rpart, MASS, doParallel, foreach, ipred)
+pacman::p_load(sperrorest, testthat, rpart, MASS, doParallel, foreach)
 
 # parsperrorest par.mode = 2 Mon Feb  6 23:24:11 2017 ------------------------------
 
