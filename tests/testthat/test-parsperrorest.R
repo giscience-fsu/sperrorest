@@ -152,7 +152,7 @@ test_that("parsperrorest() produces correct output for binary response", {
                           smp.fun = partition.cv,
                           smp.args = list(repetition = 1:2, nfold = 2),
                           par.args = list(par.mode = 2, par.units = 2),
-                          notify = TRUE, benchmark = TRUE, 
+                          notify = FALSE, benchmark = TRUE, 
                           importance = F, imp.permutations = 2)
   summary.rep <- summary(nspres$error.rep)
   summary.fold <- summary(nspres$error.fold)
@@ -362,7 +362,7 @@ test_that("par.mode = 1 works with var.imp", {
 
 test_that("notify badge is working in parsperrorest()", {
   
-  testthat::skip_on_cran()
+  testthat::skip_on_cran("because of 'notify=TRUE'")
   
   data(ecuador) 
   fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
@@ -388,7 +388,7 @@ test_that("notify badge is working in parsperrorest()", {
 
 test_that("notify without benchmark = TRUE", {
   
-  testthat::skip_on_cran()
+  testthat::skip_on_cran("because of 'notify=TRUE'")
   
   data(ecuador) 
   fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope

@@ -5,6 +5,9 @@ pacman::p_load(sperrorest, rpart, testthat, MASS)
 # sperrorest() binary response Wed Feb  8 21:40:49 2017 ------------------------------
 
 test_that("sperrorest() produces correct output for binary response", {
+  
+  skip_on_cran("because of 'notify=TRUE'")
+  
   data(ecuador) # Muenchow et al. (2012), see ?ecuador
   fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
   
@@ -41,7 +44,7 @@ test_that("sperrorest() produces correct output for binary response", {
                        pred.fun = predict,
                        smp.fun = partition.cv, 
                        smp.args = list(repetition = 1:2, nfold = 2),
-                       notify = TRUE, benchmark = TRUE, 
+                       notify = FALSE, benchmark = TRUE, 
                        importance = TRUE, imp.permutations = 2)
   summary.rep <- summary(nspres$error.rep)                    
   summary.fold <- summary(nspres$error.fold)
