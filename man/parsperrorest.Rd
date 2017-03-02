@@ -11,8 +11,8 @@ parsperrorest(formula, data, coords = c("x", "y"), model.fun,
   err.fun = err.default, error.fold = TRUE, error.rep = TRUE,
   err.train = TRUE, imp.variables = NULL, imp.permutations = 1000,
   importance = !is.null(imp.variables), distance = FALSE, do.gc = 1,
-  do.try = FALSE, progress = 1, out.progress = "", notify = FALSE,
-  par.args = list(), benchmark = FALSE, ...)
+  do.try = FALSE, progress = 1, out.progress = "", par.args = list(),
+  benchmark = FALSE, ...)
 }
 \arguments{
 \item{formula}{A formula specifying the variables used by the \code{model}.
@@ -114,8 +114,6 @@ Set to \code{FALSE} for no progress information.}
 The default (\code{''}) results in console output for Unix-systems and
 file output ('parsperrorest.progress.txt') in the current working directory
 for Windows-systems.}
-
-\item{notify}{(optional) show a notification badge after \code{parsperrorest()} has finished.}
 
 \item{par.args}{list of parallelization parameters:
 \code{par.mode} (the parallelization mode),
