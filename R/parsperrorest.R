@@ -613,7 +613,7 @@ parsperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.
     
     # parallelization here (par.mode = 1 & par.mode = 2) For each repetition:
     if (.Platform$OS.type == "windows") {
-      par.cl <- makeCluster(par.args$par.units, type = "SOCK")
+      par.cl <- makeCluster(par.args$par.units, type = "PSOCK")
       clusterSetRNGStream(par.cl, 1234567)  #set up RNG stream to obtain 
       # reproducible results
       force(pred.fun)  #force evaluation of pred.fun, so it is serialized and 
