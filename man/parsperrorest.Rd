@@ -11,8 +11,8 @@ parsperrorest(formula, data, coords = c("x", "y"), model.fun,
   err.fun = err.default, error.fold = TRUE, error.rep = TRUE,
   err.train = TRUE, imp.variables = NULL, imp.permutations = 1000,
   importance = !is.null(imp.variables), distance = FALSE, do.gc = 1,
-  do.try = FALSE, progress = 1, out.progress = "", notify = FALSE,
-  par.args = list(), benchmark = FALSE, ...)
+  do.try = FALSE, progress = 1, out.progress = "", par.args = list(),
+  benchmark = FALSE, ...)
 }
 \arguments{
 \item{formula}{A formula specifying the variables used by the \code{model}.
@@ -115,8 +115,6 @@ The default (\code{''}) results in console output for Unix-systems and
 file output ('parsperrorest.progress.txt') in the current working directory
 for Windows-systems.}
 
-\item{notify}{(optional) show a notification badge after \code{parsperrorest()} has finished.}
-
 \item{par.args}{list of parallelization parameters:
 \code{par.mode} (the parallelization mode),
 \code{par.units} (the number of parallel processing units),
@@ -170,9 +168,7 @@ For \code{par.mode = 2}, you may encounter missing repetitions in the results
 if repetitions finish to quickly. In this case, consider using
 \code{\link[=sperrorest]{sperrorest()}}
 
-Known problems when being parallized: \code{\link[randomForest:randomForest]{randomForest::randomForest()}}
-
-If you define a custom \code{pred.fun} which conists of multiple custom
+If you define a custom \code{pred.fun} which consists of multiple custom
 defined child functions, make sure to define \code{pred.fun} and all child
 functions in one call. Otherwise you will encounter errors in \code{par.mode = 2}
 caused by how \code{foreach} loads the parent environment.
@@ -185,6 +181,7 @@ was interrupted. (3) Optionally have sperrorest dump the result of each
 repetition into a file, and to skip repetitions for which a file already exists.
 }
 \examples{
+\dontrun{
 data(ecuador) # Muenchow et al. (2012), see ?ecuador
 fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
 
@@ -231,7 +228,7 @@ smry <- data.frame(
 boxplot(smry, col = c('red','red','red','green'), 
     main = 'Training vs. test, nonspatial vs. spatial',
     ylab = 'Area under the ROC curve')
-    
+}    
 }
 \references{
 Brenning, A. 2012. Spatial cross-validation and bootstrap for

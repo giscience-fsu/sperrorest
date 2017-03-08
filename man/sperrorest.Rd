@@ -13,7 +13,7 @@ sperrorest(formula, data, coords = c("x", "y"), model.fun,
   err.fun = err.default, error.fold = TRUE, error.rep = TRUE,
   err.train = TRUE, imp.variables = NULL, imp.permutations = 1000,
   importance = !is.null(imp.variables), distance = FALSE, do.gc = 1,
-  do.try = FALSE, progress = 1, benchmark = FALSE, notify = FALSE, ...)
+  do.try = FALSE, progress = 1, benchmark = FALSE, ...)
 }
 \arguments{
 \item{formula}{A formula specifying the variables used by the \code{model}.
@@ -112,8 +112,6 @@ Set to \code{FALSE} for no progress information.}
 \item{benchmark}{(optional) logical (default: \code{FALSE}): if \code{TRUE},
 perform benchmarking and return \code{sperrorestbenchmarks} object}
 
-\item{notify}{(optional) show a notification badge after \code{sperrorest()} has finished.}
-
 \item{...}{currently not used}
 }
 \value{
@@ -145,6 +143,7 @@ was interrupted. (3) Optionally have sperrorest dump the result of each
 repetition into a file, and to skip repetitions for which a file already exists.
 }
 \examples{
+\dontrun{
 data(ecuador) # Muenchow et al. (2012), see ?ecuador
 fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
 
@@ -186,6 +185,7 @@ smry <- data.frame(
 boxplot(smry, col = c('red','red','red','green'), 
         main = 'Training vs. test, nonspatial vs. spatial',
         ylab = 'Area under the ROC curve')
+}
 }
 \references{
 Brenning, A. 2012. Spatial cross-validation and bootstrap for
