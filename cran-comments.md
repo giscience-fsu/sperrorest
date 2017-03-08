@@ -25,3 +25,5 @@ There are no reverse dependencies.
 * Uses `parallel` package instead of `snow` ("PSOCK" cluster type)
 
 * removed package `notifier` causing trouble on win-builder
+
+* Confirmation of maintainer e-mail change: See e-mail to CRAN from 2017-03-07 from <alexander.brenning@uni-jena.de>
