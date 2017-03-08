@@ -89,8 +89,8 @@ assessment of spatial variable importance.</p>
   <span class='kw'>err.fun</span> <span class='kw'>=</span> <span class='no'>err.default</span>, <span class='kw'>error.fold</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>error.rep</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>err.train</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>imp.variables</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>imp.permutations</span> <span class='kw'>=</span> <span class='fl'>1000</span>,
   <span class='kw'>importance</span> <span class='kw'>=</span> !<span class='fu'>is.null</span>(<span class='no'>imp.variables</span>), <span class='kw'>distance</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>do.gc</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>do.try</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>out.progress</span> <span class='kw'>=</span> <span class='st'>""</span>, <span class='kw'>notify</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>par.args</span> <span class='kw'>=</span> <span class='fu'>list</span>(), <span class='kw'>benchmark</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)</pre>
+  <span class='kw'>do.try</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>out.progress</span> <span class='kw'>=</span> <span class='st'>""</span>, <span class='kw'>par.args</span> <span class='kw'>=</span> <span class='fu'>list</span>(),
+  <span class='kw'>benchmark</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <dl class="dl-horizontal">
@@ -194,8 +194,6 @@ Set to <code>FALSE</code> for no progress information.</dd>
 The default (<code>&#39;&#39;</code>) results in console output for Unix-systems and
 file output (&#39;parsperrorest.progress.txt&#39;) in the current working directory
 for Windows-systems.</dd>
-      <dt>notify</dt>
-      <dd>(optional) show a notification badge after <code>parsperrorest()</code> has finished.</dd>
       <dt>par.args</dt>
       <dd>list of parallelization parameters:
 <code>par.mode</code> (the parallelization mode),
@@ -230,8 +228,7 @@ encounter problems with other functions.</p>
     <p>For <code>par.mode = 2</code>, you may encounter missing repetitions in the results
 if repetitions finish to quickly. In this case, consider using
 <code><a href='sperrorest.html'>sperrorest()</a></code></p>
-    <p>Known problems when being parallized: <code><a href='http://www.rdocumentation.org/packages/randomForest/topics/randomForest'>randomForest::randomForest()</a></code></p>
-    <p>If you define a custom <code>pred.fun</code> which conists of multiple custom
+    <p>If you define a custom <code>pred.fun</code> which consists of multiple custom
 defined child functions, make sure to define <code>pred.fun</code> and all child
 functions in one call. Otherwise you will encounter errors in <code>par.mode = 2</code>
 caused by how <code>foreach</code> loads the parent environment.</p>
@@ -271,329 +268,54 @@ Lecture Notes in Computer Science, 6065 LNCS: 184-195.</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>data</span>(<span class='no'>ecuador</span>) <span class='co'># Muenchow et al. (2012), see ?ecuador</span>
-<span class='no'>fo</span> <span class='kw'>&lt;-</span> <span class='no'>slides</span> ~ <span class='no'>dem</span> + <span class='no'>slope</span> + <span class='no'>hcurv</span> + <span class='no'>vcurv</span> + <span class='no'>log.carea</span> + <span class='no'>cslope</span>
-
-<span class='co'># Example of a classification tree fitted to this data:</span>
-<span class='fu'>library</span>(<span class='no'>rpart</span>)
-<span class='no'>mypred.rpart</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>object</span>, <span class='no'>newdata</span>) <span class='fu'>predict</span>(<span class='no'>object</span>, <span class='no'>newdata</span>)[, <span class='fl'>2</span>]
-<span class='no'>ctrl</span> <span class='kw'>&lt;-</span> <span class='fu'>rpart.control</span>(<span class='kw'>cp</span> <span class='kw'>=</span> <span class='fl'>0.005</span>) <span class='co'># show the effects of overfitting</span>
-<span class='no'>fit</span> <span class='kw'>&lt;-</span> <span class='fu'>rpart</span>(<span class='no'>fo</span>, <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>ecuador</span>, <span class='kw'>control</span> <span class='kw'>=</span> <span class='no'>ctrl</span>)
-
-<span class='co'># Non-spatial 5-repeated 10-fold cross-validation:</span>
-<span class='no'>mypred.rpart</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>object</span>, <span class='no'>newdata</span>) <span class='fu'>predict</span>(<span class='no'>object</span>, <span class='no'>newdata</span>)[,<span class='fl'>2</span>]
-<span class='no'>par.nsp.res</span> <span class='kw'>&lt;-</span> <span class='fu'>parsperrorest</span>(<span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>ecuador</span>, <span class='kw'>formula</span> <span class='kw'>=</span> <span class='no'>fo</span>,
-                             <span class='kw'>model.fun</span> <span class='kw'>=</span> <span class='no'>rpart</span>, <span class='kw'>model.args</span> <span class='kw'>=</span> <span class='fu'>list</span>(<span class='kw'>control</span> <span class='kw'>=</span> <span class='no'>ctrl</span>),
-                             <span class='kw'>pred.fun</span> <span class='kw'>=</span> <span class='no'>mypred.rpart</span>,
-                             <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-                             <span class='kw'>smp.fun</span> <span class='kw'>=</span> <span class='no'>partition.cv</span>,
-                             <span class='kw'>smp.args</span> <span class='kw'>=</span> <span class='fu'>list</span>(<span class='kw'>repetition</span> <span class='kw'>=</span> <span class='fl'>1</span>:<span class='fl'>5</span>, <span class='kw'>nfold</span> <span class='kw'>=</span> <span class='fl'>15</span>),
-                             <span class='kw'>par.args</span> <span class='kw'>=</span> <span class='fu'>list</span>(<span class='kw'>par.units</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>par.mode</span> <span class='kw'>=</span> <span class='fl'>1</span>),
-                             <span class='kw'>error.rep</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>error.fold</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt;   |+++++++++++++++++                                 | 33% elapsed =05s, remaining ~10s  |++++++++++++++++++++++++++++++++++                | 67% elapsed =09s, remaining ~05s  |++++++++++++++++++++++++++++++++++++++++++++++++++| 100% elapsed =12s, remaining ~00s</div><div class='input'><span class='fu'>summary</span>(<span class='no'>par.nsp.res</span>$<span class='no'>error.rep</span>)</div><div class='output co'>#&gt;                           mean          sd       median         IQR
-#&gt; train.auroc       7.410875e-01 0.003862250 7.399036e-01 0.002177564
-#&gt; train.error       2.994357e-01 0.003661315 2.998214e-01 0.002035714
-#&gt; train.accuracy    7.005643e-01 0.003661315 7.001786e-01 0.002035714
-#&gt; train.sensitivity 6.710571e-01 0.014473709 6.736429e-01 0.009000000
-#&gt; train.specificity 7.300714e-01 0.010551018 7.272857e-01 0.005071429
-#&gt; train.fpr70       3.141286e-01 0.013459823 3.130000e-01 0.013642857
-#&gt; train.fpr80       4.911571e-01 0.019435621 4.905000e-01 0.015071429
-#&gt; train.fpr90       6.865143e-01 0.017442135 6.918571e-01 0.031071429
-#&gt; train.tpr80       5.535571e-01 0.007410762 5.535714e-01 0.010714286
-#&gt; train.tpr90       3.246286e-01 0.007628224 3.252857e-01 0.006000000
-#&gt; train.tpr95       1.878571e-01 0.008143797 1.905000e-01 0.009000000
-#&gt; train.events      1.400000e+04 0.000000000 1.400000e+04 0.000000000
-#&gt; train.count       2.800000e+04 0.000000000 2.800000e+04 0.000000000
-#&gt; test.auroc        6.476167e-01 0.004606886 6.481540e-01 0.004566500
-#&gt; test.error        3.766000e-01 0.003029026 3.765000e-01 0.002500000
-#&gt; test.accuracy     6.234000e-01 0.003029026 6.235000e-01 0.002500000
-#&gt; test.sensitivity  5.924000e-01 0.011928956 5.940000e-01 0.006000000
-#&gt; test.specificity  6.544000e-01 0.015043271 6.550000e-01 0.020000000
-#&gt; test.fpr70        5.048000e-01 0.021970435 4.940000e-01 0.031000000
-#&gt; test.fpr80        6.324000e-01 0.014621901 6.330000e-01 0.016000000
-#&gt; test.fpr90        7.988000e-01 0.015959323 8.000000e-01 0.001000000
-#&gt; test.tpr80        4.142000e-01 0.007463243 4.130000e-01 0.003000000
-#&gt; test.tpr90        1.840000e-01 0.016673332 1.930000e-01 0.019000000
-#&gt; test.tpr95        9.840000e-02 0.007092249 1.000000e-01 0.013000000
-#&gt; test.events       1.000000e+03 0.000000000 1.000000e+03 0.000000000
-#&gt; test.count        2.000000e+03 0.000000000 2.000000e+03 0.000000000</div><div class='input'><span class='fu'>summary</span>(<span class='no'>par.nsp.res</span>$<span class='no'>error.fold</span>)</div><div class='output co'>#&gt;                            mean         sd        median        IQR
-#&gt; train.auroc          0.73524357 0.02236125    0.74203767 0.02745061
-#&gt; train.error          0.29943593 0.01640904    0.29528403 0.02143049
-#&gt; train.accuracy       0.70056407 0.01640904    0.70471597 0.02143049
-#&gt; train.sensitivity    0.67098691 0.05465183    0.67773019 0.07410212
-#&gt; train.specificity    0.73005250 0.03653538    0.72540541 0.04369640
-#&gt; train.fpr70          0.47350031 0.21604559    0.37473002 0.27585023
-#&gt; train.fpr80          0.62166540 0.15053977    0.59913793 0.25329279
-#&gt; train.fpr90          0.75407281 0.08245299    0.73650794 0.13372788
-#&gt; train.tpr80          0.50500074 0.06071390    0.51502146 0.08620790
-#&gt; train.tpr90          0.14929488 0.10720025    0.11158342 0.12926901
-#&gt; train.tpr95          0.09765495 0.05368679    0.09324759 0.08147455
-#&gt; train.events       933.33333333 5.44588447  934.00000000 8.00000000
-#&gt; train.count       1866.66666667 0.47457900 1867.00000000 1.00000000
-#&gt; test.auroc           0.64606504 0.04442818    0.64564007 0.04853172
-#&gt; test.error           0.37659896 0.03865435    0.37593985 0.04626305
-#&gt; test.accuracy        0.62340104 0.03865435    0.62406015 0.04626305
-#&gt; test.sensitivity     0.59287726 0.07759705    0.57812500 0.10735931
-#&gt; test.specificity     0.65488138 0.07683303    0.66666667 0.10652459
-#&gt; test.fpr70           0.63187646 0.18151324    0.60759494 0.32247710
-#&gt; test.fpr80           0.74771412 0.12874986    0.75000000 0.17602085
-#&gt; test.fpr90           0.84739378 0.08995144    0.86486486 0.12661776
-#&gt; test.tpr80           0.33125520 0.14187780    0.37096774 0.16985369
-#&gt; test.tpr90           0.11644909 0.09772018    0.08620690 0.09575636
-#&gt; test.tpr95           0.05877681 0.03876634    0.05357143 0.05418530
-#&gt; test.events         66.66666667 5.44588447   66.00000000 8.00000000
-#&gt; test.count         133.33333333 0.47457900  133.00000000 1.00000000
-#&gt; distance            -1.00000000 0.00000000   -1.00000000 0.00000000</div><div class='input'><span class='fu'>summary</span>(<span class='no'>par.nsp.res</span>$<span class='no'>represampling</span>)</div><div class='output co'>#&gt; $`1`
-#&gt;    n.train n.test
-#&gt; 1     1866    134
-#&gt; 2     1867    133
-#&gt; 3     1867    133
-#&gt; 4     1867    133
-#&gt; 5     1866    134
-#&gt; 6     1867    133
-#&gt; 7     1867    133
-#&gt; 8     1867    133
-#&gt; 9     1866    134
-#&gt; 10    1867    133
-#&gt; 11    1866    134
-#&gt; 12    1866    134
-#&gt; 13    1867    133
-#&gt; 14    1867    133
-#&gt; 15    1867    133
-#&gt; 
-#&gt; $`2`
-#&gt;    n.train n.test
-#&gt; 1     1867    133
-#&gt; 2     1866    134
-#&gt; 3     1867    133
-#&gt; 4     1867    133
-#&gt; 5     1867    133
-#&gt; 6     1867    133
-#&gt; 7     1867    133
-#&gt; 8     1867    133
-#&gt; 9     1867    133
-#&gt; 10    1867    133
-#&gt; 11    1866    134
-#&gt; 12    1867    133
-#&gt; 13    1866    134
-#&gt; 14    1866    134
-#&gt; 15    1866    134
-#&gt; 
-#&gt; $`3`
-#&gt;    n.train n.test
-#&gt; 1     1866    134
-#&gt; 2     1867    133
-#&gt; 3     1866    134
-#&gt; 4     1867    133
-#&gt; 5     1867    133
-#&gt; 6     1866    134
-#&gt; 7     1867    133
-#&gt; 8     1866    134
-#&gt; 9     1867    133
-#&gt; 10    1866    134
-#&gt; 11    1867    133
-#&gt; 12    1867    133
-#&gt; 13    1867    133
-#&gt; 14    1867    133
-#&gt; 15    1867    133
-#&gt; 
-#&gt; $`4`
-#&gt;    n.train n.test
-#&gt; 1     1866    134
-#&gt; 2     1866    134
-#&gt; 3     1867    133
-#&gt; 4     1867    133
-#&gt; 5     1867    133
-#&gt; 6     1866    134
-#&gt; 7     1867    133
-#&gt; 8     1866    134
-#&gt; 9     1867    133
-#&gt; 10    1867    133
-#&gt; 11    1867    133
-#&gt; 12    1867    133
-#&gt; 13    1867    133
-#&gt; 14    1866    134
-#&gt; 15    1867    133
-#&gt; 
-#&gt; $`5`
-#&gt;    n.train n.test
-#&gt; 1     1867    133
-#&gt; 2     1867    133
-#&gt; 3     1867    133
-#&gt; 4     1866    134
-#&gt; 5     1866    134
-#&gt; 6     1867    133
-#&gt; 7     1866    134
-#&gt; 8     1867    133
-#&gt; 9     1866    134
-#&gt; 10    1867    133
-#&gt; 11    1866    134
-#&gt; 12    1867    133
-#&gt; 13    1867    133
-#&gt; 14    1867    133
-#&gt; 15    1867    133
-#&gt; </div><div class='input'><span class='co'># plot(par.nsp.res$represampling, ecuador)</span>
-
-<span class='co'># Spatial 5-repeated 10-fold spatial cross-validation:</span>
-<span class='no'>par.sp.res</span> <span class='kw'>&lt;-</span> <span class='fu'>parsperrorest</span>(<span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>ecuador</span>, <span class='kw'>formula</span> <span class='kw'>=</span> <span class='no'>fo</span>,
-                            <span class='kw'>model.fun</span> <span class='kw'>=</span> <span class='no'>rpart</span>, <span class='kw'>model.args</span> <span class='kw'>=</span> <span class='fu'>list</span>(<span class='kw'>control</span> <span class='kw'>=</span> <span class='no'>ctrl</span>),
-                            <span class='kw'>pred.fun</span> <span class='kw'>=</span> <span class='no'>mypred.rpart</span>,
-                            <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-                            <span class='kw'>smp.fun</span> <span class='kw'>=</span> <span class='no'>partition.kmeans</span>,
-                            <span class='kw'>smp.args</span> <span class='kw'>=</span> <span class='fu'>list</span>(<span class='kw'>repetition</span> <span class='kw'>=</span> <span class='fl'>1</span>:<span class='fl'>5</span>, <span class='kw'>nfold</span> <span class='kw'>=</span> <span class='fl'>15</span>),
-                            <span class='kw'>par.args</span> <span class='kw'>=</span> <span class='fu'>list</span>(<span class='kw'>par.units</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>par.mode</span> <span class='kw'>=</span> <span class='fl'>2</span>),
-                            <span class='kw'>error.rep</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>error.fold</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; Sun Feb 19 21:31:03 2017 Done.</div><div class='input'><span class='fu'>summary</span>(<span class='no'>par.sp.res</span>$<span class='no'>error.rep</span>)</div><div class='output co'>#&gt;                           mean          sd       median          IQR
-#&gt; train.auroc       7.496999e-01 0.002542707 7.504402e-01 0.0007962092
-#&gt; train.error       2.956643e-01 0.001722932 2.948214e-01 0.0005357143
-#&gt; train.accuracy    7.043357e-01 0.001722932 7.051786e-01 0.0005357143
-#&gt; train.sensitivity 6.786429e-01 0.008807030 6.782143e-01 0.0099285714
-#&gt; train.specificity 7.300286e-01 0.009079664 7.290000e-01 0.0142857143
-#&gt; train.fpr70       3.081429e-01 0.006468724 3.080000e-01 0.0076428571
-#&gt; train.fpr80       4.741714e-01 0.009624268 4.717857e-01 0.0114285714
-#&gt; train.fpr90       6.613286e-01 0.006475149 6.622857e-01 0.0051428571
-#&gt; train.tpr80       5.578714e-01 0.011158117 5.556429e-01 0.0123571429
-#&gt; train.tpr90       3.558000e-01 0.004643242 3.572143e-01 0.0009285714
-#&gt; train.tpr95       1.464143e-01 0.049086357 1.662857e-01 0.0790000000
-#&gt; train.events      1.400000e+04 0.000000000 1.400000e+04 0.0000000000
-#&gt; train.count       2.800000e+04 0.000000000 2.800000e+04 0.0000000000
-#&gt; test.auroc        5.601145e-01 0.004464785 5.619010e-01 0.0044570000
-#&gt; test.error        4.482000e-01 0.006496153 4.455000e-01 0.0065000000
-#&gt; test.accuracy     5.518000e-01 0.006496153 5.545000e-01 0.0065000000
-#&gt; test.sensitivity  5.056000e-01 0.010549882 5.050000e-01 0.0100000000
-#&gt; test.specificity  5.980000e-01 0.015443445 6.040000e-01 0.0170000000
-#&gt; test.fpr70        6.480000e-01 0.009797959 6.470000e-01 0.0070000000
-#&gt; test.fpr80        7.654000e-01 0.014328294 7.700000e-01 0.0140000000
-#&gt; test.fpr90        8.906000e-01 0.011970798 8.890000e-01 0.0090000000
-#&gt; test.tpr80        2.606000e-01 0.028562213 2.600000e-01 0.0270000000
-#&gt; test.tpr90        1.164000e-01 0.046548899 1.190000e-01 0.0830000000
-#&gt; test.tpr95        6.160000e-02 0.016801786 6.100000e-02 0.0090000000
-#&gt; test.events       1.000000e+03 0.000000000 1.000000e+03 0.0000000000
-#&gt; test.count        2.000000e+03 0.000000000 2.000000e+03 0.0000000000</div><div class='input'><span class='fu'>summary</span>(<span class='no'>par.sp.res</span>$<span class='no'>error.fold</span>)</div><div class='output co'>#&gt;                            mean          sd        median         IQR
-#&gt; train.auroc          0.74385225  0.02391961    0.74961076  0.04065904
-#&gt; train.error          0.29569528  0.01862702    0.29027113  0.03143194
-#&gt; train.accuracy       0.70430472  0.01862702    0.70972887  0.03143194
-#&gt; train.sensitivity    0.67805133  0.06154342    0.68861024  0.09969122
-#&gt; train.specificity    0.72985327  0.04029980    0.73178458  0.04013168
-#&gt; train.fpr70          0.43350026  0.19294804    0.34537726  0.20144202
-#&gt; train.fpr80          0.55884701  0.14078768    0.52339499  0.14824653
-#&gt; train.fpr90          0.76403607  0.09410692    0.77152318  0.16957930
-#&gt; train.tpr80          0.51288208  0.06626049    0.52312775  0.10237824
-#&gt; train.tpr90          0.28205862  0.10411569    0.32683983  0.12513468
-#&gt; train.tpr95          0.07781421  0.04498173    0.06152242  0.05697041
-#&gt; train.events       933.33333333 25.17470488  934.00000000 31.50000000
-#&gt; train.count       1866.66666667 26.80325380 1868.00000000 32.00000000
-#&gt; test.auroc           0.54348405  0.06948049    0.54044118  0.10417840
-#&gt; test.error           0.44846996  0.07615030    0.46236559  0.11204014
-#&gt; test.accuracy        0.55153004  0.07615030    0.53763441  0.11204014
-#&gt; test.sensitivity     0.48388989  0.26516235    0.44186047  0.31264545
-#&gt; test.specificity     0.58768195  0.19391887    0.61016949  0.26278519
-#&gt; test.fpr70           0.75872579  0.15471891    0.76056338  0.20947264
-#&gt; test.fpr80           0.83689699  0.11995890    0.84507042  0.20983943
-#&gt; test.fpr90           0.90951376  0.09020068    0.94736842  0.12976221
-#&gt; test.tpr80           0.11867267  0.12223320    0.10000000  0.14957112
-#&gt; test.tpr90           0.03325227  0.04671940    0.01587302  0.05063291
-#&gt; test.tpr95           0.02074698  0.03227142    0.00000000  0.02312216
-#&gt; test.events         66.66666667 25.17470488   66.00000000 31.50000000
-#&gt; test.count         133.33333333 26.80325380  132.00000000 32.00000000
-#&gt; distance            -1.00000000  0.00000000   -1.00000000  0.00000000</div><div class='input'><span class='fu'>summary</span>(<span class='no'>par.sp.res</span>$<span class='no'>represampling</span>)</div><div class='output co'>#&gt; $`1`
-#&gt;    n.train n.test
-#&gt; 1     1876    124
-#&gt; 2     1865    135
-#&gt; 3     1898    102
-#&gt; 4     1833    167
-#&gt; 5     1870    130
-#&gt; 6     1883    117
-#&gt; 7     1875    125
-#&gt; 8     1884    116
-#&gt; 9     1885    115
-#&gt; 10    1857    143
-#&gt; 11    1849    151
-#&gt; 12    1839    161
-#&gt; 13    1867    133
-#&gt; 14    1847    153
-#&gt; 15    1872    128
-#&gt; 
-#&gt; $`2`
-#&gt;    n.train n.test
-#&gt; 1     1819    181
-#&gt; 2     1861    139
-#&gt; 3     1841    159
-#&gt; 4     1874    126
-#&gt; 5     1899    101
-#&gt; 6     1916     84
-#&gt; 7     1881    119
-#&gt; 8     1863    137
-#&gt; 9     1914     86
-#&gt; 10    1850    150
-#&gt; 11    1862    138
-#&gt; 12    1856    144
-#&gt; 13    1879    121
-#&gt; 14    1838    162
-#&gt; 15    1847    153
-#&gt; 
-#&gt; $`3`
-#&gt;    n.train n.test
-#&gt; 1     1863    137
-#&gt; 2     1856    144
-#&gt; 3     1872    128
-#&gt; 4     1923     77
-#&gt; 5     1893    107
-#&gt; 6     1877    123
-#&gt; 7     1868    132
-#&gt; 8     1882    118
-#&gt; 9     1868    132
-#&gt; 10    1893    107
-#&gt; 11    1854    146
-#&gt; 12    1856    144
-#&gt; 13    1791    209
-#&gt; 14    1848    152
-#&gt; 15    1856    144
-#&gt; 
-#&gt; $`4`
-#&gt;    n.train n.test
-#&gt; 1     1876    124
-#&gt; 2     1859    141
-#&gt; 3     1866    134
-#&gt; 4     1837    163
-#&gt; 5     1881    119
-#&gt; 6     1807    193
-#&gt; 7     1878    122
-#&gt; 8     1899    101
-#&gt; 9     1847    153
-#&gt; 10    1851    149
-#&gt; 11    1858    142
-#&gt; 12    1921     79
-#&gt; 13    1872    128
-#&gt; 14    1855    145
-#&gt; 15    1893    107
-#&gt; 
-#&gt; $`5`
-#&gt;    n.train n.test
-#&gt; 1     1814    186
-#&gt; 2     1835    165
-#&gt; 3     1811    189
-#&gt; 4     1869    131
-#&gt; 5     1833    167
-#&gt; 6     1852    148
-#&gt; 7     1910     90
-#&gt; 8     1887    113
-#&gt; 9     1840    160
-#&gt; 10    1882    118
-#&gt; 11    1888    112
-#&gt; 12    1890    110
-#&gt; 13    1880    120
-#&gt; 14    1896    104
-#&gt; 15    1913     87
-#&gt; </div><div class='input'><span class='co'># plot(par.sp.res$represampling, ecuador)</span>
-
-<span class='no'>smry</span> <span class='kw'>&lt;-</span> <span class='fu'>data.frame</span>(
-    <span class='kw'>nonspat.training</span> <span class='kw'>=</span> <span class='fu'>unlist</span>(<span class='fu'>summary</span>(<span class='no'>par.nsp.res</span>$<span class='no'>error.rep</span>, <span class='kw'>level</span> <span class='kw'>=</span> <span class='fl'>1</span>)$<span class='no'>train.auroc</span>),
-    <span class='kw'>nonspat.test</span>     <span class='kw'>=</span> <span class='fu'>unlist</span>(<span class='fu'>summary</span>(<span class='no'>par.nsp.res</span>$<span class='no'>error.rep</span>, <span class='kw'>level</span> <span class='kw'>=</span> <span class='fl'>1</span>)$<span class='no'>test.auroc</span>),
-    <span class='kw'>spatial.training</span> <span class='kw'>=</span> <span class='fu'>unlist</span>(<span class='fu'>summary</span>(<span class='no'>par.sp.res</span>$<span class='no'>error.rep</span>, <span class='kw'>level</span> <span class='kw'>=</span> <span class='fl'>1</span>)$<span class='no'>train.auroc</span>),
-    <span class='kw'>spatial.test</span>     <span class='kw'>=</span> <span class='fu'>unlist</span>(<span class='fu'>summary</span>(<span class='no'>par.sp.res</span>$<span class='no'>error.rep</span>, <span class='kw'>level</span> <span class='kw'>=</span> <span class='fl'>1</span>)$<span class='no'>test.auroc</span>))
-<span class='fu'>boxplot</span>(<span class='no'>smry</span>, <span class='kw'>col</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>'red'</span>,<span class='st'>'red'</span>,<span class='st'>'red'</span>,<span class='st'>'green'</span>),
-    <span class='kw'>main</span> <span class='kw'>=</span> <span class='st'>'Training vs. test, nonspatial vs. spatial'</span>,
-    <span class='kw'>ylab</span> <span class='kw'>=</span> <span class='st'>'Area under the ROC curve'</span>)</div><img src='parsperrorest-18.png' alt='' width='540' height='400' /><div class='input'>    
-</div></pre>
+    <pre class="examples"><div class='input'><span class='co'>## Not run: ------------------------------------</span>
+<span class='co'># data(ecuador) # Muenchow et al. (2012), see ?ecuador</span>
+<span class='co'># fo &lt;- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope</span>
+<span class='co'># </span>
+<span class='co'># # Example of a classification tree fitted to this data:</span>
+<span class='co'># library(rpart)</span>
+<span class='co'># mypred.rpart &lt;- function(object, newdata) predict(object, newdata)[, 2]</span>
+<span class='co'># ctrl &lt;- rpart.control(cp = 0.005) # show the effects of overfitting</span>
+<span class='co'># fit &lt;- rpart(fo, data = ecuador, control = ctrl)</span>
+<span class='co'># </span>
+<span class='co'># # Non-spatial 5-repeated 10-fold cross-validation:</span>
+<span class='co'># mypred.rpart &lt;- function(object, newdata) predict(object, newdata)[,2]</span>
+<span class='co'># par.nsp.res &lt;- parsperrorest(data = ecuador, formula = fo,</span>
+<span class='co'>#                              model.fun = rpart, model.args = list(control = ctrl),</span>
+<span class='co'>#                              pred.fun = mypred.rpart,</span>
+<span class='co'>#                              progress = TRUE,</span>
+<span class='co'>#                              smp.fun = partition.cv, </span>
+<span class='co'>#                              smp.args = list(repetition = 1:5, nfold = 15), </span>
+<span class='co'>#                              par.args = list(par.units = 2, par.mode = 1),</span>
+<span class='co'>#                              error.rep = TRUE, error.fold = TRUE)</span>
+<span class='co'># summary(par.nsp.res$error.rep)</span>
+<span class='co'># summary(par.nsp.res$error.fold)</span>
+<span class='co'># summary(par.nsp.res$represampling)</span>
+<span class='co'># # plot(par.nsp.res$represampling, ecuador)</span>
+<span class='co'># </span>
+<span class='co'># # Spatial 5-repeated 10-fold spatial cross-validation:</span>
+<span class='co'># par.sp.res &lt;- parsperrorest(data = ecuador, formula = fo,</span>
+<span class='co'>#                             model.fun = rpart, model.args = list(control = ctrl),</span>
+<span class='co'>#                             pred.fun = mypred.rpart,</span>
+<span class='co'>#                             progress = TRUE,</span>
+<span class='co'>#                             smp.fun = partition.kmeans, </span>
+<span class='co'>#                             smp.args = list(repetition = 1:5, nfold = 15), </span>
+<span class='co'>#                             par.args = list(par.units = 2, par.mode = 2),</span>
+<span class='co'>#                             error.rep = TRUE, error.fold = TRUE)</span>
+<span class='co'># summary(par.sp.res$error.rep)</span>
+<span class='co'># summary(par.sp.res$error.fold)</span>
+<span class='co'># summary(par.sp.res$represampling)</span>
+<span class='co'># # plot(par.sp.res$represampling, ecuador)</span>
+<span class='co'># </span>
+<span class='co'># smry &lt;- data.frame(</span>
+<span class='co'>#     nonspat.training = unlist(summary(par.nsp.res$error.rep, level = 1)$train.auroc),</span>
+<span class='co'>#     nonspat.test     = unlist(summary(par.nsp.res$error.rep, level = 1)$test.auroc),</span>
+<span class='co'>#     spatial.training = unlist(summary(par.sp.res$error.rep, level = 1)$train.auroc),</span>
+<span class='co'>#     spatial.test     = unlist(summary(par.sp.res$error.rep, level = 1)$test.auroc))</span>
+<span class='co'># boxplot(smry, col = c('red','red','red','green'), </span>
+<span class='co'>#     main = 'Training vs. test, nonspatial vs. spatial',</span>
+<span class='co'>#     ylab = 'Area under the ROC curve')</span>
+<span class='co'>## ---------------------------------------------    </span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

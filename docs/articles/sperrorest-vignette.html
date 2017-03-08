@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>sperrorest-vignette: Spatial modeling using statistical learning techniques • sperrorest</title>
+<title>Spatial Modeling Using Statistical Learning Techniques • sperrorest</title>
 <!-- jquery --><script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script><!-- Font Awesome icons --><link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
 <!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
@@ -50,109 +50,75 @@
       </header><div class="row">
   <div class="col-md-9">
     <div class="page-header toc-ignore">
-      <h1>sperrorest-vignette: Spatial modeling using statistical learning techniques</h1>
+      <h1>Spatial Modeling Using Statistical Learning Techniques</h1>
                         <h4 class="author">Alexander Brenning, Patrick Schratz</h4>
             
-            <h4 class="date">2017-02-05</h4>
+            <h4 class="date">2017-03-08</h4>
           </div>
 
     
     
 <div class="contents">
+<div id="introduction" class="section level1">
+<h1 class="hasAnchor">
+<html><body><a href="#introduction" class="anchor"> </a></body></html>Introduction</h1>
+<p>Geospatial data scientists often make use of a variety of statistical and machine learning techniques for spatial prediction in applications such as landslide susceptibility modeling <span class="citation">(Goetz et al. <a href="#ref-Goetz2015">2015</a>)</span> or habitat modeling <span class="citation">(Knudby, Brenning, and LeDrew <a href="#ref-Knudby2010">2010</a>)</span>. Novel and often more flexible techniques promise improved predictive performances as they are better able to represent nonlinear relationships or higher-order interactions between predictors than less flexible linear models.</p>
+<p>Nevertheless, this increased flexibility comes with the risk of possible over-fitting to the training data. Since nearby spatial observations often tend to be more similar than distant ones, traditional random cross-validation is unable to detect this over-fitting whenever spatial observations are close to each other (e.g. <span class="citation">Brenning (<a href="#ref-Brenning2005">2005</a>)</span>). Spatial cross-validation addresses this by resampling the data not completely randomly, but using larger spatial regions. In some cases, spatial data is grouped, e.g. in remotely-sensed land use mapping grid cells belonging to the same field share the same management procedures and cultivation history, making them more similar to each other than to pixels from other fields with the same crop type.</p>
+<p>This package provides a customizable toolkit for cross-validation (and bootstrap) estimation using a variety of spatial resampling schemes. More so, this toolkit can even be extended to spatio-temporal data or other complex data structures. This vignette will walk you through a simple case study, crop classification in central Chile <span class="citation">(Peña and Brenning <a href="#ref-Pena2015">2015</a>)</span>.</p>
+<p>This vignette is based on code that Alex Brenning developed for his course on ‘Environmental Statistics and GeoComputation’ that he teaches in the <a href="http://www.geographie.uni-jena.de/Studium/Studierende/Studieng%C3%A4nge/Master+of+Science+Geoinformatik+.html">Geographic Information Science Master’s program</a> at Friedrich Schiller University Jena, Germany. Please take a look at our program and spread the word!</p>
+</div>
 <div id="data-and-packages" class="section level1">
 <h1 class="hasAnchor">
-<html><body><a href="#data-and-packages" class="anchor"> </a></body></html>Data And Packages</h1>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(rpart)
-<span class="kw">library</span>(MASS)
-<span class="kw">library</span>(ipred)
-<span class="kw">library</span>(sperrorest)</code></pre></div>
-<p>The <code>maipo</code> data set from Marco Pena is used.</p>
+<html><body><a href="#data-and-packages" class="anchor"> </a></body></html>Data and Packages</h1>
+<p>As a case study we will carry out a supervised classification analysis using remotely-sensed data to predict fruit-tree crop types in central Chile. This data set is a subsample of data from <span class="citation">(Peña and Brenning <a href="#ref-Pena2015">2015</a>)</span>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(pacman)
+<span class="kw">p_load</span>(sperrorest)</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data</span>(<span class="st">"maipo"</span>, <span class="dt">package =</span> <span class="st">"sperrorest"</span>)</code></pre></div>
-<p>Variable description:</p>
+<p>The remote-sensing predictor variables were derived from an image times series consisting of eight Landsat images acquired throughout the (southern hemisphere) growing season. The data set includes the following variables:</p>
 <p><strong>Response</strong><br>
-- <code>croptype</code>: response variable (factor) with 4 levels</p>
+- <code>croptype</code>: response variable (factor) with 4 levels: ground truth information</p>
 <p><strong>Predictors</strong><br>
 - <code>b</code>[12-87]: spectral data, e.g. b82 = image date #8, spectral band #2<br>
-- <code>ndvi</code>[01-08]: Normalized Differenced Vegetation Index, e.g. #8 = image date #8<br>
-- <code>ndwi</code>[01-08]: Normalized Differenced Water Index, e.g. #8 = image date #8</p>
+- <code>ndvi</code>[01-08]: Normalized Difference Vegetation Index, e.g. #8 = image date #8<br>
+- <code>ndwi</code>[01-08]: Normalized Difference Water Index, e.g. #8 = image date #8</p>
 <p><strong>Others</strong><br>
 - <code>field</code>: field identifier (grouping variable - not to be used as predictor)<br>
 - <code>utmx</code>, <code>utmy</code>: x/y location; not to be used as predictors</p>
-</div>
-<div id="preprocessing" class="section level1">
-<h1 class="hasAnchor">
-<html><body><a href="#preprocessing" class="anchor"> </a></body></html>Preprocessing</h1>
-<p>Transformation of some predictor variables:</p>
+<p>All but the first four variables of the data set are predictors; their names are used to construct a formula object:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">predictors &lt;-<span class="st"> </span><span class="kw">colnames</span>(maipo)[<span class="dv">5</span><span class="op">:</span><span class="kw">ncol</span>(maipo)]
 <span class="co"># Construct a formula:</span>
 fo &lt;-<span class="st"> </span><span class="kw">as.formula</span>(<span class="kw">paste</span>(<span class="st">"croptype ~"</span>, <span class="kw">paste</span>(predictors, <span class="dt">collapse =</span> <span class="st">"+"</span>)))</code></pre></div>
-<p>Quick look at (some) correlations among the predictors:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">co &lt;-<span class="st"> </span><span class="kw">abs</span>(<span class="kw">cor</span>(maipo[, predictors]) <span class="op">*</span><span class="st"> </span><span class="dv">100</span>)
-co[co <span class="op">&lt;</span><span class="st"> </span><span class="dv">70</span>] &lt;-<span class="st"> </span><span class="dv">0</span> <span class="co"># mask out weak/moderate correlations</span>
-<span class="kw">head</span>(<span class="kw">round</span>(co))
-##     b12 b13 b14 b15 b16 b17 b22 b23 b24 b25 b26 b27 b32 b33 b34 b35 b36
-## b12 100  97  98   0   0  84  81  81  79   0   0  70   0   0   0   0   0
-## b13  97 100  96   0   0  75  79  83  78   0   0   0   0   0   0   0   0
-## b14  98  96 100   0  72  87  80  82  82   0   0  75   0   0   0   0   0
-## b15   0   0   0 100   0   0   0   0   0   0   0   0   0   0   0   0   0
-## b16   0   0  72   0 100  94   0   0   0   0  89  82   0   0   0   0   0
-## b17  84  75  87   0  94 100   0   0  72   0  83  86   0   0   0   0   0
-##     b37 b42 b43 b44 b45 b46 b47 b52 b53 b54 b55 b56 b57 b62 b63 b64 b65
-## b12   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
-## b13   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
-## b14   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
-## b15   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
-## b16   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
-## b17   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
-##     b66 b67 b72 b73 b74 b75 b76 b77 b82 b83 b84 b85 b86 b87 ndvi01 ndvi02
-## b12   0   0   0   0   0   0   0   0   0   0   0   0   0   0     92     77
-## b13   0   0   0   0   0   0   0   0   0   0   0   0   0   0     83     72
-## b14   0   0   0   0   0   0   0   0   0   0   0   0   0   0     93     79
-## b15   0   0   0   0   0   0   0   0   0   0   0   0   0   0     75      0
-## b16   0   0   0   0   0   0   0   0   0   0   0   0   0   0      0      0
-## b17   0   0   0   0   0   0   0   0   0   0   0   0   0   0     85     73
-##     ndvi03 ndvi04 ndvi05 ndvi06 ndvi07 ndvi08 ndwi01 ndwi02 ndwi03 ndwi04
-## b12      0      0      0      0      0      0     74      0      0      0
-## b13      0      0      0      0      0      0      0      0      0      0
-## b14      0      0      0      0      0      0     78      0      0      0
-## b15      0      0      0      0      0      0     74      0      0      0
-## b16      0      0      0      0      0      0     85     77      0      0
-## b17      0      0      0      0      0      0     94     82      0      0
-##     ndwi05 ndwi06 ndwi07 ndwi08
-## b12      0      0      0      0
-## b13      0      0      0      0
-## b14      0      0      0      0
-## b15      0      0      0      0
-## b16      0      0      0      0
-## b17      0      0      0      0</code></pre></div>
 </div>
 <div id="modeling" class="section level1">
 <h1 class="hasAnchor">
 <html><body><a href="#modeling" class="anchor"> </a></body></html>Modeling</h1>
+<p>Here we will take a look at a few classification methods with varying degrees of computational complexity and flexibility. This should give you an idea of how different models are handled by <code>sperrorest</code>, depending on the characteristics of their fitting and prediction methods. Please refer to <span class="citation">(James et al. <a href="#ref-James2013">2013</a>)</span> for background information on the models used here.</p>
 <div id="linear-discriminant-analysis-lda" class="section level2">
 <h2 class="hasAnchor">
 <html><body><a href="#linear-discriminant-analysis-lda" class="anchor"> </a></body></html>Linear Discriminant Analysis (LDA)</h2>
-<p>Fit a model with all predictors:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fit &lt;-<span class="st"> </span>MASS<span class="op">::</span><span class="kw">lda</span>(fo, <span class="dt">data =</span> maipo)</code></pre></div>
-<p>Predict the croptype with the fitted model and calculate the average misclassification error rate (MER):</p>
+<p>LDA is simple and fast, and often performs surprisingly well if the problem at hand is ‘linear enough’. As a start, let’s fit a model with all predictors and using all available data:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">p_load</span>(MASS)
+fit &lt;-<span class="st"> </span><span class="kw">lda</span>(fo, <span class="dt">data =</span> maipo)</code></pre></div>
+<p>Predict the croptype with the fitted model and calculate the misclassification error rate (MER) on the training sample:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pred &lt;-<span class="st"> </span><span class="kw">predict</span>(fit, <span class="dt">newdata =</span> maipo)<span class="op">$</span>class
-<span class="kw">mean</span>(pred <span class="op">!=</span><span class="st"> </span>maipo<span class="op">$</span>croptype)
-## [1] 0.04369247</code></pre></div>
-<p>Take a look at the confusion matrix:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">table</span>(<span class="dt">pred =</span> pred, <span class="dt">obs =</span> maipo<span class="op">$</span>croptype)
-##        obs
-## pred    crop1 crop2 crop3 crop4
+<span class="kw">mean</span>(pred <span class="op">!=</span><span class="st"> </span>maipo<span class="op">$</span>croptype)</code></pre></div>
+<pre><code>## [1] 0.0437</code></pre>
+<p>But remember that this result is over-optimistic because we are re-using the training sample for model evaluation. We will soon show you how to do better with cross-validation.</p>
+<p>We can also take a look at the confusion matrix but again, this result is overly optimistic:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">table</span>(<span class="dt">pred =</span> pred, <span class="dt">obs =</span> maipo<span class="op">$</span>croptype)</code></pre></div>
+<pre><code>##         obs
+##   pred  crop1 crop2 crop3 crop4
 ##   crop1  1294     8     4    37
 ##   crop2    50  1054     4    44
 ##   crop3     0     0  1935     6
-##   crop4    45   110    29  3093</code></pre></div>
+##   crop4    45   110    29  3093</code></pre>
 </div>
 <div id="classification-tree" class="section level2">
 <h2 class="hasAnchor">
 <html><body><a href="#classification-tree" class="anchor"> </a></body></html>Classification Tree</h2>
-<p>Fit a model with all predictors:</p>
+<p>Classification and regresion trees (CART) take a completely different approach—they are based on yes/no questions in the predictor variables and can be referred to as a binary partitioning technique. Fit a model with all predictors and default settings:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">p_load</span>(rpart)</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fit &lt;-<span class="st"> </span><span class="kw">rpart</span>(fo, <span class="dt">data =</span> maipo)
-<span class="co">#            control = rpart.control(cp=0.01))</span>
 
 ## optional: view the classiciation tree
 <span class="co"># par(xpd = TRUE)</span>
@@ -160,294 +126,352 @@ co[co <span class="op">&lt;</span><span class="st"> </span><span class="dv">70</
 <span class="co"># text(fit, use.n = TRUE)</span></code></pre></div>
 <p>Again, predict the croptype with the fitted model and calculate the average MER:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pred &lt;-<span class="st"> </span><span class="kw">predict</span>(fit, <span class="dt">newdata =</span> maipo, <span class="dt">type =</span> <span class="st">"class"</span>)
-<span class="kw">mean</span>(pred <span class="op">!=</span><span class="st"> </span>maipo<span class="op">$</span>croptype)
-## [1] 0.1127966</code></pre></div>
-<p>And take a look at the confusion matrix:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">table</span>(<span class="dt">pred =</span> pred, <span class="dt">obs =</span> maipo<span class="op">$</span>croptype)
-##        obs
-## pred    crop1 crop2 crop3 crop4
+<span class="kw">mean</span>(pred <span class="op">!=</span><span class="st"> </span>maipo<span class="op">$</span>croptype)</code></pre></div>
+<pre><code>## [1] 0.113</code></pre>
+<p>Here the <code>predict</code> call is slightly different. Again, we could calculate a confusion matrix.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">table</span>(<span class="dt">pred =</span> pred, <span class="dt">obs =</span> maipo<span class="op">$</span>croptype)</code></pre></div>
+<pre><code>##         obs
+##   pred  crop1 crop2 crop3 crop4
 ##   crop1  1204    66     0    54
 ##   crop2    47   871    38   123
 ##   crop3    38     8  1818    53
-##   crop4   100   227   116  2950</code></pre></div>
-<p>Note that some classes may be over-/underpredicted, i.e. remotely-sensed crop areas can be biased even if accuracy is high!</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(pred)
-## crop1 crop2 crop3 crop4 
-##  1324  1079  1917  3393
-<span class="kw">summary</span>(maipo<span class="op">$</span>croptype)
-## crop1 crop2 crop3 crop4 
-##  1389  1172  1972  3180</code></pre></div>
+##   crop4   100   227   116  2950</code></pre>
 </div>
-<div id="bagging-ipred" class="section level2">
+<div id="randomforest" class="section level2">
 <h2 class="hasAnchor">
-<html><body><a href="#bagging-ipred" class="anchor"> </a></body></html>Bagging (ipred)</h2>
-<p>The same can be done using the <code>bagging()</code> function from the <code>ipred</code> package <span class="citation">(Leo Breiman 1996)</span>. This is a previous version of the famous <code>randomForest()</code> by Leo Breiman <span class="citation">(L. Breiman 2001)</span>. For some reason <code>randomForest()</code> does introduce problems when being paralized. Hence <code>bagging()</code> is used in this vignette. However, <code>randomForest()</code> works fine with the sequential <code><a href="../reference/sperrorest.html">sperrorest()</a></code> function and should be prefered over <code>bagging()</code>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fit &lt;-<span class="st"> </span><span class="kw">bagging</span>(fo, <span class="dt">data =</span> maipo, <span class="dt">coob =</span> <span class="ot">TRUE</span>)
-fit
+<html><body><a href="#randomforest" class="anchor"> </a></body></html>RandomForest</h2>
+<p>Bagging, bundling and random forests build upon the CART technique by fitting many trees on bootstrap resamples of the original data set <span class="citation">(Breiman <a href="#ref-Breiman1996">1996</a>)</span> <span class="citation">(Breiman <a href="#ref-Breiman2001">2001</a>)</span> <span class="citation">(Hothorn and Lausen <a href="#ref-Hothorn2005">2005</a>)</span>. They differ in that random forest also samples from the predictors, and bundling adds an ancillary classifier for improved classification. We will use the nowadays widely used <code>randomForest()</code> here.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">p_load</span>(randomForest)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fit &lt;-<span class="st"> </span><span class="kw">randomForest</span>(fo, <span class="dt">data =</span> maipo, <span class="dt">coob =</span> <span class="ot">TRUE</span>)
+fit</code></pre></div>
+<pre><code>## 
+## Call:
+##  randomForest(formula = fo, data = maipo, coob = TRUE) 
+##                Type of random forest: classification
+##                      Number of trees: 500
+## No. of variables tried at each split: 8
 ## 
-## Bagging classification trees with 25 bootstrap replications 
-## 
-## Call: bagging.data.frame(formula = fo, data = maipo, coob = TRUE)
-## 
-## Out-of-bag estimate of misclassification error:  0.0182</code></pre></div>
-<p>Training-set misclassification error rate (MER)</p>
+##         OOB estimate of  error rate: 0.57%
+## Confusion matrix:
+##       crop1 crop2 crop3 crop4 class.error
+## crop1  1382     2     0     5     0.00504
+## crop2     1  1163     0     8     0.00768
+## crop3     0     0  1959    13     0.00659
+## crop4     7     5     3  3165     0.00472</code></pre>
+<p>Let’s take a look at the MER achieved on the training sample:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pred &lt;-<span class="st"> </span><span class="kw">predict</span>(fit, <span class="dt">newdata =</span> maipo, <span class="dt">type =</span> <span class="st">"class"</span>)
-<span class="kw">mean</span>(pred <span class="op">!=</span><span class="st"> </span>maipo<span class="op">$</span>croptype)
-## [1] 0</code></pre></div>
-<p>Confusion matrix:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">table</span>(<span class="dt">pred =</span> pred, <span class="dt">obs =</span> maipo<span class="op">$</span>croptype)
-##        obs
-## pred    crop1 crop2 crop3 crop4
+<span class="kw">mean</span>(pred <span class="op">!=</span><span class="st"> </span>maipo<span class="op">$</span>croptype)</code></pre></div>
+<pre><code>## [1] 0</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">table</span>(<span class="dt">pred =</span> pred, <span class="dt">obs =</span> maipo<span class="op">$</span>croptype)</code></pre></div>
+<pre><code>##         obs
+##   pred  crop1 crop2 crop3 crop4
 ##   crop1  1389     0     0     0
 ##   crop2     0  1172     0     0
 ##   crop3     0     0  1972     0
-##   crop4     0     0     0  3180</code></pre></div>
-<ul>
-<li>Almost no missclassification! (only one observation)</li>
-<li>Even the OOB (out-of-bag) estimate of the error rate is &lt; 1%.</li>
-<li>Too good to be true? We’ll see…</li>
-</ul>
+##   crop4     0     0     0  3180</code></pre>
+<p>Isn’t this amazing? Only one grid cell is misclassified by the bagging classifier! Even the OOB (out-of-bag) estimate of the error rate is &lt; 1%.<br>
+Too good to be true? We’ll see…</p>
 </div>
 </div>
 <div id="cross-validation-estimation-of-predictive-performance" class="section level1">
 <h1 class="hasAnchor">
 <html><body><a href="#cross-validation-estimation-of-predictive-performance" class="anchor"> </a></body></html>Cross-Validation Estimation of Predictive Performance</h1>
+<p>Of course we can’t take the MER on the training set too seriously—it is biased. But we’ve heard of cross-validation, in which disjoint subsets are used for model training and testing. Let’s use <code>sperrorest</code> for cross-validation.</p>
+<p>Also, at this point we should highlight that the observations in this data set are pixels, and multiple grid cells belong to the same field. In a predictive situation, and when field boundaries are known (as is the case here), we would want to predict the same class for all grid cells that belong to the same field. Here we will use a majority filter. This filter ensures that the final predicted class type of every field is the most often predicted croptype within one field.</p>
 <div id="linear-discriminant-analysis-lda-1" class="section level2">
 <h2 class="hasAnchor">
 <html><body><a href="#linear-discriminant-analysis-lda-1" class="anchor"> </a></body></html>Linear Discriminant Analysis (LDA)</h2>
-<p>We need to set up some functions to create a wrapper predict function of the LDA model for <code><a href="../reference/sperrorest.html">sperrorest()</a></code>.</p>
+<p>First, we need to create a wrapper predict method for LDA for <code><a href="../reference/sperrorest.html">sperrorest()</a></code>. This is necessary in order to accomodate the majority filter, and also because class predictions from <code>lda</code>’s predict method are hidden in the <code>$class</code> component of the returned object.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">lda.predfun &lt;-<span class="st"> </span><span class="cf">function</span>(object, newdata, <span class="dt">fac =</span> <span class="ot">NULL</span>) {
-  <span class="kw">library</span>(nnet)
+  
+  <span class="kw">p_load</span>(nnet)
   majority &lt;-<span class="st"> </span><span class="cf">function</span>(x) {
     <span class="kw">levels</span>(x)[<span class="kw">which.is.max</span>(<span class="kw">table</span>(x))]
   }
   
   majority.filter &lt;-<span class="st"> </span><span class="cf">function</span>(x, fac) {
     <span class="cf">for</span> (lev <span class="cf">in</span> <span class="kw">levels</span>(fac)) {
-      x[ fac <span class="op">==</span><span class="st"> </span>lev ] &lt;-<span class="st"> </span><span class="kw">majority</span>(x[ fac <span class="op">==</span><span class="st"> </span>lev ])
+      x[fac <span class="op">==</span><span class="st"> </span>lev] &lt;-<span class="st"> </span><span class="kw">majority</span>(x[fac <span class="op">==</span><span class="st"> </span>lev])
     }
     x
   }
   
   pred &lt;-<span class="st"> </span><span class="kw">predict</span>(object, <span class="dt">newdata =</span> newdata)<span class="op">$</span>class
-  <span class="cf">if</span> (<span class="op">!</span><span class="kw">is.null</span>(fac)) pred &lt;-<span class="st"> </span><span class="kw">majority.filter</span>(pred, newdata[,fac]) 
+  <span class="cf">if</span> (<span class="op">!</span><span class="kw">is.null</span>(fac)) pred &lt;-<span class="st"> </span><span class="kw">majority.filter</span>(pred, newdata[, fac]) 
   <span class="kw">return</span>(pred)
 }</code></pre></div>
-<p>Finally, we can run <code><a href="../reference/sperrorest.html">sperrorest()</a></code> with a non-spatial sampling setup (<code><a href="../reference/partition.cv.html">partition.cv()</a></code>):</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">res.lda.nsp &lt;-<span class="st"> </span>res &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sperrorest.html">sperrorest</a></span>(fo, <span class="dt">data =</span> maipo, <span class="dt">coords =</span> <span class="kw">c</span>(<span class="st">"utmx"</span>,<span class="st">"utmy"</span>), 
-                                 <span class="dt">model.fun =</span> lda,
-                                 <span class="dt">pred.fun =</span> lda.predfun, 
-                                 <span class="dt">pred.args =</span> <span class="kw">list</span>(<span class="dt">fac =</span> <span class="st">"field"</span>),
-                                 <span class="dt">smp.fun =</span> partition.cv, 
-                                 <span class="dt">smp.args =</span> <span class="kw">list</span>(<span class="dt">repetition =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">6</span>, <span class="dt">nfold =</span> <span class="dv">5</span>),
-                                 <span class="dt">error.rep =</span> <span class="ot">TRUE</span>, <span class="dt">error.fold =</span> <span class="ot">FALSE</span>)
-## Sun Feb  5 19:23:20 2017 Repetition 1 
-## Sun Feb  5 19:23:20 2017 - Fold 1 
-## Sun Feb  5 19:23:23 2017 - Fold 2 
-## Sun Feb  5 19:23:24 2017 - Fold 3 
-## Sun Feb  5 19:23:26 2017 - Fold 4 
-## Sun Feb  5 19:23:28 2017 - Fold 5 
-## Sun Feb  5 19:23:30 2017 Repetition 2 
-## Sun Feb  5 19:23:30 2017 - Fold 1 
-## Sun Feb  5 19:23:32 2017 - Fold 2 
-## Sun Feb  5 19:23:34 2017 - Fold 3 
-## Sun Feb  5 19:23:36 2017 - Fold 4 
-## Sun Feb  5 19:23:38 2017 - Fold 5 
-## Sun Feb  5 19:23:40 2017 Repetition 3 
-## Sun Feb  5 19:23:40 2017 - Fold 1 
-## Sun Feb  5 19:23:42 2017 - Fold 2 
-## Sun Feb  5 19:23:44 2017 - Fold 3 
-## Sun Feb  5 19:23:45 2017 - Fold 4 
-## Sun Feb  5 19:23:47 2017 - Fold 5 
-## Sun Feb  5 19:23:49 2017 Repetition 4 
-## Sun Feb  5 19:23:49 2017 - Fold 1 
-## Sun Feb  5 19:23:51 2017 - Fold 2 
-## Sun Feb  5 19:23:53 2017 - Fold 3 
-## Sun Feb  5 19:23:54 2017 - Fold 4 
-## Sun Feb  5 19:23:56 2017 - Fold 5 
-## Sun Feb  5 19:23:58 2017 Repetition 5 
-## Sun Feb  5 19:23:58 2017 - Fold 1 
-## Sun Feb  5 19:24:00 2017 - Fold 2 
-## Sun Feb  5 19:24:02 2017 - Fold 3 
-## Sun Feb  5 19:24:03 2017 - Fold 4 
-## Sun Feb  5 19:24:05 2017 - Fold 5 
-## Sun Feb  5 19:24:07 2017 Repetition 6 
-## Sun Feb  5 19:24:07 2017 - Fold 1 
-## Sun Feb  5 19:24:09 2017 - Fold 2 
-## Sun Feb  5 19:24:11 2017 - Fold 3 
-## Sun Feb  5 19:24:12 2017 - Fold 4 
-## Sun Feb  5 19:24:14 2017 - Fold 5 
-## Sun Feb  5 19:24:16 2017 Done.
-<span class="kw">round</span>(<span class="kw">summary</span>(res.lda.nsp<span class="op">$</span>error.rep), <span class="dv">3</span>)
-##                     mean    sd    median   IQR
-## train.error        0.034 0.000     0.034 0.000
-## train.accuracy     0.966 0.000     0.966 0.000
-## train.events    4688.000 0.000  4688.000 0.000
-## train.count    30852.000 0.000 30852.000 0.000
-## test.error         0.041 0.001     0.041 0.001
-## test.accuracy      0.959 0.001     0.959 0.001
-## test.events     1172.000 0.000  1172.000 0.000
-## test.count      7713.000 0.000  7713.000 0.000</code></pre></div>
-<p>To run a spatial cross-validation at the field level, we can use <code><a href="../reference/partition.factor.cv.html">partition.factor.cv()</a></code> as the sampling function. Subsequently, we have to specify the location of the fields. We can do so using the <code>field</code> variable of our data set and put in <code>smp.args</code>:</p>
+<p>To ensure that custom predict-functions do also work with <code><a href="../reference/parsperrorest.html">parsperrorest()</a></code>, we need to define all custom functions in one step. Otherwise, the <code>foreach()</code> package in <code>par.mode = 2</code> of <code><a href="../reference/parsperrorest.html">parsperrorest()</a></code> will throw errors because of the way how it loads functions of the parent environment.</p>
+<p>Finally, we can run <code><a href="../reference/sperrorest.html">sperrorest()</a></code> with a non-spatial sampling setup (<code><a href="../reference/partition.cv.html">partition.cv()</a></code>). In this example we use a ‘50 repetitions - 5 folds’ setup. To make your results more independent of particular random partitioning, you may want to use 100 repetitions or even more in practice.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">res.lda.nsp &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sperrorest.html">sperrorest</a></span>(fo, <span class="dt">data =</span> maipo, <span class="dt">coords =</span> <span class="kw">c</span>(<span class="st">"utmx"</span>,<span class="st">"utmy"</span>), 
+                          <span class="dt">model.fun =</span> lda,
+                          <span class="dt">pred.fun =</span> lda.predfun, 
+                          <span class="dt">pred.args =</span> <span class="kw">list</span>(<span class="dt">fac =</span> <span class="st">"field"</span>),
+                          <span class="dt">smp.fun =</span> partition.cv, 
+                          <span class="dt">smp.args =</span> <span class="kw">list</span>(<span class="dt">repetition =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">50</span>, <span class="dt">nfold =</span> <span class="dv">5</span>),
+                          <span class="dt">error.rep =</span> <span class="ot">TRUE</span>, <span class="dt">error.fold =</span> <span class="ot">TRUE</span>,
+                          <span class="dt">progress =</span> <span class="ot">FALSE</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(res.lda.nsp<span class="op">$</span>error.rep)</code></pre></div>
+<pre><code>##                    mean    sd   median   IQR
+## train.error    3.40e-02 0.001 3.40e-02 0.001
+## train.accuracy 9.66e-01 0.001 9.66e-01 0.001
+## train.events   4.69e+03 0.000 4.69e+03 0.000
+## train.count    3.09e+04 0.000 3.09e+04 0.000
+## test.error     4.00e-02 0.002 4.00e-02 0.002
+## test.accuracy  9.60e-01 0.002 9.60e-01 0.002
+## test.events    1.17e+03 0.000 1.17e+03 0.000
+## test.count     7.71e+03 0.000 7.71e+03 0.000</code></pre>
+<p>To run a spatial cross-validation at the field level, we can use <code><a href="../reference/partition.factor.cv.html">partition.factor.cv()</a></code> as the sampling function. Since we are using 5 folds, we get a coarse 80/20 split of our data. 80% will be used for training, 20% for testing our trained model.</p>
+<p>To take a look where our training and tests sets will be partitioned on each fold, we can plot them. The red colored points represent the test set in each fold, the black colored points the training set. Note that because we plotted over 7000 points, overplotting occurs and since the red crosses are plotted after the black ones, it seems visually that way more than ~20% of red points exist than it is really the case.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">resamp &lt;-<span class="st"> </span><span class="kw"><a href="../reference/partition.factor.cv.html">partition.factor.cv</a></span>(maipo, <span class="dt">nfold =</span> <span class="dv">5</span>, <span class="dt">repetition =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">1</span>, <span class="dt">fac =</span> <span class="st">"field"</span>)
+<span class="kw">plot</span>(resamp, maipo, <span class="dt">coords =</span> <span class="kw">c</span>(<span class="st">"utmx"</span>,<span class="st">"utmy"</span>))</code></pre></div>
+<div class="figure">
+<img src="../inst/figure/resamp-plot.png">
+</div>
+<p>Subsequently, we have to specify the location of the fields (<code>fac = "field"</code>) in the prediction arguments (<code>pred.args</code>) and sampling arguments (<code>smp.args</code>) in <code><a href="../reference/sperrorest.html">sperrorest()</a></code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">res.lda.sp &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sperrorest.html">sperrorest</a></span>(fo, <span class="dt">data =</span> maipo, <span class="dt">coords =</span> <span class="kw">c</span>(<span class="st">"utmx"</span>,<span class="st">"utmy"</span>), 
                          <span class="dt">model.fun =</span> lda,
                          <span class="dt">pred.fun =</span> lda.predfun, 
                          <span class="dt">pred.args =</span> <span class="kw">list</span>(<span class="dt">fac =</span> <span class="st">"field"</span>),
                          <span class="dt">smp.fun =</span> partition.factor.cv,
-                         <span class="dt">smp.args =</span> <span class="kw">list</span>(<span class="dt">fac =</span> <span class="st">"field"</span>, <span class="dt">repetition =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">6</span>, <span class="dt">nfold =</span> <span class="dv">5</span>),
-                         <span class="dt">error.rep =</span> <span class="ot">TRUE</span>, <span class="dt">error.fold =</span> <span class="ot">FALSE</span>, 
-                         <span class="dt">benchmark =</span> <span class="ot">TRUE</span>)
-## Sun Feb  5 19:24:16 2017 Repetition 1 
-## Sun Feb  5 19:24:16 2017 - Fold 1 
-## Sun Feb  5 19:24:19 2017 - Fold 2 
-## Sun Feb  5 19:24:21 2017 - Fold 3 
-## Sun Feb  5 19:24:22 2017 - Fold 4 
-## Sun Feb  5 19:24:24 2017 - Fold 5 
-## Sun Feb  5 19:24:26 2017 Repetition 2 
-## Sun Feb  5 19:24:26 2017 - Fold 1 
-## Sun Feb  5 19:24:28 2017 - Fold 2 
-## Sun Feb  5 19:24:30 2017 - Fold 3 
-## Sun Feb  5 19:24:31 2017 - Fold 4 
-## Sun Feb  5 19:24:33 2017 - Fold 5 
-## Sun Feb  5 19:24:35 2017 Repetition 3 
-## Sun Feb  5 19:24:35 2017 - Fold 1 
-## Sun Feb  5 19:24:37 2017 - Fold 2 
-## Sun Feb  5 19:24:39 2017 - Fold 3 
-## Sun Feb  5 19:24:40 2017 - Fold 4 
-## Sun Feb  5 19:24:42 2017 - Fold 5 
-## Sun Feb  5 19:24:44 2017 Repetition 4 
-## Sun Feb  5 19:24:44 2017 - Fold 1 
-## Sun Feb  5 19:24:46 2017 - Fold 2 
-## Sun Feb  5 19:24:47 2017 - Fold 3 
-## Sun Feb  5 19:24:49 2017 - Fold 4 
-## Sun Feb  5 19:24:51 2017 - Fold 5 
-## Sun Feb  5 19:24:53 2017 Repetition 5 
-## Sun Feb  5 19:24:53 2017 - Fold 1 
-## Sun Feb  5 19:24:55 2017 - Fold 2 
-## Sun Feb  5 19:24:57 2017 - Fold 3 
-## Sun Feb  5 19:24:58 2017 - Fold 4 
-## Sun Feb  5 19:25:00 2017 - Fold 5 
-## Sun Feb  5 19:25:02 2017 Repetition 6 
-## Sun Feb  5 19:25:02 2017 - Fold 1 
-## Sun Feb  5 19:25:04 2017 - Fold 2 
-## Sun Feb  5 19:25:06 2017 - Fold 3 
-## Sun Feb  5 19:25:07 2017 - Fold 4 
-## Sun Feb  5 19:25:09 2017 - Fold 5 
-## Sun Feb  5 19:25:11 2017 Done.
-res.lda.sp<span class="op">$</span>benchmark<span class="op">$</span>runtime.performance
-## Time difference of 54.46836 secs</code></pre></div>
-<p>The same can be done faster using <code><a href="../reference/parsperrorest.html">parsperrorest()</a></code>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">res.lda.sp.par &lt;-<span class="st"> </span><span class="kw"><a href="../reference/parsperrorest.html">parsperrorest</a></span>(fo, <span class="dt">data =</span> maipo, <span class="dt">coords =</span> <span class="kw">c</span>(<span class="st">"utmx"</span>,<span class="st">"utmy"</span>), 
-                                <span class="dt">model.fun =</span> lda,
-                                <span class="dt">pred.fun =</span> lda.predfun, 
-                                <span class="dt">pred.args =</span> <span class="kw">list</span>(<span class="dt">fac =</span> <span class="st">"field"</span>),
-                                <span class="dt">smp.fun =</span> partition.factor.cv,
-                                <span class="dt">smp.args =</span> <span class="kw">list</span>(<span class="dt">fac =</span> <span class="st">"field"</span>, <span class="dt">repetition =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">6</span>, <span class="dt">nfold =</span> <span class="dv">5</span>),
-                                <span class="dt">par.args =</span> <span class="kw">list</span>(<span class="dt">par.units =</span> <span class="dv">2</span>, <span class="dt">par.mode =</span> <span class="dv">2</span>),
-                                <span class="dt">error.rep =</span> <span class="ot">TRUE</span>, <span class="dt">error.fold =</span> <span class="ot">TRUE</span>,
-                                <span class="dt">benchmark =</span> <span class="ot">TRUE</span>)
-## Sun Feb  5 19:25:49 2017 Done.
-res.lda.sp.par<span class="op">$</span>benchmark<span class="op">$</span>runtime.performance
-## Time difference of 37.60295 secs</code></pre></div>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">res.lda.par &lt;-<span class="st"> </span><span class="kw"><a href="../reference/parsperrorest.html">parsperrorest</a></span>(fo, <span class="dt">data =</span> maipo, <span class="dt">coords =</span> <span class="kw">c</span>(<span class="st">"utmx"</span>,<span class="st">"utmy"</span>), 
-                               <span class="dt">model.fun =</span> lda,
-                               <span class="dt">pred.fun =</span> lda.predfun, 
-                               <span class="dt">pred.args =</span> <span class="kw">list</span>(<span class="dt">fac =</span> <span class="st">"field"</span>),
-                               <span class="dt">smp.fun =</span> partition.cv,
-                               <span class="dt">smp.args =</span> <span class="kw">list</span>(<span class="dt">repetition =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">6</span>, <span class="dt">nfold =</span> <span class="dv">5</span>),
-                               <span class="dt">par.args =</span> <span class="kw">list</span>(<span class="dt">par.units =</span> <span class="dv">2</span>, <span class="dt">par.mode =</span> <span class="dv">2</span>),
-                               <span class="dt">error.rep =</span> <span class="ot">TRUE</span>, <span class="dt">error.fold =</span> <span class="ot">TRUE</span>,
-                               <span class="dt">benchmark =</span> <span class="ot">TRUE</span>)
-## Sun Feb  5 19:26:27 2017 Done.
-res.lda.sp.par<span class="op">$</span>benchmark<span class="op">$</span>runtime.performance
-## Time difference of 37.60295 secs</code></pre></div>
+                         <span class="dt">smp.args =</span> <span class="kw">list</span>(<span class="dt">fac =</span> <span class="st">"field"</span>, <span class="dt">repetition =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">50</span>, <span class="dt">nfold =</span> <span class="dv">5</span>),
+                         <span class="dt">error.rep =</span> <span class="ot">TRUE</span>, <span class="dt">error.fold =</span> <span class="ot">TRUE</span>, 
+                         <span class="dt">benchmark =</span> <span class="ot">TRUE</span>, <span class="dt">progress =</span> <span class="ot">FALSE</span>)
+res.lda.sp<span class="op">$</span>benchmark<span class="op">$</span>runtime.performance</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(res.lda.sp<span class="op">$</span>error.rep)</code></pre></div>
+<pre><code>##                    mean      sd   median     IQR
+## train.error    2.95e-02 0.00177 2.97e-02 0.00261
+## train.accuracy 9.70e-01 0.00177 9.70e-01 0.00261
+## train.events   4.69e+03 0.00000 4.69e+03 0.00000
+## train.count    3.09e+04 0.00000 3.09e+04 0.00000
+## test.error     6.65e-02 0.00807 6.59e-02 0.01083
+## test.accuracy  9.33e-01 0.00807 9.34e-01 0.01083
+## test.events    1.17e+03 0.00000 1.17e+03 0.00000
+## test.count     7.71e+03 0.00000 7.71e+03 0.00000</code></pre>
+<!-- In order to speed up the calculation on a multicore CPU, we can use `parsperrorest()`. Here an example using two cores: -->
+<!-- ```{r} -->
+<!-- #### läuft nicht, da 'out.of.bounds' error wenn partition.factor.cv + custom pred.fun -->
+<!-- res.lda.sp.par <- parsperrorest(fo, data = maipo, coords = c("utmx","utmy"), -->
+<!--                                 model.fun = lda, -->
+<!--                                 pred.fun = lda.predfun, -->
+<!--                                 pred.args = list(fac = "field"), -->
+<!--                                 smp.fun = partition.factor.cv, -->
+<!--                                 smp.args = list(fac = "field", repetition = 1:6, nfold = 5), -->
+<!--                                 par.args = list(par.units = 2, par.mode = 2), -->
+<!--                                 error.rep = TRUE, error.fold = TRUE, -->
+<!--                                 benchmark = TRUE) -->
+<!-- res.lda.sp.par$benchmark$runtime.performance -->
+<!-- ``` -->
+<!-- ```{r} -->
+<!-- res.lda.par <- parsperrorest(fo, data = maipo, coords = c("utmx","utmy"),  -->
+<!--                                model.fun = lda, -->
+<!--                                pred.fun = lda.predfun,  -->
+<!--                                pred.args = list(fac = "field"), -->
+<!--                                smp.fun = partition.cv, -->
+<!--                                smp.args = list(repetition = 1:6, nfold = 5), -->
+<!--                                par.args = list(par.units = 2, par.mode = 2), -->
+<!--                                error.rep = TRUE, error.fold = TRUE, -->
+<!--                                benchmark = TRUE) -->
+<!-- res.lda.par$benchmark$runtime.performance -->
+<!-- ``` -->
 </div>
-<div id="bagging" class="section level2">
+<div id="randomforest-1" class="section level2">
 <h2 class="hasAnchor">
-<html><body><a href="#bagging" class="anchor"> </a></body></html>Bagging</h2>
-<p>This time we do not need to set up a custom <code>pred.fun</code> as the generic <code>predict()</code> works fine. Running <code><a href="../reference/sperrorest.html">sperrorest()</a></code> takes some time here (a few minutes depending on your CPU power).</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">res.bagg.sp &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sperrorest.html">sperrorest</a></span>(fo, <span class="dt">data =</span> maipo, <span class="dt">coords =</span> <span class="kw">c</span>(<span class="st">"utmx"</span>,<span class="st">"utmy"</span>), 
-                          <span class="dt">model.fun =</span> bagging,
+<html><body><a href="#randomforest-1" class="anchor"> </a></body></html>RandomForest</h2>
+<p>In the case of Random Forest, the customized <code>pred.fun</code> looks as follows; it is only required because of the majority filter, without it, we could just omit the <code>pred.fun</code> and <code>pred.args</code> arguments below.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">rf.predfun &lt;-<span class="st"> </span><span class="cf">function</span>(object, newdata, <span class="dt">fac =</span> <span class="ot">NULL</span>) {
+  
+  <span class="kw">p_load</span>(nnet)
+  majority &lt;-<span class="st"> </span><span class="cf">function</span>(x) {
+    <span class="kw">levels</span>(x)[<span class="kw">which.is.max</span>(<span class="kw">table</span>(x))]
+  }
+  
+  majority.filter &lt;-<span class="st"> </span><span class="cf">function</span>(x, fac) {
+    <span class="cf">for</span> (lev <span class="cf">in</span> <span class="kw">levels</span>(fac)) {
+      x[fac <span class="op">==</span><span class="st"> </span>lev] &lt;-<span class="st"> </span><span class="kw">majority</span>(x[fac <span class="op">==</span><span class="st"> </span>lev])
+    }
+    x
+  }
+  
+  pred &lt;-<span class="st"> </span><span class="kw">predict</span>(object, <span class="dt">newdata =</span> newdata)
+  <span class="cf">if</span> (<span class="op">!</span><span class="kw">is.null</span>(fac)) pred &lt;-<span class="st"> </span><span class="kw">majority.filter</span>(pred, newdata[,fac]) 
+  <span class="kw">return</span>(pred)
+}</code></pre></div>
+<p>Running <code><a href="../reference/sperrorest.html">sperrorest()</a></code> takes some time here (Test machine: 3,2 Ghz Intel I-5 with 4 physical cores).</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">res.rf.sp &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sperrorest.html">sperrorest</a></span>(fo, <span class="dt">data =</span> maipo, <span class="dt">coords =</span> <span class="kw">c</span>(<span class="st">"utmx"</span>,<span class="st">"utmy"</span>), 
+                          <span class="dt">model.fun =</span> randomForest,
+                          <span class="dt">pred.fun =</span> rf.predfun,
                           <span class="dt">pred.args =</span> <span class="kw">list</span>(<span class="dt">fac =</span> <span class="st">"field"</span>),
                           <span class="dt">smp.fun =</span> partition.factor.cv,
                           <span class="dt">smp.args =</span> <span class="kw">list</span>(<span class="dt">fac =</span> <span class="st">"field"</span>,
-                                          <span class="dt">repetition =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">6</span>, <span class="dt">nfold =</span> <span class="dv">5</span>),
+                                          <span class="dt">repetition =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">50</span>, <span class="dt">nfold =</span> <span class="dv">5</span>),
                           <span class="dt">error.rep =</span> <span class="ot">TRUE</span>, <span class="dt">error.fold =</span> <span class="ot">TRUE</span>,
-                          <span class="dt">benchmark =</span> <span class="ot">TRUE</span>, <span class="dt">verbose =</span> <span class="st">"rep"</span>)
-## Warning in sperrorest(fo, data = maipo, coords = c("utmx", "utmy"), model.fun = bagging, : '...' arguments currently not supported:
-## 
-##         use 'model.args' to pass list of additional 
-##         arguments to 'model.fun'
-## Sun Feb  5 19:26:28 2017 Repetition 1 
-## Sun Feb  5 19:26:28 2017 - Fold 1 
-## Sun Feb  5 19:26:35 2017 - Fold 2 
-## Sun Feb  5 19:26:43 2017 - Fold 3 
-## Sun Feb  5 19:26:50 2017 - Fold 4 
-## Sun Feb  5 19:26:58 2017 - Fold 5 
-## Sun Feb  5 19:27:05 2017 Repetition 2 
-## Sun Feb  5 19:27:05 2017 - Fold 1 
-## Sun Feb  5 19:27:12 2017 - Fold 2 
-## Sun Feb  5 19:27:20 2017 - Fold 3 
-## Sun Feb  5 19:27:27 2017 - Fold 4 
-## Sun Feb  5 19:27:35 2017 - Fold 5 
-## Sun Feb  5 19:27:43 2017 Repetition 3 
-## Sun Feb  5 19:27:43 2017 - Fold 1 
-## Sun Feb  5 19:27:50 2017 - Fold 2 
-## Sun Feb  5 19:27:57 2017 - Fold 3 
-## Sun Feb  5 19:28:04 2017 - Fold 4 
-## Sun Feb  5 19:28:12 2017 - Fold 5 
-## Sun Feb  5 19:28:19 2017 Repetition 4 
-## Sun Feb  5 19:28:19 2017 - Fold 1 
-## Sun Feb  5 19:28:27 2017 - Fold 2 
-## Sun Feb  5 19:28:34 2017 - Fold 3 
-## Sun Feb  5 19:28:41 2017 - Fold 4 
-## Sun Feb  5 19:28:48 2017 - Fold 5 
-## Sun Feb  5 19:28:55 2017 Repetition 5 
-## Sun Feb  5 19:28:55 2017 - Fold 1 
-## Sun Feb  5 19:29:02 2017 - Fold 2 
-## Sun Feb  5 19:29:09 2017 - Fold 3 
-## Sun Feb  5 19:29:17 2017 - Fold 4 
-## Sun Feb  5 19:29:24 2017 - Fold 5 
-## Sun Feb  5 19:29:31 2017 Repetition 6 
-## Sun Feb  5 19:29:31 2017 - Fold 1 
-## Sun Feb  5 19:29:37 2017 - Fold 2 
-## Sun Feb  5 19:29:44 2017 - Fold 3 
-## Sun Feb  5 19:29:51 2017 - Fold 4 
-## Sun Feb  5 19:29:58 2017 - Fold 5 
-## Sun Feb  5 19:30:06 2017 Done.
-res.bagg.sp<span class="op">$</span>benchmark<span class="op">$</span>runtime.performance
-## Time difference of 3.636113 mins</code></pre></div>
-<p>To speed things up, we can use <code><a href="../reference/parsperrorest.html">parsperrorest()</a></code> and see the time difference. Note that we have two parallel modes to choose from!<br>
-In this example we will use <code>par.mode = 2</code> because <code>par.mode = 1</code> will not work in this example (reason unknown). In this vignette we will always use 2 cores to ensure that this example is working for everybody.<br>
-You can of course increase the number of cores and also the number of repetitions/folds to your desire! Note that we will not use any console outputs in this vignette to keep it tidy. However you can just change this setting to your desire using the <code>progress</code> argument.</p>
-<div id="details-of-par-mode" class="section level4">
-<h4 class="hasAnchor">
-<html><body><a href="#details-of-par-mode" class="anchor"> </a></body></html>Details of par.mode</h4>
-<p><code>par.mode = 1</code> uses either a <code>parallel::mclapply()</code> (Unix) or <code>parallel::parApply()</code> (Windows), depending on your platform. Due to this contraint this mode is not used in this vignette. So if you are reading this and running a Windows machine, jump to <code>par.mode = 2</code> or <code>par.mode = 3</code> example! The advantage of using <code>par.mode = 1</code> compared to <code>par.mode = 2</code> is its speed. However <code>par.mode = 1</code> lacks in stability.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">res.bagg.sp.par &lt;-<span class="st"> </span><span class="kw"><a href="../reference/parsperrorest.html">parsperrorest</a></span>(fo, <span class="dt">data =</span> maipo, <span class="dt">coords =</span> <span class="kw">c</span>(<span class="st">"utmx"</span>,<span class="st">"utmy"</span>), 
-                                 <span class="dt">model.fun =</span> bagging,
-                                 <span class="dt">pred.args =</span> <span class="kw">list</span>(<span class="dt">fac =</span> <span class="st">"field"</span>),
-                                 <span class="dt">smp.fun =</span> partition.factor.cv,
-                                 <span class="dt">smp.args =</span> <span class="kw">list</span>(<span class="dt">fac =</span> <span class="st">"field"</span>, 
-                                                 <span class="dt">repetition =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">6</span>, <span class="dt">nfold =</span> <span class="dv">5</span>),
-                                 <span class="dt">par.args =</span> <span class="kw">list</span>(<span class="dt">par.units =</span> <span class="dv">2</span>, <span class="dt">par.mode =</span> <span class="dv">2</span>),
-                                 <span class="dt">error.rep =</span> <span class="ot">TRUE</span>, <span class="dt">error.fold =</span> <span class="ot">TRUE</span>,
-                                 <span class="dt">benchmark =</span> <span class="ot">TRUE</span>)
-## Sun Feb  5 19:32:10 2017 Done.
-res.bagg.sp.par<span class="op">$</span>benchmarks<span class="op">$</span>runtime.performance
-## Time difference of 2.07011 mins</code></pre></div>
+                          <span class="dt">benchmark =</span> <span class="ot">TRUE</span>, <span class="dt">progress =</span> <span class="dv">2</span>)</code></pre></div>
+<pre><code>## Mon Feb 27 20:56:01 2017 Repetition 1 
+## Mon Feb 27 20:57:12 2017 Repetition 2 
+## Mon Feb 27 20:58:20 2017 Repetition 3 
+## Mon Feb 27 20:59:29 2017 Repetition 4 
+## Mon Feb 27 21:00:36 2017 Repetition 5 
+## Mon Feb 27 21:01:46 2017 Repetition 6 
+## Mon Feb 27 21:02:55 2017 Repetition 7 
+## Mon Feb 27 21:04:01 2017 Repetition 8 
+## Mon Feb 27 21:05:07 2017 Repetition 9 
+## Mon Feb 27 21:06:16 2017 Repetition 10 
+## Mon Feb 27 21:07:23 2017 Repetition 11 
+## Mon Feb 27 21:08:30 2017 Repetition 12 
+## Mon Feb 27 21:09:38 2017 Repetition 13 
+## Mon Feb 27 21:10:45 2017 Repetition 14 
+## Mon Feb 27 21:11:53 2017 Repetition 15 
+## Mon Feb 27 21:13:01 2017 Repetition 16 
+## Mon Feb 27 21:14:09 2017 Repetition 17 
+## Mon Feb 27 21:15:16 2017 Repetition 18 
+## Mon Feb 27 21:16:23 2017 Repetition 19 
+## Mon Feb 27 21:17:31 2017 Repetition 20 
+## Mon Feb 27 21:18:39 2017 Repetition 21 
+## Mon Feb 27 21:19:46 2017 Repetition 22 
+## Mon Feb 27 21:20:53 2017 Repetition 23 
+## Mon Feb 27 21:22:03 2017 Repetition 24 
+## Mon Feb 27 21:23:13 2017 Repetition 25 
+## Mon Feb 27 21:24:23 2017 Repetition 26 
+## Mon Feb 27 21:25:32 2017 Repetition 27 
+## Mon Feb 27 21:26:39 2017 Repetition 28 
+## Mon Feb 27 21:27:47 2017 Repetition 29 
+## Mon Feb 27 21:28:55 2017 Repetition 30 
+## Mon Feb 27 21:30:03 2017 Repetition 31 
+## Mon Feb 27 21:31:11 2017 Repetition 32 
+## Mon Feb 27 21:32:18 2017 Repetition 33 
+## Mon Feb 27 21:33:25 2017 Repetition 34 
+## Mon Feb 27 21:34:33 2017 Repetition 35 
+## Mon Feb 27 21:35:40 2017 Repetition 36 
+## Mon Feb 27 21:36:47 2017 Repetition 37 
+## Mon Feb 27 21:37:54 2017 Repetition 38 
+## Mon Feb 27 21:39:02 2017 Repetition 39 
+## Mon Feb 27 21:40:09 2017 Repetition 40 
+## Mon Feb 27 21:41:17 2017 Repetition 41 
+## Mon Feb 27 21:42:24 2017 Repetition 42 
+## Mon Feb 27 21:43:31 2017 Repetition 43 
+## Mon Feb 27 21:44:38 2017 Repetition 44 
+## Mon Feb 27 21:45:46 2017 Repetition 45 
+## Mon Feb 27 21:46:54 2017 Repetition 46 
+## Mon Feb 27 21:48:01 2017 Repetition 47 
+## Mon Feb 27 21:49:07 2017 Repetition 48 
+## Mon Feb 27 21:50:15 2017 Repetition 49 
+## Mon Feb 27 21:51:21 2017 Repetition 50 
+## Mon Feb 27 21:52:27 2017 Done.
+
+res.rf.sp$benchmark$runtime.performance
+## Time difference of 56.4 mins</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(res.rf.sp<span class="op">$</span>error.rep<span class="op">$</span>test.error)</code></pre></div>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##  0.0630  0.0827  0.0871  0.0868  0.0928  0.1100</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(res.rf.sp<span class="op">$</span>error.rep<span class="op">$</span>test.accuracy)</code></pre></div>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##   0.890   0.907   0.913   0.913   0.917   0.937</code></pre>
+<p>What a surprise! RandomForest classification isn’t that good after all, if we acknowledge that in ‘real life’ we wouldn’t be making predictions in situations where the class membership of other grid cells in the same field is known in the training stage. So spatial dependence does matter.</p>
+</div>
+<div id="parallelized-cross-validation" class="section level2">
+<h2 class="hasAnchor">
+<html><body><a href="#parallelized-cross-validation" class="anchor"> </a></body></html>Parallelized Cross-Validation</h2>
+<p>To speed things up, we can use <code><a href="../reference/parsperrorest.html">parsperrorest()</a></code> and inspect the runtime difference. Note that we have two parallel modes to choose from!<br>
+In this example we will use both <code>par.mode = 1</code> and <code>par.mode = 2</code> to show you the runtime differences.</p>
+<p><strong>Details of argument <code>par.mode</code></strong></p>
+<p>The advantage of <code>par.mode = 1</code> compared to <code>par.mode = 2</code> is its speed. However, <code>par.mode = 1</code> is somewhat less stable. This means that <code>par.mode = 1</code> will throws errors for some models (e.g. LDA) while <code>par.mode = 2</code> does not. <code>par.mode = 1</code> uses either a <code>parallel::mclapply()</code> (Unix) or <code>parallel::parApply()</code> (Windows) while <code>par.mode = 2</code> is running on a <code>foreach</code> backend.</p>
+<p>While traditional <code>mclapply()</code> approaches have the downside that no progress report can be printed, the <code>pbapply</code> package implemented in <code><a href="../reference/parsperrorest.html">parsperrorest()</a></code> provides progress output (showing a progress bar) and does even work cross-platform. <code>par.mode = 1</code> does not show a progress bar but prints fold and/or repetition information to the console.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">res.rf.sp.par1 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/parsperrorest.html">parsperrorest</a></span>(fo, <span class="dt">data =</span> maipo, <span class="dt">coords =</span> <span class="kw">c</span>(<span class="st">"utmx"</span>,<span class="st">"utmy"</span>), 
+                               <span class="dt">model.fun =</span> randomForest,
+                               <span class="dt">pred.fun =</span> rf.predfun,
+                               <span class="dt">pred.args =</span> <span class="kw">list</span>(<span class="dt">fac =</span> <span class="st">"field"</span>),
+                               <span class="dt">smp.fun =</span> partition.factor.cv,
+                               <span class="dt">smp.args =</span> <span class="kw">list</span>(<span class="dt">fac =</span> <span class="st">"field"</span>, 
+                                               <span class="dt">repetition =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">50</span>, <span class="dt">nfold =</span> <span class="dv">5</span>),
+                               <span class="dt">par.args =</span> <span class="kw">list</span>(<span class="dt">par.units =</span> <span class="dv">4</span>, <span class="dt">par.mode =</span> <span class="dv">1</span>),
+                               <span class="dt">error.rep =</span> <span class="ot">TRUE</span>, <span class="dt">error.fold =</span> <span class="ot">TRUE</span>,
+                               <span class="dt">benchmark =</span> <span class="ot">TRUE</span>, <span class="dt">progress =</span> <span class="ot">FALSE</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">res.rf.sp.par1<span class="op">$</span>benchmarks<span class="op">$</span>runtime.performance</code></pre></div>
+<pre><code>## Time difference of 18 mins</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">res.rf.sp.par2 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/parsperrorest.html">parsperrorest</a></span>(fo, <span class="dt">data =</span> maipo, <span class="dt">coords =</span> <span class="kw">c</span>(<span class="st">"utmx"</span>,<span class="st">"utmy"</span>), 
+                                <span class="dt">model.fun =</span> randomForest,
+                                <span class="dt">pred.fun =</span> rf.predfun,
+                                <span class="dt">pred.args =</span> <span class="kw">list</span>(<span class="dt">fac =</span> <span class="st">"field"</span>),
+                                <span class="dt">smp.fun =</span> partition.factor.cv,
+                                <span class="dt">smp.args =</span> <span class="kw">list</span>(<span class="dt">fac =</span> <span class="st">"field"</span>, 
+                                                <span class="dt">repetition =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">50</span>, <span class="dt">nfold =</span> <span class="dv">5</span>),
+                                <span class="dt">par.args =</span> <span class="kw">list</span>(<span class="dt">par.units =</span> <span class="dv">4</span>, <span class="dt">par.mode =</span> <span class="dv">2</span>),
+                                <span class="dt">error.rep =</span> <span class="ot">TRUE</span>, <span class="dt">error.fold =</span> <span class="ot">TRUE</span>,
+                                <span class="dt">benchmark =</span> <span class="ot">TRUE</span>, <span class="dt">progress =</span> <span class="ot">FALSE</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">res.rf.sp.par2<span class="op">$</span>benchmarks<span class="op">$</span>runtime.performance</code></pre></div>
+<pre><code>## Time difference of 19.9 mins</code></pre>
+<p>Both the differences of the parallel methods (<code><a href="../reference/parsperrorest.html">parsperrorest()</a></code>) compared to the sequential one (<code><a href="../reference/sperrorest.html">sperrorest()</a></code>) and between the parallel modes themselves can be seen as variance among the repetitions. If you would use more repetitions (e.g. 100), this difference would converge towards zero.</p>
+<div id="results-of-par-mode-1" class="section level3">
+<h3 class="hasAnchor">
+<html><body><a href="#results-of-par-mode-1" class="anchor"> </a></body></html>Results of par.mode = 1</h3>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(res.rf.sp.par1<span class="op">$</span>error.rep<span class="op">$</span>test.error)</code></pre></div>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##  0.0744  0.0813  0.0852  0.0862  0.0903  0.1090</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(res.rf.sp.par1<span class="op">$</span>error.rep<span class="op">$</span>test.accuracy)</code></pre></div>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##   0.891   0.910   0.915   0.914   0.919   0.926</code></pre>
+</div>
+<div id="results-of-par-mode-2" class="section level3">
+<h3 class="hasAnchor">
+<html><body><a href="#results-of-par-mode-2" class="anchor"> </a></body></html>Results of par.mode = 2</h3>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(res.rf.sp.par2<span class="op">$</span>error.rep<span class="op">$</span>test.error)</code></pre></div>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##  0.0638  0.0832  0.0874  0.0872  0.0926  0.1130</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(res.rf.sp.par2<span class="op">$</span>error.rep<span class="op">$</span>test.accuracy)</code></pre></div>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##   0.887   0.907   0.913   0.913   0.917   0.936</code></pre>
 </div>
 </div>
+</div>
+<div id="usage-advices" class="section level1">
+<h1 class="hasAnchor">
+<html><body><a href="#usage-advices" class="anchor"> </a></body></html>Usage Advices</h1>
+<p>Given all the different sampling functions and the custom predict function (<code>rf.predfun()</code>) you might be a little confused which function to use for your use case.<br>
+If you want to do a “normal”, i.e. <strong>non-spatial cross-validation</strong> we recommend to use <code><a href="../reference/partition.cv.html">partition.cv()</a></code> as <code>smp.fun</code> in <code><a href="../reference/sperrorest.html">sperrorest()</a></code> or <code><a href="../reference/parsperrorest.html">parsperrorest()</a></code>.<br>
+If you want to perform a <strong>spatial cross-validation</strong> and you do not have a grouping structure like fields in our example, you should use <code><a href="../reference/partition.kmeans.html">partition.kmeans()</a></code> as <code>smp.fun</code>. This creates a spatial k-means clustering within your cross-validation runs.</p>
+<p>Most often you can simply use the generic <code>predict()</code> method for your model. Only in cases where you want to do prediction based on some factor level like in this vignette, you need to write your own prediction function.</p>
+<p><strong>Wrapper functions</strong></p>
+<p>Another point to be aware of is that some model functions do use a different argument naming/order than the <code>model.fun()</code> argument of <code><a href="../reference/sperrorest.html">sperrorest()</a></code> expects (formula + data). For example, the formula argument of <code>glmmPQL()</code> is named <code>fixed</code> instead of <code>formula</code>.<br>
+Also sometimes you may encounter errors when providing spatial correlation structures to your model using <code>model.args</code>. If this happens, also try to provide the correlation structure within a wrapper function.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">my_glmmPQL &lt;-<span class="st"> </span><span class="cf">function</span>(formula, data) {
+  
+  <span class="co"># calculate spatial correlation structure</span>
+  correlation =<span class="st"> </span><span class="kw">corSpatial</span>(<span class="dt">value =</span> <span class="kw">c</span>(<span class="dv">5024</span>, <span class="fl">0.25</span>), <span class="dt">form =</span> <span class="op">~</span>ry <span class="op">+</span><span class="st"> </span>rx, <span class="dt">nugget =</span> <span class="ot">TRUE</span>,
+                           <span class="dt">fixed =</span> <span class="ot">FALSE</span>, <span class="dt">type =</span> <span class="st">"spherical"</span>)
+  correlation =<span class="st"> </span><span class="kw">Initialize</span>(correlation, <span class="dt">data =</span> data)
+  
+  <span class="co"># actual model.fun</span>
+  <span class="kw">glmmPQL</span>(<span class="dt">fixed =</span> formula, <span class="dt">data =</span> data, <span class="dt">correlation =</span> correlation)
+}</code></pre></div>
+<p>For all further questions, please feel free to open an issue at our <a href="https://github.com/pat-s/sperrorest">Github repo</a>.</p>
 </div>
 <div id="references" class="section level1 unnumbered">
 <h1 class="hasAnchor">
 <html><body><a href="#references" class="anchor"> </a></body></html>References</h1>
 <div id="refs" class="references">
-<div id="ref-Breiman2001">
-<p>Breiman, L. 2001. “Random Forests.” <em>Machine Learning</em> 45 (1): 5–32.</p>
-</div>
 <div id="ref-Breiman1996">
-<p>Breiman, Leo. 1996. “Bagging Predictors.” <em>Machine Learning</em> 24 (2): 123–40.</p>
+<p>Breiman, Leo. 1996. “Bagging Predictors.” <em>Machine Learning</em> 24 (2). Springer Nature: 123–40. doi:<a href="https://doi.org/10.1007/bf00058655">10.1007/bf00058655</a>.</p>
+</div>
+<div id="ref-Breiman2001">
+<p>———. 2001. “Random Forests.” <em>Machine Learning</em> 45 (1). Springer Nature: 5–32. doi:<a href="https://doi.org/10.1023/a:1010933404324">10.1023/a:1010933404324</a>.</p>
+</div>
+<div id="ref-Brenning2005">
+<p>Brenning, A. 2005. “Spatial Prediction Models for Landslide Hazards: Review, Comparison and Evaluation.” <em>Natural Hazards and Earth System Science</em> 5 (6). Copernicus GmbH: 853–62. doi:<a href="https://doi.org/10.5194/nhess-5-853-2005">10.5194/nhess-5-853-2005</a>.</p>
+</div>
+<div id="ref-Goetz2015">
+<p>Goetz, J.N., A. Brenning, H. Petschko, and P. Leopold. 2015. “Evaluating Machine Learning and Statistical Prediction Techniques for Landslide Susceptibility Modeling.” <em>Computers &amp; Geosciences</em> 81 (August). Elsevier BV: 1–11. doi:<a href="https://doi.org/10.1016/j.cageo.2015.04.007">10.1016/j.cageo.2015.04.007</a>.</p>
+</div>
+<div id="ref-Hothorn2005">
+<p>Hothorn, Torsten, and Berthold Lausen. 2005. “Bundling Classifiers by Bagging Trees.” <em>Computational Statistics &amp; Data Analysis</em> 49 (4). Elsevier BV: 1068–78. doi:<a href="https://doi.org/10.1016/j.csda.2004.06.019">10.1016/j.csda.2004.06.019</a>.</p>
+</div>
+<div id="ref-James2013">
+<p>James, Gareth, Daniela Witten, Trevor Hastie, and Robert Tibshirani. 2013. <em>An Introduction to Statistical Learning</em>. Springer New York. doi:<a href="https://doi.org/10.1007/978-1-4614-7138-7">10.1007/978-1-4614-7138-7</a>.</p>
+</div>
+<div id="ref-Knudby2010">
+<p>Knudby, Anders, Alexander Brenning, and Ellsworth LeDrew. 2010. “New Approaches to Modelling Fishhabitat Relationships.” <em>Ecological Modelling</em> 221 (3). Elsevier BV: 503–11. doi:<a href="https://doi.org/10.1016/j.ecolmodel.2009.11.008">10.1016/j.ecolmodel.2009.11.008</a>.</p>
+</div>
+<div id="ref-Pena2015">
+<p>Peña, M.A., and A. Brenning. 2015. “Assessing Fruit-Tree Crop Classification from Landsat-8 Time Series for the Maipo Valley, Chile.” <em>Remote Sensing of Environment</em> 171 (December). Elsevier BV: 234–44. doi:<a href="https://doi.org/10.1016/j.rse.2015.10.029">10.1016/j.rse.2015.10.029</a>.</p>
 </div>
 </div>
 </div>
@@ -458,21 +482,23 @@ res.bagg.sp.par<span class="op">$</span>benchmarks<span class="op">$</span>runti
         <div id="tocnav">
       <h2>Contents</h2>
       <ul class="nav nav-pills nav-stacked">
-<li><a href="#data-and-packages">Data And Packages</a></li>
-      <li><a href="#preprocessing">Preprocessing</a></li>
+<li><a href="#introduction">Introduction</a></li>
+      <li><a href="#data-and-packages">Data and Packages</a></li>
       <li>
 <a href="#modeling">Modeling</a><ul class="nav nav-pills nav-stacked">
 <li><a href="#linear-discriminant-analysis-lda">Linear Discriminant Analysis (LDA)</a></li>
       <li><a href="#classification-tree">Classification Tree</a></li>
-      <li><a href="#bagging-ipred">Bagging (ipred)</a></li>
+      <li><a href="#randomforest">RandomForest</a></li>
       </ul>
 </li>
       <li>
 <a href="#cross-validation-estimation-of-predictive-performance">Cross-Validation Estimation of Predictive Performance</a><ul class="nav nav-pills nav-stacked">
 <li><a href="#linear-discriminant-analysis-lda-1">Linear Discriminant Analysis (LDA)</a></li>
-      <li><a href="#bagging">Bagging</a></li>
+      <li><a href="#randomforest-1">RandomForest</a></li>
+      <li><a href="#parallelized-cross-validation">Parallelized Cross-Validation</a></li>
       </ul>
 </li>
+      <li><a href="#usage-advices">Usage Advices</a></li>
       <li><a href="#references">References</a></li>
       </ul>
 </div>
