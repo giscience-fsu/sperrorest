@@ -400,7 +400,7 @@ summary.sperrorestpackageversion <- function(object, ...) {
 #'      nonspat.test     = unlist(summary(nspres$error.rep, level = 1)$test.auroc),
 #'      spatial.training = unlist(summary(spres$error.rep,  level = 1)$train.auroc),
 #'      spatial.test     = unlist(summary(spres$error.rep,  level = 1)$test.auroc))
-#' boxplot(smry, col = c('red','red','red','green'), 
+#' boxplot(smry, col = c('red','red','green','green'), 
 #'         main = 'Training vs. test, nonspatial vs. spatial',
 #'         ylab = 'Area under the ROC curve')
 #' }
