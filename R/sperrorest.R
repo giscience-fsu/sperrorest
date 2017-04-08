@@ -539,6 +539,12 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
       pooled.obs.test <- pooled.pred.test <- c()
     }
     
+    # lapply approach Sat Apr  8 18:08:35 2017 ------------------------------
+    
+    out <- lapply(seq_along(), function(x) {
+      
+    })
+    
     # Parallelize this???  For each fold:
     for (j in 1:length(resamp[[i]]))
     {
@@ -689,6 +695,9 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
           cat(date(), "-- Variable importance\n")
           }
           imp.temp <- imp.one.rep
+          
+          # variable importance Sat Apr  8 18:13:27 2017 ------------------------------
+          
           
           # Parallelize this: ???
           for (cnt in 1:imp.permutations)
