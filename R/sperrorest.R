@@ -541,9 +541,9 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
     
     # lapply approach Sat Apr  8 18:08:35 2017 ------------------------------
     
-    out <- lapply(seq_along(), function(x) {
-      
-    })
+    # out <- lapply(seq_along(), function(x) {
+    #   
+    # })
     
     # Parallelize this???  For each fold:
     for (j in 1:length(resamp[[i]]))

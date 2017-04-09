@@ -46,7 +46,7 @@ test_that("output type (= list) for different logical combinations of
                                  pred.fun = lda.predfun,
                                  smp.fun = partition.cv,
                                  smp.args = list(repetition = 1:2, nfold = 2),
-                                 par.args = list(par.mode = 2, par.units = 2),
+                                 par.args = list(par.mode = 1, par.units = 2),
                                  error.rep = TRUE, error.fold = TRUE,
                                  benchmark = TRUE, progress = FALSE)
             
