@@ -21,7 +21,7 @@
 #' pooled.obs.test = c(), err.fun = err.default)
 #' 
 #' # create list with multiple fold results
-#' runfolds_list <- map(seq_along(1:4), function(j) runfolds(j = j, data = ecuador, currentSample = currentSample[[1]],
+#' runfolds_list <- map(seq_along(1:4), function(j) runfolds(j = j, data = ecuador, currentSample = currentSample,
 #' formula = slides ~ dem + slope + hcurv + vcurv + log.carea + cslope, 
 #' model.args = list(family = "binomial"), do.try = FALSE, model.fun = glm,
 #' error.fold = TRUE, error.rep = TRUE, imp.permutations = 2, 
@@ -314,20 +314,14 @@ runreps <- function(currentSample = NULL, data = NULL, formula = NULL,
                                                                  coords = coords, progress = progress, pooled.obs.train = pooled.obs.train, 
                                                                  pooled.obs.test = pooled.obs.test, err.fun = err.fun))
   
-  # subset list to 'currentRes' and 'currentImpo'
-  list_sub <- map(runfolds_list, function(x) x[c(5, 6)])
+  # how to subset lists
+  # list_sub <- map(runfolds_list, function(x) x[c(5, 6)])
   
   # merge list output of fold pooled.error measures into one list
-  runfolds_pooled <- map(seq_along(2:length(runfolds)), function(x)
-    Map(c, runfolds[[1]], runfolds[[x]] ))
+  runfolds_pooled <- map(seq_along(2:length(runfolds_list)), function(x)
+    Map(c, runfolds_list[[1]], runfolds_list[[x]] ))
   runfolds_pooled <- runfolds_pooled[[1]]
   
-  # format currentRes output as needed # SHOULD NOT NEEDED ANYMORE DUE TO ELIMINATION WITHIN RUNFOLDS
-  #runfolds_error <- map(seq_along(runfolds), function(x)
-  #  runfolds[[x]]$currentRes)
-  
-  # merge both lists back into one list
-  #runfolds_pooled$currentRes <- runfolds_error
   
   
   # Put the results from the pooled estimation into the pooled.err data structure:
