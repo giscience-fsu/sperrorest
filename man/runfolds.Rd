@@ -36,5 +36,19 @@ err.train = TRUE, importance = TRUE, currentRes = currentRes,
 pred.args = list(type = "response"), response = "slides", par.cl = 2, 
 coords = c("x", "y"), progress = 1, pooled.obs.train = c(), 
 pooled.obs.test = c(), err.fun = err.default)
+
+# create list with multiple fold results
+runfolds_list <- map(seq_along(1:4), function(j) runfolds(j = j, data = ecuador, currentSample = currentSample,
+formula = slides ~ dem + slope + hcurv + vcurv + log.carea + cslope, 
+model.args = list(family = "binomial"), do.try = FALSE, model.fun = glm,
+error.fold = TRUE, error.rep = TRUE, imp.permutations = 2, 
+imp.variables = c("dem", "slope", "hcurv", "vcurv", "log.carea", "cslope"),
+err.train = TRUE, importance = TRUE, currentRes = currentRes, 
+pred.args = list(type = "response"), response = "slides", par.cl = 2, 
+coords = c("x", "y"), progress = 1, pooled.obs.train = c(), 
+pooled.obs.test = c(), err.fun = err.default))
+
+# MERGE SUBLISTS: ONLY CURRENTRES AND CURRENTIMPO
+
 }
 \keyword{internal}
