@@ -21,7 +21,7 @@
 #' pooled.obs.test = c(), err.fun = err.default)
 #' 
 #' # create list with multiple fold results
-#' runfolds_list <- map(seq_along(1:4), function(j) runfolds(j = j, data = ecuador, currentSample = currentSample,
+#' runfolds_list <- map(seq_along(1:4), function(j) runfolds(j = j, data = ecuador, currentSample = currentSample[[1]],
 #' formula = slides ~ dem + slope + hcurv + vcurv + log.carea + cslope, 
 #' model.args = list(family = "binomial"), do.try = FALSE, model.fun = glm,
 #' error.fold = TRUE, error.rep = TRUE, imp.permutations = 2, 
@@ -263,7 +263,7 @@ runfolds <- function(j = NULL, currentSample = NULL, data = NULL, formula = NULL
 #' coords = c("x", "y"), progress = 1, pooled.obs.train = c(), 
 #' pooled.obs.test = c(), err.fun = err.default)
 #' 
-#' runfolds_list <- map(seq_along(1:4), function(j) runfolds(
+#' runfolds_list <- map(seq_along(1:4), function(j) runfolds(j))
 #'@export
 #'
 
@@ -314,6 +314,8 @@ runreps <- function(currentSample = NULL, data = NULL, formula = NULL,
                                                                  coords = coords, progress = progress, pooled.obs.train = pooled.obs.train, 
                                                                  pooled.obs.test = pooled.obs.test, err.fun = err.fun))
   
+  # subset list to 'currentRes' and 'currentImpo'
+  list_sub <- map(runfolds_list, function(x) x[c(5, 6)])
   
   # merge list output of fold pooled.error measures into one list
   runfolds_pooled <- map(seq_along(2:length(runfolds)), function(x)
@@ -373,3 +375,4 @@ runreps <- function(currentSample = NULL, data = NULL, formula = NULL,
   #return(list(error = currentRes, pooled.error = currentPooled.err, importance = currentImpo))
   return(list(error = runfolds_error, pooled.error = currentPooled.err, importance = currentImpo))
 }
+
