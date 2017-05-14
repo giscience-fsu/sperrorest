@@ -1,5 +1,6 @@
 #'runfolds
 #'@keywords internal
+#'@importFrom purrr map
 #'@examples
 #' 
 #' j <- 1 # running the first repetition of 'currentSample', normally we are 
@@ -44,7 +45,7 @@ runfolds <- function(j = NULL, currentSample = NULL, data = NULL, formula = NULL
                      currentImpo = NULL, pred.args = NULL, progress = NULL, 
                      pooled.obs.train = NULL, pooled.obs.test = NULL, pooled.pred.train = NULL,
                      response = NULL, is.factor.prediction = NULL, pooled.pred.test = NULL,
-                     coords = NULL, test.fun = NULL) {
+                     coords = NULL, test.fun = NULL) { 
   # Create training sample:
   nd <- data[currentSample[[j]]$train, ]
   if (!is.null(train.fun))
@@ -317,30 +318,42 @@ runreps <- function(currentSample = NULL, data = NULL, formula = NULL,
   # how to subset lists
   # list_sub <- map(runfolds_list, function(x) x[c(5, 6)])
   
-  # merge list output of fold pooled.error measures into one list
-  runfolds_pooled <- map(seq_along(2:length(runfolds_list)), function(x)
-    Map(c, runfolds_list[[1]], runfolds_list[[x]] ))
-  runfolds_pooled <- runfolds_pooled[[1]]
+  ### what we need here from runfolds() output
+  # [ ] pooled.obs.train
+  # [ ] pooled.obs.test
+  # [ ] pooled.pred.train
+  # [ ] pooled.pred.test
+  # [ ] currentRes (1 list)
+  # [ ] currentImpo (1 list)
   
-  
+  if (importance == TRUE) {
+    # subset fold result to importance results only
+    impo_only <- test[6][[1]]
+    # get mean from all impo results of all folds (multiple dataframes stored in a list)
+    # http://stackoverflow.com/questions/18371187/element-wise-mean-for-a-list-of-dataframes-with-na
+    currentImpo <- Reduce("+", impo_only) / length(impo_only)
+  }
+  # merge sublists of each fold into one list
+  # http://stackoverflow.com/questions/32557131/adding-a-vector-to-each-sublist-within-a-list-r
+  # http://stackoverflow.com/questions/43963683/r-flexible-passing-of-sublists-to-following-function
+  runfolds_merged <- do.call(Map, c(f = list, runfolds_list))
+
+  pooled_only <- runfolds_merged[c(1:4)] 
+  pooled_only <- sapply(unique(names(pooled_only)), function(x) unname(unlist(pooled_only[names(pooled_only) == x])), simplify = FALSE)   
   
   # Put the results from the pooled estimation into the pooled.err data structure:
   if (error.rep) {
     if (is.factor(data[, response])) {
       lev <- levels(data[, response])
       if (err.train) {
-        pooled.obs.train <- factor(lev[runfolds_pooled$pooled.obs.train], levels = lev)
-        #pooled.obs.train <- factor(lev[pooled.obs.train], levels = lev)
+        pooled.obs.train <- factor(lev[pooled_only$pooled.obs.train], levels = lev)
       }
-      pooled.obs.test <- factor(lev[runfolds_pooled$pooled.obs.test], levels = lev)
-      #pooled.obs.test <- factor(lev[pooled.obs.test], levels = lev)
+      pooled.obs.test <- factor(lev[pooled_only$pooled.obs.test], levels = lev)
       if (is.factor.prediction) {
         if (err.train) {
-          pooled.pred.train <- factor(lev[runfolds_pooled$pooled.pred.train], levels = lev) 
-          #pooled.pred.train <- factor(lev[pooled.pred.train], levels = lev)
+          pooled.pred.train <- factor(lev[pooled_only$pooled.pred.train], levels = lev) 
         } 
-        pooled.pred.test <- factor(lev[runfolds_pooled$pooled.pred.test], levels = lev) 
-        #pooled.pred.test1 <- factor(lev[pooled.pred.test], levels = lev)
+        pooled.pred.test <- factor(lev[pooled_only$pooled.pred.test], levels = lev) 
       } 
     }
     pooled.err.train <- NULL

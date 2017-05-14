@@ -28,7 +28,7 @@ pred.args = list(type = "response"), response = "slides", par.cl = 2,
 coords = c("x", "y"), progress = 1, pooled.obs.train = c(), 
 pooled.obs.test = c(), err.fun = err.default)
 
-runfolds_list <- map(seq_along(1:4), function(j) runfolds(
+runfolds_list <- map(seq_along(1:4), function(j) runfolds(j))
 }
 \keyword{#}
 \keyword{####}
