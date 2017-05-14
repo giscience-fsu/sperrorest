@@ -309,7 +309,7 @@ runreps <- function(currentSample = NULL, data = NULL, formula = NULL,
                                                                  formula = formula, 
                                                                  model.args = model.args, do.try = do.try, model.fun = model.fun,
                                                                  error.fold = error.fold, error.rep = error.rep, imp.permutations = imp.permutations, 
-                                                                 imp.variables = imp.variables,
+                                                                 imp.variables = imp.variables, is.factor.prediction = is.factor.prediction,
                                                                  err.train = err.train, importance = importance, currentRes = currentRes, 
                                                                  pred.args = pred.args, response = response, par.cl = par.cl, 
                                                                  coords = coords, progress = progress, pooled.obs.train = pooled.obs.train, 
@@ -328,7 +328,7 @@ runreps <- function(currentSample = NULL, data = NULL, formula = NULL,
   
   if (importance == TRUE) {
     # subset fold result to importance results only
-    impo_only <- test[6][[1]]
+    impo_only <- runfolds_list[6][[1]]
     # get mean from all impo results of all folds (multiple dataframes stored in a list)
     # http://stackoverflow.com/questions/18371187/element-wise-mean-for-a-list-of-dataframes-with-na
     currentImpo <- Reduce("+", impo_only) / length(impo_only)
