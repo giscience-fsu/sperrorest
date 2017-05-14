@@ -409,7 +409,15 @@ parsperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.
     # pblapply call Sun Apr  9 13:28:31 2017 ------------------------------
     
     
-    myRes <- pblapply(cl = par.cl, X = resamp, FUN = runreps)
+    myRes <- pblapply(cl = par.cl, X = resamp, FUN = runreps(currentSample = X, data = data,
+                                                             formula = formula, 
+                                                             model.args = model.args, do.try = do.try, model.fun = model.fun,
+                                                             error.fold = error.fold, error.rep = error.rep, imp.permutations = imp.permutations, 
+                                                             imp.variables = imp.variables, is.factor.prediction = is.factor.prediction,
+                                                             err.train = err.train, importance = importance, currentRes = currentRes, 
+                                                             pred.args = pred.args, response = response, par.cl = par.cl, 
+                                                             coords = coords, progress = progress, pooled.obs.train = pooled.obs.train, 
+                                                             pooled.obs.test = pooled.obs.test, err.fun = err.fun))
     
     # transfer results of lapply() to respective data objects
     walk(seq_along(myRes), function(i) {
