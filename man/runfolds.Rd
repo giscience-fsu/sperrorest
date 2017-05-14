@@ -5,10 +5,10 @@
 \title{runfolds}
 \usage{
 runfolds(j = NULL, currentSample = NULL, data = NULL, formula = NULL,
-  model.args = NULL, par.cl = NULL, do.try = NULL, model.fun = NULL,
-  error.fold = NULL, error.rep = NULL, pred.fun = NULL,
-  imp.variables = NULL, imp.permutations = NULL, err.fun = NULL,
-  train.fun = NULL, err.train = NULL, importance = NULL,
+  model.args = NULL, par.cl = NULL, do.gc = NULL, do.try = NULL,
+  model.fun = NULL, error.fold = NULL, error.rep = NULL,
+  pred.fun = NULL, imp.variables = NULL, imp.permutations = NULL,
+  err.fun = NULL, train.fun = NULL, err.train = NULL, importance = NULL,
   currentRes = NULL, currentImpo = NULL, pred.args = NULL,
   progress = NULL, pooled.obs.train = NULL, pooled.obs.test = NULL,
   pooled.pred.train = NULL, response = NULL, is.factor.prediction = NULL,
@@ -28,7 +28,7 @@ currentSample <- readRDS("inst/test-objects/resamp.rda")[[1]]
 currentRes <- readRDS("inst/test-objects/currentRes.rda")
 
 runfolds_single <- runfolds(j = 1, data = ecuador, currentSample = currentSample,
-formula = slides ~ dem + slope + hcurv + vcurv + log.carea + cslope, 
+formula = slides ~ dem + slope + hcurv + vcurv + log.carea + cslope, do.gc = 1,
 model.args = list(family = "binomial"), do.try = FALSE, model.fun = glm,
 error.fold = TRUE, error.rep = TRUE, imp.permutations = 2, 
 imp.variables = c("dem", "slope", "hcurv", "vcurv", "log.carea", "cslope"),

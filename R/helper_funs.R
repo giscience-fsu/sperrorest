@@ -12,7 +12,7 @@
 #' currentRes <- readRDS("inst/test-objects/currentRes.rda")
 #' 
 #' runfolds_single <- runfolds(j = 1, data = ecuador, currentSample = currentSample,
-#' formula = slides ~ dem + slope + hcurv + vcurv + log.carea + cslope, 
+#' formula = slides ~ dem + slope + hcurv + vcurv + log.carea + cslope, do.gc = 1,
 #' model.args = list(family = "binomial"), do.try = FALSE, model.fun = glm,
 #' error.fold = TRUE, error.rep = TRUE, imp.permutations = 2, 
 #' imp.variables = c("dem", "slope", "hcurv", "vcurv", "log.carea", "cslope"),
@@ -25,7 +25,7 @@
 #' runfolds_list <- map(seq_along(1:4), function(j) runfolds(j = j, data = ecuador, currentSample = currentSample,
 #' formula = slides ~ dem + slope + hcurv + vcurv + log.carea + cslope, 
 #' model.args = list(family = "binomial"), do.try = FALSE, model.fun = glm,
-#' error.fold = TRUE, error.rep = TRUE, imp.permutations = 2, 
+#' error.fold = TRUE, error.rep = TRUE, imp.permutations = 2, do.gc = 1,
 #' imp.variables = c("dem", "slope", "hcurv", "vcurv", "log.carea", "cslope"),
 #' err.train = TRUE, importance = TRUE, currentRes = currentRes, 
 #' pred.args = list(type = "response"), response = "slides", par.cl = 2, 
@@ -37,7 +37,7 @@
 #'@export
 
 runfolds <- function(j = NULL, currentSample = NULL, data = NULL, formula = NULL, 
-                     model.args = NULL, par.cl = NULL,
+                     model.args = NULL, par.cl = NULL, do.gc = NULL,
                      do.try = NULL, model.fun = NULL, error.fold = NULL, 
                      error.rep = NULL, pred.fun = NULL, imp.variables = NULL,
                      imp.permutations = NULL, err.fun = NULL, train.fun = NULL,
@@ -160,7 +160,7 @@ runfolds <- function(j = NULL, currentSample = NULL, data = NULL, formula = NULL
     pooled.obs.test <- c(pooled.obs.test, nd[, response])
     pooled.pred.test <- c(pooled.pred.test, pred.test)
     # assign to outer scope; otherwise object is NULL in runreps
-    is.factor.prediction <<- is.factor(pred.test)
+    is.factor.prediction <- is.factor(pred.test)
   }
   
   ### Permutation-based variable importance assessment:
@@ -230,14 +230,55 @@ runfolds <- function(j = NULL, currentSample = NULL, data = NULL, formula = NULL
     }  # end of else if (!is.null(currentres[[j]]$test))
   }
   
+  # if (importance == TRUE) {
+  #   # subset fold result to importance results only
+  #   impo_only <- runfolds_list[6][[1]]
+  #   # get mean from all impo results of all folds (multiple dataframes stored in a list)
+  #   # http://stackoverflow.com/questions/18371187/element-wise-mean-for-a-list-of-dataframes-with-na
+  #   currentImpo <- Reduce("+", impo_only) / length(impo_only)
+  # }
+  # # merge sublists of each fold into one list
+  # # http://stackoverflow.com/questions/32557131/adding-a-vector-to-each-sublist-within-a-list-r
+  # # http://stackoverflow.com/questions/43963683/r-flexible-passing-of-sublists-to-following-function
+  # runfolds_merged <- do.call(Map, c(f = list, runfolds_list))
+  # 
+  # pooled_only <- runfolds_merged[c(1:4)] 
+  # pooled_only <- sapply(unique(names(pooled_only)), function(x) unname(unlist(pooled_only[names(pooled_only) == x])), simplify = FALSE)   
+  # 
+  
+  
+  # Put the results from the pooled estimation into the pooled.err data structure:
+  if (error.rep) {
+    if (is.factor(data[, response])) {
+      lev <- levels(data[, response])
+      if (err.train) {
+        pooled.obs.train <- factor(lev[pooled.obs.train], levels = lev)
+      }
+      pooled.obs.test <- factor(lev[pooled.obs.test], levels = lev)
+      if (is.factor.prediction) {
+        if (err.train) {
+          pooled.pred.train <- factor(lev[pooled.pred.train], levels = lev) 
+        } 
+        pooled.pred.test <- factor(lev[pooled.pred.test], levels = lev) 
+      } 
+    }
+    pooled.err.train <- NULL
+    if (err.train) {
+      pooled.err.train <- err.fun(pooled.obs.train, pooled.pred.train)
+    }
+    
+    currentPooled.err <- t(unlist(list(train = pooled.err.train, test = err.fun(pooled.obs.test, 
+                                                                                pooled.pred.test))))
+    
+    if (do.gc >= 2) {
+      gc()
+    }
+  }  # end for each fold
+  
   currentRes <- currentRes[[j]]
   currentImpo <- currentImpo[[j]]
   
-  return(list(pooled.obs.train = pooled.obs.train,
-              pooled.obs.test = pooled.obs.test,
-              pooled.pred.train = pooled.pred.train,
-              pooled.pred.test = pooled.pred.test,
-              currentRes = currentRes,
+  return(list(currentRes = currentRes,
               currentImpo = currentImpo))
   
 }
