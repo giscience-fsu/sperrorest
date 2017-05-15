@@ -22,7 +22,7 @@
 #' pooled.obs.test = c(), err.fun = err.default)
 #' 
 #' # create list with multiple fold results
-#' runfolds_list <- map(seq_along(1:4), function(j) runfolds(j = j, data = ecuador, currentSample = currentSample,
+#' runfolds_list <- map(seq_along(1:4), function(rep) runfolds(j = rep, data = ecuador, currentSample = currentSample,
 #' formula = slides ~ dem + slope + hcurv + vcurv + log.carea + cslope, 
 #' model.args = list(family = "binomial"), do.try = FALSE, model.fun = glm,
 #' error.fold = TRUE, error.rep = TRUE, imp.permutations = 2, 
@@ -253,16 +253,23 @@ runfolds <- function(j = NULL, currentSample = NULL, data = NULL, formula = NULL
 #' imp.one.rep <- readRDS("inst/test-objects/imp.one.rep.rda")
 #' currentSample <- readRDS("inst/test-objects/resamp.rda")
 #' currentRes <- readRDS("inst/test-objects/currentRes.rda")
+#' 
 #' @examples 
-#' runreps_single <- runreps(currentSample = currentSample, data = ecuador,
+#' 
+#' data <- ecuador
+#' imp.one.rep <- readRDS("inst/test-objects/imp.one.rep.rda")
+#' currentSample <- readRDS("inst/test-objects/resamp.rda")
+#' currentRes <- readRDS("inst/test-objects/currentRes.rda")
+#' 
+#' runreps_res <- lapply(currentSample, function(X) runreps(currentSample = X, data = ecuador,
 #' formula = slides ~ dem + slope + hcurv + vcurv + log.carea + cslope, 
 #' model.args = list(family = "binomial"), do.try = FALSE, model.fun = glm,
-#' error.fold = TRUE, error.rep = TRUE, imp.permutations = 2,
+#' error.fold = TRUE, error.rep = TRUE, imp.permutations = 2, do.gc = 1,
 #' imp.variables = c("dem", "slope", "hcurv", "vcurv", "log.carea", "cslope"),
 #' err.train = TRUE, importance = TRUE, currentRes = currentRes, 
 #' pred.args = list(type = "response"), response = "slides", par.cl = 2, 
 #' coords = c("x", "y"), progress = 1, pooled.obs.train = c(), 
-#' pooled.obs.test = c(), err.fun = err.default)
+#' pooled.obs.test = c(), err.fun = err.default))
 #' 
 #' runfolds_list <- map(seq_along(1:4), function(j) runfolds(j))
 #'@export
@@ -270,7 +277,7 @@ runfolds <- function(j = NULL, currentSample = NULL, data = NULL, formula = NULL
 
 # runreps function for lapply()
 runreps <- function(currentSample = NULL, data = NULL, formula = NULL, 
-                    model.args = NULL, par.cl = NULL,
+                    model.args = NULL, par.cl = NULL, do.gc = 1,
                     do.try = NULL, model.fun = NULL, error.fold = NULL, 
                     error.rep = NULL, pred.fun = NULL, imp.variables = NULL,
                     imp.permutations = NULL, err.fun = NULL, train.fun = NULL,
@@ -305,7 +312,7 @@ runreps <- function(currentSample = NULL, data = NULL, formula = NULL,
   # this ensures that runfolds finds all objects which have been defined until here
   environment(runfolds) <- environment()
   
-  runfolds_list <- map(seq_along(currentSample), function(j) runfolds(j = j, data = ecuador, currentSample = currentSample,
+  runfolds_list <- map(seq_along(currentSample), function(rep) runfolds(j = rep, data = data, currentSample = currentSample,
                                                                       formula = formula, 
                                                                       model.args = model.args, do.try = do.try, model.fun = model.fun,
                                                                       error.fold = error.fold, error.rep = error.rep, imp.permutations = imp.permutations, 
@@ -349,14 +356,14 @@ runreps <- function(currentSample = NULL, data = NULL, formula = NULL,
     if (is.factor(data[, response])) {
       lev <- levels(data[, response])
       if (err.train) {
-        pooled.obs.train <- factor(lev[pooled_only$pooled.obs.train], levels = lev)
+        pooled_only$pooled.obs.train <- factor(lev[pooled_only$pooled.obs.train], levels = lev)
       }
-      pooled.obs.test <- factor(lev[pooled_only$pooled.obs.test], levels = lev)
+      pooled_only$pooled.obs.test <- factor(lev[pooled_only$pooled.obs.test], levels = lev)
       if (is.factor.prediction) {
         if (err.train) {
-          pooled.pred.train <- factor(lev[pooled_only$pooled.pred.train], levels = lev) 
+          pooled_only$pooled.pred.train <- factor(lev[pooled_only$pooled.pred.train], levels = lev) 
         } 
-        pooled.pred.test <- factor(lev[pooled_only$pooled.pred.test], levels = lev) 
+        pooled_only$pooled.pred.test <- factor(lev[pooled_only$pooled.pred.test], levels = lev) 
       } 
     }
     pooled.err.train <- NULL
@@ -364,8 +371,8 @@ runreps <- function(currentSample = NULL, data = NULL, formula = NULL,
       pooled.err.train <- err.fun(pooled.obs.train, pooled.pred.train)
     }
     
-    currentPooled.err <- t(unlist(list(train = pooled.err.train, test = err.fun(pooled.obs.test, 
-                                                                                pooled.pred.test))))
+    currentPooled.err <- t(unlist(list(train = pooled.err.train, test = err.fun(pooled_only$pooled.obs.test, 
+                                                                                pooled_only$pooled.pred.test))))
     
     if (do.gc >= 2) {
       gc()

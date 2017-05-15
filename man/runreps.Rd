@@ -5,10 +5,10 @@
 \title{runreps}
 \usage{
 runreps(currentSample = NULL, data = NULL, formula = NULL,
-  model.args = NULL, par.cl = NULL, do.try = NULL, model.fun = NULL,
-  error.fold = NULL, error.rep = NULL, pred.fun = NULL,
-  imp.variables = NULL, imp.permutations = NULL, err.fun = NULL,
-  train.fun = NULL, err.train = NULL, importance = NULL,
+  model.args = NULL, par.cl = NULL, do.gc = 1, do.try = NULL,
+  model.fun = NULL, error.fold = NULL, error.rep = NULL,
+  pred.fun = NULL, imp.variables = NULL, imp.permutations = NULL,
+  err.fun = NULL, train.fun = NULL, err.train = NULL, importance = NULL,
   currentRes = NULL, currentImpo = NULL, pred.args = NULL,
   progress = NULL, pooled.obs.train = NULL, pooled.obs.test = NULL,
   pooled.pred.train = NULL, response = NULL, is.factor.prediction = NULL,
@@ -18,15 +18,21 @@ runreps(currentSample = NULL, data = NULL, formula = NULL,
 runreps
 }
 \examples{
-runreps_single <- runreps(currentSample = currentSample, data = ecuador,
+
+data <- ecuador
+imp.one.rep <- readRDS("inst/test-objects/imp.one.rep.rda")
+currentSample <- readRDS("inst/test-objects/resamp.rda")
+currentRes <- readRDS("inst/test-objects/currentRes.rda")
+
+runreps_single <- lapply(currentSample, function(X) runreps(currentSample = X, data = ecuador,
 formula = slides ~ dem + slope + hcurv + vcurv + log.carea + cslope, 
 model.args = list(family = "binomial"), do.try = FALSE, model.fun = glm,
-error.fold = TRUE, error.rep = TRUE, imp.permutations = 2,
+error.fold = TRUE, error.rep = TRUE, imp.permutations = 2, do.gc = 1,
 imp.variables = c("dem", "slope", "hcurv", "vcurv", "log.carea", "cslope"),
 err.train = TRUE, importance = TRUE, currentRes = currentRes, 
 pred.args = list(type = "response"), response = "slides", par.cl = 2, 
 coords = c("x", "y"), progress = 1, pooled.obs.train = c(), 
-pooled.obs.test = c(), err.fun = err.default)
+pooled.obs.test = c(), err.fun = err.default))
 
 runfolds_list <- map(seq_along(1:4), function(j) runfolds(j))
 }

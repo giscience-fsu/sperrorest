@@ -38,7 +38,7 @@ coords = c("x", "y"), progress = 1, pooled.obs.train = c(),
 pooled.obs.test = c(), err.fun = err.default)
 
 # create list with multiple fold results
-runfolds_list <- map(seq_along(1:4), function(j) runfolds(j = j, data = ecuador, currentSample = currentSample,
+runfolds_list <- map(seq_along(1:4), function(rep) runfolds(j = rep, data = ecuador, currentSample = currentSample,
 formula = slides ~ dem + slope + hcurv + vcurv + log.carea + cslope, 
 model.args = list(family = "binomial"), do.try = FALSE, model.fun = glm,
 error.fold = TRUE, error.rep = TRUE, imp.permutations = 2, 
