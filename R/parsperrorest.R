@@ -502,8 +502,10 @@ parsperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.
     cl <- makeCluster(par.args$par.units, outfile = out.progress)
     registerDoParallel(cl)
     
+    # foreach.out <- foreach(i = 1:length(resamp), .packages = (.packages()), .errorhandling = "remove", 
+    #                        .combine = "comb", .multicombine = TRUE, .verbose = T) %dopar% 
     foreach.out <- foreach(i = 1:length(resamp), .packages = (.packages()), .errorhandling = "remove", 
-                           .combine = "comb", .multicombine = TRUE, .verbose = FALSE) %dopar% {
+                           .multicombine = F, .verbose = T) %dopar% {
                              
                              # reset rep.err otherwise duplicates are introduced
                              rep.err <- NULL
@@ -513,245 +515,91 @@ parsperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.
                                pooled.obs.test <- pooled.pred.test <- c()
                              }
                              
-                             walk(seq_along(resamp[[i]]), function(j) {
-                               
-                               # for (j in 1:length(resamp[[i]]))
-                               # {
-                               if (progress == TRUE | progress == 1)
-                               {
-                                 cat(date(), "Repetition", names(resamp)[i], "- Fold", j, "\n")
-                               }
-                               if (progress == TRUE | progress == 2)
-                               {
-                                 cat(date(), "Repetition", names(resamp)[i], "\n")
-                               }
-                               nd <<- data[resamp[[i]][[j]]$train, ]
-                               if (!is.null(train.fun))
-                               {
-                                 nd <<- train.fun(data = nd, param = train.param)
-                               }
-                               margs <<- c(list(formula = formula, data = nd), model.args)
-                               if (do.try)
-                               {
-                                 fit <<- try(do.call(model.fun, args = margs))
-                                 if (class(fit) == "try-error")
-                                 {
-                                   fit <<- NULL
-                                   if (error.fold)
-                                   {
-                                     if (err.train)
-                                     {
-                                       res[[i]][[j]]$train <<- NULL
-                                     }
-                                     res[[i]][[j]]$test <<- NULL
-                                     if (importance)
-                                     {
-                                       impo[[i]][[j]] <<- c()
-                                     }
-                                   }
-                                   if (do.gc >= 2)
-                                   {
-                                     gc()
-                                   }
-                                   next
-                                 }
-                               } else
-                               {
-                                 fit <<- do.call(model.fun, args = margs)
-                               }
-                               if (err.train) {
-                                 pargs <<- c(list(object = fit, newdata = nd), pred.args)
-                                 if (is.null(pred.fun)) {
-                                   pred.train <<- do.call(predict, args = pargs)
-                                 } else {
-                                   pred.train <<- do.call(pred.fun, args = pargs)
-                                 }
-                                 rm(pargs)
-                                 if (error.fold) 
-                                   if (do.try) {
-                                     err.try <<- try(err.fun(nd[, response], pred.train))
-                                     if (class(err.try) == "try-error") 
-                                       err.try <<- NULL
-                                     res[[i]][[j]]$train <<- err.try
-                                   } else {
-                                     res[[i]][[j]]$train <<- err.fun(nd[, response], pred.train)
-                                   }
-                                 if (error.rep) {
-                                   pooled.obs.train <<- c(pooled.obs.train, nd[, response])
-                                   pooled.pred.train <<- c(pooled.pred.train, pred.train)
-                                 }
-                               } else {
-                                 if (error.fold) {
-                                   res[[i]][[j]]$train <<- NULL
-                                 }
-                               }
-                               nd <<- data[resamp[[i]][[j]]$test, ]
-                               if (!is.null(test.fun))
-                               {
-                                 nd <<- test.fun(data = nd, param = test.param)
-                               }
-                               if (importance)
-                               {
-                                 nd.bak <<- nd
-                               }
-                               pargs <<- c(list(object = fit, newdata = nd), pred.args)
-                               if (is.null(pred.fun))
-                               {
-                                 pred.test <<- do.call(predict, args = pargs)
-                               } else
-                               {
-                                 pred.test <<- do.call(pred.fun, args = pargs)
-                               }
-                               rm(pargs)
-                               if (error.fold)
-                               {
-                                 if (do.try)
-                                 {
-                                   err.try <<- try(err.fun(nd[, response], pred.test))
-                                   if (class(err.try) == "try-error") 
-                                     err.try <<- NULL
-                                   res[[i]][[j]]$test <<- err.try
-                                 } else
-                                 {
-                                   res[[i]][[j]]$test <<- err.fun(nd[, response], pred.test)
-                                 }
-                               }
-                               if (error.rep)
-                               {
-                                 pooled.obs.test <<- c(pooled.obs.test, nd[, response])
-                                 pooled.pred.test <<- c(pooled.pred.test, pred.test)
-                                 is.factor.prediction <<- is.factor(pred.test)
-                               }
-                               if (importance & error.fold)
-                               {
-                                 if (is.null(res[[i]][[j]]$test))
-                                 {
-                                   impo[[i]][[j]] <<- c()
-                                   if (!progress == FALSE) 
-                                     cat(date(), "-- skipping variable importance\n")
-                                 } else
-                                 {
-                                   if (!progress == FALSE)
-                                   {
-                                     cat(date(), "-- Variable importance\n")
-                                   }
-                                   imp.temp <<- imp.one.rep
-                                   for (cnt in 1:imp.permutations)
-                                   {
-                                     if (!progress == FALSE & (cnt > 1)) 
-                                       if (log10(cnt) == floor(log10(cnt))) 
-                                         cat(date(), "   ", cnt, "\n")
-                                     permut <<- sample(1:nrow(nd), replace = FALSE)
-                                     for (vnm in imp.variables)
-                                     {
-                                       nd <<- nd.bak
-                                       nd[, vnm] <<- nd[, vnm][permut]
-                                       pargs <<- c(list(object = fit, newdata = nd), pred.args)
-                                       if (is.null(pred.fun))
-                                       {
-                                         pred.test <<- do.call(predict, args = pargs)
-                                       } else
-                                       {
-                                         pred.test <<- do.call(pred.fun, args = pargs)
-                                       }
-                                       rm(pargs)
-                                       if (do.try)
-                                       {
-                                         permut.err <<- try(err.fun(nd[, response], pred.test))
-                                         if (class(permut.err) == "try-error")
-                                         {
-                                           imp.temp[[vnm]][[cnt]] <<- c()
-                                         } else
-                                         {
-                                           imp.temp[[vnm]][[cnt]] <<- as.list(unlist(res[[i]][[j]]$test) - 
-                                                                               unlist(permut.err))
-                                         }
-                                       } else
-                                       {
-                                         permut.err <<- err.fun(nd[, response], pred.test)
-                                         imp.temp[[vnm]][[cnt]] <<- as.list(unlist(res[[i]][[j]]$test) - 
-                                                                             unlist(permut.err))
-                                       }
-                                     }
-                                   }
-                                   impo[[i]][[j]] <<- as.data.frame(t(sapply(imp.temp, function(y) sapply(as.data.frame(t(sapply(y, 
-                                                                                                                                as.data.frame))), function(x) mean(unlist(x))))))
-                                   rm(nd.bak, nd)
-                                 }
-                               }
-                               # res <<- res[[i]][1, ]
-                             })  #end of each fold
+                             currentRes <- NULL
+                             currentImpo <- resamp[[i]]
+                             currentPooled.err <- NULL
                              
-                             # res[[i]] <- res[[i]][1, ]
-                             if (error.rep)
-                             {
-                               if (is.factor(data[, response]))
-                               {
-                                 lev <- levels(data[, response])
-                                 if (err.train)
-                                 {
-                                   pooled.obs.train <- factor(lev[pooled.obs.train], levels = lev)
-                                   pooled.obs.test <- factor(lev[pooled.obs.test], levels = lev)
-                                 }
-                                 if (is.factor.prediction)
-                                 {
-                                   if (err.train)
-                                   {
-                                     pooled.pred.train <- factor(lev[pooled.pred.train], levels = lev)
-                                     pooled.pred.test <- factor(lev[pooled.pred.test], levels = lev)
-                                   }
-                                 }
-                                 rep.err.train <- NULL
-                                 if (err.train)
-                                 {
-                                   rep.err.train <- err.fun(pooled.obs.train, pooled.pred.train)
-                                 }
-                                 if (i == 1)
-                                 {
-                                   rep.err <- t(unlist(list(train = rep.err.train, test = err.fun(pooled.obs.test, 
-                                                                                                  pooled.pred.test))))
-                                 } else
-                                 {
-                                   rep.err <- rbind(rep.err, unlist(list(train = rep.err.train, 
-                                                                         test = err.fun(pooled.obs.test, pooled.pred.test))))
-                                 }
-                                 if (do.gc >= 2)
-                                 {
-                                   gc()
-                                 }
-                               }
-                               if ((do.gc >= 1) & (do.gc < 2))
-                               {
-                                 gc()
-                               }
+                             if (error.fold) {
+                               currentRes <- lapply(resamp[[i]], unclass)
+                               class(currentRes) <- "sperroresterror"
+                             } else {
+                               currentRes <- NULL
                              }
-                             
-                             if (error.rep & error.fold)
-                             {
-                               if (importance) {
-                                 foreach.out <- list(rep.err, res, impo)
-                               } else {
-                                 foreach.out <- list(rep.err, res)
-                               }
-                               foreach.out <- list(foreach.out)
-                               return(foreach.out)
-                             }
-                             if (error.rep & !error.fold)
-                             {
-                               foreach.out <- rep.err
-                               return(foreach.out)
-                             }
-                             if (!error.rep & error.fold)
-                             {
-                               if (importance) {
-                                 foreach.out <- list(res, impo)
-                                 foreach.out <- list(foreach.out)
-                               } else {
-                                 foreach.out <- res
-                               }
-                               return(foreach.out)
-                             }
+                             print("hello")
+                             runfolds_list <- map(seq_along(resamp[[i]]), function(rep) runfolds(j = rep, data = data, currentSample = resamp[[i]],
+                                                                                                   formula = formula, i = i, par.mode = par.args$par.mode,
+                                                                                                   model.args = model.args, do.try = do.try, model.fun = model.fun,
+                                                                                                   error.fold = error.fold, error.rep = error.rep, imp.permutations = imp.permutations, 
+                                                                                                   imp.variables = imp.variables, is.factor.prediction = is.factor.prediction,
+                                                                                                   err.train = err.train, importance = importance, currentRes = currentRes, 
+                                                                                                   pred.args = pred.args, response = response, par.cl = par.cl, 
+                                                                                                   coords = coords, progress = progress, pooled.obs.train = pooled.obs.train, 
+                                                                                                   pooled.obs.test = pooled.obs.test, err.fun = err.fun))
+                             print("hello")
+                             return(list(runfolds_list))
                            }
+                             
+                             
+                             
+                           #   # merge sublists of each fold into one list
+                           #   # http://stackoverflow.com/questions/32557131/adding-a-vector-to-each-sublist-within-a-list-r
+                           #   # http://stackoverflow.com/questions/43963683/r-flexible-passing-of-sublists-to-following-function
+                           #   runfolds_merged <- do.call(Map, c(f = list, runfolds_list))
+                           #   
+                           #   if (importance == TRUE) {
+                           #     # subset fold result to importance results only
+                           #     impo_only <- runfolds_merged[6][[1]]
+                           #     ### get mean from all impo results of all folds (multiple dataframes stored in a list)
+                           #     ### http://stackoverflow.com/questions/18371187/element-wise-mean-for-a-list-of-dataframes-with-na
+                           #     ### NICHT MITTELN, ENFACH ALLE IMPO (= FÜR JEDEN FOLD) ZURÜCKGEBEN
+                           #     # currentImpo <- Reduce("+", impo_only) / length(impo_only)
+                           #   }
+                           #   
+                           #   pooled_only <- runfolds_merged[c(1:4)] 
+                           #   pooled_only <- sapply(unique(names(pooled_only)), function(x) unname(unlist(pooled_only[names(pooled_only) == x])), simplify = FALSE)   
+                           #   
+                           #   # Jetzt die avg. werte pro repetition errechnen
+                           #   # Put the results from the pooled estimation into the pooled.err data structure:
+                           #   if (error.rep) {
+                           #     if (is.factor(data[, response])) {
+                           #       lev <- levels(data[, response])
+                           #       if (err.train) {
+                           #         pooled_only$pooled.obs.train <- factor(lev[pooled_only$pooled.obs.train], levels = lev)
+                           #       }
+                           #       pooled_only$pooled.obs.test <- factor(lev[pooled_only$pooled.obs.test], levels = lev)
+                           #       if (is.factor.prediction) {
+                           #         if (err.train) {
+                           #           pooled_only$pooled.pred.train <- factor(lev[pooled_only$pooled.pred.train], levels = lev) 
+                           #         } 
+                           #         pooled_only$pooled.pred.test <- factor(lev[pooled_only$pooled.pred.test], levels = lev) 
+                           #       } 
+                           #     }
+                           #     pooled.err.train <- NULL
+                           #     if (err.train) {
+                           #       pooled.err.train <- err.fun(pooled_only$pooled.obs.train, pooled_only$pooled.pred.train)
+                           #     }
+                           #     
+                           #     currentPooled.err <- t(unlist(list(train = pooled.err.train, test = err.fun(pooled_only$pooled.obs.test, 
+                           #                                                                                 pooled_only$pooled.pred.test))))
+                           #     
+                           #     if (do.gc >= 2) {
+                           #       gc()
+                           #     }
+                           #   }  # end for each fold
+                           #   
+                           #   if ((do.gc >= 1) & (do.gc < 2)) {
+                           #     gc()
+                           #   }
+                           #   
+                           #   # set currentImpo to NULL to prevent false importance output (resamp object) 
+                           #   # if not desired 
+                           #   if (importance == FALSE) {
+                           #     currentImpo <- NULL
+                           #   }
+                           #   
+                           #   #return(list(error = currentRes, pooled.error = currentPooled.err, importance = currentImpo))
+                           #   return(list(error = runfolds_merged$currentRes, pooled.error = currentPooled.err, importance = impo_only))
+                           # }
     stopCluster(cl)
   }
   
