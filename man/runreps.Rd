@@ -24,7 +24,7 @@ imp.one.rep <- readRDS("inst/test-objects/imp.one.rep.rda")
 currentSample <- readRDS("inst/test-objects/resamp.rda")
 currentRes <- readRDS("inst/test-objects/currentRes.rda")
 
-runreps_single <- lapply(currentSample, function(X) runreps(currentSample = X, data = ecuador,
+runreps_res <- lapply(currentSample, function(X) runreps(currentSample = X, data = ecuador,
 formula = slides ~ dem + slope + hcurv + vcurv + log.carea + cslope, 
 model.args = list(family = "binomial"), do.try = FALSE, model.fun = glm,
 error.fold = TRUE, error.rep = TRUE, imp.permutations = 2, do.gc = 1,

@@ -368,7 +368,7 @@ runreps <- function(currentSample = NULL, data = NULL, formula = NULL,
     }
     pooled.err.train <- NULL
     if (err.train) {
-      pooled.err.train <- err.fun(pooled.obs.train, pooled.pred.train)
+      pooled.err.train <- err.fun(pooled_only$pooled.obs.train, pooled_only$pooled.pred.train)
     }
     
     currentPooled.err <- t(unlist(list(train = pooled.err.train, test = err.fun(pooled_only$pooled.obs.test, 
@@ -391,4 +391,28 @@ runreps <- function(currentSample = NULL, data = NULL, formula = NULL,
   
   #return(list(error = currentRes, pooled.error = currentPooled.err, importance = currentImpo))
   return(list(error = runfolds_merged$currentRes, pooled.error = currentPooled.err, importance = impo_only))
+}
+
+
+#' transfer_parallel_output
+#' 
+#' @keywords internal
+#' @export
+transfer_parallel_output <- function(myRes = NULL, res = NULL, impo = NULL,
+                                     pooled.err = NULL) {
+  
+  for (i in seq_along(myRes)) {
+    if (i == 1) {
+      pooled.err <- myRes[[i]]$pooled.error
+      impo[[i]] <- myRes[[i]]$importance
+      res[[i]] <- myRes[[i]]$error
+    } else {
+      pooled.err <- rbind(pooled.err, myRes[[i]]$pooled.error)
+      impo[[i]] <- myRes[[i]]$importance
+      res[[i]] <- myRes[[i]]$error
+    }
+  }
+  
+  return(list(pooled.err = pooled.err, impo = impo,
+              res = res))
 }

@@ -409,8 +409,8 @@ parsperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.
     # pblapply call Sun Apr  9 13:28:31 2017 ------------------------------
     
     
-    myRes <- pblapply(cl = par.cl, X = resamp, FUN = runreps(currentSample = X, data = data,
-                                                             formula = formula, 
+    myRes <- pblapply(cl = par.cl, X = resamp, function(X) runreps(currentSample = X, data = data,
+                                                             formula = formula, do.gc = do.gc, 
                                                              model.args = model.args, do.try = do.try, model.fun = model.fun,
                                                              error.fold = error.fold, error.rep = error.rep, imp.permutations = imp.permutations, 
                                                              imp.variables = imp.variables, is.factor.prediction = is.factor.prediction,
@@ -420,17 +420,7 @@ parsperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.
                                                              pooled.obs.test = pooled.obs.test, err.fun = err.fun))
     
     # transfer results of lapply() to respective data objects
-    walk(seq_along(myRes), function(i) {
-      if (i == 1) {
-        pooled.err <<- myRes[[i]]$pooled.error
-        impo[[i]] <<- myRes[[i]]$importance
-        res[[i]] <<- myRes[[i]]$error
-      } else {
-        pooled.err <<- rbind(pooled.err, myRes[[i]]$pooled.error)
-        impo[[i]] <<- myRes[[i]]$importance
-        res[[i]] <<- myRes[[i]]$error
-      }
-    })
+    myRes_mod <- transfer_parallel_output(myRes, res, impo, pooled.err)
     
     # for (i in 1:length(myRes)) {
     #   if (i == 1) {
@@ -447,12 +437,13 @@ parsperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.
     
     # convert matrix(?) to data.frame:
     if (error.rep) {
-      pooled.err <- as.data.frame(pooled.err)
+      pooled.err <- as.data.frame(myRes_mod$pooled.err)
       rownames(pooled.err) <- NULL
       class(pooled.err) <- "sperrorestreperror"
     }
     
     if (importance) {
+      impo <- myRes_mod$impo
       class(impo) <- "sperrorestimportance"
     }
     
@@ -480,7 +471,7 @@ parsperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.
     package.version <- packageVersion("sperrorest")
     class(package.version) <- "sperrorestpackageversion"
     
-    RES <- list(error.rep = pooled.err, error.fold = res, represampling = resamp, 
+    RES <- list(error.rep = pooled.err, error.fold = myRes_mod$res, represampling = resamp, 
                 importance = impo, benchmarks = my.bench, package.version = package.version)
     class(RES) <- "sperrorest"
     
