@@ -5,8 +5,8 @@
 \title{runreps}
 \usage{
 runreps(currentSample = NULL, data = NULL, formula = NULL,
-  model.args = NULL, par.cl = NULL, do.gc = 1, do.try = NULL,
-  model.fun = NULL, error.fold = NULL, error.rep = NULL,
+  model.args = NULL, par.cl = NULL, do.gc = 1, imp.one.rep = NULL,
+  do.try = NULL, model.fun = NULL, error.fold = NULL, error.rep = NULL,
   pred.fun = NULL, imp.variables = NULL, imp.permutations = NULL,
   err.fun = NULL, train.fun = NULL, err.train = NULL, importance = NULL,
   currentRes = NULL, currentImpo = NULL, pred.args = NULL,
