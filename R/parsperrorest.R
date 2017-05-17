@@ -471,10 +471,16 @@ parsperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.
                                currentRes <- NULL
                              }
                              environment(runfolds) <- environment()
+                             
+                             print(progress)
+                             if (progress == 2) {
+                               cat(date(), "Repetition", names(resamp[[i]])[i], "\n")
+                             }
+                             
                              try(map(seq_along(resamp[[i]]), 
                                  function(rep) runfolds(j = rep, data = data, currentSample = resamp[[i]],
                                                         formula = formula, par.mode = par.args$par.mode, i = i, 
-                                                        imp.one.rep = imp.one.rep,
+                                                        imp.one.rep = imp.one.rep, pred.fun = pred.fun, 
                                                         model.args = model.args, do.try = do.try, model.fun = model.fun,
                                                         error.fold = error.fold, error.rep = error.rep, imp.permutations = imp.permutations,
                                                         imp.variables = imp.variables, is.factor.prediction = is.factor.prediction,
@@ -544,7 +550,7 @@ parsperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.
     stopCluster(cl)
   }
   
-  ### format parallel outputs
+  ### format parallel outputs ----
   
   if (par.args$par.mode == 2) {
   # split combined lists from foreach output into sublists referring to repetitions 

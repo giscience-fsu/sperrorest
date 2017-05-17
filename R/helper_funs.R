@@ -80,11 +80,8 @@ runfolds <- function(j = NULL, currentSample = NULL, data = NULL, formula = NULL
                      coords = NULL, test.fun = NULL, imp.one.rep = NULL, i = NULL) { 
   if (importance == FALSE) {
     
-    if (par.mode == 2 && progress == TRUE | progress == 1) {
+    if (par.mode == 2 && progress == "TRUE" | progress == 1) {
       cat(date(), "Repetition", names(currentSample)[i], "- Fold", j, "\n")
-    }
-    if (par.mode == 2 && progress == TRUE | progress == 2) {
-      cat(date(), "Repetition", names(currentSample)[i], "\n")
     }
   }
 
@@ -365,6 +362,10 @@ runreps <- function(currentSample = NULL, data = NULL, formula = NULL,
   
   # this ensures that runfolds finds all objects which have been defined until here
   environment(runfolds) <- environment()
+  
+  if (par.mode == 2 && progress == TRUE | progress == 2) {
+    cat(date(), "Repetition", names(currentSample)[i], "\n")
+  }
   
   runfolds_list <- map(seq_along(currentSample), function(rep) runfolds(j = rep, data = data, currentSample = currentSample,
                                                                       formula = formula, par.mode = par.mode, pred.fun = pred.fun,
