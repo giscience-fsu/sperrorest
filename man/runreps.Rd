@@ -35,6 +35,17 @@ pred.args = list(type = "response"), response = "slides", par.cl = 2,
 coords = c("x", "y"), progress = 1, pooled.obs.train = c(), 
 pooled.obs.test = c(), err.fun = err.default))
 
+runreps_res <- lapply(currentSample, function(X) runreps(currentSample = X, data = ecuador,
+formula = slides ~ dem + slope + hcurv + vcurv + log.carea + cslope, 
+do.try = FALSE, model.fun = rpart,
+error.fold = TRUE, error.rep = TRUE, imp.permutations = 2, pred.fun = mypred.rpart, 
+model.args = list(control = ctrl),
+imp.variables = c("dem", "slope", "hcurv", "vcurv", "log.carea", "cslope"),
+err.train = TRUE, importance = TRUE, currentRes = currentRes, 
+response = "slides", par.cl = 2, 
+coords = c("x", "y"), progress = 1, pooled.obs.train = c(), 
+pooled.obs.test = c(), err.fun = err.default))
+
 runfolds_list <- map(seq_along(1:4), function(j) runfolds(j))
 }
 \keyword{#}

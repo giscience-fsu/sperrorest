@@ -21,6 +21,38 @@
 #' coords = c("x", "y"), progress = 1, pooled.obs.train = c(), 
 #' pooled.obs.test = c(), err.fun = err.default)
 #' 
+#' ### rpart example
+#' data(ecuador)
+#' fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
+#' 
+#' mypred.rpart <- function(object, newdata) predict(object, newdata)[, 2]
+#' ctrl <- rpart.control(cp = 0.005) # show the effects of overfitting
+#' 
+#' # Non-spatial 5-repeated 10-fold cross-validation:
+#' mypred.rpart <- function(object, newdata) predict(object, newdata)[,2]
+#' 
+#' runfolds_single <- runfolds(j = 1, data = ecuador, currentSample = currentSample,
+#' formula = slides ~ dem + slope + hcurv + vcurv + log.carea + cslope, 
+#' do.try = FALSE, model.fun = rpart,
+#' error.fold = TRUE, error.rep = TRUE, imp.permutations = 2, pred.fun = mypred.rpart, 
+#' model.args = list(control = ctrl),
+#' imp.variables = c("dem", "slope", "hcurv", "vcurv", "log.carea", "cslope"),
+#' err.train = TRUE, importance = TRUE, currentRes = currentRes, 
+#' response = "slides", par.cl = 2, 
+#' coords = c("x", "y"), progress = 1, pooled.obs.train = c(), 
+#' pooled.obs.test = c(), err.fun = err.default)
+#' 
+#' runfolds_list <- map(seq_along(1:4), function(rep) runfolds(j = rep, data = ecuador, currentSample = currentSample,
+#' formula = slides ~ dem + slope + hcurv + vcurv + log.carea + cslope, 
+#' do.try = FALSE, model.fun = rpart,
+#' error.fold = TRUE, error.rep = TRUE, imp.permutations = 2, pred.fun = mypred.rpart, 
+#' model.args = list(control = ctrl),
+#' imp.variables = c("dem", "slope", "hcurv", "vcurv", "log.carea", "cslope"),
+#' err.train = TRUE, importance = TRUE, currentRes = currentRes, 
+#' response = "slides", par.cl = 2, 
+#' coords = c("x", "y"), progress = 1, pooled.obs.train = c(), 
+#' pooled.obs.test = c(), err.fun = err.default))
+#' 
 #' # create list with multiple fold results
 #' runfolds_list <- map(seq_along(1:4), function(rep) runfolds(j = rep, data = ecuador, currentSample = currentSample,
 #' formula = slides ~ dem + slope + hcurv + vcurv + log.carea + cslope, 
@@ -282,6 +314,17 @@ runfolds <- function(j = NULL, currentSample = NULL, data = NULL, formula = NULL
 #' coords = c("x", "y"), progress = 1, pooled.obs.train = c(), 
 #' pooled.obs.test = c(), err.fun = err.default))
 #' 
+#' runreps_res <- lapply(currentSample, function(X) runreps(currentSample = X, data = ecuador,
+#' formula = slides ~ dem + slope + hcurv + vcurv + log.carea + cslope, 
+#' do.try = FALSE, model.fun = rpart,
+#' error.fold = TRUE, error.rep = TRUE, imp.permutations = 2, pred.fun = mypred.rpart, 
+#' model.args = list(control = ctrl),
+#' imp.variables = c("dem", "slope", "hcurv", "vcurv", "log.carea", "cslope"),
+#' err.train = TRUE, importance = TRUE, currentRes = currentRes, 
+#' response = "slides", par.cl = 2, 
+#' coords = c("x", "y"), progress = 1, pooled.obs.train = c(), 
+#' pooled.obs.test = c(), err.fun = err.default))
+#' 
 #' runfolds_list <- map(seq_along(1:4), function(j) runfolds(j))
 #'@export
 #'
@@ -324,7 +367,7 @@ runreps <- function(currentSample = NULL, data = NULL, formula = NULL,
   environment(runfolds) <- environment()
   
   runfolds_list <- map(seq_along(currentSample), function(rep) runfolds(j = rep, data = data, currentSample = currentSample,
-                                                                      formula = formula, par.mode = par.mode, 
+                                                                      formula = formula, par.mode = par.mode, pred.fun = pred.fun,
                                                                       model.args = model.args, do.try = do.try, model.fun = model.fun,
                                                                       error.fold = error.fold, error.rep = error.rep, imp.permutations = imp.permutations, 
                                                                       imp.variables = imp.variables, is.factor.prediction = is.factor.prediction,
