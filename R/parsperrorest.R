@@ -273,8 +273,8 @@ parsperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.
   {
     if (!error.fold)
     {
-      warning("'importance=TRUE' currently only supported with 
-        'error.fold=TRUE'.\nUsing 'importance=FALSE'")
+      warning(paste0("'importance = TRUE' currently only supported with 'error.fold = TRUE'.\n", 
+                     "Using 'importance = FALSE'"))
       importance <- FALSE
     }
     stopifnot(is.numeric(imp.permutations))
@@ -362,7 +362,11 @@ parsperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.
     for (vnm in imp.variables) imp.one.rep[[vnm]] <- tmp
     rm(tmp)
   }
-  # par.mode = 1 (pbapply) -------
+  
+  
+  ### par.mode = 1 (pbapply) -------
+  
+  
   if (par.args$par.mode == 1) {
     
     if (par.args$par.units > detectCores()) {
@@ -409,7 +413,7 @@ parsperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.
     # pblapply call Sun Apr  9 13:28:31 2017 ------------------------------
     
     
-    myRes <- pblapply(cl = par.cl, X = resamp, function(X) runreps(currentSample = X, data = data,
+    myRes <- pblapply(cl = par.cl, X = resamp, function(X) runreps(currentSample = X, data = data, par.mode = par.args$par.mode,
                                                              formula = formula, do.gc = do.gc, imp.one.rep = imp.one.rep,
                                                              model.args = model.args, do.try = do.try, model.fun = model.fun,
                                                              error.fold = error.fold, error.rep = error.rep, imp.permutations = imp.permutations, 
@@ -418,65 +422,18 @@ parsperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.
                                                              pred.args = pred.args, response = response, par.cl = par.cl, 
                                                              coords = coords, progress = progress, pooled.obs.train = pooled.obs.train, 
                                                              pooled.obs.test = pooled.obs.test, err.fun = err.fun))
-    
-    # transfer results of lapply() to respective data objects
-    myRes_mod <- transfer_parallel_output(myRes, res, impo, pooled.err)
-    
-    # convert matrix(?) to data.frame:
-    if (error.rep) {
-      pooled.err <- as.data.frame(myRes_mod$pooled.err)
-      rownames(pooled.err) <- NULL
-      class(pooled.err) <- "sperrorestreperror"
-    }
-    
-    if (importance) {
-      impo <- myRes_mod$impo
-      class(impo) <- "sperrorestimportance"
-    }
-    
-    if (benchmark) {
-      end.time <- Sys.time()
-      my.bench <- list(system.info = Sys.info(), t.start = start.time, t.end = end.time, 
-                       cpu.cores = detectCores(), par.mode = par.args$par.mode, 
-                       par.units = par.args$par.units, runtime.performance = end.time - start.time)
-      class(my.bench) <- "sperrorestbenchmarks"
-    } else {
-      my.bench <- NULL
-    }
-    
-    # if (notify == TRUE) {
-    #   if (benchmark == TRUE) {
-    #     msg <- paste0("Repetitions: ", length(smp.args$repetition), "; ", 
-    #                   "Folds: ", smp.args$nfold, "; ", "Total time: ", round(my.bench$runtime.performance, 
-    #                                                                          2))
-    #   } else (msg <- paste0("Repetitions: ", length(smp.args$repetition), "; ", 
-    #                         "Folds: ", smp.args$nfold))
-    #   
-    #   notify(title = "parsperrorest() finished successfully!", msg <- msg)
-    # }
-    
-    package.version <- packageVersion("sperrorest")
-    class(package.version) <- "sperrorestpackageversion"
-    
-    RES <- list(error.rep = pooled.err, error.fold = myRes_mod$res, represampling = resamp, 
-                importance = impo, benchmarks = my.bench, package.version = package.version)
-    class(RES) <- "sperrorest"
-    
-    return(RES)
-    
   }
-  # par.mode = 2 (foreach) -------
+  
+  
+  ### par.mode = 2 (foreach) -------
+  
+  
   if (par.args$par.mode == 2) {
     # combine function for multiple object outputs in foreach call
     comb <- function(...)
     {
       mapply("rbind", ..., SIMPLIFY = FALSE)
     }
-    
-    # comb <- function(x, ...) {
-    #   lapply(seq_along(x),
-    #          function(i) c(x[[i]], lapply(list(...), function(y) y[[i]])))
-    # }
     
     # suppress any progress output of workes if progress = FALSE
     if (progress == FALSE)
@@ -495,10 +452,7 @@ parsperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.
     registerDoParallel(cl)
     
     myRes <- foreach(i = 1:length(resamp), .packages = (.packages()), .errorhandling = "remove", 
-                           .combine = "comb", .multicombine = TRUE, .verbose = T) %dopar% {
-
-                             # reset rep.err otherwise duplicates are introduced
-                             #rep.err <- NULL
+                           .combine = "comb", .multicombine = TRUE, .verbose = FALSE) %dopar% {
                              
                              if (err.train) {
                                pooled.obs.train <- pooled.pred.train <- c()
@@ -517,26 +471,23 @@ parsperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.
                                currentRes <- NULL
                              }
                              environment(runfolds) <- environment()
-                             runfolds_list <- try(map(seq_along(resamp[[i]]), function(rep) runfolds(j = rep, data = data, currentSample = resamp[[i]],
-                                                                                                   formula = formula, par.mode = par.args$par.mode, i = i, imp.one.rep = imp.one.rep,
-                                                                                                   model.args = model.args, do.try = do.try, model.fun = model.fun,
-                                                                                                   error.fold = error.fold, error.rep = error.rep, imp.permutations = imp.permutations,
-                                                                                                   imp.variables = imp.variables, is.factor.prediction = is.factor.prediction,
-                                                                                                   err.train = err.train, importance = importance, currentRes = currentRes,
-                                                                                                   pred.args = pred.args, response = response, par.cl = par.cl,
-                                                                                                   coords = coords, progress = progress, pooled.obs.train = pooled.obs.train,
-                                                                                                   pooled.obs.test = pooled.obs.test, err.fun = err.fun))
-                             )
-                             saveRDS(runfolds_list, "~/Desktop/runfolds_list.rda")
-                             #return(list(runfolds_list))
-
-                             
+                             try(map(seq_along(resamp[[i]]), 
+                                 function(rep) runfolds(j = rep, data = data, currentSample = resamp[[i]],
+                                                        formula = formula, par.mode = par.args$par.mode, i = i, 
+                                                        imp.one.rep = imp.one.rep,
+                                                        model.args = model.args, do.try = do.try, model.fun = model.fun,
+                                                        error.fold = error.fold, error.rep = error.rep, imp.permutations = imp.permutations,
+                                                        imp.variables = imp.variables, is.factor.prediction = is.factor.prediction,
+                                                        err.train = err.train, importance = importance, currentRes = currentRes,
+                                                        pred.args = pred.args, response = response, par.cl = par.cl,
+                                                        coords = coords, progress = progress, pooled.obs.train = pooled.obs.train,
+                                                        pooled.obs.test = pooled.obs.test, err.fun = err.fun))) -> runfolds_list
                              # merge sublists of each fold into one list
                              # http://stackoverflow.com/questions/32557131/adding-a-vector-to-each-sublist-within-a-list-r
                              # http://stackoverflow.com/questions/43963683/r-flexible-passing-of-sublists-to-following-function
                              runfolds_merged <- do.call(Map, c(f = list, runfolds_list))
                              
-
+                             
                              if (importance == TRUE) {
                                # subset fold result to importance results only
                                impo_only <- runfolds_merged[6][[1]]
@@ -549,7 +500,6 @@ parsperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.
                              pooled_only <- runfolds_merged[c(1:4)]
                              pooled_only <- sapply(unique(names(pooled_only)), function(x) unname(unlist(pooled_only[names(pooled_only) == x])), simplify = FALSE)
 
-                             # Jetzt die avg. werte pro repetition errechnen
                              # Put the results from the pooled estimation into the pooled.err data structure:
                              if (error.rep) {
                                if (is.factor(data[, response])) {
@@ -567,8 +517,6 @@ parsperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.
                                    pooled_only$pooled.pred.test <- factor(lev[pooled_only$pooled.pred.test], levels = lev)
                                  }
                                } 
-                               #return(is.factor.prediction)
-                               ### and here
                                pooled.err.train <- NULL
                                if (err.train) {
                                  pooled.err.train <- err.fun(pooled_only$pooled.obs.train, pooled_only$pooled.pred.train)
@@ -576,12 +524,10 @@ parsperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.
 
                                currentPooled.err <- t(unlist(list(train = pooled.err.train, test = err.fun(pooled_only$pooled.obs.test,
                                                                                                            pooled_only$pooled.pred.test))))
-                               #return(is.factor.prediction)
-
                                if (do.gc >= 2) {
                                  gc()
                                }
-                             }  # end for each fold
+                             }
 
                              if ((do.gc >= 1) & (do.gc < 2)) {
                                gc()
@@ -590,43 +536,28 @@ parsperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.
                              # set currentImpo to NULL to prevent false importance output (resamp object)
                              # if not desired
                              if (importance == FALSE) {
-                               currentImpo <- NULL
+                               impo_only <- NULL
                              }
-                             #return(is.factor.prediction)
-
-                             #return(list(error = currentRes, pooled.error = currentPooled.err, importance = currentImpo))
                              result <- list(error = runfolds_merged$currentRes, pooled.error = currentPooled.err, importance = impo_only)
                              return(list(result))
                            }
     stopCluster(cl)
   }
   
-  # end foreach() ------
-
+  ### format parallel outputs
+  
+  if (par.args$par.mode == 2) {
   # split combined lists from foreach output into sublists referring to repetitions 
-  myRes_split <- split(myRes[[1]], 1:length(resamp))
+  myRes <- split(myRes[[1]], 1:length(resamp))
+  }
   
   # assign names to sublists - otherwise `transfer_parallel_output` does not work
-  for (i in 1:length(myRes_split)) {
-    names(myRes_split[[i]]) <- c("error", "pooled.error", "importance")
+  for (i in 1:length(myRes)) {
+    names(myRes[[i]]) <- c("error", "pooled.error", "importance")
   }
-
-  saveRDS(myRes_split, "~/Desktop/myRes_split")  
+  
   # transfer results of lapply() to respective data objects
-  myRes_mod <- transfer_parallel_output(myRes_split, res, impo, pooled.err)
-  
-  # for (i in 1:length(myRes)) {
-  #   if (i == 1) {
-  #     pooled.err <- myRes[[i]]$pooled.error
-  #     impo[[i]] <- myRes[[i]]$importance
-  #     res[[i]] <- myRes[[i]]$error
-  #   } else {
-  #     pooled.err <- rbind(pooled.err, myRes[[i]]$pooled.error)
-  #     impo[[i]] <- myRes[[i]]$importance
-  #     res[[i]] <- myRes[[i]]$error
-  #   }
-  # }
-  
+  myRes_mod <- transfer_parallel_output(myRes, res, impo, pooled.err)
   
   # convert matrix(?) to data.frame:
   if (error.rep) {

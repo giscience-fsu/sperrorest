@@ -296,7 +296,7 @@ runreps <- function(currentSample = NULL, data = NULL, formula = NULL,
                     currentImpo = NULL, pred.args = NULL, progress = NULL, 
                     pooled.obs.train = NULL, pooled.obs.test = NULL, pooled.pred.train = NULL,
                     response = NULL, is.factor.prediction = NULL, pooled.pred.test = NULL,
-                    coords = NULL, test.fun = NULL) {
+                    coords = NULL, test.fun = NULL, par.mode = NULL) {
   # output data structures
   currentRes <- NULL
   currentImpo <- currentSample
@@ -324,7 +324,7 @@ runreps <- function(currentSample = NULL, data = NULL, formula = NULL,
   environment(runfolds) <- environment()
   
   runfolds_list <- map(seq_along(currentSample), function(rep) runfolds(j = rep, data = data, currentSample = currentSample,
-                                                                      formula = formula, 
+                                                                      formula = formula, par.mode = par.mode, 
                                                                       model.args = model.args, do.try = do.try, model.fun = model.fun,
                                                                       error.fold = error.fold, error.rep = error.rep, imp.permutations = imp.permutations, 
                                                                       imp.variables = imp.variables, is.factor.prediction = is.factor.prediction,
@@ -397,7 +397,7 @@ runreps <- function(currentSample = NULL, data = NULL, formula = NULL,
   # set currentImpo to NULL to prevent false importance output (resamp object) 
   # if not desired 
   if (importance == FALSE) {
-    currentImpo <- NULL
+    impo_only <- NULL
   }
   
   #return(list(error = currentRes, pooled.error = currentPooled.err, importance = currentImpo))
