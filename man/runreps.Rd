@@ -12,7 +12,8 @@ runreps(currentSample = NULL, data = NULL, formula = NULL,
   currentRes = NULL, currentImpo = NULL, pred.args = NULL,
   progress = NULL, pooled.obs.train = NULL, pooled.obs.test = NULL,
   pooled.pred.train = NULL, response = NULL, is.factor.prediction = NULL,
-  pooled.pred.test = NULL, coords = NULL, test.fun = NULL)
+  pooled.pred.test = NULL, coords = NULL, test.fun = NULL,
+  par.mode = NULL)
 }
 \description{
 runreps

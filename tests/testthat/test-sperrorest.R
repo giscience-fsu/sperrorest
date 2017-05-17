@@ -43,7 +43,7 @@ test_that("sperrorest() produces correct output for binary response", {
                        smp.fun = partition.cv, 
                        smp.args = list(repetition = 1:2, nfold = 2),
                        benchmark = TRUE, 
-                       importance = F, imp.permutations = 2)
+                       importance = TRUE, imp.permutations = 2)
   summary.rep <- summary(nspres$error.rep)                    
   summary.fold <- summary(nspres$error.fold)
   summary.resampling <- summary(nspres$represampling)
