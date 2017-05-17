@@ -574,7 +574,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
         fit <- try(do.call(model.fun, args = margs), silent = silent)
         
         # Error handling:
-        if (class(fit) == "try-error") # when does this happen?
+        if (inherits(fit, "try-error")) # when does this happen?
         {
           fit <- NULL # nocov
           if (error.fold) # nocov
