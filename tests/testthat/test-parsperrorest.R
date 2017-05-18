@@ -46,7 +46,7 @@ test_that("output type (= list) for different logical combinations of
                                  model.fun = lda,
                                  pred.fun = lda.predfun,
                                  smp.fun = partition.cv,
-                                 smp.args = list(repetition = 1:2, nfold = 2),
+                                 smp.args = list(repetition = 1:4, nfold = 6),
                                  par.args = list(par.mode = 1, par.units = 2),
                                  error.rep = TRUE, error.fold = TRUE,
                                  benchmark = TRUE, progress = FALSE)
@@ -85,8 +85,6 @@ test_that("output type (= list) for different logical combinations of
 
 test_that("output length of list is correct for error.rep = TRUE and error.fold  = TRUE 
           for par.mode = 2 on rpart example", {
-            
-            testthat::skip("par.mode = 2 & LDA not working anymore after rewrite with runfolds")
             
             data(ecuador)
             fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
@@ -309,7 +307,7 @@ test_that("do.try argument", {
 test_that("output length of list is correct for error.rep = TRUE and error.fold  = TRUE 
           for par.mode = 1 on rpart example", {
             
-            testthat::skip("par.mode = 2 & LDA not working anymore after rewrite with runfolds")
+            testthat::skip("par.mode = 1 & rpart not working")
             
             data(ecuador) 
             fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
@@ -473,8 +471,6 @@ test_that("deprecated args", {
 
 test_that("partition.factor.cv works (LDA)", {
   
-  testthat::skip("par.mode = 2 & LDA not working anymore after rewrite with runfolds")
-  
   lda.predfun <- function(object, newdata, fac = NULL) {
     library(nnet)
     majority <- function(x) {
@@ -506,7 +502,7 @@ test_that("partition.factor.cv works (LDA)", {
                                   smp.fun = partition.factor.cv,
                                   smp.args = list(fac = "field", repetition = 1:2, nfold = 2),
                                   par.args = list(par.units = 2, par.mode = 2),
-                                  error.rep = TRUE, error.fold = TRUE,
+                                  error.rep = TRUE, error.fold = TRUE, progress = "TRUE",
                                   benchmark = TRUE)
   
 })

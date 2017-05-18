@@ -38,6 +38,40 @@ pred.args = list(type = "response"), response = "slides", par.cl = 2,
 coords = c("x", "y"), progress = 1, pooled.obs.train = c(), 
 pooled.obs.test = c(), err.fun = err.default)
 
+### LDA
+library(MASS)
+currentSample <- partition.cv(maipo, nfold = 4, repetition = 2)[[1]]
+lda.predfun <- function(object, newdata, fac = NULL) {
+library(nnet)
+majority <- function(x) {
+  levels(x)[which.is.max(table(x))]
+}
+
+majority.filter <- function(x, fac) {
+  for (lev in levels(fac)) {
+    x[ fac == lev ] <- majority(x[ fac == lev ])
+  }
+  x
+}
+
+pred <- predict(object, newdata = newdata)$class
+if (!is.null(fac)) pred <- majority.filter(pred, newdata[,fac])
+return(pred)
+ }
+ 
+data("maipo", package = "sperrorest")
+predictors <- colnames(maipo)[5:ncol(maipo)]
+fo <- as.formula(paste("croptype ~", paste(predictors, collapse = "+")))
+
+runfolds_single <- runfolds(j = 1, data = maipo, currentSample = currentSample,
+formula = fo, 
+do.try = FALSE, model.fun = lda, pred.fun = lda.predfun,
+error.fold = TRUE, error.rep = TRUE, pred.args = list(fac = "field"),
+err.train = TRUE, importance = FALSE, currentRes = currentSample, 
+response = "croptype", par.cl = 2, 
+coords = c("x", "y"), progress = 1, pooled.obs.train = c(), 
+pooled.obs.test = c(), err.fun = err.default)
+
 ### rpart example
 data(ecuador)
 fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
