@@ -368,7 +368,7 @@ parsperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.
   ### par.mode = 1 (pbapply) -------
   
   
-  if (par.args$par.mode == 1 | par.args$par.mode == 3) {
+  if (par.args$par.mode == 1 | par.args$par.mode == 3 | par.args$par.mode == 4) {
     
     if (par.args$par.units > detectCores()) {
       par.args$par.units <- detectCores()
@@ -413,7 +413,7 @@ parsperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.
     
     # runreps call Sun Apr  9 13:28:31 2017 ------------------------------
     
-    if (par.args$par.mode == 1) {
+    if (par.args$par.mode == 1 | par.args$par.mode == 4) {
       if (.Platform$OS.type == "Windows") {
         
       myRes <- try(pblapply(cl = par.cl, resamp, function(X) runreps(currentSample = X, data = data, par.mode = par.args$par.mode,
@@ -426,16 +426,28 @@ parsperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.
                                                                      coords = coords, progress = progress, pooled.obs.train = pooled.obs.train,
                                                                      pooled.obs.test = pooled.obs.test, err.fun = err.fun)))
       } else {
-        myRes <- try(pbmclapply(mc.cores = par.cl, resamp, function(X) runreps(currentSample = X, data = data, par.mode = par.args$par.mode,
-                                                                               formula = formula, do.gc = do.gc, imp.one.rep = imp.one.rep, pred.fun = pred.fun,
-                                                                               model.args = model.args, do.try = do.try, model.fun = model.fun,
-                                                                               error.fold = error.fold, error.rep = error.rep, imp.permutations = imp.permutations,
-                                                                               imp.variables = imp.variables, is.factor.prediction = is.factor.prediction,
-                                                                               err.train = err.train, importance = importance, currentRes = currentRes,
-                                                                               pred.args = pred.args, response = response, par.cl = par.cl,
-                                                                               coords = coords, progress = progress, pooled.obs.train = pooled.obs.train,
-                                                                               pooled.obs.test = pooled.obs.test, err.fun = err.fun)))
+        if (par.args$par.mode == 4) {
+          myRes <- try(mclapply(mc.cores = par.cl, resamp, function(X) runreps(currentSample = X, data = data, par.mode = par.args$par.mode,
+                                                                                 formula = formula, do.gc = do.gc, imp.one.rep = imp.one.rep, pred.fun = pred.fun,
+                                                                                 model.args = model.args, do.try = do.try, model.fun = model.fun,
+                                                                                 error.fold = error.fold, error.rep = error.rep, imp.permutations = imp.permutations,
+                                                                                 imp.variables = imp.variables, is.factor.prediction = is.factor.prediction,
+                                                                                 err.train = err.train, importance = importance, currentRes = currentRes,
+                                                                                 pred.args = pred.args, response = response, par.cl = par.cl,
+                                                                                 coords = coords, progress = progress, pooled.obs.train = pooled.obs.train,
+                                                                                 pooled.obs.test = pooled.obs.test, err.fun = err.fun)))
+        } else {
+          myRes <- try(pbmclapply(mc.cores = par.cl, resamp, function(X) runreps(currentSample = X, data = data, par.mode = par.args$par.mode,
+                                                                                 formula = formula, do.gc = do.gc, imp.one.rep = imp.one.rep, pred.fun = pred.fun,
+                                                                                 model.args = model.args, do.try = do.try, model.fun = model.fun,
+                                                                                 error.fold = error.fold, error.rep = error.rep, imp.permutations = imp.permutations,
+                                                                                 imp.variables = imp.variables, is.factor.prediction = is.factor.prediction,
+                                                                                 err.train = err.train, importance = importance, currentRes = currentRes,
+                                                                                 pred.args = pred.args, response = response, par.cl = par.cl,
+                                                                                 coords = coords, progress = progress, pooled.obs.train = pooled.obs.train,
+                                                                                 pooled.obs.test = pooled.obs.test, err.fun = err.fun)))
         }
+      }
       
       
     }
