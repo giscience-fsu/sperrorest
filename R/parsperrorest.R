@@ -10,6 +10,7 @@
 #' @import pbapply
 #' @import rpart
 #' @importFrom utils packageVersion 
+#' @import future
 #' @import parallel
 #' @import foreach
 #' @import doParallel
@@ -367,7 +368,7 @@ parsperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.
   ### par.mode = 1 (pbapply) -------
   
   
-  if (par.args$par.mode == 1) {
+  if (par.args$par.mode == 1 | par.args$par.mode == 3) {
     
     if (par.args$par.units > detectCores()) {
       par.args$par.units <- detectCores()
@@ -410,10 +411,37 @@ parsperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.
     
     #environment(runreps) <- environment()
     
-    # pblapply call Sun Apr  9 13:28:31 2017 ------------------------------
+    # runreps call Sun Apr  9 13:28:31 2017 ------------------------------
     
-    
-    myRes <- try(pblapply(cl = par.cl, resamp, function(X) runreps(currentSample = X, data = data, par.mode = par.args$par.mode,
+    if (par.args$par.mode == 1) {
+      if (.Platform$OS.type == "Windows") {
+        
+      myRes <- try(pblapply(cl = par.cl, resamp, function(X) runreps(currentSample = X, data = data, par.mode = par.args$par.mode,
+                                                                     formula = formula, do.gc = do.gc, imp.one.rep = imp.one.rep, pred.fun = pred.fun,
+                                                                     model.args = model.args, do.try = do.try, model.fun = model.fun,
+                                                                     error.fold = error.fold, error.rep = error.rep, imp.permutations = imp.permutations,
+                                                                     imp.variables = imp.variables, is.factor.prediction = is.factor.prediction,
+                                                                     err.train = err.train, importance = importance, currentRes = currentRes,
+                                                                     pred.args = pred.args, response = response, par.cl = par.cl,
+                                                                     coords = coords, progress = progress, pooled.obs.train = pooled.obs.train,
+                                                                     pooled.obs.test = pooled.obs.test, err.fun = err.fun)))
+      } else {
+        myRes <- try(pbmclapply(mc.cores = par.cl, resamp, function(X) runreps(currentSample = X, data = data, par.mode = par.args$par.mode,
+                                                                               formula = formula, do.gc = do.gc, imp.one.rep = imp.one.rep, pred.fun = pred.fun,
+                                                                               model.args = model.args, do.try = do.try, model.fun = model.fun,
+                                                                               error.fold = error.fold, error.rep = error.rep, imp.permutations = imp.permutations,
+                                                                               imp.variables = imp.variables, is.factor.prediction = is.factor.prediction,
+                                                                               err.train = err.train, importance = importance, currentRes = currentRes,
+                                                                               pred.args = pred.args, response = response, par.cl = par.cl,
+                                                                               coords = coords, progress = progress, pooled.obs.train = pooled.obs.train,
+                                                                               pooled.obs.test = pooled.obs.test, err.fun = err.fun)))
+        }
+      
+      
+    }
+    if (par.args$par.mode == 3) {
+      plan(multiprocess, workers = par.args$par.units + 1)
+      myRes <- try(future_lapply(resamp, function(X) runreps(currentSample = X, data = data, par.mode = par.args$par.mode,
                                                              formula = formula, do.gc = do.gc, imp.one.rep = imp.one.rep, pred.fun = pred.fun,
                                                              model.args = model.args, do.try = do.try, model.fun = model.fun,
                                                              error.fold = error.fold, error.rep = error.rep, imp.permutations = imp.permutations,
@@ -422,15 +450,7 @@ parsperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.
                                                              pred.args = pred.args, response = response, par.cl = par.cl,
                                                              coords = coords, progress = progress, pooled.obs.train = pooled.obs.train,
                                                              pooled.obs.test = pooled.obs.test, err.fun = err.fun)))
-  #   myRes <- lapply(resamp, function(X) runreps(currentSample = X, data = data, par.mode = par.args$par.mode,
-  #                                                            formula = formula, do.gc = do.gc, imp.one.rep = imp.one.rep, pred.fun = pred.fun,
-  #                                                            model.args = model.args, do.try = do.try, model.fun = model.fun,
-  #                                                            error.fold = error.fold, error.rep = error.rep, imp.permutations = imp.permutations, 
-  #                                                            imp.variables = imp.variables, is.factor.prediction = is.factor.prediction,
-  #                                                            err.train = err.train, importance = importance, currentRes = currentRes, 
-  #                                                            pred.args = pred.args, response = response, par.cl = par.cl, 
-  #                                                            coords = coords, progress = progress, pooled.obs.train = pooled.obs.train, 
-  #                                                            pooled.obs.test = pooled.obs.test, err.fun = err.fun))
+    }
   }
   
   
@@ -459,6 +479,8 @@ parsperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.
     
     cl <- makeCluster(par.args$par.units, outfile = out.progress)
     registerDoParallel(cl)
+    
+    # runreps call Fri May 19 14:35:58 2017 ------------------------------
     
     myRes <- foreach(i = 1:length(resamp), .packages = (.packages()), .errorhandling = "remove", 
                            .combine = "comb", .multicombine = TRUE, .verbose = FALSE) %dopar% {
