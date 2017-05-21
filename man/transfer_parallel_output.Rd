@@ -8,6 +8,6 @@ transfer_parallel_output(myRes = NULL, res = NULL, impo = NULL,
   pooled.err = NULL)
 }
 \description{
-transfer_parallel_output
+transfers output of parallel calls to runreps
 }
 \keyword{internal}

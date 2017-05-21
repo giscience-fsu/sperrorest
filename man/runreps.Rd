@@ -5,7 +5,7 @@
 \title{runreps}
 \usage{
 runreps(currentSample = NULL, data = NULL, formula = NULL,
-  model.args = NULL, par.cl = NULL, do.gc = 1, imp.one.rep = NULL,
+  model.args = NULL, par.cl = NULL, do.gc = NULL, imp.one.rep = NULL,
   do.try = NULL, model.fun = NULL, error.fold = NULL, error.rep = NULL,
   pred.fun = NULL, imp.variables = NULL, imp.permutations = NULL,
   err.fun = NULL, train.fun = NULL, err.train = NULL, importance = NULL,
@@ -13,110 +13,9 @@ runreps(currentSample = NULL, data = NULL, formula = NULL,
   progress = NULL, pooled.obs.train = NULL, pooled.obs.test = NULL,
   pooled.pred.train = NULL, response = NULL, is.factor.prediction = NULL,
   pooled.pred.test = NULL, coords = NULL, test.fun = NULL,
-  par.mode = NULL)
+  par.mode = NULL, i = NULL)
 }
 \description{
-runreps
+Runs model fitting, error estimation and variable importance on fold level
 }
-\examples{
-#' ### LDA
-library(MASS)
-currentSample <- readRDS("inst/test-objects/resamp_maipo.rda")
-lda.predfun <- function(object, newdata, fac = NULL) {
-library(nnet)
-majority <- function(x) {
-  levels(x)[which.is.max(table(x))]
-}
-
-majority.filter <- function(x, fac) {
-  for (lev in levels(fac)) {
-    x[ fac == lev ] <- majority(x[ fac == lev ])
-  }
-  x
-}
-
-pred <- predict(object, newdata = newdata)$class
-if (!is.null(fac)) pred <- majority.filter(pred, newdata[,fac])
-return(pred)
- }
- 
-data("maipo", package = "sperrorest")
-predictors <- colnames(maipo)[5:ncol(maipo)]
-fo <- as.formula(paste("croptype ~", paste(predictors, collapse = "+")))
-
-runreps_res <- lapply(currentSample, function(X) runreps(currentSample = X, data = maipo,
-formula = fo, par.mode = 1, pred.fun = lda.predfun,
-do.try = FALSE, model.fun = lda,
-error.fold = TRUE, error.rep = TRUE, do.gc = 1,
-err.train = TRUE, importance = FALSE, currentRes = currentRes, 
-pred.args = list(fac = "field"), response = "croptype", par.cl = 2, 
-coords = c("x", "y"), progress = 1, pooled.obs.train = c(), 
-pooled.obs.test = c(), err.fun = err.default))
-
-####
-
-data <- ecuador
-imp.one.rep <- readRDS("inst/test-objects/imp.one.rep.rda")
-currentSample <- readRDS("inst/test-objects/resamp.rda")
-currentRes <- readRDS("inst/test-objects/currentRes.rda")
-
-runreps_res <- lapply(currentSample, function(X) runreps(currentSample = X, data = ecuador,
-formula = slides ~ dem + slope + hcurv + vcurv + log.carea + cslope, 
-model.args = list(family = "binomial"), do.try = FALSE, model.fun = glm,
-error.fold = TRUE, error.rep = TRUE, imp.permutations = 2, do.gc = 1,
-imp.variables = c("dem", "slope", "hcurv", "vcurv", "log.carea", "cslope"),
-err.train = TRUE, importance = TRUE, currentRes = currentRes, 
-pred.args = list(type = "response"), response = "slides", par.cl = 2, 
-coords = c("x", "y"), progress = 1, pooled.obs.train = c(), 
-pooled.obs.test = c(), err.fun = err.default))
-
-runreps_res <- lapply(currentSample, function(X) runreps(currentSample = X, data = ecuador,
-formula = slides ~ dem + slope + hcurv + vcurv + log.carea + cslope, 
-do.try = FALSE, model.fun = rpart,
-error.fold = TRUE, error.rep = TRUE, imp.permutations = 2, pred.fun = mypred.rpart, 
-model.args = list(control = ctrl),
-imp.variables = c("dem", "slope", "hcurv", "vcurv", "log.carea", "cslope"),
-err.train = TRUE, importance = TRUE, currentRes = currentRes, 
-response = "slides", par.cl = 2, 
-coords = c("x", "y"), progress = 1, pooled.obs.train = c(), 
-pooled.obs.test = c(), err.fun = err.default))
-
-runfolds_list <- map(seq_along(1:4), function(j) runfolds(j))
-}
-\keyword{#}
-\keyword{####}
-\keyword{'currentSample',}
-\keyword{'runreps()'}
-\keyword{1}
-\keyword{2}
-\keyword{4}
-\keyword{<-}
-\keyword{also}
-\keyword{an}
-\keyword{apply}
-\keyword{are}
-\keyword{call}
-\keyword{calling}
-\keyword{currentRes}
-\keyword{currentSample}
-\keyword{data}
-\keyword{ecuador}
-\keyword{first}
-\keyword{folds}
-\keyword{imp.one.rep}
 \keyword{internal}
-\keyword{j}
-\keyword{nFolds}
-\keyword{normally}
-\keyword{of}
-\keyword{readRDS("inst/test-objects/currentRes.rda")}
-\keyword{readRDS("inst/test-objects/imp.one.rep.rda")}
-\keyword{readRDS("inst/test-objects/resamp.rda")}
-\keyword{repetition}
-\keyword{repetitions,}
-\keyword{running}
-\keyword{see}
-\keyword{seq_along}
-\keyword{the}
-\keyword{to}
-\keyword{we}
