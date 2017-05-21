@@ -1,106 +1,8 @@
-#'runfolds
-#'@keywords internal
-#'@importFrom purrr map
-#'@examples
-#' 
-#' j <- 1 # running the first repetition of 'currentSample', normally we are 
-#' # calling an apply call to seq_along nFolds of repetition
-#' # see also 'runreps()'
-#' data <- ecuador
-#' imp.one.rep <- readRDS("inst/test-objects/imp.one.rep.rda")
-#' currentSample <- readRDS("inst/test-objects/resamp.rda")[[1]]
-#' currentRes <- readRDS("inst/test-objects/currentRes.rda")
-#' 
-#' runfolds_single <- runfolds(j = 1, data = ecuador, currentSample = currentSample,
-#' formula = slides ~ dem + slope + hcurv + vcurv + log.carea + cslope, 
-#' model.args = list(family = "binomial"), do.try = FALSE, model.fun = glm,
-#' error.fold = TRUE, error.rep = TRUE, imp.permutations = 2, 
-#' imp.variables = c("dem", "slope", "hcurv", "vcurv", "log.carea", "cslope"),
-#' err.train = TRUE, importance = TRUE, currentRes = currentRes, 
-#' pred.args = list(type = "response"), response = "slides", par.cl = 2, 
-#' coords = c("x", "y"), progress = 1, pooled.obs.train = c(), 
-#' pooled.obs.test = c(), err.fun = err.default)
-#' 
-#' ### LDA
-#' library(MASS)
-#' currentSample <- partition.cv(maipo, nfold = 4, repetition = 2)[[1]]
-#' lda.predfun <- function(object, newdata, fac = NULL) {
-#' library(nnet)
-#' majority <- function(x) {
-#'   levels(x)[which.is.max(table(x))]
-#' }
-#' 
-#' majority.filter <- function(x, fac) {
-#'   for (lev in levels(fac)) {
-#'     x[ fac == lev ] <- majority(x[ fac == lev ])
-#'   }
-#'   x
-#' }
-#' 
-#' pred <- predict(object, newdata = newdata)$class
-#' if (!is.null(fac)) pred <- majority.filter(pred, newdata[,fac])
-#' return(pred)
-#'  }
-#'  
-#' data("maipo", package = "sperrorest")
-#' predictors <- colnames(maipo)[5:ncol(maipo)]
-#' fo <- as.formula(paste("croptype ~", paste(predictors, collapse = "+")))
-#' 
-#' runfolds_single <- runfolds(j = 1, data = maipo, currentSample = currentSample,
-#' formula = fo, 
-#' do.try = FALSE, model.fun = lda, pred.fun = lda.predfun,
-#' error.fold = TRUE, error.rep = TRUE, pred.args = list(fac = "field"),
-#' err.train = TRUE, importance = FALSE, currentRes = currentSample, 
-#' response = "croptype", par.cl = 2, 
-#' coords = c("x", "y"), progress = 1, pooled.obs.train = c(), 
-#' pooled.obs.test = c(), err.fun = err.default)
-#' 
-#' ### rpart example
-#' data(ecuador)
-#' fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
-#' 
-#' mypred.rpart <- function(object, newdata) predict(object, newdata)[, 2]
-#' ctrl <- rpart.control(cp = 0.005) # show the effects of overfitting
-#' 
-#' # Non-spatial 5-repeated 10-fold cross-validation:
-#' mypred.rpart <- function(object, newdata) predict(object, newdata)[,2]
-#' 
-#' runfolds_single <- runfolds(j = 1, data = ecuador, currentSample = currentSample,
-#' formula = slides ~ dem + slope + hcurv + vcurv + log.carea + cslope, 
-#' do.try = FALSE, model.fun = rpart,
-#' error.fold = TRUE, error.rep = TRUE, imp.permutations = 2, pred.fun = mypred.rpart, 
-#' model.args = list(control = ctrl),
-#' imp.variables = c("dem", "slope", "hcurv", "vcurv", "log.carea", "cslope"),
-#' err.train = TRUE, importance = TRUE, currentRes = currentRes, 
-#' response = "slides", par.cl = 2, 
-#' coords = c("x", "y"), progress = 1, pooled.obs.train = c(), 
-#' pooled.obs.test = c(), err.fun = err.default)
-#' 
-#' runfolds_list <- map(seq_along(1:4), function(rep) runfolds(j = rep, data = ecuador, currentSample = currentSample,
-#' formula = slides ~ dem + slope + hcurv + vcurv + log.carea + cslope, 
-#' do.try = FALSE, model.fun = rpart,
-#' error.fold = TRUE, error.rep = TRUE, imp.permutations = 2, pred.fun = mypred.rpart, 
-#' model.args = list(control = ctrl),
-#' imp.variables = c("dem", "slope", "hcurv", "vcurv", "log.carea", "cslope"),
-#' err.train = TRUE, importance = TRUE, currentRes = currentRes, 
-#' response = "slides", par.cl = 2, 
-#' coords = c("x", "y"), progress = 1, pooled.obs.train = c(), 
-#' pooled.obs.test = c(), err.fun = err.default))
-#' 
-#' # create list with multiple fold results
-#' runfolds_list <- map(seq_along(1:4), function(rep) runfolds(j = rep, data = ecuador, currentSample = currentSample,
-#' formula = slides ~ dem + slope + hcurv + vcurv + log.carea + cslope, 
-#' model.args = list(family = "binomial"), do.try = FALSE, model.fun = glm,
-#' error.fold = TRUE, error.rep = TRUE, imp.permutations = 2, 
-#' imp.variables = c("dem", "slope", "hcurv", "vcurv", "log.carea", "cslope"),
-#' err.train = TRUE, importance = TRUE, currentRes = currentRes, 
-#' pred.args = list(type = "response"), response = "slides", par.cl = 2, 
-#' coords = c("x", "y"), progress = 1, pooled.obs.train = c(), 
-#' pooled.obs.test = c(), err.fun = err.default))
-#' 
-#' # MERGE SUBLISTS: ONLY CURRENTRES AND CURRENTIMPO
-#' 
-#'@export
+#' @title runfolds
+#' @description Runs model fitting, error estimation and variable importance on fold level
+#' @keywords internal
+#' @importFrom purrr map
+#' @export
 
 runfolds <- function(j = NULL, currentSample = NULL, data = NULL, formula = NULL, 
                      model.args = NULL, par.cl = NULL, par.mode = NULL,
@@ -111,7 +13,8 @@ runfolds <- function(j = NULL, currentSample = NULL, data = NULL, formula = NULL
                      currentImpo = NULL, pred.args = NULL, progress = NULL, 
                      pooled.obs.train = NULL, pooled.obs.test = NULL, pooled.pred.train = NULL,
                      response = NULL, is.factor.prediction = NULL, pooled.pred.test = NULL,
-                     coords = NULL, test.fun = NULL, imp.one.rep = NULL, i = NULL) { 
+                     coords = NULL, test.fun = NULL, imp.one.rep = NULL, i = NULL,
+                     train.param = NULL, do.gc = NULL, test.param = NULL) { 
   if (importance == FALSE) {
     
     if (par.mode == 2 && progress == "TRUE" | progress == 1) {
@@ -316,88 +219,15 @@ runfolds <- function(j = NULL, currentSample = NULL, data = NULL, formula = NULL
   
 }
 
-#'
-#'runreps
-#'@keywords internal
-#' j <- 1 # running the first repetition of 'currentSample', normally we are 
-#' # calling an apply call to seq_along nFolds of repetition
-#' # see also 'runreps()'
-#' #### 2 repetitions, 4 folds
-#' data <- ecuador
-#' imp.one.rep <- readRDS("inst/test-objects/imp.one.rep.rda")
-#' currentSample <- readRDS("inst/test-objects/resamp.rda")
-#' currentRes <- readRDS("inst/test-objects/currentRes.rda")
-#' 
-#' @examples 
-#' #' ### LDA
-#' library(MASS)
-#' currentSample <- readRDS("inst/test-objects/resamp_maipo.rda")
-#' lda.predfun <- function(object, newdata, fac = NULL) {
-#' library(nnet)
-#' majority <- function(x) {
-#'   levels(x)[which.is.max(table(x))]
-#' }
-#' 
-#' majority.filter <- function(x, fac) {
-#'   for (lev in levels(fac)) {
-#'     x[ fac == lev ] <- majority(x[ fac == lev ])
-#'   }
-#'   x
-#' }
-#' 
-#' pred <- predict(object, newdata = newdata)$class
-#' if (!is.null(fac)) pred <- majority.filter(pred, newdata[,fac])
-#' return(pred)
-#'  }
-#'  
-#' data("maipo", package = "sperrorest")
-#' predictors <- colnames(maipo)[5:ncol(maipo)]
-#' fo <- as.formula(paste("croptype ~", paste(predictors, collapse = "+")))
-#' 
-#' runreps_res <- lapply(currentSample, function(X) runreps(currentSample = X, data = maipo,
-#' formula = fo, par.mode = 1, pred.fun = lda.predfun,
-#' do.try = FALSE, model.fun = lda,
-#' error.fold = TRUE, error.rep = TRUE, do.gc = 1,
-#' err.train = TRUE, importance = FALSE, currentRes = currentRes, 
-#' pred.args = list(fac = "field"), response = "croptype", par.cl = 2, 
-#' coords = c("x", "y"), progress = 1, pooled.obs.train = c(), 
-#' pooled.obs.test = c(), err.fun = err.default))
-#' 
-#' ####
-#' 
-#' data <- ecuador
-#' imp.one.rep <- readRDS("inst/test-objects/imp.one.rep.rda")
-#' currentSample <- readRDS("inst/test-objects/resamp.rda")
-#' currentRes <- readRDS("inst/test-objects/currentRes.rda")
-#' 
-#' runreps_res <- lapply(currentSample, function(X) runreps(currentSample = X, data = ecuador,
-#' formula = slides ~ dem + slope + hcurv + vcurv + log.carea + cslope, 
-#' model.args = list(family = "binomial"), do.try = FALSE, model.fun = glm,
-#' error.fold = TRUE, error.rep = TRUE, imp.permutations = 2, do.gc = 1,
-#' imp.variables = c("dem", "slope", "hcurv", "vcurv", "log.carea", "cslope"),
-#' err.train = TRUE, importance = TRUE, currentRes = currentRes, 
-#' pred.args = list(type = "response"), response = "slides", par.cl = 2, 
-#' coords = c("x", "y"), progress = 1, pooled.obs.train = c(), 
-#' pooled.obs.test = c(), err.fun = err.default))
-#' 
-#' runreps_res <- lapply(currentSample, function(X) runreps(currentSample = X, data = ecuador,
-#' formula = slides ~ dem + slope + hcurv + vcurv + log.carea + cslope, 
-#' do.try = FALSE, model.fun = rpart,
-#' error.fold = TRUE, error.rep = TRUE, imp.permutations = 2, pred.fun = mypred.rpart, 
-#' model.args = list(control = ctrl),
-#' imp.variables = c("dem", "slope", "hcurv", "vcurv", "log.carea", "cslope"),
-#' err.train = TRUE, importance = TRUE, currentRes = currentRes, 
-#' response = "slides", par.cl = 2, 
-#' coords = c("x", "y"), progress = 1, pooled.obs.train = c(), 
-#' pooled.obs.test = c(), err.fun = err.default))
-#' 
-#' runfolds_list <- map(seq_along(1:4), function(j) runfolds(j))
-#'@export
+#' @title runreps
+#' @description Runs model fitting, error estimation and variable importance on fold level
+#' @keywords internal
+#' @export
 #'
 
 # runreps function for lapply()
 runreps <- function(currentSample = NULL, data = NULL, formula = NULL, 
-                    model.args = NULL, par.cl = NULL, do.gc = 1, imp.one.rep = NULL,
+                    model.args = NULL, par.cl = NULL, do.gc = NULL, imp.one.rep = NULL,
                     do.try = NULL, model.fun = NULL, error.fold = NULL, 
                     error.rep = NULL, pred.fun = NULL, imp.variables = NULL,
                     imp.permutations = NULL, err.fun = NULL, train.fun = NULL,
@@ -405,7 +235,7 @@ runreps <- function(currentSample = NULL, data = NULL, formula = NULL,
                     currentImpo = NULL, pred.args = NULL, progress = NULL, 
                     pooled.obs.train = NULL, pooled.obs.test = NULL, pooled.pred.train = NULL,
                     response = NULL, is.factor.prediction = NULL, pooled.pred.test = NULL,
-                    coords = NULL, test.fun = NULL, par.mode = NULL) {
+                    coords = NULL, test.fun = NULL, par.mode = NULL, i = NULL) {
   # output data structures
   currentRes <- NULL
   currentImpo <- currentSample
@@ -518,8 +348,8 @@ runreps <- function(currentSample = NULL, data = NULL, formula = NULL,
 }
 
 
-#' transfer_parallel_output
-#' 
+#' @title transfer_parallel_output
+#' @description transfers output of parallel calls to runreps
 #' @keywords internal
 #' @export
 transfer_parallel_output <- function(myRes = NULL, res = NULL, impo = NULL,
