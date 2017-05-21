@@ -43,8 +43,8 @@ test_that("output type (= list) for different logical combinations of
                                  model.fun = lda,
                                  pred.fun = lda.predfun,
                                  smp.fun = partition.cv,
-                                 smp.args = list(repetition = 1:4, nfold = 6),
-                                 par.args = list(par.mode = "foreach", par.units = "foreach"),
+                                 smp.args = list(repetition = 1:2, nfold = 2),
+                                 par.args = list(par.mode = "foreach", par.units = 2),
                                  error.rep = TRUE, error.fold = TRUE,
                                  benchmark = TRUE, progress = FALSE)
             
@@ -58,7 +58,7 @@ test_that("output type (= list) for different logical combinations of
                                  pred.fun = lda.predfun,
                                  smp.fun = partition.cv,
                                  smp.args = list(repetition = 1:2, nfold = 2),
-                                 par.args = list(par.mode = "foreach", par.units = "foreach"),
+                                 par.args = list(par.mode = "foreach", par.units = 2),
                                  error.rep = TRUE, error.fold = FALSE,
                                  benchmark = TRUE, progress = TRUE)
             
@@ -71,7 +71,7 @@ test_that("output type (= list) for different logical combinations of
                                  pred.fun = lda.predfun,
                                  smp.fun = partition.cv,
                                  smp.args = list(repetition = 1:2, nfold = 2),
-                                 par.args = list(par.mode = "foreach", par.units = "foreach"),
+                                 par.args = list(par.mode = "foreach", par.units = 2),
                                  error.rep = FALSE, error.fold = TRUE,
                                  benchmark = TRUE, progress = FALSE)
             
@@ -98,7 +98,7 @@ test_that("output length of list is correct for error.rep = TRUE and error.fold 
                                          progress = FALSE,
                                          smp.fun = partition.cv,
                                          smp.args = list(repetition = 1:2, nfold = 2),
-                                         par.args = list(par.mode = 2, par.units = "foreach"),
+                                         par.args = list(par.mode = "foreach", par.units = 2),
                                          error.rep = TRUE, error.fold = TRUE)
             
             expect_equal(length(par.nsp.res$error.fold[[1]]), 2)
@@ -115,7 +115,7 @@ test_that("parsperrorest() variable importance with error.rep = T and error.fold
                           pred.fun = predict, pred.args = list(type = "response"),
                           smp.fun = partition.cv,
                           smp.args = list(repetition = 1:2, nfold = 4),
-                          par.args = list(par.mode = "foreach", par.units = "foreach"),
+                          par.args = list(par.mode = "foreach", par.units = 2),
                           benchmark = TRUE, 
                           importance = TRUE, imp.permutations = 10)
   expect_equal(class(nspres$importance[[1]][[1]]), "data.frame")
@@ -130,7 +130,7 @@ test_that("parsperrorest() variable importance with error.rep = F and error.fold
                           pred.fun = predict, pred.args = list(type = "response"),
                           smp.fun = partition.cv,
                           smp.args = list(repetition = 1:2, nfold = 4),
-                          par.args = list(par.mode = 2, par.units = "foreach"),
+                          par.args = list(par.mode = "foreach", par.units = 2),
                           benchmark = TRUE, error.rep = FALSE, 
                           importance = TRUE, imp.permutations = 10)
   expect_equal(class(nspres$importance[[1]][[1]]), "data.frame")
@@ -147,7 +147,7 @@ test_that("parsperrorest() produces correct output for binary response", {
                           pred.fun = predict, pred.args = list(type = "response"),
                           smp.fun = partition.cv,
                           smp.args = list(repetition = 1:2, nfold = 2),
-                          par.args = list(par.mode = "foreach", par.units = "foreach"),
+                          par.args = list(par.mode = "foreach", par.units = 2),
                           benchmark = TRUE, 
                           importance = FALSE, imp.permutations = 2)
   summary.rep <- summary(nspres$error.rep)
@@ -165,7 +165,7 @@ test_that("parsperrorest() when pred.fun = NULL", {
                           pred.args = list(type = "response"),
                           smp.fun = partition.cv,
                           smp.args = list(repetition = 1:2, nfold = 4),
-                          par.args = list(par.mode = 2, par.units = "foreach"),
+                          par.args = list(par.mode = "foreach", par.units = 2),
                           benchmark = TRUE,
                           importance = TRUE, imp.permutations = 10)
   summary.rep <- summary(nspres$error.rep)
@@ -176,13 +176,11 @@ test_that("parsperrorest() when pred.fun = NULL", {
   expect_equal(class(nspres$importance[[1]][[1]]), "data.frame") # check for importance object
 })
 
-# parsperrorest par.mode = "apply" Mon Feb  6 23:25:08 2017 ------------------------------
+# parsperrorest par.mode = "future" Mon Feb  6 23:25:08 2017 ------------------------------
 
 
 test_that("output type (= list) for different logical combinations of 
-          error.rep and error.fold for par.mode = 'apply' on LDA example", {
-            
-            testthat::skip_on_os("mac")
+          error.rep and error.fold for par.mode = 'future' on LDA example", {
             
             lda.predfun <- function(object, newdata, fac = NULL) {
               library(nnet)
@@ -217,7 +215,7 @@ test_that("output type (= list) for different logical combinations of
                                  pred.fun = lda.predfun,
                                  smp.fun = partition.cv,
                                  smp.args = list(repetition = 1:2, nfold = 2),
-                                 par.args = list(par.mode = "apply", par.units = "foreach"),
+                                 par.args = list(par.mode = "future", par.units = 2),
                                  error.rep = TRUE, error.fold = TRUE,
                                  benchmark = TRUE, progress = FALSE)
             
@@ -231,7 +229,7 @@ test_that("output type (= list) for different logical combinations of
                                  pred.fun = lda.predfun,
                                  smp.fun = partition.cv,
                                  smp.args = list(repetition = 1:2, nfold = 2),
-                                 par.args = list(par.mode = "apply", par.units = "foreach"),
+                                 par.args = list(par.mode = "future", par.units = 2),
                                  error.rep = TRUE, error.fold = FALSE,
                                  benchmark = TRUE, progress = FALSE)
             
@@ -244,7 +242,7 @@ test_that("output type (= list) for different logical combinations of
                                  pred.fun = lda.predfun,
                                  smp.fun = partition.cv,
                                  smp.args = list(repetition = 1:2, nfold = 2),
-                                 par.args = list(par.mode = "apply", par.units = "foreach"),
+                                 par.args = list(par.mode = "future", par.units = 2),
                                  error.rep = FALSE, error.fold = TRUE,
                                  benchmark = TRUE, progress = FALSE)
             
@@ -254,8 +252,6 @@ test_that("output type (= list) for different logical combinations of
           })
 
 test_that("do.try argument", {
-  
-  testthat::skip_on_os("mac")
   
   lda.predfun <- function(object, newdata, fac = NULL) {
     library(nnet)
@@ -290,7 +286,7 @@ test_that("do.try argument", {
                        pred.fun = lda.predfun,
                        smp.fun = partition.cv,
                        smp.args = list(repetition = 1:2, nfold = 2),
-                       par.args = list(par.mode = "apply", par.units = "foreach"),
+                       par.args = list(par.mode = "future", par.units = 2),
                        error.rep = TRUE, error.fold = TRUE,
                        benchmark = TRUE, progress = FALSE,
                        do.try = T)
@@ -302,7 +298,7 @@ test_that("do.try argument", {
 })
 
 test_that("output length of list is correct for error.rep = TRUE and error.fold  = TRUE 
-          for par.mode = 1 on rpart example", {
+          for par.mode = 'apply' on rpart example", {
             
             data(ecuador) 
             fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
@@ -320,7 +316,7 @@ test_that("output length of list is correct for error.rep = TRUE and error.fold 
                                          progress = FALSE, 
                                          smp.fun = partition.cv,
                                          smp.args = list(repetition = 1:2, nfold = 2),
-                                         par.args = list(par.mode = "apply", par.units = "foreach"),
+                                         par.args = list(par.mode = "apply", par.units = 2),
                                          error.rep = TRUE, error.fold = TRUE)
             
             expect_equal(length(par.nsp.res$error.fold[[1]]), 2)
@@ -328,7 +324,7 @@ test_that("output length of list is correct for error.rep = TRUE and error.fold 
 
 # par.mode "apply" variable importance Tue Feb 21 22:15:41 2017 ------------------------------
 
-test_that("par.mode = 1 works with var.imp", {
+test_that("par.mode = 'apply' works with var.imp", {
   
   data(ecuador) # Muenchow et al. (2012), see ?ecuador
   fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
@@ -338,7 +334,7 @@ test_that("par.mode = 1 works with var.imp", {
                           pred.args = list(type = "response"),
                           smp.fun = partition.cv,
                           smp.args = list(repetition = 1:2, nfold = 4),
-                          par.args = list(par.mode = "apply", par.units = "foreach"),
+                          par.args = list(par.mode = "apply", par.units = 2),
                           benchmark = TRUE,
                           importance = TRUE, imp.permutations = 2)
   summary.rep <- summary(nspres$error.rep)
@@ -374,7 +370,7 @@ test_that("notify badge is working in parsperrorest()", {
                                progress = FALSE,
                                smp.fun = partition.cv,
                                smp.args = list(repetition = 1:2, nfold = 2),
-                               par.args = list(par.mode = 1, par.units = "foreach"),
+                               par.args = list(par.mode = "apply", par.units = 2),
                                error.rep = TRUE, error.fold = TRUE, notify = TRUE)
 
   expect_equal(length(par.nsp.res$error.fold[[1]]), 2)
@@ -400,7 +396,7 @@ test_that("notify without benchmark = TRUE", {
                                progress = FALSE,
                                smp.fun = partition.cv, benchmark = FALSE,
                                smp.args = list(repetition = 1:2, nfold = 2),
-                               par.args = list(par.mode = 1, par.units = "foreach"),
+                               par.args = list(par.mode = "apply", par.units = 2),
                                error.rep = TRUE, error.fold = TRUE, notify = TRUE)
 
   expect_equal(length(par.nsp.res$error.fold[[1]]), 2)
@@ -418,7 +414,7 @@ test_that("importance = T and err.fold = F", {
                             pred.fun = predict,
                             smp.fun = partition.cv, 
                             smp.args = list(repetition = 1:2, nfold = 2),
-                            par.args = list(par.mode = "apply", par.units = "foreach"),
+                            par.args = list(par.mode = "apply", par.units = 2),
                             importance = TRUE, error.fold = FALSE))
   
   expect_warning(parsperrorest(data = ecuador, formula = fo,
@@ -426,7 +422,7 @@ test_that("importance = T and err.fold = F", {
                             pred.fun = predict,
                             smp.fun = partition.cv, 
                             smp.args = list(repetition = 1:2, nfold = 2),
-                            par.args = list(par.mode = "apply", par.units = "foreach"),
+                            par.args = list(par.mode = "apply", par.units = 2),
                             someargument = NULL))
 })
 
@@ -498,7 +494,7 @@ test_that("partition.factor.cv works (LDA)", {
                                   pred.args = list(fac = "field"),
                                   smp.fun = partition.factor.cv,
                                   smp.args = list(fac = "field", repetition = 1:2, nfold = 2),
-                                  par.args = list(par.units = "foreach", par.mode = 2),
+                                  par.args = list(par.units = 2, par.mode = "foreach"),
                                   error.rep = TRUE, error.fold = TRUE, progress = "TRUE",
                                   benchmark = TRUE)
   
