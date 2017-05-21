@@ -457,7 +457,14 @@ parsperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.
     # par.mode = "future" Sun May 21 12:04:55 2017 ------------------------------
     
     if (par.args$par.mode == "future") {
-      plan(multiprocess, workers = par.args$par.units)
+      if (exists(par.args$par.option)) {
+        plan(par.args$par.option, workers = par.args$par.units)
+      } else {
+        par.args$par.option <- "multiprocess"
+        plan(par.args$par.option, workers = par.args$par.units)
+      }
+      
+      sprintf("Taking parallel mode %s with option %s", par.args$par.mode, par.args$par.option)
       myRes <- try(future_lapply(resamp, function(X) runreps(currentSample = X, data = data, par.mode = par.args$par.mode,
                                                              formula = formula, do.gc = do.gc, imp.one.rep = imp.one.rep, pred.fun = pred.fun,
                                                              model.args = model.args, do.try = do.try, model.fun = model.fun,
