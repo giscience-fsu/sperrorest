@@ -118,6 +118,7 @@ for Windows-systems.}
 \item{par.args}{list of parallelization parameters:
 \code{par.mode} (the parallelization mode),
 \code{par.units} (the number of parallel processing units),
+\code{par.option} (optional settings for \code{par.mode = "future"}),
 \code{par.libs} (libraries to be loaded on cluster workers, character list).
 See Details for more information.}
 
@@ -149,36 +150,18 @@ and bootstrap error estimation and parallelized permutation-based
 assessment of spatial variable importance.
 }
 \details{
-Two \code{par.mode} options are availabe. The default mode is
-\code{par.mode = 1}. Here, \code{\link[pbapply:pblapply]{pbapply::pblapply()}} is used which
-either calls \code{\link[parallel:mclapply]{parallel::mclapply()}} (on Unix-systems) or
-\code{\link[parallel:parApply]{parallel::parApply()}} (on Windows-systems). \code{par.mode = 2}
-uses \code{\link[foreach:foreach]{foreach::foreach()}}. While this approach is not as efficient,
-it may work in cases in which \code{par.mode = 1} fails.
+Various parallel modes are availabe. The default mode is
+using the \link{foreach} framework.
 
-\code{par.libs} only applies to \code{par.mode = 1} on Windows-systems.
+Parallel mode \code{"future"} uses the \link{future} framework. The default option here is \link{multiprocess}.
+Other options like \link{cluster} can be specified using \code{par.option}.
 
-This parallelized version of \code{\link[=sperrorest]{sperrorest()}} may highly
-decrease computation time. However, please note that problems
-may occur depending on which function is used for cross-validation.
-While the \code{\link[rpart:rpart]{rpart::rpart()}} example (see Examples) here works fine, you may
-encounter problems with other functions.
-
-For \code{par.mode = 2}, you may encounter missing repetitions in the results
-if repetitions finish to quickly. In this case, consider using
-\code{\link[=sperrorest]{sperrorest()}}
-
-If you define a custom \code{pred.fun} which consists of multiple custom
-defined child functions, make sure to define \code{pred.fun} and all child
-functions in one call. Otherwise you will encounter errors in \code{par.mode = 2}
-caused by how \code{foreach} loads the parent environment.
+Parallel mode \code{"apply"} uses \link{pbmclapply} on Unix Systems and \link{pbApply} on
+Windows machines.
 }
 \note{
-(1) Optionally save fitted models, training and test samples in the
-results object; (2) Optionally save intermediate results in some file, and
-enable the function to continue an interrupted sperrorest call where it
-was interrupted. (3) Optionally have sperrorest dump the result of each
-repetition into a file, and to skip repetitions for which a file already exists.
+Custom predict functions passed to \code{pred.fun}, which consist of multiple custom
+defined child functions, must be defined in one function.
 }
 \examples{
 \dontrun{
