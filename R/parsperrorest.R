@@ -149,7 +149,7 @@
 #' Parallel mode `"future"` uses the [future] framework. The default option here is [multiprocess]. 
 #' Other options like [cluster] can be specified using `par.option`. 
 #' 
-#' Parallel mode `"apply"` uses [pbmclapply] on Unix Systems and [pbApply] on 
+#' Parallel mode `"apply"` uses [pbmclapply] on Unix Systems and [parApply] on 
 #' Windows machines. 
 #' 
 #' @note Custom predict functions passed to `pred.fun`, which consist of multiple custom 

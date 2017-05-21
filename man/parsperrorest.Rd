@@ -156,7 +156,7 @@ using the \link{foreach} framework.
 Parallel mode \code{"future"} uses the \link{future} framework. The default option here is \link{multiprocess}.
 Other options like \link{cluster} can be specified using \code{par.option}.
 
-Parallel mode \code{"apply"} uses \link{pbmclapply} on Unix Systems and \link{pbApply} on
+Parallel mode \code{"apply"} uses \link{pbmclapply} on Unix Systems and \link{parApply} on
 Windows machines.
 }
 \note{
