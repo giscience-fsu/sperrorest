@@ -13,9 +13,6 @@
 #' @import rpart
 #' @importFrom utils packageVersion 
 #' @import future
-#' @import parallel
-#' @import foreach
-#' @import doParallel
 #' @importFrom purrr walk map
 #' 
 #' @param data a `data.frame` with predictor and response variables. 
@@ -360,8 +357,8 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
   
   if (par.args$par.mode == "apply" | par.args$par.mode == "future" | par.args$par.mode == "apply-mclapply") {
     
-    if (par.args$par.units > detectCores()) {
-      par.args$par.units <- detectCores()
+    if (par.args$par.units > availableCores()) {
+      par.args$par.units <- availableCores()
     }
     
     
@@ -406,7 +403,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
     if (par.args$par.mode == "apply" | par.args$par.mode == "apply-mclapply") {
       if (.Platform$OS.type == "Windows") {
         
-        message(sprintf("Using 'parApply()'."))
+        message(sprintf("Using 'parApply' parallel mode with %s cores.", par.args$par.units))
         myRes <- try(pblapply(cl = par.cl, resamp, function(X) runreps(currentSample = X, data = data, par.mode = par.args$par.mode,
                                                                        formula = formula, do.gc = do.gc, imp.one.rep = imp.one.rep, pred.fun = pred.fun,
                                                                        model.args = model.args, do.try = do.try, model.fun = model.fun,
@@ -420,7 +417,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
         # not provided as an option to the user -> pbmclapply is faster
         # only used for performance evaluation
         if (par.args$par.mode == "apply-mclapply") { 
-          message(sprintf("Using 'mclapply()'."))
+          message(sprintf("Using 'mclapply' parallel mode with %s cores.", par.args$par.units))
           myRes <- try(mclapply(mc.cores = par.cl, resamp, function(X) runreps(currentSample = X, data = data, par.mode = par.args$par.mode,
                                                                                formula = formula, do.gc = do.gc, imp.one.rep = imp.one.rep, pred.fun = pred.fun,
                                                                                model.args = model.args, do.try = do.try, model.fun = model.fun,
@@ -435,7 +432,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
                         "If you are on macOS either run R in 'Vanilla' mode or use another parallel mode."))
           }
         } else {
-          message(sprintf("Using 'pbmclapply()'."))
+          message(sprintf("Using 'pbmcapply' parallel mode with %s cores.", par.args$par.units))
           myRes <- try(pbmclapply(mc.cores = par.cl, resamp, function(X) runreps(currentSample = X, data = data, par.mode = par.args$par.mode,
                                                                                  formula = formula, do.gc = do.gc, imp.one.rep = imp.one.rep, pred.fun = pred.fun,
                                                                                  model.args = model.args, do.try = do.try, model.fun = model.fun,
@@ -464,7 +461,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
         plan(par.args$par.option, workers = par.args$par.units)
       }
       
-      message(sprintf("Using framework 'future' with 'future_lapply()'  and '%s' option.", par.args$par.option))
+      message(sprintf("Using parallel framework 'future' with 'future_lapply'  and '%s' option.", par.args$par.option))
       myRes <- try(future_lapply(resamp, function(X) runreps(currentSample = X, data = data, par.mode = par.args$par.mode,
                                                              formula = formula, do.gc = do.gc, imp.one.rep = imp.one.rep, pred.fun = pred.fun,
                                                              model.args = model.args, do.try = do.try, model.fun = model.fun,
@@ -477,9 +474,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
     }
   }
   
-  
   ### par.mode = "foreach" -------
-  
   
   if (par.args$par.mode == "foreach" | par.args$par.mode == "sequential") {
     
@@ -509,15 +504,15 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
     if (is.null(par.args$par.units) && !par.args$par.mode == "sequential") {
       plan(multiprocess)
       cores <- availableCores()
-      message(sprintf("Using 'foreach()' parallel mode with %s cores.", cores))
+      message(sprintf("Using 'foreach' parallel mode with %s cores.", cores))
     } 
     if (!is.null(par.args$par.units) && !par.args$par.mode == "sequential") {
       plan(multiprocess, workers = par.args$par.units)
-      message(sprintf("Using 'foreach()' parallel mode with %s cores.", par.args$par.units))
+      message(sprintf("Using 'foreach' parallel mode with %s cores.", par.args$par.units))
     }
     if (par.args$par.mode == "sequential") {
       plan(sequential)
-      message(sprintf("Using 'foreach()' sequential mode."))
+      message(sprintf("Using 'foreach' sequential mode."))
     }
     
     # runreps call Fri May 19 14:35:58 2017 ------------------------------
