@@ -61,7 +61,7 @@ partition.cv <- function(data, coords = c("x", "y"), nfold = 10, repetition = 1,
 {
   resampling <- list()
   
-  for (cnt in repetition)
+  for (cnt in 1:length(repetition))
   {
     if (!is.null(seed1)) 
       set.seed(seed1 + cnt)
@@ -129,7 +129,7 @@ partition.cv.strat <- function(data, coords = c("x", "y"), nfold = 10, return.fa
   minstrat <- min(tapply(strat, strat, length))
   stopifnot(minstrat >= nfold)
   
-  for (cnt in repetition)
+  for (cnt in 1:length(repetition))
   {
     if (!is.null(seed1)) 
       set.seed(seed1 + cnt)
@@ -193,7 +193,7 @@ partition.factor <- function(data, coords = c("x", "y"), fac, return.factor = FA
   if (!return.factor) 
     fac <- as.resampling(fac)
   represmp <- list()
-  for (cnt in repetition) represmp[[as.character(cnt)]] <- fac
+  for (cnt in 1:length(repetition)) represmp[[as.character(cnt)]] <- fac
   if (!return.factor) 
     represmp <- as.represampling(represmp)
   return(represmp)
@@ -241,7 +241,7 @@ partition.factor.cv <- function(data, coords = c("x", "y"), fac, nfold = 10,
     nfold <- nlevels(fac)
   }
   resampling <- list()
-  for (cnt in repetition)
+  for (cnt in 1:length(repetition))
   {
     if (!is.null(seed1)) 
       set.seed(seed1 + cnt)
@@ -418,7 +418,7 @@ partition.tiles <- function(data, coords = c("x", "y"), dsplit = NULL, nsplit = 
       dsplit <- c(dsplit, dsplit)
   
   resampling <- list()
-  for (cnt in repetition)
+  for (cnt in 1:length(repetition))
   {
     
     if (!is.null(seed1)) 
@@ -624,7 +624,7 @@ partition.kmeans <- function(data, coords = c("x", "y"), nfold = 10, repetition 
   balancing.steps <- max(1, balancing.steps)
   
   resampling <- list()
-  for (cnt in repetition)
+  for (cnt in 1:length(repetition))
   {
     if (!is.null(seed1)) 
       set.seed(seed1 + cnt)
@@ -736,7 +736,7 @@ partition.disc <- function(data, coords = c("x", "y"), radius, buffer = NULL, nd
   resample <- list()
   
   # Loop for repetitions:
-  for (cnt in repetition)
+  for (cnt in 1:length(repetition))
   {
     if (!is.null(seed1)) 
       set.seed(seed1 + cnt)
@@ -832,7 +832,7 @@ represampling.bootstrap <- function(data, coords = c("x", "y"), nboot = nrow(dat
                                     repetition = 1, seed1 = NULL, oob = FALSE)
 {
   resample <- list()
-  for (cnt in repetition)
+  for (cnt in 1:length(repetition))
   {
     if (!is.null(seed1)) 
       set.seed(seed1 + cnt)
@@ -932,7 +932,7 @@ represampling.factor.bootstrap <- function(data, fac, repetition = 1, nboot = -1
   
   resample <- list()
   
-  for (cnt in repetition)
+  for (cnt in 1:length(repetition))
   {
     if (!is.null(seed1)) 
       set.seed(seed1 + cnt)
@@ -1072,7 +1072,7 @@ represampling.disc.bootstrap <- function(data, coords = c("x", "y"), nboot, repe
   if (oob)
   {
     resample <- list()
-    for (cnt in repetition)
+    for (cnt in 1:length(repetition))
     {
       if (!is.null(seed1)) 
         set.seed(seed1 + cnt)
@@ -1093,7 +1093,7 @@ represampling.disc.bootstrap <- function(data, coords = c("x", "y"), nboot, repe
   } else
   {
     resample <- list()
-    for (cnt in repetition)
+    for (cnt in 1:length(repetition))
     {
       if (!is.null(seed1)) 
         set.seed(seed1 + cnt)
