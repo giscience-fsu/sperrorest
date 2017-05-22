@@ -1,10 +1,10 @@
-context("parsperrorest.R")
+context("sperrorest.R")
 
 Sys.setenv(R_TESTS = "")
 
-pacman::p_load(sperrorest, testthat, rpart, MASS, doParallel, foreach)
+pacman::p_load(sperrorest, testthat, rpart, MASS, doParallel, foreach, doFuture)
 
-# parsperrorest par.mode = 2 Mon Feb  6 23:24:11 2017 --------------------------
+# sperrorest par.mode = 2 Mon Feb  6 23:24:11 2017 --------------------------
 
 test_that("output type (= list) for different logical combinations of 
           error.rep and error.fold for par.mode = 2 on LDA example", {
@@ -39,12 +39,11 @@ test_that("output type (= list) for different logical combinations of
             data(maipo)
             
             # err.rep = TRUE, err.fold = TRUE
-            out <- parsperrorest(fo, data = maipo, coords = c("utmx","utmy"),
+            out <- sperrorest(fo, data = maipo, coords = c("utmx","utmy"),
                                  model.fun = lda,
                                  pred.fun = lda.predfun,
                                  smp.fun = partition.cv,
-                                 smp.args = list(repetition = 1:2, nfold = 2),
-                                 par.args = list(par.mode = "foreach", par.units = 2),
+                                 smp.args = list(repetition = 1:4, nfold = 2),
                                  error.rep = TRUE, error.fold = TRUE,
                                  benchmark = TRUE, progress = FALSE)
             
@@ -53,12 +52,12 @@ test_that("output type (= list) for different logical combinations of
             expect_equal(names(out$error.rep)[[1]], "train.error") # check that train.error is first
             
             # err.rep = TRUE, err.fold = FALSE
-            out <- parsperrorest(fo, data = maipo, coords = c("utmx","utmy"),
+            out <- sperrorest(fo, data = maipo, coords = c("utmx","utmy"),
                                  model.fun = lda,
                                  pred.fun = lda.predfun,
                                  smp.fun = partition.cv,
                                  smp.args = list(repetition = 1:2, nfold = 2),
-                                 par.args = list(par.mode = "foreach", par.units = 2),
+                                 par.args = list(par.mode = "sequential"),
                                  error.rep = TRUE, error.fold = FALSE,
                                  benchmark = TRUE, progress = TRUE)
             
@@ -66,7 +65,7 @@ test_that("output type (= list) for different logical combinations of
             expect_equal(typeof(out$error.fold), "NULL")
             
             # err.rep = FALSE, err.fold = TRUE
-            out <- parsperrorest(fo, data = maipo, coords = c("utmx","utmy"),
+            out <- sperrorest(fo, data = maipo, coords = c("utmx","utmy"),
                                  model.fun = lda,
                                  pred.fun = lda.predfun,
                                  smp.fun = partition.cv,
@@ -92,7 +91,7 @@ test_that("output length of list is correct for error.rep = TRUE and error.fold 
             
             # Non-spatial 5-repeated 10-fold cross-validation:
             mypred.rpart <- function(object, newdata) predict(object, newdata)[,2]
-            par.nsp.res <- parsperrorest(data = ecuador, formula = fo,
+            par.nsp.res <- sperrorest(data = ecuador, formula = fo,
                                          model.fun = rpart, model.args = list(control = ctrl),
                                          pred.fun = mypred.rpart,
                                          progress = FALSE,
@@ -104,13 +103,13 @@ test_that("output length of list is correct for error.rep = TRUE and error.fold 
             expect_equal(length(par.nsp.res$error.fold[[1]]), 2)
           })
 
-# parsperrorest() variable importance Wed Feb  8 21:59:03 2017 ------------------------------
+# sperrorest() variable importance Wed Feb  8 21:59:03 2017 ------------------------------
 
-test_that("parsperrorest() variable importance with error.rep = T and error.fold = T", {
+test_that("sperrorest() variable importance with error.rep = T and error.fold = T", {
   data(ecuador) # Muenchow et al. (2012), see ?ecuador
   fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
 
-  nspres <- parsperrorest(data = ecuador, formula = fo,
+  nspres <- sperrorest(data = ecuador, formula = fo,
                           model.fun = glm, model.args = list(family = "binomial"),
                           pred.fun = predict, pred.args = list(type = "response"),
                           smp.fun = partition.cv,
@@ -121,11 +120,11 @@ test_that("parsperrorest() variable importance with error.rep = T and error.fold
   expect_equal(class(nspres$importance[[1]][[1]]), "data.frame")
 })
 
-test_that("parsperrorest() variable importance with error.rep = F and error.fold = T", {
+test_that("sperrorest() variable importance with error.rep = F and error.fold = T", {
   data(ecuador) # Muenchow et al. (2012), see ?ecuador
   fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
   
-  nspres <- parsperrorest(data = ecuador, formula = fo,
+  nspres <- sperrorest(data = ecuador, formula = fo,
                           model.fun = glm, model.args = list(family = "binomial"),
                           pred.fun = predict, pred.args = list(type = "response"),
                           smp.fun = partition.cv,
@@ -136,18 +135,18 @@ test_that("parsperrorest() variable importance with error.rep = F and error.fold
   expect_equal(class(nspres$importance[[1]][[1]]), "data.frame")
 })
 
-# parsperrorest() binary response Wed Feb  8 22:43:12 2017 ------------------------------
+# sperrorest() binary response Wed Feb  8 22:43:12 2017 ------------------------------
 
-test_that("parsperrorest() produces correct output for binary response", {
+test_that("sperrorest() produces correct output for binary response", {
   data(ecuador) # Muenchow et al. (2012), see ?ecuador
   fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
   
-  nspres <- parsperrorest(data = ecuador, formula = fo,
+  nspres <- sperrorest(data = ecuador, formula = fo,
                           model.fun = glm, model.args = list(family = "binomial"),
                           pred.fun = predict, pred.args = list(type = "response"),
                           smp.fun = partition.cv,
                           smp.args = list(repetition = 1:2, nfold = 2),
-                          par.args = list(par.mode = "foreach", par.units = 2),
+                          par.args = list(par.mode = "sequential", par.units = 2),
                           benchmark = TRUE, 
                           importance = FALSE, imp.permutations = 2)
   summary.rep <- summary(nspres$error.rep)
@@ -156,11 +155,11 @@ test_that("parsperrorest() produces correct output for binary response", {
   expect_equal(names(nspres$error.rep)[[1]], "train.auroc") # check for train.auroc for binary response
 })
 
-test_that("parsperrorest() when pred.fun = NULL", {
+test_that("sperrorest() when pred.fun = NULL", {
   data(ecuador) # Muenchow et al. (2012), see ?ecuador
   fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
   
-  nspres <- parsperrorest(data = ecuador, formula = fo,
+  nspres <- sperrorest(data = ecuador, formula = fo,
                           model.fun = glm, model.args = list(family = "binomial"),
                           pred.args = list(type = "response"),
                           smp.fun = partition.cv,
@@ -176,7 +175,7 @@ test_that("parsperrorest() when pred.fun = NULL", {
   expect_equal(class(nspres$importance[[1]][[1]]), "data.frame") # check for importance object
 })
 
-# parsperrorest par.mode = "future" Mon Feb  6 23:25:08 2017 ------------------------------
+# sperrorest par.mode = "future" Mon Feb  6 23:25:08 2017 ------------------------------
 
 
 test_that("output type (= list) for different logical combinations of 
@@ -210,7 +209,7 @@ test_that("output type (= list) for different logical combinations of
               ndwi08
             
             # err.rep = TRUE, err.fold = TRUE
-            out <- parsperrorest(fo, data = maipo, coords = c("utmx","utmy"),
+            out <- sperrorest(fo, data = maipo, coords = c("utmx","utmy"),
                                  model.fun = lda,
                                  pred.fun = lda.predfun,
                                  smp.fun = partition.cv,
@@ -224,7 +223,7 @@ test_that("output type (= list) for different logical combinations of
             expect_equal(names(out$error.rep)[[1]], "train.error") # check for train.error existence
             
             # err.rep = TRUE, err.fold = FALSE
-            out <- parsperrorest(fo, data = maipo, coords = c("utmx","utmy"),
+            out <- sperrorest(fo, data = maipo, coords = c("utmx","utmy"),
                                  model.fun = lda,
                                  pred.fun = lda.predfun,
                                  smp.fun = partition.cv,
@@ -237,7 +236,7 @@ test_that("output type (= list) for different logical combinations of
             expect_equal(typeof(out$error.fold), "NULL")
             
             # err.rep = FALSE, err.fold = TRUE
-            out <- parsperrorest(fo, data = maipo, coords = c("utmx","utmy"),
+            out <- sperrorest(fo, data = maipo, coords = c("utmx","utmy"),
                                  model.fun = lda,
                                  pred.fun = lda.predfun,
                                  smp.fun = partition.cv,
@@ -281,7 +280,7 @@ test_that("do.try argument", {
     ndwi08
   
   # err.rep = TRUE, err.fold = TRUE
-  out <- parsperrorest(fo, data = maipo, coords = c("utmx","utmy"),
+  out <- sperrorest(fo, data = maipo, coords = c("utmx","utmy"),
                        model.fun = lda,
                        pred.fun = lda.predfun,
                        smp.fun = partition.cv,
@@ -310,7 +309,7 @@ test_that("output length of list is correct for error.rep = TRUE and error.fold 
             
             # Non-spatial 5-repeated 10-fold cross-validation:
             mypred.rpart <- function(object, newdata) predict(object, newdata)[,2]
-            par.nsp.res <- parsperrorest(data = ecuador, formula = fo,
+            par.nsp.res <- sperrorest(data = ecuador, formula = fo,
                                          model.fun = rpart, model.args = list(control = ctrl),
                                          pred.fun = mypred.rpart,
                                          progress = FALSE, 
@@ -329,7 +328,7 @@ test_that("par.mode = 'apply' works with var.imp", {
   data(ecuador) # Muenchow et al. (2012), see ?ecuador
   fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
   
-  nspres <- parsperrorest(data = ecuador, formula = fo,
+  nspres <- sperrorest(data = ecuador, formula = fo,
                           model.fun = glm, model.args = list(family = "binomial"),
                           pred.args = list(type = "response"),
                           smp.fun = partition.cv,
@@ -349,7 +348,7 @@ test_that("par.mode = 'apply' works with var.imp", {
 
 # notify argument Tue Feb  7 13:45:45 2017 ------------------------------
 
-test_that("notify badge is working in parsperrorest()", {
+test_that("notify badge is working in sperrorest()", {
 
   testthat::skip_on_cran() # "because of 'notify=TRUE'"
   testthat::skip("notifier integration removed")
@@ -364,7 +363,7 @@ test_that("notify badge is working in parsperrorest()", {
 
   # Non-spatial 5-repeated 10-fold cross-validation:
   mypred.rpart <- function(object, newdata) predict(object, newdata)[,2]
-  par.nsp.res <- parsperrorest(data = ecuador, formula = fo,
+  par.nsp.res <- sperrorest(data = ecuador, formula = fo,
                                model.fun = rpart, model.args = list(control = ctrl),
                                pred.fun = mypred.rpart,
                                progress = FALSE,
@@ -390,7 +389,7 @@ test_that("notify without benchmark = TRUE", {
 
   # Non-spatial 5-repeated 10-fold cross-validation:
   mypred.rpart <- function(object, newdata) predict(object, newdata)[,2]
-  par.nsp.res <- parsperrorest(data = ecuador, formula = fo,
+  par.nsp.res <- sperrorest(data = ecuador, formula = fo,
                                model.fun = rpart, model.args = list(control = ctrl),
                                pred.fun = mypred.rpart,
                                progress = FALSE,
@@ -402,14 +401,14 @@ test_that("notify without benchmark = TRUE", {
   expect_equal(length(par.nsp.res$error.fold[[1]]), 2)
 })
 
-# parsperrorest warnings Thu Feb  9 22:34:08 2017 ------------------------------
+# sperrorest warnings Thu Feb  9 22:34:08 2017 ------------------------------
 
 test_that("importance = T and err.fold = F", { 
   
   data(ecuador) # Muenchow et al. (2012), see ?ecuador
   fo <- slope ~ hcurv + vcurv + log.carea + cslope
   
-  expect_warning(parsperrorest(data = ecuador, formula = fo,
+  expect_warning(sperrorest(data = ecuador, formula = fo,
                             model.fun = glm,
                             pred.fun = predict,
                             smp.fun = partition.cv, 
@@ -417,7 +416,7 @@ test_that("importance = T and err.fold = F", {
                             par.args = list(par.mode = "apply", par.units = 2),
                             importance = TRUE, error.fold = FALSE))
   
-  expect_warning(parsperrorest(data = ecuador, formula = fo,
+  expect_warning(sperrorest(data = ecuador, formula = fo,
                             model.fun = glm,
                             pred.fun = predict,
                             smp.fun = partition.cv, 
@@ -426,33 +425,33 @@ test_that("importance = T and err.fold = F", {
                             someargument = NULL))
 })
 
-# parsperrorest depr. args Thu Feb  9 22:42:48 2017 ------------------------------
+# sperrorest depr. args Thu Feb  9 22:42:48 2017 ------------------------------
 
 test_that("deprecated args", { 
   data(ecuador) # Muenchow et al. (2012), see ?ecuador
   fo <- slope ~ hcurv + vcurv + log.carea + cslope
   
-  expect_error(parsperrorest(data = ecuador, formula = fo,
+  expect_error(sperrorest(data = ecuador, formula = fo,
                           model.fun = glm,
                           pred.fun = predict,
                           smp.fun = partition.cv, 
                           smp.args = list(repetition = 1:2, nfold = 2),
                           predfun = NULL))
   
-  expect_error(parsperrorest(data = ecuador, formula = fo,
+  expect_error(sperrorest(data = ecuador, formula = fo,
                           model.fun = glm,
                           pred.fun = predict,
                           smp.fun = partition.cv, 
                           smp.args = list(repetition = 1:2, nfold = 2),
                           silent = NULL))
   
-  expect_error(parsperrorest(data = ecuador, formula = fo,
+  expect_error(sperrorest(data = ecuador, formula = fo,
                           model.fun = glm,
                           pred.fun = predict,
                           smp.fun = partition.cv, 
                           smp.args = list(repetition = 1:2, nfold = 2),
                           err.pooled = NULL))
-  expect_error(parsperrorest(data = ecuador, formula = fo,
+  expect_error(sperrorest(data = ecuador, formula = fo,
                           model.fun = glm,
                           pred.fun = predict,
                           smp.fun = partition.cv, 
@@ -488,7 +487,7 @@ test_that("partition.factor.cv works (LDA)", {
   # Construct a formula:
   fo <- as.formula(paste("croptype ~", paste(predictors, collapse = "+")))
   
-  res.lda.sp.par <- parsperrorest(fo, data = maipo, coords = c("utmx","utmy"),
+  res.lda.sp.par <- sperrorest(fo, data = maipo, coords = c("utmx","utmy"),
                                   model.fun = lda,
                                   pred.fun = lda.predfun,
                                   pred.args = list(fac = "field"),
