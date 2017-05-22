@@ -536,14 +536,13 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
                        
                        
                        if (error.fold) {
-                         currentRes <- lapply(resamp[[i]], unclass)
+                         currentRes <- map(resamp[[i]], unclass)
                          class(currentRes) <- "sperroresterror"
                        } else {
                          currentRes <- NULL
                        }
                        environment(runfolds) <- environment()
                        
-                       print(progress)
                        if (progress == 2) {
                          cat(date(), "Repetition", names(resamp[[i]])[i], "\n")
                        }
