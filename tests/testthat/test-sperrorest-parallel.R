@@ -4,7 +4,7 @@ Sys.setenv(R_TESTS = "")
 
 pacman::p_load(sperrorest, testthat, rpart, MASS, doParallel, foreach, doFuture)
 
-# sperrorest par.mode = 2 Mon Feb  6 23:24:11 2017 --------------------------
+# par.mode = "foreach" Mon Feb  6 23:24:11 2017 --------------------------
 
 test_that("output type (= list) for different logical combinations of 
           error.rep and error.fold for par.mode = 2 on LDA example", {
@@ -57,7 +57,7 @@ test_that("output type (= list) for different logical combinations of
                                  model.fun = lda,
                                  pred.fun = lda.predfun,
                                  smp.fun = partition.cv,
-                                 smp.args = list(repetition = 1:3, nfold = 5),
+                                 smp.args = list(repetition = 1:6, nfold = 5),
                                  par.args = list(par.mode = "sequential"),
                                  error.rep = TRUE, error.fold = FALSE,
                                  benchmark = TRUE, progress = TRUE)
@@ -104,7 +104,7 @@ test_that("output length of list is correct for error.rep = TRUE and error.fold 
             expect_equal(length(par.nsp.res$error.fold[[1]]), 2)
           })
 
-# sperrorest() variable importance Wed Feb  8 21:59:03 2017 ------------------------------
+# variable importance Wed Feb  8 21:59:03 2017 
 
 test_that("sperrorest() variable importance with error.rep = T and error.fold = T", {
   data(ecuador) # Muenchow et al. (2012), see ?ecuador
@@ -136,7 +136,7 @@ test_that("sperrorest() variable importance with error.rep = F and error.fold = 
   expect_equal(class(nspres$importance[[1]][[1]]), "data.frame")
 })
 
-# sperrorest() binary response Wed Feb  8 22:43:12 2017 ------------------------------
+# binary response Wed Feb  8 22:43:12 2017 
 
 test_that("sperrorest() produces correct output for binary response", {
   data(ecuador) # Muenchow et al. (2012), see ?ecuador
@@ -176,7 +176,7 @@ test_that("sperrorest() when pred.fun = NULL", {
   expect_equal(class(nspres$importance[[1]][[1]]), "data.frame") # check for importance object
 })
 
-# sperrorest par.mode = "future" Mon Feb  6 23:25:08 2017 ------------------------------
+# par.mode = "future" Mon Feb  6 23:25:08 2017 ------------------------------
 
 
 test_that("output type (= list) for different logical combinations of 
@@ -322,7 +322,7 @@ test_that("output length of list is correct for error.rep = TRUE and error.fold 
             expect_equal(length(par.nsp.res$error.fold[[1]]), 2)
           })
 
-# par.mode "apply" variable importance Tue Feb 21 22:15:41 2017 ------------------------------
+# par.mode = "apply" variable importance Tue Feb 21 22:15:41 2017 ------------------------------
 
 test_that("par.mode = 'apply' works with var.imp", {
   
@@ -347,7 +347,7 @@ test_that("par.mode = 'apply' works with var.imp", {
 
 ### manual
 
-# notify argument Tue Feb  7 13:45:45 2017 ------------------------------
+# notify argument Tue Feb  7 13:45:45 2017 
 
 test_that("notify badge is working in sperrorest()", {
 
@@ -402,7 +402,7 @@ test_that("notify without benchmark = TRUE", {
   expect_equal(length(par.nsp.res$error.fold[[1]]), 2)
 })
 
-# sperrorest warnings Thu Feb  9 22:34:08 2017 ------------------------------
+# sperrorest warnings Thu Feb  9 22:34:08 2017 
 
 test_that("importance = T and err.fold = F", { 
   
@@ -426,7 +426,7 @@ test_that("importance = T and err.fold = F", {
                             someargument = NULL))
 })
 
-# sperrorest depr. args Thu Feb  9 22:42:48 2017 ------------------------------
+# sperrorest depr. args Thu Feb  9 22:42:48 2017 
 
 test_that("deprecated args", { 
   data(ecuador) # Muenchow et al. (2012), see ?ecuador
@@ -460,7 +460,7 @@ test_that("deprecated args", {
                           err.unpooled = NULL))
 })
 
-# partition.factor.cv mit custom pred.fun Sun Feb 19 09:36:26 2017 ------------------------------
+# partition.factor.cv mit custom pred.fun Sun Feb 19 09:36:26 2017 
 
 test_that("partition.factor.cv works (LDA)", {
   
