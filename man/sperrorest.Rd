@@ -2,8 +2,6 @@
 % Please edit documentation in R/sperrorest.R
 \name{sperrorest}
 \alias{sperrorest}
-\alias{sperroresterror}
-\alias{sperrorestimportance}
 \title{Perform spatial error estimation and variable importance assessment}
 \usage{
 sperrorest(formula, data, coords = c("x", "y"), model.fun,
@@ -13,7 +11,8 @@ sperrorest(formula, data, coords = c("x", "y"), model.fun,
   err.fun = err.default, error.fold = TRUE, error.rep = TRUE,
   err.train = TRUE, imp.variables = NULL, imp.permutations = 1000,
   importance = !is.null(imp.variables), distance = FALSE, do.gc = 1,
-  do.try = FALSE, progress = 1, benchmark = FALSE, ...)
+  do.try = FALSE, progress = 1, out.progress = "", par.args = list(),
+  benchmark = FALSE, ...)
 }
 \arguments{
 \item{formula}{A formula specifying the variables used by the \code{model}.
@@ -70,7 +69,7 @@ known responses in \code{data} and the model predictions delivered
 by \code{pred.fun}. E.g., \code{\link[=err.default]{err.default()}} (the default).
 See example and details below.}
 
-\item{error.fold}{logical (default: \code{TRUE} if \code{importance} is
+\item{error.fold}{logical (default: \code{TRUE}) if \code{importance} is
 \code{TRUE}, otherwise \code{FALSE}): calculate error measures on each fold
 within a resampling repetition.}
 
@@ -104,10 +103,24 @@ if \code{>=2}, after each fold}
 use \code{\link[=try]{try()}} to robustify calls to \code{model.fun} and
 \code{err.fun}; use with caution!}
 
-\item{progress}{if \code{progress = 1}, repetition and fold progress is
-shown in console (in Windows Rgui, disable 'Buffered output' in 'Misc' menu).
-If \code{progress = 2}, only repetition information is shown.
+\item{progress}{numeric (default: \code{1}): Whether to show progress
+information. For \code{par.mode = 1}, information about elapsed time, estimated time remaining and a
+percentage indicator (0\% - 100\%) are shown.
+\code{progress = 2} only applies to \code{par.mode = 2} and shows repetition
+information only (instead of repetition and fold).
 Set to \code{FALSE} for no progress information.}
+
+\item{out.progress}{only used if \code{par.mode = 2}: Optionally write progress output to a file instead of console output.
+The default (\code{''}) results in console output for Unix-systems and
+file output ('parsperrorest.progress.txt') in the current working directory
+for Windows-systems.}
+
+\item{par.args}{list of parallelization parameters:
+\code{par.mode} (the parallelization mode),
+\code{par.units} (the number of parallel processing units),
+\code{par.option} (optional settings for \code{par.mode = "future"}),
+\code{par.libs} (libraries to be loaded on cluster workers, character list).
+See Details for more information.}
 
 \item{benchmark}{(optional) logical (default: \code{FALSE}): if \code{TRUE},
 perform benchmarking and return \code{sperrorestbenchmarks} object}
@@ -131,16 +144,24 @@ number of parallel units, and runtime performance}
 information about the \code{sperrorest} package version}
 }
 \description{
-\code{sperrorest} is a flexible interface for multiple types of spatial and
-non-spatial cross-validation and bootstrap error estimation and
-permutation-based assessment of spatial variable importance.
+\code{parsperrorest} is a flexible interface for multiple types of
+parallelized spatial and non-spatial cross-validation
+and bootstrap error estimation and parallelized permutation-based
+assessment of spatial variable importance.
+}
+\details{
+Various parallel modes are availabe. The default mode is
+using the \link{foreach} framework.
+
+Parallel mode \code{"future"} uses the \link{future} framework. The default option here is \link{multiprocess}.
+Other options like \link{cluster} can be specified using \code{par.option}.
+
+Parallel mode \code{"apply"} uses \link{pbmclapply} on Unix Systems and \link{parApply} on
+Windows machines.
 }
 \note{
-(1) Optionally save fitted models, training and test samples in the
-results object; (2) Optionally save intermediate results in some file, and
-enable the function to continue an interrupted sperrorest call where it
-was interrupted. (3) Optionally have sperrorest dump the result of each
-repetition into a file, and to skip repetitions for which a file already exists.
+Custom predict functions passed to \code{pred.fun}, which consist of multiple custom
+defined child functions, must be defined in one function.
 }
 \examples{
 \dontrun{
@@ -149,43 +170,48 @@ fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
 
 # Example of a classification tree fitted to this data:
 library(rpart)
+mypred.rpart <- function(object, newdata) predict(object, newdata)[, 2]
 ctrl <- rpart.control(cp = 0.005) # show the effects of overfitting
 fit <- rpart(fo, data = ecuador, control = ctrl)
-par(xpd = TRUE)
-plot(fit, compress = TRUE, main = 'Stoyans landslide data set')
-text(fit, use.n = TRUE)
 
 # Non-spatial 5-repeated 10-fold cross-validation:
-mypred.rpart <- function(object, newdata) predict(object, newdata)[, 2]
-nspres <- sperrorest(data = ecuador, formula = fo,
-                     model.fun = rpart, model.args = list(control = ctrl),
-                     pred.fun = mypred.rpart,
-                     smp.fun = partition.cv, 
-                     smp.args = list(repetition = 1:5, nfold = 10))
-summary(nspres$error.rep)                    
-summary(nspres$error.fold)
-summary(nspres$represampling)
-# plot(nspres$represampling, ecuador)
+mypred.rpart <- function(object, newdata) predict(object, newdata)[,2]
+par.nsp.res <- parsperrorest(data = ecuador, formula = fo,
+                             model.fun = rpart, model.args = list(control = ctrl),
+                             pred.fun = mypred.rpart,
+                             progress = TRUE,
+                             smp.fun = partition.cv, 
+                             smp.args = list(repetition = 1:5, nfold = 15), 
+                             par.args = list(par.units = 2, par.mode = 1),
+                             error.rep = TRUE, error.fold = TRUE)
+summary(par.nsp.res$error.rep)
+summary(par.nsp.res$error.fold)
+summary(par.nsp.res$represampling)
+# plot(par.nsp.res$represampling, ecuador)
 
 # Spatial 5-repeated 10-fold spatial cross-validation:
-spres <- sperrorest(data = ecuador, formula = fo,
-                    model.fun = rpart, model.args = list(control = ctrl),
-                    pred.fun = mypred.rpart,
-                    smp.fun = partition.kmeans, 
-                    smp.args = list(repetition = 1:5, nfold = 10))
-summary(spres$error.rep)
-summary(spres$represampling)
-# plot(spres$represampling, ecuador)
+par.sp.res <- parsperrorest(data = ecuador, formula = fo,
+                            model.fun = rpart, model.args = list(control = ctrl),
+                            pred.fun = mypred.rpart,
+                            progress = TRUE,
+                            smp.fun = partition.kmeans, 
+                            smp.args = list(repetition = 1:5, nfold = 15), 
+                            par.args = list(par.units = 2, par.mode = 2),
+                            error.rep = TRUE, error.fold = TRUE)
+summary(par.sp.res$error.rep)
+summary(par.sp.res$error.fold)
+summary(par.sp.res$represampling)
+# plot(par.sp.res$represampling, ecuador)
 
 smry <- data.frame(
-     nonspat.training = unlist(summary(nspres$error.rep, level = 1)$train.auroc),
-     nonspat.test     = unlist(summary(nspres$error.rep, level = 1)$test.auroc),
-     spatial.training = unlist(summary(spres$error.rep,  level = 1)$train.auroc),
-     spatial.test     = unlist(summary(spres$error.rep,  level = 1)$test.auroc))
-boxplot(smry, col = c('red','red','green','green'), 
-        main = 'Training vs. test, nonspatial vs. spatial',
-        ylab = 'Area under the ROC curve')
-}
+    nonspat.training = unlist(summary(par.nsp.res$error.rep, level = 1)$train.auroc),
+    nonspat.test     = unlist(summary(par.nsp.res$error.rep, level = 1)$test.auroc),
+    spatial.training = unlist(summary(par.sp.res$error.rep, level = 1)$train.auroc),
+    spatial.test     = unlist(summary(par.sp.res$error.rep, level = 1)$test.auroc))
+boxplot(smry, col = c('red','red','red','green'), 
+    main = 'Training vs. test, nonspatial vs. spatial',
+    ylab = 'Area under the ROC curve')
+}    
 }
 \references{
 Brenning, A. 2012. Spatial cross-validation and bootstrap for
@@ -212,5 +238,5 @@ IDA 2010, Tucson, AZ, USA, 19-21 May 2010.
 Lecture Notes in Computer Science, 6065 LNCS: 184-195.
 }
 \seealso{
-\code{\link[=parsperrorest]{parsperrorest()}}
+\code{\link[=sperrorest]{sperrorest()}}
 }
