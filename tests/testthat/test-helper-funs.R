@@ -65,6 +65,7 @@ testthat::test_that("runfolds works on LDA example", {
   expect_equal(length(runfolds_single), 6)
 })
 
+
 testthat::test_that("runfolds works on rpart example", {
   
   imp.one.rep <- readRDS("inst/test-objects/imp.one.rep.rda")

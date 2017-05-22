@@ -43,9 +43,10 @@ test_that("output type (= list) for different logical combinations of
                                  model.fun = lda,
                                  pred.fun = lda.predfun,
                                  smp.fun = partition.cv,
-                                 smp.args = list(repetition = 1:4, nfold = 2),
+                                 #par.args = list(par.mode = "sequential"),
+                                 smp.args = list(repetition = 1:10, nfold = 4),
                                  error.rep = TRUE, error.fold = TRUE,
-                                 benchmark = TRUE, progress = FALSE)
+                                 benchmark = TRUE, progress = T)
             
             expect_equal(typeof(out$error.rep), "list")
             expect_equal(typeof(out$error.fold), "list")
@@ -56,7 +57,7 @@ test_that("output type (= list) for different logical combinations of
                                  model.fun = lda,
                                  pred.fun = lda.predfun,
                                  smp.fun = partition.cv,
-                                 smp.args = list(repetition = 1:2, nfold = 2),
+                                 smp.args = list(repetition = 1:3, nfold = 5),
                                  par.args = list(par.mode = "sequential"),
                                  error.rep = TRUE, error.fold = FALSE,
                                  benchmark = TRUE, progress = TRUE)
@@ -129,7 +130,7 @@ test_that("sperrorest() variable importance with error.rep = F and error.fold = 
                           pred.fun = predict, pred.args = list(type = "response"),
                           smp.fun = partition.cv,
                           smp.args = list(repetition = 1:2, nfold = 4),
-                          par.args = list(par.mode = "foreach", par.units = 2),
+                          par.args = list(par.mode = "sequential", par.units = 2),
                           benchmark = TRUE, error.rep = FALSE, 
                           importance = TRUE, imp.permutations = 10)
   expect_equal(class(nspres$importance[[1]][[1]]), "data.frame")
