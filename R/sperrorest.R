@@ -429,7 +429,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
                         "If you are on macOS either run R in 'Vanilla' mode or use another parallel mode."))
           }
         } else {
-          message(sprintf("Using 'pbmcapply' parallel mode with %s cores.", par.args$par.units))
+          message(sprintf("Using 'pbmclapply' parallel mode with %s cores.", par.args$par.units))
           myRes <- try(pbmclapply(mc.cores = par.cl, resamp, function(X) runreps(currentSample = X, data = data, par.mode = par.args$par.mode,
                                                                                  formula = formula, do.gc = do.gc, imp.one.rep = imp.one.rep, pred.fun = pred.fun,
                                                                                  model.args = model.args, do.try = do.try, model.fun = model.fun,
@@ -440,7 +440,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
                                                                                  coords = coords, progress = progress, pooled.obs.train = pooled.obs.train,
                                                                                  pooled.obs.test = pooled.obs.test, err.fun = err.fun)))
           # check if run was sufficient
-          if (myRes == "NULL") {
+          if (length(myRes) > 1 && myRes == "NULL") {
             stop(paste0("No output was received from parsperrorest.\n", 
                         "If you are on macOS either run R in 'Vanilla' mode or use another parallel mode."))
           }
