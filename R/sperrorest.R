@@ -1,6 +1,6 @@
-#' Perform spatial error estimation and variable importance assessment
+#' Perform spatial error estimation and variable importance assessment in parallel
 #'
-#' `parsperrorest` is a flexible interface for multiple types of 
+#' `sperrorest` is a flexible interface for multiple types of 
 #' parallelized spatial and non-spatial cross-validation 
 #' and bootstrap error estimation and parallelized permutation-based 
 #' assessment of spatial variable importance.
@@ -120,8 +120,6 @@
 #' `par.mode` (the parallelization mode),
 #' `par.units` (the number of parallel processing units), 
 #' `par.option` (optional settings for `par.mode = "future"`),
-#' `par.libs` (libraries to be loaded on cluster workers, character list).
-#' See Details for more information.
 #' 
 #' @param benchmark (optional) logical (default: `FALSE`): if `TRUE`, 
 #' perform benchmarking and return `sperrorestbenchmarks` object
@@ -141,14 +139,15 @@
 #' \item{package.version}{a `sperrorestpackageversion` object containing 
 #' information about the `sperrorest` package version}
 #' 
-#' @details Various parallel modes are availabe. The default mode is 
-#' using the [foreach] framework. 
+#' @details By default [sperrorest] runs in parallel on all cores using [foreach]
+#' with the [future] backend. If this is not desired, specify 
+#' `par.units` in `par.args`.
 #' 
-#' Parallel mode `"future"` uses the [future] framework. The default option here is [multiprocess]. 
-#' Other options like [cluster] can be specified using `par.option`. 
+#' Other parallelization modes include `apply` ([pbmclapply] on Unix, [parApply]
+#' on Windows) and `future` ([future_lapply]). For the latter `par.options` (default to
+#' `multiprocess`) can be specified. See [plan] for further details. 
 #' 
-#' Parallel mode `"apply"` uses [pbmclapply] on Unix Systems and [parApply] on 
-#' Windows machines. 
+#' Setting `par.mode = "sequential"` executes `sperrorest` like a normal for-loop.
 #' 
 #' @note Custom predict functions passed to `pred.fun`, which consist of multiple custom 
 #' defined child functions, must be defined in one function.  
@@ -176,7 +175,6 @@
 #' IDA 2010, Tucson, AZ, USA, 19-21 May 2010.  
 #' Lecture Notes in Computer Science, 6065 LNCS: 184-195.
 #' 
-#' @seealso [sperrorest()]
 #' 
 #' @examples
 #' \dontrun{
@@ -191,28 +189,27 @@
 #'
 #' # Non-spatial 5-repeated 10-fold cross-validation:
 #' mypred.rpart <- function(object, newdata) predict(object, newdata)[,2]
-#' par.nsp.res <- parsperrorest(data = ecuador, formula = fo,
-#'                              model.fun = rpart, model.args = list(control = ctrl),
-#'                              pred.fun = mypred.rpart,
-#'                              progress = TRUE,
-#'                              smp.fun = partition.cv, 
-#'                              smp.args = list(repetition = 1:5, nfold = 15), 
-#'                              par.args = list(par.units = 2, par.mode = 1),
-#'                              error.rep = TRUE, error.fold = TRUE)
+#' par.nsp.res <- sperrorest(data = ecuador, formula = fo,
+#'                           model.fun = rpart, model.args = list(control = ctrl),
+#'                           pred.fun = mypred.rpart,
+#'                           progress = TRUE,
+#'                           smp.fun = partition.cv, 
+#'                           smp.args = list(repetition = 1:5, nfold = 15), 
+#'                           error.rep = TRUE, error.fold = TRUE)
 #' summary(par.nsp.res$error.rep)
 #' summary(par.nsp.res$error.fold)
 #' summary(par.nsp.res$represampling)
 #' # plot(par.nsp.res$represampling, ecuador)
 #'
 #' # Spatial 5-repeated 10-fold spatial cross-validation:
-#' par.sp.res <- parsperrorest(data = ecuador, formula = fo,
-#'                             model.fun = rpart, model.args = list(control = ctrl),
-#'                             pred.fun = mypred.rpart,
-#'                             progress = TRUE,
-#'                             smp.fun = partition.kmeans, 
-#'                             smp.args = list(repetition = 1:5, nfold = 15), 
-#'                             par.args = list(par.units = 2, par.mode = 2),
-#'                             error.rep = TRUE, error.fold = TRUE)
+#' par.sp.res <- sperrorest(data = ecuador, formula = fo,
+#'                          model.fun = rpart, model.args = list(control = ctrl),
+#'                          pred.fun = mypred.rpart,
+#'                          progress = TRUE,
+#'                          smp.fun = partition.kmeans, 
+#'                          smp.args = list(repetition = 1:5, nfold = 15), 
+#'                          par.args = list(par.units = 2, par.mode = "future"),
+#'                          error.rep = TRUE, error.fold = TRUE)
 #' summary(par.sp.res$error.rep)
 #' summary(par.sp.res$error.fold)
 #' summary(par.sp.res$represampling)
@@ -370,13 +367,13 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
       force(pred.fun)  #force evaluation of pred.fun, so it is serialized and 
       # provided to all cluster workers
       clusterExport(par.cl, "par.args", envir = environment())
-      clusterEvalQ(par.cl, {
-        map(X = par.args$par.libs, function(n)
-        {
-          do.call("library", list(n))
-        })
-        NULL
-      })
+      # clusterEvalQ(par.cl, {
+      #   map(X = par.args$par.libs, function(n)
+      #   {
+      #     do.call("library", list(n))
+      #   })
+      #   NULL
+      # })
     } else {
       RNGkind("L'Ecuyer-CMRG")
       set.seed(1234567)

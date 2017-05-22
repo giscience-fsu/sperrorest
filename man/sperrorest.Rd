@@ -2,7 +2,7 @@
 % Please edit documentation in R/sperrorest.R
 \name{sperrorest}
 \alias{sperrorest}
-\title{Perform spatial error estimation and variable importance assessment}
+\title{Perform spatial error estimation and variable importance assessment in parallel}
 \usage{
 sperrorest(formula, data, coords = c("x", "y"), model.fun,
   model.args = list(), pred.fun = NULL, pred.args = list(),
@@ -98,9 +98,7 @@ mean nearest-neighbour distances from test samples to training samples using
 \item{par.args}{list of parallelization parameters:
 \code{par.mode} (the parallelization mode),
 \code{par.units} (the number of parallel processing units),
-\code{par.option} (optional settings for \code{par.mode = "future"}),
-\code{par.libs} (libraries to be loaded on cluster workers, character list).
-See Details for more information.}
+\code{par.option} (optional settings for \code{par.mode = "future"}),}
 
 \item{do.gc}{numeric (default: 1): defines frequency of memory garbage
 collection by calling \code{\link[=gc]{gc()}}; if \code{<1}, no garbage collection;
@@ -145,20 +143,21 @@ number of parallel units, and runtime performance}
 information about the \code{sperrorest} package version}
 }
 \description{
-\code{parsperrorest} is a flexible interface for multiple types of
+\code{sperrorest} is a flexible interface for multiple types of
 parallelized spatial and non-spatial cross-validation
 and bootstrap error estimation and parallelized permutation-based
 assessment of spatial variable importance.
 }
 \details{
-Various parallel modes are availabe. The default mode is
-using the \link{foreach} framework.
+By default \link{sperrorest} runs in parallel on all cores using \link{foreach}
+with the \link{future} backend. If this is not desired, specify
+\code{par.units} in \code{par.args}.
 
-Parallel mode \code{"future"} uses the \link{future} framework. The default option here is \link{multiprocess}.
-Other options like \link{cluster} can be specified using \code{par.option}.
+Other parallelization modes include \code{apply} (\link{pbmclapply} on Unix, \link{parApply}
+on Windows) and \code{future} (\link{future_lapply}). For the latter \code{par.options} (default to
+\code{multiprocess}) can be specified. See \link{plan} for further details.
 
-Parallel mode \code{"apply"} uses \link{pbmclapply} on Unix Systems and \link{parApply} on
-Windows machines.
+Setting \code{par.mode = "sequential"} executes \code{sperrorest} like a normal for-loop.
 }
 \note{
 Custom predict functions passed to \code{pred.fun}, which consist of multiple custom
@@ -177,28 +176,27 @@ fit <- rpart(fo, data = ecuador, control = ctrl)
 
 # Non-spatial 5-repeated 10-fold cross-validation:
 mypred.rpart <- function(object, newdata) predict(object, newdata)[,2]
-par.nsp.res <- parsperrorest(data = ecuador, formula = fo,
-                             model.fun = rpart, model.args = list(control = ctrl),
-                             pred.fun = mypred.rpart,
-                             progress = TRUE,
-                             smp.fun = partition.cv, 
-                             smp.args = list(repetition = 1:5, nfold = 15), 
-                             par.args = list(par.units = 2, par.mode = 1),
-                             error.rep = TRUE, error.fold = TRUE)
+par.nsp.res <- sperrorest(data = ecuador, formula = fo,
+                          model.fun = rpart, model.args = list(control = ctrl),
+                          pred.fun = mypred.rpart,
+                          progress = TRUE,
+                          smp.fun = partition.cv, 
+                          smp.args = list(repetition = 1:5, nfold = 15), 
+                          error.rep = TRUE, error.fold = TRUE)
 summary(par.nsp.res$error.rep)
 summary(par.nsp.res$error.fold)
 summary(par.nsp.res$represampling)
 # plot(par.nsp.res$represampling, ecuador)
 
 # Spatial 5-repeated 10-fold spatial cross-validation:
-par.sp.res <- parsperrorest(data = ecuador, formula = fo,
-                            model.fun = rpart, model.args = list(control = ctrl),
-                            pred.fun = mypred.rpart,
-                            progress = TRUE,
-                            smp.fun = partition.kmeans, 
-                            smp.args = list(repetition = 1:5, nfold = 15), 
-                            par.args = list(par.units = 2, par.mode = 2),
-                            error.rep = TRUE, error.fold = TRUE)
+par.sp.res <- sperrorest(data = ecuador, formula = fo,
+                         model.fun = rpart, model.args = list(control = ctrl),
+                         pred.fun = mypred.rpart,
+                         progress = TRUE,
+                         smp.fun = partition.kmeans, 
+                         smp.args = list(repetition = 1:5, nfold = 15), 
+                         par.args = list(par.units = 2, par.mode = "future"),
+                         error.rep = TRUE, error.fold = TRUE)
 summary(par.sp.res$error.rep)
 summary(par.sp.res$error.fold)
 summary(par.sp.res$represampling)
@@ -237,7 +235,4 @@ yield prediction in Precision Agriculture. In Advances in Intelligent
 Data Analysis IX, Proceedings, 9th International Symposium,
 IDA 2010, Tucson, AZ, USA, 19-21 May 2010.
 Lecture Notes in Computer Science, 6065 LNCS: 184-195.
-}
-\seealso{
-\code{\link[=sperrorest]{sperrorest()}}
 }
