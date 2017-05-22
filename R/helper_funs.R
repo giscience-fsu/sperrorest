@@ -17,7 +17,7 @@ runfolds <- function(j = NULL, currentSample = NULL, data = NULL, formula = NULL
                      train.param = NULL, do.gc = NULL, test.param = NULL) { 
   if (importance == FALSE) {
     
-    if (par.mode == 2 && progress == "TRUE" | progress == 1) {
+    if (par.mode == "foreach" | par.mode == "sequential" && progress == "TRUE" | progress == 1) {
       cat(date(), "Repetition", names(currentSample)[i], "- Fold", j, "\n")
     }
   }
@@ -262,7 +262,7 @@ runreps <- function(currentSample = NULL, data = NULL, formula = NULL,
   # this ensures that runfolds finds all objects which have been defined until here
   environment(runfolds) <- environment()
   
-  if (par.mode == 2 && progress == TRUE | progress == 2) {
+  if (par.mode == "foreach" | par.mode == "sequential" && progress == TRUE | progress == 2) {
     cat(date(), "Repetition", names(currentSample)[i], "\n")
   }
   
@@ -275,17 +275,6 @@ runreps <- function(currentSample = NULL, data = NULL, formula = NULL,
                                                                       pred.args = pred.args, response = response, par.cl = par.cl, 
                                                                       coords = coords, progress = progress, pooled.obs.train = pooled.obs.train, 
                                                                       pooled.obs.test = pooled.obs.test, err.fun = err.fun))
-  
-  # how to subset lists
-  # list_sub <- map(runfolds_list, function(x) x[c(5, 6)])
-  
-  ### what we need here from runfolds() output
-  # [ ] pooled.obs.train
-  # [ ] pooled.obs.test
-  # [ ] pooled.pred.train
-  # [ ] pooled.pred.test
-  # [ ] currentRes (1 list)
-  # [ ] currentImpo (1 list)
   
   # merge sublists of each fold into one list
   # http://stackoverflow.com/questions/32557131/adding-a-vector-to-each-sublist-within-a-list-r

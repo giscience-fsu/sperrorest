@@ -9,6 +9,7 @@
 #' 
 #' @import pbapply
 #' @import pbmcapply
+#' @import doFuture
 #' @import rpart
 #' @importFrom utils packageVersion 
 #' @import future
@@ -231,12 +232,13 @@
 #' }    
 #' @export
 sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.args = list(), 
-                          pred.fun = NULL, pred.args = list(), smp.fun = partition.loo, smp.args = list(), 
-                          train.fun = NULL, train.param = NULL, test.fun = NULL, test.param = NULL, err.fun = err.default, 
-                          error.fold = TRUE, error.rep = TRUE, err.train = TRUE, imp.variables = NULL, 
-                          imp.permutations = 1000, importance = !is.null(imp.variables), distance = FALSE, 
-                          do.gc = 1, do.try = FALSE, progress = 1, out.progress = "", # notify = FALSE, 
-                          par.args = list(), benchmark = FALSE, ...) {
+                       pred.fun = NULL, pred.args = list(), smp.fun = partition.loo, smp.args = list(), 
+                       train.fun = NULL, train.param = NULL, test.fun = NULL, test.param = NULL, err.fun = err.default, 
+                       error.fold = TRUE, error.rep = TRUE, err.train = TRUE, imp.variables = NULL, 
+                       imp.permutations = 1000, importance = !is.null(imp.variables), distance = FALSE, 
+                       par.args = list(par.mode = "foreach", par.units = NULL), 
+                       do.gc = 1, do.try = FALSE, progress = 1, out.progress = "", # notify = FALSE, 
+                       benchmark = FALSE, ...) {
   # if benchmark = TRUE, start clock
   if (benchmark) 
     start.time <- Sys.time()
@@ -479,9 +481,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
   ### par.mode = "foreach" -------
   
   
-  if (par.args$par.mode == "foreach") {
-    
-    message(sprintf("Using 'foreach()'."))
+  if (par.args$par.mode == "foreach" | par.args$par.mode == "sequential") {
     
     # combine function for multiple object outputs in foreach call
     comb <- function(...)
@@ -502,8 +502,23 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
     if (out.progress == "" & Sys.info()["sysname"] == "Windows") 
       out.progress <- paste0(getwd(), "/parsperrorest.progress.txt")
     
-    cl <- makeCluster(par.args$par.units, outfile = out.progress)
-    registerDoParallel(cl)
+
+    registerDoFuture()
+
+    # check for sequential/parallel execution and (if parallel) get number of cores
+    if (is.null(par.args$par.units) && !par.args$par.mode == "sequential") {
+      plan(multiprocess)
+      cores <- availableCores()
+      message(sprintf("Using 'foreach()' parallel mode with %s cores.", cores))
+    } 
+    if (!is.null(par.args$par.units) && !par.args$par.mode == "sequential") {
+      plan(multiprocess, workers = par.args$par.units)
+      message(sprintf("Using 'foreach()' parallel mode with %s cores.", par.args$par.units))
+    }
+    if (par.args$par.mode == "sequential") {
+      plan(sequential)
+      message(sprintf("Using 'foreach()' sequential mode."))
+    }
     
     # runreps call Fri May 19 14:35:58 2017 ------------------------------
     
@@ -603,12 +618,11 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
                        result <- list(error = runfolds_merged$currentRes, pooled.error = currentPooled.err, importance = impo_only)
                        return(list(result))
                      }
-    stopCluster(cl)
   }
   
   ### format parallel outputs ----
   
-  if (par.args$par.mode == "foreach") {
+  if (par.args$par.mode == "foreach" | par.args$par.mode == "sequential") {
     # split combined lists from foreach output into sublists referring to repetitions 
     myRes <- split(myRes[[1]], 1:length(resamp))
   }
@@ -642,17 +656,6 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
   } else {
     my.bench <- NULL
   }
-  
-  # if (notify == TRUE) {
-  #   if (benchmark == TRUE) {
-  #     msg <- paste0("Repetitions: ", length(smp.args$repetition), "; ", 
-  #                   "Folds: ", smp.args$nfold, "; ", "Total time: ", round(my.bench$runtime.performance, 
-  #                                                                          2))
-  #   } else (msg <- paste0("Repetitions: ", length(smp.args$repetition), "; ", 
-  #                         "Folds: ", smp.args$nfold))
-  #   
-  #   notify(title = "parsperrorest() finished successfully!", msg <- msg)
-  # }
   
   package.version <- packageVersion("sperrorest")
   class(package.version) <- "sperrorestpackageversion"

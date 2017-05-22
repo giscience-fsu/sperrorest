@@ -10,9 +10,10 @@ sperrorest(formula, data, coords = c("x", "y"), model.fun,
   train.param = NULL, test.fun = NULL, test.param = NULL,
   err.fun = err.default, error.fold = TRUE, error.rep = TRUE,
   err.train = TRUE, imp.variables = NULL, imp.permutations = 1000,
-  importance = !is.null(imp.variables), distance = FALSE, do.gc = 1,
-  do.try = FALSE, progress = 1, out.progress = "", par.args = list(),
-  benchmark = FALSE, ...)
+  importance = !is.null(imp.variables), distance = FALSE,
+  par.args = list(par.mode = "foreach", par.units = NULL), do.gc = 1,
+  do.try = FALSE, progress = 1, out.progress = "", benchmark = FALSE,
+  ...)
 }
 \arguments{
 \item{formula}{A formula specifying the variables used by the \code{model}.
@@ -94,6 +95,13 @@ importance assessment?}
 mean nearest-neighbour distances from test samples to training samples using
 \code{\link[=add.distance.represampling]{add.distance.represampling()}}}
 
+\item{par.args}{list of parallelization parameters:
+\code{par.mode} (the parallelization mode),
+\code{par.units} (the number of parallel processing units),
+\code{par.option} (optional settings for \code{par.mode = "future"}),
+\code{par.libs} (libraries to be loaded on cluster workers, character list).
+See Details for more information.}
+
 \item{do.gc}{numeric (default: 1): defines frequency of memory garbage
 collection by calling \code{\link[=gc]{gc()}}; if \code{<1}, no garbage collection;
 if \code{>=1}, run a \code{gc()} after each repetition;
@@ -114,13 +122,6 @@ Set to \code{FALSE} for no progress information.}
 The default (\code{''}) results in console output for Unix-systems and
 file output ('parsperrorest.progress.txt') in the current working directory
 for Windows-systems.}
-
-\item{par.args}{list of parallelization parameters:
-\code{par.mode} (the parallelization mode),
-\code{par.units} (the number of parallel processing units),
-\code{par.option} (optional settings for \code{par.mode = "future"}),
-\code{par.libs} (libraries to be loaded on cluster workers, character list).
-See Details for more information.}
 
 \item{benchmark}{(optional) logical (default: \code{FALSE}): if \code{TRUE},
 perform benchmarking and return \code{sperrorestbenchmarks} object}
