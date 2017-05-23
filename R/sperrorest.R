@@ -12,10 +12,11 @@
 #' @import pbmcapply
 #' @import parallel
 #' @import foreach
+#' @import future
+#' @import doFuture
 #' @import doParallel
 #' @import rpart
 #' @importFrom utils packageVersion 
-#' @import future
 #' @importFrom purrr walk map
 #' 
 #' @param data a `data.frame` with predictor and response variables. 
@@ -512,27 +513,28 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
       cl <- makeCluster(par.args$par.units, outfile = out.progress)
       registerDoParallel(cl)
     }
-    
-    # registerDoFuture()
-    # 
-    # # check for sequential/parallel execution and (if parallel) get number of cores
-    # if (is.null(par.args$par.units) && !par.args$par.mode == "sequential") {
-    #   plan(multiprocess)
-    #   cores <- availableCores()
-    #   message(sprintf("Using 'foreach' parallel mode with %s cores.", cores))
-    # } 
-    # if (!is.null(par.args$par.units) && !par.args$par.mode == "sequential") {
-    #   plan(multiprocess, workers = par.args$par.units)
-    #   message(sprintf("Using 'foreach' parallel mode with %s cores.", par.args$par.units))
-    # }
-    # if (par.args$par.mode == "sequential") {
-    #   plan(sequential)
-    #   message(sprintf("Using 'foreach' sequential mode."))
-    # }
-    
+
+    # check for sequential/parallel execution and (if parallel) get number of cores
+    if (is.null(par.args$par.units) && !par.args$par.mode == "sequential" && par.args$par.mode == "foreach") {
+      registerDoFuture()
+      plan(multiprocess)
+      cores <- availableCores()
+      message(sprintf("Using 'foreach' parallel mode with %s cores.", cores))
+    }
+    if (!is.null(par.args$par.units) && !par.args$par.mode == "sequential" && par.args$par.mode == "foreach") {
+      registerDoFuture()
+      plan(multiprocess, workers = par.args$par.units)
+      message(sprintf("Using 'foreach' parallel mode with %s cores.", par.args$par.units))
+    }
+    if (par.args$par.mode == "sequential") {
+      registerDoFuture()
+      plan(sequential)
+      message(sprintf("Using 'foreach' sequential mode."))
+    }
+
     # runreps call Fri May 19 14:35:58 2017 ------------------------------
     
-    myRes <- foreach(i = 1:length(resamp), .export=ls(.GlobalEnv), .packages = (.packages()), .errorhandling = "remove", 
+    myRes <- foreach(i = 1:length(resamp), .packages = (.packages()), .errorhandling = "remove", 
                      .combine = "comb", .multicombine = TRUE, .verbose = FALSE) %dopar% {
                        
                        if (err.train) {
@@ -569,7 +571,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
                                                       coords = coords, progress = progress, pooled.obs.train = pooled.obs.train,
                                                       pooled.obs.test = pooled.obs.test, err.fun = err.fun))) -> runfolds_list
                        
-                       return(runfolds_list)
+                       #return(runfolds_list)
                        # merge sublists of each fold into one list
                        # http://stackoverflow.com/questions/32557131/adding-a-vector-to-each-sublist-within-a-list-r
                        # http://stackoverflow.com/questions/43963683/r-flexible-passing-of-sublists-to-following-function
@@ -593,22 +595,22 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
                          if (is.factor(data[, response])) {
                            lev <- levels(data[, response])
                            if (err.train) {
-                             lev[pooled_only$pooled.obs.train] %>% 
-                               factor(levels = lev) -> pooled_only$pooled.obs.train
-                             # pooled_only$pooled.obs.train <- factor(lev[pooled_only$pooled.obs.train], levels = lev)
+                             # lev[pooled_only$pooled.obs.train] %>% 
+                             #   factor(levels = lev) -> pooled_only$pooled.obs.train
+                             pooled_only$pooled.obs.train <- factor(lev[pooled_only$pooled.obs.train], levels = lev)
                            }
-                           lev[pooled_only$pooled.obs.test] %>% 
-                             factor(levels = lev) -> pooled_only$pooled.obs.test
-                           # pooled_only$pooled.obs.test <- factor(lev[pooled_only$pooled.obs.test], levels = lev)
+                           # lev[pooled_only$pooled.obs.test] %>% 
+                           #   factor(levels = lev) -> pooled_only$pooled.obs.test
+                           pooled_only$pooled.obs.test <- factor(lev[pooled_only$pooled.obs.test], levels = lev)
                            if (is.factor.prediction) {
                              if (err.train) {
-                               lev[pooled_only$pooled.pred.train] %>% 
-                                 factor(levels = lev) -> pooled_only$pooled.pred.train
-                               # pooled_only$pooled.pred.train <- factor(lev[pooled_only$pooled.pred.train], levels = lev)
+                               # lev[pooled_only$pooled.pred.train] %>% 
+                               #   factor(levels = lev) -> pooled_only$pooled.pred.train
+                               pooled_only$pooled.pred.train <- factor(lev[pooled_only$pooled.pred.train], levels = lev)
                              }
-                             lev[pooled_only$pooled.obs.test] %>% 
-                               factor(levels = lev) -> pooled_only$pooled.obs.test
-                             # pooled_only$pooled.pred.test <- factor(lev[pooled_only$pooled.pred.test], levels = lev)
+                             # lev[pooled_only$pooled.obs.test] %>% 
+                             #   factor(levels = lev) -> pooled_only$pooled.obs.test
+                             pooled_only$pooled.pred.test <- factor(lev[pooled_only$pooled.pred.test], levels = lev)
                            }
                          } 
                          pooled.err.train <- NULL
@@ -616,13 +618,13 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
                            pooled.err.train <- err.fun(pooled_only$pooled.obs.train, pooled_only$pooled.pred.train)
                          }
                          
-                         list(train = pooled.err.train, test = err.fun(pooled_only$pooled.obs.test,
-                                                                       pooled_only$pooled.pred.test)) %>% 
-                           unlist() %>% 
-                           t() -> currentPooled.err
+                         # list(train = pooled.err.train, test = err.fun(pooled_only$pooled.obs.test,
+                         #                                               pooled_only$pooled.pred.test)) %>% 
+                         #   unlist() %>% 
+                         #   t() -> currentPooled.err
                          
-                         # currentPooled.err <- t(unlist(list(train = pooled.err.train, test = err.fun(pooled_only$pooled.obs.test,
-                         #                                                                           pooled_only$pooled.pred.test))))
+                         currentPooled.err <- t(unlist(list(train = pooled.err.train, test = err.fun(pooled_only$pooled.obs.test,
+                                                                                                     pooled_only$pooled.pred.test))))
                          if (do.gc >= 2) {
                            gc()
                          }
@@ -640,12 +642,13 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
                        result <- list(error = runfolds_merged$currentRes, pooled.error = currentPooled.err, importance = impo_only)
                        return(list(result))
                      }
+    if (par.args$par.mode == "foreach-old")
       stopCluster(cl)
   }
   
   ### format parallel outputs ----
   
-  if (par.args$par.mode == "foreach" | par.args$par.mode == "sequential") {
+  if (par.args$par.mode == "foreach" | par.args$par.mode == "sequential" | par.args$par.mode == "foreach-old") {
     # split combined lists from foreach output into sublists referring to repetitions 
     myRes <- split(myRes[[1]], 1:length(resamp))
   }
