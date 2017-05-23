@@ -1,0 +1,25 @@
+#' @title svm_cv_err
+#' @description Calculates AUROC for different gamma and cost values
+#' 
+#' @importFrom ROCR prediction performance
+#' 
+#' @param cost svm cost value
+#' @param gamma svm gamma value
+#' 
+#' @keywords internal
+#' @export
+svm_cv_err <- function(cost, gamma) {
+  err <- c()
+  
+  fit <- svm(formula, train, 
+            type = "C-classification", probability = TRUE,
+            cost = cost, gamma = gamma)
+  pred <- predict(fit, newdata = test, probability = TRUE)
+  pred <-  attr(pred, "probabilities")[, 2]
+  predobj <- prediction(pred, test[,lhs] )
+  auroc <- performance(predobj, measure = "auc")@y.values[[1]]
+  #cat(auroc, "\n")
+  err <- c(err, auroc)
+  
+  return(mean(err))
+}
