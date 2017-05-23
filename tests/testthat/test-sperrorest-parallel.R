@@ -43,8 +43,7 @@ test_that("output type (= list) for different logical combinations of
                               model.fun = lda,
                               pred.fun = lda.predfun,
                               smp.fun = partition.cv,
-                              par.args = list(par.mode = "foreach-old", par.units = 2),
-                              smp.args = list(repetition = 1:4, nfold = 10),
+                              smp.args = list(repetition = 1:2, nfold = 4),
                               error.rep = TRUE, error.fold = TRUE,
                               benchmark = TRUE, progress = T)
             
@@ -57,8 +56,8 @@ test_that("output type (= list) for different logical combinations of
                               model.fun = lda,
                               pred.fun = lda.predfun,
                               smp.fun = partition.cv,
-                              smp.args = list(repetition = 1:6, nfold = 5),
-                              par.args = list(par.mode = "sequential"),
+                              smp.args = list(repetition = 1:2, nfold = 5),
+                              par.args = list(par.mode = "foreach"),
                               error.rep = TRUE, error.fold = FALSE,
                               benchmark = TRUE, progress = TRUE)
             
@@ -71,7 +70,7 @@ test_that("output type (= list) for different logical combinations of
                               pred.fun = lda.predfun,
                               smp.fun = partition.cv,
                               smp.args = list(repetition = 1:2, nfold = 2),
-                              par.args = list(par.mode = "future", par.units = 2),
+                              par.args = list(par.mode = "foreach", par.units = 2),
                               error.rep = FALSE, error.fold = TRUE,
                               benchmark = TRUE, progress = FALSE)
             
@@ -81,7 +80,7 @@ test_that("output type (= list) for different logical combinations of
 
 
 test_that("output length of list is correct for error.rep = TRUE and error.fold  = TRUE 
-          for par.mode = 2 on rpart example", {
+          for par.mode = 'foreach' on rpart example", {
             
             data(ecuador)
             fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
@@ -115,7 +114,7 @@ test_that("sperrorest() variable importance with error.rep = T and error.fold = 
                        pred.fun = predict, pred.args = list(type = "response"),
                        smp.fun = partition.cv,
                        smp.args = list(repetition = 1:2, nfold = 4),
-                       par.args = list(par.mode = "sequential", par.units = 2),
+                       par.args = list(par.mode = "foreach", par.units = 2),
                        benchmark = TRUE, 
                        importance = TRUE, imp.permutations = 10)
   expect_equal(class(nspres$importance[[1]][[1]]), "data.frame")
@@ -130,7 +129,7 @@ test_that("sperrorest() variable importance with error.rep = F and error.fold = 
                        pred.fun = predict, pred.args = list(type = "response"),
                        smp.fun = partition.cv,
                        smp.args = list(repetition = 1:2, nfold = 4),
-                       par.args = list(par.mode = "sequential", par.units = 2),
+                       par.args = list(par.mode = "foreach", par.units = 2),
                        benchmark = TRUE, error.rep = FALSE, 
                        importance = TRUE, imp.permutations = 10)
   expect_equal(class(nspres$importance[[1]][[1]]), "data.frame")
@@ -147,7 +146,7 @@ test_that("sperrorest() produces correct output for binary response", {
                        pred.fun = predict, pred.args = list(type = "response"),
                        smp.fun = partition.cv,
                        smp.args = list(repetition = 1:2, nfold = 2),
-                       par.args = list(par.mode = "sequential", par.units = 2),
+                       par.args = list(par.mode = "foreach", par.units = 2),
                        benchmark = TRUE, 
                        importance = FALSE, imp.permutations = 2)
   summary.rep <- summary(nspres$error.rep)
@@ -214,8 +213,9 @@ test_that("output type (= list) for different logical combinations of
                               model.fun = lda,
                               pred.fun = lda.predfun,
                               smp.fun = partition.cv,
-                              smp.args = list(repetition = 1:2, nfold = 2),
-                              par.args = list(par.mode = "future", par.units = 2),
+                              smp.args = list(repetition = 1:4, nfold = 2),
+                              par.args = list(par.mode = "future", par.units = 2,
+                                              par.option = "multisession"),
                               error.rep = TRUE, error.fold = TRUE,
                               benchmark = TRUE, progress = FALSE)
             
