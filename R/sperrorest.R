@@ -250,23 +250,28 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
   if (!is.null(test.fun)) 
     stopifnot(is.function(test.fun))
   stopifnot(is.function(err.fun))
+  
   if (importance)
   {
-    if (!error.fold)
-    {
+    if (!error.fold) {
       warning(paste0("'importance = TRUE' currently only supported with 'error.fold = TRUE'.\n", 
                      "Using 'importance = FALSE'"))
       importance <- FALSE
     }
+    
     stopifnot(is.numeric(imp.permutations))
-    if (!is.null(imp.variables)) 
+    
+    if (!is.null(imp.variables)) {
       stopifnot(is.character(imp.variables))
+    }
   }
   stopifnot(is.character(coords))
   stopifnot(length(coords) == 2)
-  if (importance & !error.fold) 
+  
+  if (importance & !error.fold) {
     stop("variable importance assessment currently only supported 
          at the unpooled level")
+  }
   
   # Check if user is trying to bypass the normal mechanism for generating training
   # and test data sets and for passing formulas:
@@ -283,28 +288,24 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
   
   # Deprecated argumentsSun May 21 21:31:51 2017 ------------------------------
   dots.args <- list(...)
-  if (length(dots.args) > 0)
-  {
-    if (any(names(dots.args) == "predfun"))
-    {
+  if (length(dots.args) > 0) {
+    if (any(names(dots.args) == "predfun")) {
       stop("sorry: argument names have changed; 'predfun' is now 'pred.fun'")
     }
-    if (any(names(dots.args) == "silent"))
-    {
+    if (any(names(dots.args) == "silent")) {
       stop("sorry: argument names have changed; 'silent' is now 'progress'")
     }
-    if (any(names(dots.args) == "err.pooled"))
-    {
+    if (any(names(dots.args) == "err.pooled")) {
       stop("sorry: argument names have changed; 'err.pooled' is now 'error.rep'")
     }
-    if (any(names(dots.args) == "err.unpooled"))
-    {
+    if (any(names(dots.args) == "err.unpooled")) {
       stop("sorry: argument names have changed; 'err.unpooled' is now 'error.fold'")
     }
     # > v1.1
     if (class(par.args$par.mode) == "numeric") {
       stop("par.mode has to be specified using an explicit parallel mode name")
     }
+    
     warning("'...' arguments currently not supported:\n
             use 'model.args' to pass list of additional 
             arguments to 'model.fun'")
@@ -317,26 +318,30 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
   smp.args$coords <- coords
   
   resamp <- do.call(smp.fun, args = smp.args)
+  
   if (distance) 
     # Parallelize this function???
     resamp <- add.distance(resamp, data, coords = coords, fun = mean)
   
-  if (error.fold)
-  {
+  if (error.fold) {
     res <- lapply(resamp, unclass)
     class(res) <- "sperroresterror"
-  } else res <- NULL
+  } else {
+    res <- NULL
+  }
+  
   pooled.err <- NULL
+  
   # required to be able to assign levels to predictions if appropriate:
   is.factor.prediction <- NULL
   
   ### Permutation-based variable importance assessment (optional):
   impo <- NULL
-  if (importance)
-  {
+  if (importance) {
     # Importance of which variables:
-    if (is.null(imp.variables)) 
+    if (is.null(imp.variables)) {
       imp.variables <- strsplit(as.character(formula)[3], " + ", fixed = TRUE)[[1]]
+    }
     # Dummy data structure that will later be populated with the results:
     impo <- resamp
     # Create a template that will contain results of variable importance assessment:
@@ -344,7 +349,9 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
     names(imp.one.rep) <- imp.variables
     tmp <- as.list(rep(NA, imp.permutations))
     names(tmp) <- as.character(1:imp.permutations)
-    for (vnm in imp.variables) imp.one.rep[[vnm]] <- tmp
+    for (vnm in imp.variables) {
+      imp.one.rep[[vnm]] <- tmp
+    }
     rm(tmp)
   }
   
@@ -482,18 +489,16 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
     }
     
     # suppress any progress output of workes if progress = FALSE
-    if (progress == FALSE)
-    {
+    if (progress == FALSE) {
       out.progress <- "/dev/null"
-      if (Sys.info()["sysname"] == "Windows")
-      {
+      if (Sys.info()["sysname"] == "Windows") {
         out.progress <- "nul:"
       }
     }
     # special settings for Windows
-    if (out.progress == "" & Sys.info()["sysname"] == "Windows") 
+    if (out.progress == "" & Sys.info()["sysname"] == "Windows") {
       out.progress <- paste0(getwd(), "/parsperrorest.progress.txt")
-    
+    }
 
     registerDoFuture()
 
