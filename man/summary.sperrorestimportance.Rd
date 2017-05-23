@@ -14,7 +14,7 @@
 \item{level}{Level at which errors are summarized:
 0: overall; 1: repetition; 2: fold}
 
-\item{na.rm}{Remove \code{NA} values? See \code{\link[=mean]{mean()}} etc.}
+\item{na.rm}{Remove \code{NA} values? See \link{mean} etc.}
 
 \item{which}{optional character vector specifying selected variables for
 which the importances should be summarized (to do: check implementation)}

@@ -16,14 +16,14 @@
 #' @method summary sperroresterror
 #' 
 #' @param object `sperroresterror` resp. `sperrorestcombinederror` 
-#' error object calculated by [sperrorest()]
+#' error object calculated by [sperrorest]
 #' @param level Level at which errors are summarized: 
 #' 0: overall; 1: repetition; 2: fold
 #' @param pooled If `TRUE` (default), mean and standard deviation etc are 
 #' calculated between fold-level error estimates. If `FALSE`, 
-#' apply first a [weighted.mean()] among folds before calculating 
+#' apply first a [weighted.mean] among folds before calculating 
 #' mean, standard deviation etc among repetitions. See also Details.
-#' @param na.rm Remove `NA` values? See [mean()] etc.
+#' @param na.rm Remove `NA` values? See [mean] etc.
 #' @param ... additional arguments (currently ignored)
 #' 
 #' @return Depending on the level of aggregation, a `list` or 
@@ -43,10 +43,10 @@
 #' standard deviation of the error. `error.rep = FALSE` is not recommended, 
 #' it is mainly for testing purposes; when the test sets are small 
 #' (as in leave-one-out cross-validation, in the extreme case), 
-#' consider running [sperrorest()] with `error.rep = TRUE` and 
+#' consider running [sperrorest] with `error.rep = TRUE` and 
 #' examine only the `error.rep` component of its result.
 #' 
-#' @seealso [sperrorest::parsperrorest()]
+#' @seealso [sperrorest]
 #' 
 #' @export
 summary.sperroresterror <- function(object, level = 0, pooled = TRUE, na.rm = TRUE, 

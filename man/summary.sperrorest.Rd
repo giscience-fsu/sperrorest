@@ -33,7 +33,7 @@
 \item{level}{Level at which errors are summarized:
 0: overall; 1: repetition; 2: fold}
 
-\item{na.rm}{Remove \code{NA} values? See \code{\link[=mean]{mean()}} etc.}
+\item{na.rm}{Remove \code{NA} values? See \link{mean} etc.}
 
 \item{...}{additional arguments for \code{\link[=summary.sperroresterror]{summary.sperroresterror()}}
 or \code{\link[=summary.sperrorestimportance]{summary.sperrorestimportance()}}}

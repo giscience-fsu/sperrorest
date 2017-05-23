@@ -48,16 +48,16 @@ fitted model object and the \code{newdata} argument,
 which are provided by \code{sperrorest})}
 
 \item{smp.fun}{A function for sampling training and test sets from
-\code{data}. E.g., \code{\link[=partition.kmeans]{partition.kmeans()}} for
+\code{data}. E.g., \link{partition.kmeans} for
 spatial cross-validation using spatial \emph{k}-means clustering.}
 
-\item{smp.args}{(optional) Arguments to be passed to \code{est.fun}}
+\item{smp.args}{(optional) Arguments to be passed to \code{smp.fun}}
 
 \item{train.fun}{(optional) A function for resampling or subsampling the
 training sample in order to achieve, e.g., uniform sample sizes on all
 training sets, or maintaining a certain ratio of positives and negatives
 in training sets.
-E.g., \code{\link[=resample.uniform]{resample.uniform()}} or \code{\link[=resample.strat.uniform]{resample.strat.uniform()}}}
+E.g., \link{resample.uniform} or \link{resample.strat.uniform}}
 
 \item{train.param}{(optional) Arguments to be passed to \code{resample.fun}}
 
@@ -67,7 +67,7 @@ E.g., \code{\link[=resample.uniform]{resample.uniform()}} or \code{\link[=resamp
 
 \item{err.fun}{A function that calculates selected error measures from the
 known responses in \code{data} and the model predictions delivered
-by \code{pred.fun}. E.g., \code{\link[=err.default]{err.default()}} (the default).
+by \code{pred.fun}. E.g., \link{err.default} (the default).
 See example and details below.}
 
 \item{error.fold}{logical (default: \code{TRUE}) if \code{importance} is
@@ -93,7 +93,7 @@ importance assessment?}
 
 \item{distance}{logical (default: \code{FALSE}): if \code{TRUE}, calculate
 mean nearest-neighbour distances from test samples to training samples using
-\code{\link[=add.distance.represampling]{add.distance.represampling()}}}
+\link{add.distance.represampling}}
 
 \item{par.args}{list of parallelization parameters:
 \code{par.mode} (the parallelization mode),
@@ -101,12 +101,12 @@ mean nearest-neighbour distances from test samples to training samples using
 \code{par.option} (optional settings for \code{par.mode = "future"}),}
 
 \item{do.gc}{numeric (default: 1): defines frequency of memory garbage
-collection by calling \code{\link[=gc]{gc()}}; if \code{<1}, no garbage collection;
-if \code{>=1}, run a \code{gc()} after each repetition;
+collection by calling \link{gc}; if \code{<1}, no garbage collection;
+if \code{>=1}, run a \link{gc} after each repetition;
 if \code{>=2}, after each fold}
 
 \item{do.try}{logical (default: \code{FALSE}): if \code{TRUE} (untested!!),
-use \code{\link[=try]{try()}} to robustify calls to \code{model.fun} and
+use \link{try} to robustify calls to \code{model.fun} and
 \code{err.fun}; use with caution!}
 
 \item{progress}{numeric (default: \code{1}): Whether to show progress

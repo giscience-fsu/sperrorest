@@ -49,16 +49,16 @@
 #' which are provided by `sperrorest`)
 #' 
 #' @param smp.fun A function for sampling training and test sets from 
-#' `data`. E.g., [partition.kmeans()] for 
+#' `data`. E.g., [partition.kmeans] for 
 #' spatial cross-validation using spatial \emph{k}-means clustering.
 #' 
-#' @param smp.args (optional) Arguments to be passed to `est.fun`
+#' @param smp.args (optional) Arguments to be passed to `smp.fun`
 #' 
 #' @param train.fun (optional) A function for resampling or subsampling the 
 #' training sample in order to achieve, e.g., uniform sample sizes on all 
 #' training sets, or maintaining a certain ratio of positives and negatives 
 #' in training sets. 
-#' E.g., [resample.uniform()] or [resample.strat.uniform()]
+#' E.g., [resample.uniform] or [resample.strat.uniform]
 #' 
 #' @param train.param (optional) Arguments to be passed to `resample.fun`
 #' 
@@ -68,7 +68,7 @@
 #' 
 #' @param err.fun A function that calculates selected error measures from the 
 #' known responses in `data` and the model predictions delivered 
-#' by `pred.fun`. E.g., [err.default()] (the default). 
+#' by `pred.fun`. E.g., [err.default] (the default). 
 #' See example and details below.
 #' 
 #' @param error.fold logical (default: `TRUE`) if `importance` is 
@@ -96,15 +96,15 @@
 #' 
 #' @param distance logical (default: `FALSE`): if `TRUE`, calculate 
 #' mean nearest-neighbour distances from test samples to training samples using 
-#' [add.distance.represampling()]
+#' [add.distance.represampling]
 #' 
 #' @param do.gc numeric (default: 1): defines frequency of memory garbage 
-#' collection by calling [gc()]; if `<1`, no garbage collection; 
-#' if `>=1`, run a `gc()` after each repetition; 
+#' collection by calling [gc]; if `<1`, no garbage collection; 
+#' if `>=1`, run a [gc] after each repetition; 
 #' if `>=2`, after each fold
 #' 
 #' @param do.try logical (default: `FALSE`): if `TRUE` (untested!!), 
-#' use [try()] to robustify calls to `model.fun` and 
+#' use [try] to robustify calls to `model.fun` and 
 #' `err.fun`; use with caution!
 #' 
 #' @param progress numeric (default: `1`): Whether to show progress 
