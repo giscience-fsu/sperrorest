@@ -517,13 +517,13 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
     # check for sequential/parallel execution and (if parallel) get number of cores
     if (is.null(par.args$par.units) && !par.args$par.mode == "sequential" && par.args$par.mode == "foreach") {
       registerDoFuture()
-      plan(multiprocess)
+      plan(multisession)
       cores <- availableCores()
       message(sprintf("Using 'foreach' parallel mode with %s cores.", cores))
     }
     if (!is.null(par.args$par.units) && !par.args$par.mode == "sequential" && par.args$par.mode == "foreach") {
       registerDoFuture()
-      plan(multiprocess, workers = par.args$par.units)
+      plan(multisession, workers = par.args$par.units)
       message(sprintf("Using 'foreach' parallel mode with %s cores.", par.args$par.units))
     }
     if (par.args$par.mode == "sequential") {
@@ -570,8 +570,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
                                                       pred.args = pred.args, response = response, par.cl = par.cl,
                                                       coords = coords, progress = progress, pooled.obs.train = pooled.obs.train,
                                                       pooled.obs.test = pooled.obs.test, err.fun = err.fun))) -> runfolds_list
-                       
-                       #return(runfolds_list)
+
                        # merge sublists of each fold into one list
                        # http://stackoverflow.com/questions/32557131/adding-a-vector-to-each-sublist-within-a-list-r
                        # http://stackoverflow.com/questions/43963683/r-flexible-passing-of-sublists-to-following-function
