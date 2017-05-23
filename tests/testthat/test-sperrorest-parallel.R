@@ -7,7 +7,7 @@ pacman::p_load(sperrorest, testthat, rpart, MASS, doParallel, foreach, doFuture)
 # par.mode = "foreach" Mon Feb  6 23:24:11 2017 --------------------------
 
 test_that("output type (= list) for different logical combinations of 
-          error.rep and error.fold for par.mode = 2 on LDA example", {
+          error.rep and error.fold for par.mode = 'foreach' on LDA example", {
             
             lda.predfun <- function(object, newdata, fac = NULL) {
               library(nnet)
@@ -40,13 +40,13 @@ test_that("output type (= list) for different logical combinations of
             
             # err.rep = TRUE, err.fold = TRUE
             out <- sperrorest(fo, data = maipo, coords = c("utmx","utmy"),
-                                 model.fun = lda,
-                                 pred.fun = lda.predfun,
-                                 smp.fun = partition.cv,
-                                 #par.args = list(par.mode = "sequential"),
-                                 smp.args = list(repetition = 1:10, nfold = 4),
-                                 error.rep = TRUE, error.fold = TRUE,
-                                 benchmark = TRUE, progress = T)
+                              model.fun = lda,
+                              pred.fun = lda.predfun,
+                              smp.fun = partition.cv,
+                              #par.args = list(par.mode = "sequential"),
+                              smp.args = list(repetition = 1:10, nfold = 4),
+                              error.rep = TRUE, error.fold = TRUE,
+                              benchmark = TRUE, progress = T)
             
             expect_equal(typeof(out$error.rep), "list")
             expect_equal(typeof(out$error.fold), "list")
@@ -54,26 +54,26 @@ test_that("output type (= list) for different logical combinations of
             
             # err.rep = TRUE, err.fold = FALSE
             out <- sperrorest(fo, data = maipo, coords = c("utmx","utmy"),
-                                 model.fun = lda,
-                                 pred.fun = lda.predfun,
-                                 smp.fun = partition.cv,
-                                 smp.args = list(repetition = 1:6, nfold = 5),
-                                 par.args = list(par.mode = "sequential"),
-                                 error.rep = TRUE, error.fold = FALSE,
-                                 benchmark = TRUE, progress = TRUE)
+                              model.fun = lda,
+                              pred.fun = lda.predfun,
+                              smp.fun = partition.cv,
+                              smp.args = list(repetition = 1:6, nfold = 5),
+                              par.args = list(par.mode = "sequential"),
+                              error.rep = TRUE, error.fold = FALSE,
+                              benchmark = TRUE, progress = TRUE)
             
             expect_equal(typeof(out$error.rep), "list")
             expect_equal(typeof(out$error.fold), "NULL")
             
             # err.rep = FALSE, err.fold = TRUE
             out <- sperrorest(fo, data = maipo, coords = c("utmx","utmy"),
-                                 model.fun = lda,
-                                 pred.fun = lda.predfun,
-                                 smp.fun = partition.cv,
-                                 smp.args = list(repetition = 1:2, nfold = 2),
-                                 par.args = list(par.mode = "foreach", par.units = 2),
-                                 error.rep = FALSE, error.fold = TRUE,
-                                 benchmark = TRUE, progress = FALSE)
+                              model.fun = lda,
+                              pred.fun = lda.predfun,
+                              smp.fun = partition.cv,
+                              smp.args = list(repetition = 1:2, nfold = 2),
+                              par.args = list(par.mode = "future", par.units = 2),
+                              error.rep = FALSE, error.fold = TRUE,
+                              benchmark = TRUE, progress = FALSE)
             
             expect_equal(typeof(out$error.rep), "NULL")
             expect_equal(typeof(out$error.fold), "list")
@@ -93,13 +93,13 @@ test_that("output length of list is correct for error.rep = TRUE and error.fold 
             # Non-spatial 5-repeated 10-fold cross-validation:
             mypred.rpart <- function(object, newdata) predict(object, newdata)[,2]
             par.nsp.res <- sperrorest(data = ecuador, formula = fo,
-                                         model.fun = rpart, model.args = list(control = ctrl),
-                                         pred.fun = mypred.rpart,
-                                         progress = FALSE,
-                                         smp.fun = partition.cv,
-                                         smp.args = list(repetition = 1:2, nfold = 2),
-                                         par.args = list(par.mode = "foreach", par.units = 2),
-                                         error.rep = TRUE, error.fold = TRUE)
+                                      model.fun = rpart, model.args = list(control = ctrl),
+                                      pred.fun = mypred.rpart,
+                                      progress = FALSE,
+                                      smp.fun = partition.cv,
+                                      smp.args = list(repetition = 1:2, nfold = 2),
+                                      par.args = list(par.mode = "foreach", par.units = 2),
+                                      error.rep = TRUE, error.fold = TRUE)
             
             expect_equal(length(par.nsp.res$error.fold[[1]]), 2)
           })
@@ -109,15 +109,15 @@ test_that("output length of list is correct for error.rep = TRUE and error.fold 
 test_that("sperrorest() variable importance with error.rep = T and error.fold = T", {
   data(ecuador) # Muenchow et al. (2012), see ?ecuador
   fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
-
+  
   nspres <- sperrorest(data = ecuador, formula = fo,
-                          model.fun = glm, model.args = list(family = "binomial"),
-                          pred.fun = predict, pred.args = list(type = "response"),
-                          smp.fun = partition.cv,
-                          smp.args = list(repetition = 1:2, nfold = 4),
-                          par.args = list(par.mode = "foreach", par.units = 2),
-                          benchmark = TRUE, 
-                          importance = TRUE, imp.permutations = 10)
+                       model.fun = glm, model.args = list(family = "binomial"),
+                       pred.fun = predict, pred.args = list(type = "response"),
+                       smp.fun = partition.cv,
+                       smp.args = list(repetition = 1:2, nfold = 4),
+                       par.args = list(par.mode = "foreach", par.units = 2),
+                       benchmark = TRUE, 
+                       importance = TRUE, imp.permutations = 10)
   expect_equal(class(nspres$importance[[1]][[1]]), "data.frame")
 })
 
@@ -126,13 +126,13 @@ test_that("sperrorest() variable importance with error.rep = F and error.fold = 
   fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
   
   nspres <- sperrorest(data = ecuador, formula = fo,
-                          model.fun = glm, model.args = list(family = "binomial"),
-                          pred.fun = predict, pred.args = list(type = "response"),
-                          smp.fun = partition.cv,
-                          smp.args = list(repetition = 1:2, nfold = 4),
-                          par.args = list(par.mode = "sequential", par.units = 2),
-                          benchmark = TRUE, error.rep = FALSE, 
-                          importance = TRUE, imp.permutations = 10)
+                       model.fun = glm, model.args = list(family = "binomial"),
+                       pred.fun = predict, pred.args = list(type = "response"),
+                       smp.fun = partition.cv,
+                       smp.args = list(repetition = 1:2, nfold = 4),
+                       par.args = list(par.mode = "sequential", par.units = 2),
+                       benchmark = TRUE, error.rep = FALSE, 
+                       importance = TRUE, imp.permutations = 10)
   expect_equal(class(nspres$importance[[1]][[1]]), "data.frame")
 })
 
@@ -143,13 +143,13 @@ test_that("sperrorest() produces correct output for binary response", {
   fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
   
   nspres <- sperrorest(data = ecuador, formula = fo,
-                          model.fun = glm, model.args = list(family = "binomial"),
-                          pred.fun = predict, pred.args = list(type = "response"),
-                          smp.fun = partition.cv,
-                          smp.args = list(repetition = 1:2, nfold = 2),
-                          par.args = list(par.mode = "sequential", par.units = 2),
-                          benchmark = TRUE, 
-                          importance = FALSE, imp.permutations = 2)
+                       model.fun = glm, model.args = list(family = "binomial"),
+                       pred.fun = predict, pred.args = list(type = "response"),
+                       smp.fun = partition.cv,
+                       smp.args = list(repetition = 1:2, nfold = 2),
+                       par.args = list(par.mode = "sequential", par.units = 2),
+                       benchmark = TRUE, 
+                       importance = FALSE, imp.permutations = 2)
   summary.rep <- summary(nspres$error.rep)
   summary.fold <- summary(nspres$error.fold)
   summary.resampling <- summary(nspres$represampling)
@@ -161,13 +161,13 @@ test_that("sperrorest() when pred.fun = NULL", {
   fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
   
   nspres <- sperrorest(data = ecuador, formula = fo,
-                          model.fun = glm, model.args = list(family = "binomial"),
-                          pred.args = list(type = "response"),
-                          smp.fun = partition.cv,
-                          smp.args = list(repetition = 1:2, nfold = 4),
-                          par.args = list(par.mode = "foreach", par.units = 2),
-                          benchmark = TRUE,
-                          importance = TRUE, imp.permutations = 10)
+                       model.fun = glm, model.args = list(family = "binomial"),
+                       pred.args = list(type = "response"),
+                       smp.fun = partition.cv,
+                       smp.args = list(repetition = 1:2, nfold = 4),
+                       par.args = list(par.mode = "foreach", par.units = 2),
+                       benchmark = TRUE,
+                       importance = TRUE, imp.permutations = 10)
   summary.rep <- summary(nspres$error.rep)
   summary.fold <- summary(nspres$error.fold)
   summary.resampling <- summary(nspres$represampling)
@@ -211,13 +211,13 @@ test_that("output type (= list) for different logical combinations of
             
             # err.rep = TRUE, err.fold = TRUE
             out <- sperrorest(fo, data = maipo, coords = c("utmx","utmy"),
-                                 model.fun = lda,
-                                 pred.fun = lda.predfun,
-                                 smp.fun = partition.cv,
-                                 smp.args = list(repetition = 1:2, nfold = 2),
-                                 par.args = list(par.mode = "future", par.units = 2),
-                                 error.rep = TRUE, error.fold = TRUE,
-                                 benchmark = TRUE, progress = FALSE)
+                              model.fun = lda,
+                              pred.fun = lda.predfun,
+                              smp.fun = partition.cv,
+                              smp.args = list(repetition = 1:2, nfold = 2),
+                              par.args = list(par.mode = "future", par.units = 2),
+                              error.rep = TRUE, error.fold = TRUE,
+                              benchmark = TRUE, progress = FALSE)
             
             expect_equal(typeof(out$error.rep), "list")
             expect_equal(typeof(out$error.fold), "list")
@@ -225,26 +225,26 @@ test_that("output type (= list) for different logical combinations of
             
             # err.rep = TRUE, err.fold = FALSE
             out <- sperrorest(fo, data = maipo, coords = c("utmx","utmy"),
-                                 model.fun = lda,
-                                 pred.fun = lda.predfun,
-                                 smp.fun = partition.cv,
-                                 smp.args = list(repetition = 1:2, nfold = 2),
-                                 par.args = list(par.mode = "future", par.units = 2),
-                                 error.rep = TRUE, error.fold = FALSE,
-                                 benchmark = TRUE, progress = FALSE)
+                              model.fun = lda,
+                              pred.fun = lda.predfun,
+                              smp.fun = partition.cv,
+                              smp.args = list(repetition = 1:2, nfold = 2),
+                              par.args = list(par.mode = "future", par.units = 2),
+                              error.rep = TRUE, error.fold = FALSE,
+                              benchmark = TRUE, progress = FALSE)
             
             expect_equal(typeof(out$error.rep), "list")
             expect_equal(typeof(out$error.fold), "NULL")
             
             # err.rep = FALSE, err.fold = TRUE
             out <- sperrorest(fo, data = maipo, coords = c("utmx","utmy"),
-                                 model.fun = lda,
-                                 pred.fun = lda.predfun,
-                                 smp.fun = partition.cv,
-                                 smp.args = list(repetition = 1:2, nfold = 2),
-                                 par.args = list(par.mode = "future", par.units = 2),
-                                 error.rep = FALSE, error.fold = TRUE,
-                                 benchmark = TRUE, progress = FALSE)
+                              model.fun = lda,
+                              pred.fun = lda.predfun,
+                              smp.fun = partition.cv,
+                              smp.args = list(repetition = 1:2, nfold = 2),
+                              par.args = list(par.mode = "future", par.units = 2),
+                              error.rep = FALSE, error.fold = TRUE,
+                              benchmark = TRUE, progress = FALSE)
             
             expect_equal(typeof(out$error.rep), "NULL")
             expect_equal(typeof(out$error.fold), "list")
@@ -282,14 +282,14 @@ test_that("do.try argument", {
   
   # err.rep = TRUE, err.fold = TRUE
   out <- sperrorest(fo, data = maipo, coords = c("utmx","utmy"),
-                       model.fun = lda,
-                       pred.fun = lda.predfun,
-                       smp.fun = partition.cv,
-                       smp.args = list(repetition = 1:2, nfold = 2),
-                       par.args = list(par.mode = "future", par.units = 2),
-                       error.rep = TRUE, error.fold = TRUE,
-                       benchmark = TRUE, progress = FALSE,
-                       do.try = T)
+                    model.fun = lda,
+                    pred.fun = lda.predfun,
+                    smp.fun = partition.cv,
+                    smp.args = list(repetition = 1:2, nfold = 2),
+                    par.args = list(par.mode = "future", par.units = 2),
+                    error.rep = TRUE, error.fold = TRUE,
+                    benchmark = TRUE, progress = FALSE,
+                    do.try = T)
   
   expect_equal(typeof(out$error.rep), "list")
   expect_equal(typeof(out$error.fold), "list")
@@ -311,13 +311,13 @@ test_that("output length of list is correct for error.rep = TRUE and error.fold 
             # Non-spatial 5-repeated 10-fold cross-validation:
             mypred.rpart <- function(object, newdata) predict(object, newdata)[,2]
             par.nsp.res <- sperrorest(data = ecuador, formula = fo,
-                                         model.fun = rpart, model.args = list(control = ctrl),
-                                         pred.fun = mypred.rpart,
-                                         progress = FALSE, 
-                                         smp.fun = partition.cv,
-                                         smp.args = list(repetition = 1:2, nfold = 2),
-                                         par.args = list(par.mode = "apply", par.units = 2),
-                                         error.rep = TRUE, error.fold = TRUE)
+                                      model.fun = rpart, model.args = list(control = ctrl),
+                                      pred.fun = mypred.rpart,
+                                      progress = FALSE, 
+                                      smp.fun = partition.cv,
+                                      smp.args = list(repetition = 1:2, nfold = 2),
+                                      par.args = list(par.mode = "apply", par.units = 2),
+                                      error.rep = TRUE, error.fold = TRUE)
             
             expect_equal(length(par.nsp.res$error.fold[[1]]), 2)
           })
@@ -330,13 +330,13 @@ test_that("par.mode = 'apply' works with var.imp", {
   fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
   
   nspres <- sperrorest(data = ecuador, formula = fo,
-                          model.fun = glm, model.args = list(family = "binomial"),
-                          pred.args = list(type = "response"),
-                          smp.fun = partition.cv,
-                          smp.args = list(repetition = 1:2, nfold = 4),
-                          par.args = list(par.mode = "apply", par.units = 2),
-                          benchmark = TRUE,
-                          importance = TRUE, imp.permutations = 2)
+                       model.fun = glm, model.args = list(family = "binomial"),
+                       pred.args = list(type = "response"),
+                       smp.fun = partition.cv,
+                       smp.args = list(repetition = 1:2, nfold = 4),
+                       par.args = list(par.mode = "apply", par.units = 2),
+                       benchmark = TRUE,
+                       importance = TRUE, imp.permutations = 2)
   summary.rep <- summary(nspres$error.rep)
   summary.fold <- summary(nspres$error.fold)
   summary.resampling <- summary(nspres$represampling)
@@ -350,55 +350,55 @@ test_that("par.mode = 'apply' works with var.imp", {
 # notify argument Tue Feb  7 13:45:45 2017 
 
 test_that("notify badge is working in sperrorest()", {
-
+  
   testthat::skip_on_cran() # "because of 'notify=TRUE'"
   testthat::skip("notifier integration removed")
-
+  
   data(ecuador)
   fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
-
+  
   # Example of a classification tree fitted to this data:
   mypred.rpart <- function(object, newdata) predict(object, newdata)[, 2]
   ctrl <- rpart.control(cp = 0.005) # show the effects of overfitting
   fit <- rpart(fo, data = ecuador, control = ctrl)
-
+  
   # Non-spatial 5-repeated 10-fold cross-validation:
   mypred.rpart <- function(object, newdata) predict(object, newdata)[,2]
   par.nsp.res <- sperrorest(data = ecuador, formula = fo,
-                               model.fun = rpart, model.args = list(control = ctrl),
-                               pred.fun = mypred.rpart,
-                               progress = FALSE,
-                               smp.fun = partition.cv,
-                               smp.args = list(repetition = 1:2, nfold = 2),
-                               par.args = list(par.mode = "apply", par.units = 2),
-                               error.rep = TRUE, error.fold = TRUE, notify = TRUE)
-
+                            model.fun = rpart, model.args = list(control = ctrl),
+                            pred.fun = mypred.rpart,
+                            progress = FALSE,
+                            smp.fun = partition.cv,
+                            smp.args = list(repetition = 1:2, nfold = 2),
+                            par.args = list(par.mode = "apply", par.units = 2),
+                            error.rep = TRUE, error.fold = TRUE, notify = TRUE)
+  
   expect_equal(length(par.nsp.res$error.fold[[1]]), 2)
 })
 
 test_that("notify without benchmark = TRUE", {
   
   testthat::skip("notifier integration removed")
-
+  
   data(ecuador)
   fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
-
+  
   # Example of a classification tree fitted to this data:
   mypred.rpart <- function(object, newdata) predict(object, newdata)[, 2]
   ctrl <- rpart.control(cp = 0.005) # show the effects of overfitting
   fit <- rpart(fo, data = ecuador, control = ctrl)
-
+  
   # Non-spatial 5-repeated 10-fold cross-validation:
   mypred.rpart <- function(object, newdata) predict(object, newdata)[,2]
   par.nsp.res <- sperrorest(data = ecuador, formula = fo,
-                               model.fun = rpart, model.args = list(control = ctrl),
-                               pred.fun = mypred.rpart,
-                               progress = FALSE,
-                               smp.fun = partition.cv, benchmark = FALSE,
-                               smp.args = list(repetition = 1:2, nfold = 2),
-                               par.args = list(par.mode = "apply", par.units = 2),
-                               error.rep = TRUE, error.fold = TRUE, notify = TRUE)
-
+                            model.fun = rpart, model.args = list(control = ctrl),
+                            pred.fun = mypred.rpart,
+                            progress = FALSE,
+                            smp.fun = partition.cv, benchmark = FALSE,
+                            smp.args = list(repetition = 1:2, nfold = 2),
+                            par.args = list(par.mode = "apply", par.units = 2),
+                            error.rep = TRUE, error.fold = TRUE, notify = TRUE)
+  
   expect_equal(length(par.nsp.res$error.fold[[1]]), 2)
 })
 
@@ -489,13 +489,13 @@ test_that("partition.factor.cv works (LDA)", {
   fo <- as.formula(paste("croptype ~", paste(predictors, collapse = "+")))
   
   res.lda.sp.par <- sperrorest(fo, data = maipo, coords = c("utmx","utmy"),
-                                  model.fun = lda,
-                                  pred.fun = lda.predfun,
-                                  pred.args = list(fac = "field"),
-                                  smp.fun = partition.factor.cv,
-                                  smp.args = list(fac = "field", repetition = 1:2, nfold = 2),
-                                  par.args = list(par.units = 2, par.mode = "foreach"),
-                                  error.rep = TRUE, error.fold = TRUE, progress = "TRUE",
-                                  benchmark = TRUE)
+                               model.fun = lda,
+                               pred.fun = lda.predfun,
+                               pred.args = list(fac = "field"),
+                               smp.fun = partition.factor.cv,
+                               smp.args = list(fac = "field", repetition = 1:2, nfold = 2),
+                               par.args = list(par.units = 2, par.mode = "foreach"),
+                               error.rep = TRUE, error.fold = TRUE, progress = "TRUE",
+                               benchmark = TRUE)
   
 })

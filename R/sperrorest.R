@@ -350,12 +350,12 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
     # Create a template that will contain results of variable importance assessment:
     rep(NA, length(imp.variables)) %>% 
       as.list() -> imp.one.rep
-      
+    
     names(imp.one.rep) <- imp.variables
     
     rep(NA, imp.permutations) %>% 
       as.list() -> tmp
-
+    
     names(tmp) <- as.character(1:imp.permutations)
     for (vnm in imp.variables) {
       imp.one.rep[[vnm]] <- tmp
@@ -507,9 +507,9 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
     if (out.progress == "" & Sys.info()["sysname"] == "Windows") {
       out.progress <- paste0(getwd(), "/sperrorest.progress.txt")
     }
-
+    
     registerDoFuture()
-
+    
     # check for sequential/parallel execution and (if parallel) get number of cores
     if (is.null(par.args$par.units) && !par.args$par.mode == "sequential") {
       plan(multiprocess)
@@ -611,8 +611,8 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
                          
                          list(train = pooled.err.train, test = err.fun(pooled_only$pooled.obs.test,
                                                                        pooled_only$pooled.pred.test)) %>% 
-                                unlist() %>% 
-                                t() -> currentPooled.err
+                           unlist() %>% 
+                           t() -> currentPooled.err
                          
                          # currentPooled.err <- t(unlist(list(train = pooled.err.train, test = err.fun(pooled_only$pooled.obs.test,
                          #                                                                           pooled_only$pooled.pred.test))))
@@ -680,6 +680,6 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
   class(RES) <- "sperrorest"
   
   return(RES)
-  }
+}
 
 
