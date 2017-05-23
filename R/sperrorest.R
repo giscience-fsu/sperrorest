@@ -8,7 +8,10 @@
 #' @inheritParams partition.cv
 #' 
 #' @import pbapply
+#' @import magrittr
 #' @import pbmcapply
+#' @import parallel
+#' @importFrom foreach %dopar% foreach
 #' @import doFuture
 #' @import rpart
 #' @importFrom utils packageVersion 
@@ -113,7 +116,7 @@
 #' 
 #' @param out.progress only used if `par.mode = 2`: Optionally write progress output to a file instead of console output. 
 #' The default (`''`) results in console output for Unix-systems and
-#' file output ('parsperrorest.progress.txt') in the current working directory 
+#' file output ('sperrorest.progress.txt') in the current working directory 
 #' for Windows-systems. 
 #' 
 #' @param par.args list of parallelization parameters:
@@ -139,7 +142,7 @@
 #' \item{package.version}{a `sperrorestpackageversion` object containing 
 #' information about the `sperrorest` package version}
 #' 
-#' @details By default [sperrorest] runs in parallel on all cores using [foreach]
+#' @details By default `sperrorest` runs in parallel on all cores using `foreach`
 #' with the [future] backend. If this is not desired, specify 
 #' `par.units` in `par.args`.
 #' 
@@ -194,7 +197,7 @@
 #'                           pred.fun = mypred.rpart,
 #'                           progress = TRUE,
 #'                           smp.fun = partition.cv, 
-#'                           smp.args = list(repetition = 1:5, nfold = 15), 
+#'                           smp.args = list(repetition = 1:5, nfold = 10), 
 #'                           error.rep = TRUE, error.fold = TRUE)
 #' summary(par.nsp.res$error.rep)
 #' summary(par.nsp.res$error.fold)
@@ -207,7 +210,7 @@
 #'                          pred.fun = mypred.rpart,
 #'                          progress = TRUE,
 #'                          smp.fun = partition.kmeans, 
-#'                          smp.args = list(repetition = 1:5, nfold = 15), 
+#'                          smp.args = list(repetition = 1:5, nfold = 10), 
 #'                          par.args = list(par.units = 2, par.mode = "future"),
 #'                          error.rep = TRUE, error.fold = TRUE)
 #' summary(par.sp.res$error.rep)
@@ -345,9 +348,14 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
     # Dummy data structure that will later be populated with the results:
     impo <- resamp
     # Create a template that will contain results of variable importance assessment:
-    imp.one.rep <- as.list(rep(NA, length(imp.variables)))
+    rep(NA, length(imp.variables)) %>% 
+      as.list() -> imp.one.rep
+      
     names(imp.one.rep) <- imp.variables
-    tmp <- as.list(rep(NA, imp.permutations))
+    
+    rep(NA, imp.permutations) %>% 
+      as.list() -> tmp
+
     names(tmp) <- as.character(1:imp.permutations)
     for (vnm in imp.variables) {
       imp.one.rep[[vnm]] <- tmp
@@ -432,7 +440,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
                                                                                coords = coords, progress = progress, pooled.obs.train = pooled.obs.train,
                                                                                pooled.obs.test = pooled.obs.test, err.fun = err.fun)))
           if (myRes == "NULL") {
-            stop(paste0("No output was received from parsperrorest.\n", 
+            stop(paste0("No output was received from sperrorest.\n", 
                         "If you are on macOS either run R in 'Vanilla' mode or use another parallel mode."))
           }
         } else {
@@ -448,7 +456,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
                                                                                  pooled.obs.test = pooled.obs.test, err.fun = err.fun)))
           # check if run was sufficient
           if (length(myRes) > 1 && myRes == "NULL") {
-            stop(paste0("No output was received from parsperrorest.\n", 
+            stop(paste0("No output was received from sperrorest.\n", 
                         "If you are on macOS either run R in 'Vanilla' mode or use another parallel mode."))
           }
         }
@@ -497,7 +505,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
     }
     # special settings for Windows
     if (out.progress == "" & Sys.info()["sysname"] == "Windows") {
-      out.progress <- paste0(getwd(), "/parsperrorest.progress.txt")
+      out.progress <- paste0(getwd(), "/sperrorest.progress.txt")
     }
 
     registerDoFuture()
@@ -578,16 +586,22 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
                          if (is.factor(data[, response])) {
                            lev <- levels(data[, response])
                            if (err.train) {
-                             pooled_only$pooled.obs.train <- factor(lev[pooled_only$pooled.obs.train], levels = lev)
+                             lev[pooled_only$pooled.obs.train] %>% 
+                               factor(levels = lev) -> pooled_only$pooled.obs.train
+                             # pooled_only$pooled.obs.train <- factor(lev[pooled_only$pooled.obs.train], levels = lev)
                            }
-                           pooled_only$pooled.obs.test <- factor(lev[pooled_only$pooled.obs.test], levels = lev)
-                           ### error between here 
-                           #return(is.factor.prediction)
+                           lev[pooled_only$pooled.obs.test] %>% 
+                             factor(levels = lev) -> pooled_only$pooled.obs.test
+                           # pooled_only$pooled.obs.test <- factor(lev[pooled_only$pooled.obs.test], levels = lev)
                            if (is.factor.prediction) {
                              if (err.train) {
-                               pooled_only$pooled.pred.train <- factor(lev[pooled_only$pooled.pred.train], levels = lev)
+                               lev[pooled_only$pooled.pred.train] %>% 
+                                 factor(levels = lev) -> pooled_only$pooled.pred.train
+                               # pooled_only$pooled.pred.train <- factor(lev[pooled_only$pooled.pred.train], levels = lev)
                              }
-                             pooled_only$pooled.pred.test <- factor(lev[pooled_only$pooled.pred.test], levels = lev)
+                             lev[pooled_only$pooled.obs.test] %>% 
+                               factor(levels = lev) -> pooled_only$pooled.obs.test
+                             # pooled_only$pooled.pred.test <- factor(lev[pooled_only$pooled.pred.test], levels = lev)
                            }
                          } 
                          pooled.err.train <- NULL
@@ -595,8 +609,13 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
                            pooled.err.train <- err.fun(pooled_only$pooled.obs.train, pooled_only$pooled.pred.train)
                          }
                          
-                         currentPooled.err <- t(unlist(list(train = pooled.err.train, test = err.fun(pooled_only$pooled.obs.test,
-                                                                                                     pooled_only$pooled.pred.test))))
+                         list(train = pooled.err.train, test = err.fun(pooled_only$pooled.obs.test,
+                                                                       pooled_only$pooled.pred.test)) %>% 
+                                unlist() %>% 
+                                t() -> currentPooled.err
+                         
+                         # currentPooled.err <- t(unlist(list(train = pooled.err.train, test = err.fun(pooled_only$pooled.obs.test,
+                         #                                                                           pooled_only$pooled.pred.test))))
                          if (do.gc >= 2) {
                            gc()
                          }
@@ -607,7 +626,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
                        }
                        
                        # set currentImpo to NULL to prevent false importance output (resamp object)
-                       # if not desired
+                       # if importance == FALSE
                        if (importance == FALSE) {
                          impo_only <- NULL
                        }

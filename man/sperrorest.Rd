@@ -118,7 +118,7 @@ Set to \code{FALSE} for no progress information.}
 
 \item{out.progress}{only used if \code{par.mode = 2}: Optionally write progress output to a file instead of console output.
 The default (\code{''}) results in console output for Unix-systems and
-file output ('parsperrorest.progress.txt') in the current working directory
+file output ('sperrorest.progress.txt') in the current working directory
 for Windows-systems.}
 
 \item{benchmark}{(optional) logical (default: \code{FALSE}): if \code{TRUE},
@@ -149,7 +149,7 @@ and bootstrap error estimation and parallelized permutation-based
 assessment of spatial variable importance.
 }
 \details{
-By default \link{sperrorest} runs in parallel on all cores using \link{foreach}
+By default \code{sperrorest} runs in parallel on all cores using \code{foreach}
 with the \link{future} backend. If this is not desired, specify
 \code{par.units} in \code{par.args}.
 
@@ -181,7 +181,7 @@ par.nsp.res <- sperrorest(data = ecuador, formula = fo,
                           pred.fun = mypred.rpart,
                           progress = TRUE,
                           smp.fun = partition.cv, 
-                          smp.args = list(repetition = 1:5, nfold = 15), 
+                          smp.args = list(repetition = 1:5, nfold = 10), 
                           error.rep = TRUE, error.fold = TRUE)
 summary(par.nsp.res$error.rep)
 summary(par.nsp.res$error.fold)
@@ -194,7 +194,7 @@ par.sp.res <- sperrorest(data = ecuador, formula = fo,
                          pred.fun = mypred.rpart,
                          progress = TRUE,
                          smp.fun = partition.kmeans, 
-                         smp.args = list(repetition = 1:5, nfold = 15), 
+                         smp.args = list(repetition = 1:5, nfold = 10), 
                          par.args = list(par.units = 2, par.mode = "future"),
                          error.rep = TRUE, error.fold = TRUE)
 summary(par.sp.res$error.rep)
