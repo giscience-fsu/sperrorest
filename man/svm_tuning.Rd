@@ -26,4 +26,7 @@ Tuning of SVM (cost & gamma) using spatial cross-validation
 \details{
 This function tunes a support vectort machine from the \link{e1071} package
 using (spatial) cross-validation.
+
+Currently this function is hard-coded to a binary response variable and AUROC
+as error measure.
 }
