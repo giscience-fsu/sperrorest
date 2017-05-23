@@ -18,7 +18,7 @@ runfolds <- function(j = NULL, currentSample = NULL, data = NULL, formula = NULL
   if (importance == FALSE) {
     
     if (par.mode == "foreach" | par.mode == "sequential" && progress == "TRUE" | progress == 1) {
-      cat(date(), "Repetition", names(currentSample)[i], "- Fold", j, "\n")
+      cat(date(), "Repetition", i, "- Fold", j, "\n")
     }
   }
   

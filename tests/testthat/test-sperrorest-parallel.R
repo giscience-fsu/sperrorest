@@ -43,8 +43,8 @@ test_that("output type (= list) for different logical combinations of
                               model.fun = lda,
                               pred.fun = lda.predfun,
                               smp.fun = partition.cv,
-                              #par.args = list(par.mode = "sequential"),
-                              smp.args = list(repetition = 1:10, nfold = 4),
+                              par.args = list(par.mode = "foreach-old", par.units = 2),
+                              smp.args = list(repetition = 1:4, nfold = 10),
                               error.rep = TRUE, error.fold = TRUE,
                               benchmark = TRUE, progress = T)
             
@@ -115,7 +115,7 @@ test_that("sperrorest() variable importance with error.rep = T and error.fold = 
                        pred.fun = predict, pred.args = list(type = "response"),
                        smp.fun = partition.cv,
                        smp.args = list(repetition = 1:2, nfold = 4),
-                       par.args = list(par.mode = "foreach", par.units = 2),
+                       par.args = list(par.mode = "sequential", par.units = 2),
                        benchmark = TRUE, 
                        importance = TRUE, imp.permutations = 10)
   expect_equal(class(nspres$importance[[1]][[1]]), "data.frame")

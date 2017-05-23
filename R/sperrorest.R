@@ -11,8 +11,8 @@
 #' @import magrittr
 #' @import pbmcapply
 #' @import parallel
-#' @importFrom foreach %dopar% foreach
-#' @import doFuture
+#' @import foreach
+#' @import doParallel
 #' @import rpart
 #' @importFrom utils packageVersion 
 #' @import future
@@ -488,7 +488,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
   
   ### par.mode = "foreach" -------
   
-  if (par.args$par.mode == "foreach" | par.args$par.mode == "sequential") {
+  if (par.args$par.mode == "foreach" | par.args$par.mode == "sequential" | par.args$par.mode == "foreach-old") {
     
     # combine function for multiple object outputs in foreach call
     comb <- function(...)
@@ -508,26 +508,31 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
       out.progress <- paste0(getwd(), "/sperrorest.progress.txt")
     }
     
-    registerDoFuture()
+    if (par.args$par.mode == "foreach-old") {
+      cl <- makeCluster(par.args$par.units, outfile = out.progress)
+      registerDoParallel(cl)
+    }
     
-    # check for sequential/parallel execution and (if parallel) get number of cores
-    if (is.null(par.args$par.units) && !par.args$par.mode == "sequential") {
-      plan(multiprocess)
-      cores <- availableCores()
-      message(sprintf("Using 'foreach' parallel mode with %s cores.", cores))
-    } 
-    if (!is.null(par.args$par.units) && !par.args$par.mode == "sequential") {
-      plan(multiprocess, workers = par.args$par.units)
-      message(sprintf("Using 'foreach' parallel mode with %s cores.", par.args$par.units))
-    }
-    if (par.args$par.mode == "sequential") {
-      plan(sequential)
-      message(sprintf("Using 'foreach' sequential mode."))
-    }
+    # registerDoFuture()
+    # 
+    # # check for sequential/parallel execution and (if parallel) get number of cores
+    # if (is.null(par.args$par.units) && !par.args$par.mode == "sequential") {
+    #   plan(multiprocess)
+    #   cores <- availableCores()
+    #   message(sprintf("Using 'foreach' parallel mode with %s cores.", cores))
+    # } 
+    # if (!is.null(par.args$par.units) && !par.args$par.mode == "sequential") {
+    #   plan(multiprocess, workers = par.args$par.units)
+    #   message(sprintf("Using 'foreach' parallel mode with %s cores.", par.args$par.units))
+    # }
+    # if (par.args$par.mode == "sequential") {
+    #   plan(sequential)
+    #   message(sprintf("Using 'foreach' sequential mode."))
+    # }
     
     # runreps call Fri May 19 14:35:58 2017 ------------------------------
     
-    myRes <- foreach(i = 1:length(resamp), .packages = (.packages()), .errorhandling = "remove", 
+    myRes <- foreach(i = 1:length(resamp), .export=ls(.GlobalEnv), .packages = (.packages()), .errorhandling = "remove", 
                      .combine = "comb", .multicombine = TRUE, .verbose = FALSE) %dopar% {
                        
                        if (err.train) {
@@ -563,6 +568,8 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
                                                       pred.args = pred.args, response = response, par.cl = par.cl,
                                                       coords = coords, progress = progress, pooled.obs.train = pooled.obs.train,
                                                       pooled.obs.test = pooled.obs.test, err.fun = err.fun))) -> runfolds_list
+                       
+                       return(runfolds_list)
                        # merge sublists of each fold into one list
                        # http://stackoverflow.com/questions/32557131/adding-a-vector-to-each-sublist-within-a-list-r
                        # http://stackoverflow.com/questions/43963683/r-flexible-passing-of-sublists-to-following-function
@@ -633,6 +640,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
                        result <- list(error = runfolds_merged$currentRes, pooled.error = currentPooled.err, importance = impo_only)
                        return(list(result))
                      }
+      stopCluster(cl)
   }
   
   ### format parallel outputs ----
