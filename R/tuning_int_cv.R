@@ -55,7 +55,8 @@ svm_tuning <- function(formula, data, accelerate = 1, int.cv.nfold = NULL, parti
   
   # Calculate AUROC for all combinations of cost and gamma values:
   for (i in 1:length(costs))
-    auroc[i] <- svm_cv_err(cost = costs[i], gamma = gammas[i])
+    auroc[i] <- svm_cv_err(cost = costs[i], gamma = gammas[i], train = train,
+                           test = test, lhs = lhs)
   
   # Identify best AUROC, or if all are NA, use defaults and issue a warning:
   if (all(is.na(auroc))) {

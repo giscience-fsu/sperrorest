@@ -8,7 +8,8 @@
 #' 
 #' @keywords internal
 #' @export
-svm_cv_err <- function(cost, gamma) {
+svm_cv_err <- function(cost = NULL, gamma = NULL, train = NULL, test = NULL,
+                       lhs = NULL) {
   err <- c()
   
   fit <- svm(formula, train, 
@@ -16,7 +17,7 @@ svm_cv_err <- function(cost, gamma) {
             cost = cost, gamma = gamma)
   pred <- predict(fit, newdata = test, probability = TRUE)
   pred <-  attr(pred, "probabilities")[, 2]
-  predobj <- prediction(pred, test[,lhs] )
+  predobj <- prediction(pred, test[, lhs] )
   auroc <- performance(predobj, measure = "auc")@y.values[[1]]
   #cat(auroc, "\n")
   err <- c(err, auroc)
