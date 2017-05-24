@@ -125,6 +125,8 @@ for Windows-systems.}
 perform benchmarking and return \code{sperrorestbenchmarks} object}
 
 \item{...}{currently not used}
+
+\item{...}{Further options passed to \link{makeCluster}}
 }
 \value{
 A list (object of class \code{sperrorest}) with (up to) six components:

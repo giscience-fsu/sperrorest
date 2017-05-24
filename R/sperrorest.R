@@ -128,6 +128,8 @@
 #' @param benchmark (optional) logical (default: `FALSE`): if `TRUE`, 
 #' perform benchmarking and return `sperrorestbenchmarks` object
 #' 
+#' @param ... Further options passed to [makeCluster]
+#' 
 #' @return A list (object of class `sperrorest`) with (up to) six components:
 #' \item{error.rep}{a `sperrorestreperror` object containing 
 #' predictive performances at the repetition level}
@@ -309,10 +311,6 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
     if (class(par.args$par.mode) == "numeric") {
       stop("par.mode has to be specified using an explicit parallel mode name")
     }
-    
-    warning("'...' arguments currently not supported:\n
-            use 'model.args' to pass list of additional 
-            arguments to 'model.fun'")
   }
   
   # Name of response variable:
@@ -509,22 +507,24 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
       out.progress <- paste0(getwd(), "/sperrorest.progress.txt")
     }
     
-    if (par.args$par.mode == "foreach-old") {
-      cl <- makeCluster(par.args$par.units, outfile = out.progress)
-      registerDoParallel(cl)
-    }
+    registerDoFuture()
+    
+    par.args$par.option <- "cluster"
 
     # check for sequential/parallel execution and (if parallel) get number of cores
     if (is.null(par.args$par.units) && !par.args$par.mode == "sequential" && par.args$par.mode == "foreach") {
-      registerDoFuture()
-      plan(multisession)
-      cores <- availableCores()
-      message(sprintf("Using 'foreach' parallel mode with %s cores.", cores))
+      
+      cl <- makeCluster(availableCores(), outfile = out.progress, ...)
+      plan(cluster, workers = cl)
+      # plan(multisession)
+      message(sprintf("Using 'foreach' parallel mode with %s cores and '%s' option.", availableCores(), par.args$par.option))
     }
     if (!is.null(par.args$par.units) && !par.args$par.mode == "sequential" && par.args$par.mode == "foreach") {
-      registerDoFuture()
-      plan(multisession, workers = par.args$par.units)
-      message(sprintf("Using 'foreach' parallel mode with %s cores.", par.args$par.units))
+      
+      cl <- makeCluster(par.args$par.units, outfile = out.progress, ...)
+      plan(cluster, workers = cl)
+
+      message(sprintf("Using 'foreach' parallel mode with %s cores and '%s' option.", par.args$par.units, par.args$par.option))
     }
     if (par.args$par.mode == "sequential") {
       registerDoFuture()
