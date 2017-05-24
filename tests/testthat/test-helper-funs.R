@@ -4,15 +4,16 @@ pacman::p_load(sperrorest, testthat, rpart, MASS)
 
 # runfolds Sun May 21 22:58:39 2017 ------------------------------
 
+skip("internal use")
+
 testthat::test_that("runfolds works on glm example", {
   
   j <- 1 # running the first repetition of 'currentSample', normally we are 
   # calling an apply call to seq_along nFolds of repetition
   # see also 'runreps()'
   data <- ecuador
-  imp.one.rep <- readRDS("inst/test-objects/imp.one.rep.rda")
-  currentSample <- readRDS("inst/test-objects/resamp.rda")[[1]]
-  currentRes <- readRDS("inst/test-objects/currentRes.rda")
+  currentSample <- partition.cv(ecuador, nfold = 4)[[1]]
+  currentRes <- currentSample
   
   runfolds_single <- runfolds(j = 1, data = ecuador, currentSample = currentSample,
                               formula = slides ~ dem + slope + hcurv + vcurv + log.carea + cslope, 
@@ -28,9 +29,9 @@ testthat::test_that("runfolds works on glm example", {
 
 testthat::test_that("runfolds works on LDA example", {
   
-  imp.one.rep <- readRDS("inst/test-objects/imp.one.rep.rda")
-  currentSample <- readRDS("inst/test-objects/resamp.rda")[[1]]
-  currentRes <- readRDS("inst/test-objects/currentRes.rda")
+  data <- ecuador
+  currentSample <- partition.cv(maipo, nfold = 4)[[1]]
+  currentRes <- currentSample
   
   lda.predfun <- function(object, newdata, fac = NULL) {
     library(nnet)
@@ -55,7 +56,7 @@ testthat::test_that("runfolds works on LDA example", {
   fo <- as.formula(paste("croptype ~", paste(predictors, collapse = "+")))
   
   runfolds_single <- runfolds(j = 1, data = maipo, currentSample = currentSample,
-                              formula = fo, 
+                              formula = fo, par.mode = "foreach",
                               do.try = FALSE, model.fun = lda, pred.fun = lda.predfun,
                               error.fold = TRUE, error.rep = TRUE, pred.args = list(fac = "field"),
                               err.train = TRUE, importance = FALSE, currentRes = currentSample, 
@@ -68,11 +69,9 @@ testthat::test_that("runfolds works on LDA example", {
 
 testthat::test_that("runfolds works on rpart example", {
   
-  imp.one.rep <- readRDS("inst/test-objects/imp.one.rep.rda")
-  currentSample <- readRDS("inst/test-objects/resamp.rda")[[1]]
-  currentRes <- readRDS("inst/test-objects/currentRes.rda")
-  
-  fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
+  data <- ecuador
+  currentSample <- partition.cv(ecuador, nfold = 4)[[1]]
+  currentRes <- currentSample
   
   mypred.rpart <- function(object, newdata) predict(object, newdata)[, 2]
   ctrl <- rpart.control(cp = 0.005) # show the effects of overfitting
@@ -101,12 +100,10 @@ testthat::test_that("runreps works on lda example", {
   # calling an apply call to seq_along nFolds of repetition
   # see also 'runreps()'
   #### 2 repetitions, 4 folds
-  data <- ecuador
-  imp.one.rep <- readRDS("inst/test-objects/imp.one.rep.rda")
-  currentSample <- readRDS("inst/test-objects/resamp.rda")
-  currentRes <- readRDS("inst/test-objects/currentRes.rda")
+  currentSample <- partition.cv(maipo, nfold = 4)
+  currentSample[[2]] <- partition.cv(maipo, nfold = 4)[[1]]
+  currentRes <- currentSample
   
-  currentSample <- readRDS("inst/test-objects/resamp_maipo.rda")
   lda.predfun <- function(object, newdata, fac = NULL) {
     library(nnet)
     majority <- function(x) {
@@ -129,7 +126,7 @@ testthat::test_that("runreps works on lda example", {
   fo <- as.formula(paste("croptype ~", paste(predictors, collapse = "+")))
   
   runreps_res <- lapply(currentSample, function(X) runreps(currentSample = X, data = maipo,
-                                                           formula = fo, par.mode = 1, pred.fun = lda.predfun,
+                                                           formula = fo, par.mode = "apply", pred.fun = lda.predfun,
                                                            do.try = FALSE, model.fun = lda,
                                                            error.fold = TRUE, error.rep = TRUE, do.gc = 1,
                                                            err.train = TRUE, importance = FALSE, currentRes = currentRes, 
