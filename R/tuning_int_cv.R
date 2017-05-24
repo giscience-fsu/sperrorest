@@ -26,9 +26,9 @@ svm_tuning <- function(formula, data, accelerate = 1, int.cv.nfold = NULL, parti
 
   if (is.null(partition.fun)) {
     partition.fun <- partition.kmeans
-    message(sprintf("Using %s as partitioning method", partition.fun))
+    message(sprintf("Using %s as partitioning method", as.character(quote(partition.fun))))
   } else {
-    message(sprintf("Using %s as partitioning method", partition.fun))
+    message(sprintf("Using %s as partitioning method", as.character(quote(partition.fun))))
   }
   
   if (is.null(int.cv.nfold)) {
