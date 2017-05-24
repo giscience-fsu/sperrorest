@@ -5,7 +5,7 @@
 \title{svm_cv_err}
 \usage{
 svm_cv_err(cost = NULL, gamma = NULL, train = NULL, test = NULL,
-  lhs = NULL, formula = NULL)
+  lhs = NULL, formula = NULL, kernel = NULL, ...)
 }
 \arguments{
 \item{cost}{svm cost value}

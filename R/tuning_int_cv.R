@@ -1,7 +1,10 @@
 #' @title svm_tuning
 #' @description Tuning of SVM (cost & gamma) using spatial cross-validation
 #' 
-#' @importFrom e1071 svm
+#' @import future
+#' @import doFuture
+#' @import parallel
+#' @import foreach
 #' 
 #' @param formula
 #' 
@@ -15,20 +18,30 @@
 #' 
 #' @param partition.fun method for partitioning the data (e.g. [partition.kmeans])
 #' 
+#' @param additional options passed to [SVM]
+#' 
 #' @details This function tunes a support vectort machine from the [e1071] package 
 #' using (spatial) cross-validation.
 #' 
 #' Currently this function is hard-coded to a binary response variable and AUROC 
 #' as error measure. 
 #' 
+#' @examples 
+#' data(ecuador) # Muenchow et al. (2012), see ?ecuador
+#' fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
+#' svm_tune <- svm_tuning(fo, ecuador, accelerate = 4, int.cv.nfold = 5, partition.fun = partition.kmeans) 
+#' 
 #' @export
-svm_tuning <- function(formula, data, accelerate = 1, int.cv.nfold = NULL, partition.fun = NULL) {
-
+svm_tuning <- function(formula, data, accelerate = 1, int.cv.nfold = NULL, partition.fun = NULL,
+                       out.progress = "", kernel = "radial", ...) {
+  
+  partition.fun_arg <- as.character(quote(partition.fun))
+  
   if (is.null(partition.fun)) {
-    message(sprintf("Using %s as partitioning method", as.character(quote(partition.fun))))
+    message(sprintf("Using %s as partitioning method", partition.fun_arg))
     partition.fun <- partition.kmeans
   } else {
-    message(sprintf("Using %s as partitioning method", as.character(quote(partition.fun))))
+    message(sprintf("Using %s as partitioning method", partition.fun_arg))
   }
   
   if (is.null(int.cv.nfold)) {
@@ -54,9 +67,11 @@ svm_tuning <- function(formula, data, accelerate = 1, int.cv.nfold = NULL, parti
   auroc <- rep(NA, length(costs))
   
   # Calculate AUROC for all combinations of cost and gamma values:
+  
   for (i in 1:length(costs)) {
     auroc[i] <- svm_cv_err(cost = costs[i], gamma = gammas[i], train = train,
-                           test = test, lhs = lhs, formula = formula)
+                           test = test, lhs = lhs, formula = formula,  
+                           kernel = kernel, ...)   
   } 
   
   # Identify best AUROC, or if all are NA, use defaults and issue a warning:
@@ -71,7 +86,9 @@ svm_tuning <- function(formula, data, accelerate = 1, int.cv.nfold = NULL, parti
   }
   
   # Output on screen:
-  cat("Optimal C: ", cost, "        optimal gamma: ", gamma,"       optimal auroc: ", max(auroc,na.rm=T), "\n")
+  cat("Optimal C: ", cost, "        optimal gamma: ", 
+      gamma,"       optimal auroc: ", 
+      max(auroc,na.rm = T), "\n")
   
   # Generate the actual fit object using optimized cost and gamma parameters:
   fit <- svm(formula, data,

@@ -5,7 +5,7 @@
 \title{svm_tuning}
 \usage{
 svm_tuning(formula, data, accelerate = 1, int.cv.nfold = NULL,
-  partition.fun = NULL)
+  partition.fun = NULL, out.progress = "", kernel = "radial", ...)
 }
 \arguments{
 \item{formula}{}
@@ -19,14 +19,22 @@ for actual analysis.}
 \item{partition.fun}{method for partitioning the data (e.g. \link{partition.kmeans})}
 
 \item{int_cv_fold}{number of folds for cross-validation}
+
+\item{additional}{options passed to \link{SVM}}
 }
 \description{
 Tuning of SVM (cost & gamma) using spatial cross-validation
 }
 \details{
-This function tunes a support vectort machine from the \link{e1071} package
+This function tunes a support vectort machine from the \link{gmum.r} package
 using (spatial) cross-validation.
 
 Currently this function is hard-coded to a binary response variable and AUROC
 as error measure.
+}
+\examples{
+data(ecuador) # Muenchow et al. (2012), see ?ecuador
+fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
+svm_tune <- svm_tuning(fo, ecuador, accelerate = 4, int.cv.nfold = 5, partition.fun = partition.kmeans) 
+
 }
