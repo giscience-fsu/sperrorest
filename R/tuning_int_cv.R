@@ -25,8 +25,8 @@
 svm_tuning <- function(formula, data, accelerate = 1, int.cv.nfold = NULL, partition.fun = NULL) {
 
   if (is.null(partition.fun)) {
-    partition.fun <- partition.kmeans
     message(sprintf("Using %s as partitioning method", as.character(quote(partition.fun))))
+    partition.fun <- partition.kmeans
   } else {
     message(sprintf("Using %s as partitioning method", as.character(quote(partition.fun))))
   }
@@ -54,9 +54,10 @@ svm_tuning <- function(formula, data, accelerate = 1, int.cv.nfold = NULL, parti
   auroc <- rep(NA, length(costs))
   
   # Calculate AUROC for all combinations of cost and gamma values:
-  for (i in 1:length(costs))
+  for (i in 1:length(costs)) {
     auroc[i] <- svm_cv_err(cost = costs[i], gamma = gammas[i], train = train,
-                           test = test, lhs = lhs)
+                           test = test, lhs = lhs, formula = formula)
+  } 
   
   # Identify best AUROC, or if all are NA, use defaults and issue a warning:
   if (all(is.na(auroc))) {

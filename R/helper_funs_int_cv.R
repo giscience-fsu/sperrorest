@@ -9,10 +9,11 @@
 #' @keywords internal
 #' @export
 svm_cv_err <- function(cost = NULL, gamma = NULL, train = NULL, test = NULL,
-                       lhs = NULL) {
+                       lhs = NULL, formula = NULL) {
   err <- c()
   
-  fit <- svm(formula, train, 
+  # using the "formula" class here
+  fit <- svm(formula = formula, data = train,
             type = "C-classification", probability = TRUE,
             cost = cost, gamma = gamma)
   pred <- predict(fit, newdata = test, probability = TRUE)

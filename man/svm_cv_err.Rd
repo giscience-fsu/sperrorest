@@ -4,7 +4,8 @@
 \alias{svm_cv_err}
 \title{svm_cv_err}
 \usage{
-svm_cv_err(cost, gamma)
+svm_cv_err(cost = NULL, gamma = NULL, train = NULL, test = NULL,
+  lhs = NULL, formula = NULL)
 }
 \arguments{
 \item{cost}{svm cost value}
