@@ -3,29 +3,57 @@
 #' 
 #' @importFrom ROCR prediction performance
 #' @importFrom e1071 svm
+#' @importFrom gmum.r SVM
 #' 
-#' @param cost svm cost value
-#' @param gamma svm gamma value
+#' @param formula model formula
+#' 
+#' @param cost cost value
+#' 
+#' @param gamma gamma value
+#' 
+#' @param train training data
+#' 
+#' @param test testing data
+#' 
+#' @param kernel to use for fitting. See [svm]
+#' 
+#' @param type classification type to use. See [svm]
+#' 
+#' @param response response variable
 #' 
 #' @keywords internal
+#' 
+#' @examples 
+#' parti <- partition.kmeans(ecuador, nfold = 5, order.clusters = FALSE)
+#' train <- ecuador[parti[[1]][[1]]$train, ]
+#' test <- ecuador[parti[[1]][[1]]$test, ]
+#' response <- "slides"
+#' fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
+#' out <- svm_cv_err(cost = 0.01, gamma = 0.166, train = train, test = test,
+#' formula = fo, kernel = "radial", type = "C-classification", response = "slides",
+#' svm_function = "svm")
+#' 
 #' @export
 svm_cv_err <- function(cost = NULL, gamma = NULL, train = NULL, test = NULL,
-                       lhs = NULL, formula = NULL, kernel = NULL, ...) {
+                       response = NULL, formula = NULL, kernel = NULL, 
+                       type = NULL, svm_fun = NULL, ...) {
   err <- c()
   
-  # using the "formula" class here
-  fit <- svm(formula = formula, data = train, kernel = kernel, 
-             type = "C-classification", probability = TRUE,
-             cost = cost, gamma = gamma, ...)
-  
-  pred <- predict(fit, newdata = test, probability = TRUE)
-  pred <-  attr(pred, "probabilities")[, 2]
-  predobj <- prediction(pred, test[, lhs])
-  
-  auroc <- performance(predobj, measure = "auc")@y.values[[1]]
+  # check type of response variable 
+  if (is.factor(train[[response]])) {
+    
+    args <- list(formula = formula, data = train, type = type, kernel = kernel,
+                 probability = TRUE, cost = cost, gamma = gamma)
+    fit <- do.call(svm_fun, args)
+    
+    pred <- predict(fit, newdata = test, probability = TRUE)
+    pred <-  attr(pred, "probabilities")[, 2]
+    predobj <- prediction(pred, test[, response])
+    
+    auroc <- performance(predobj, measure = "auc")@y.values[[1]]
 
-  #cat(auroc, "\n")
-  err <- c(err, auroc)
-  
-  return(mean(err))
+    err <- c(err, auroc)
+    
+    return(mean(err))
+  }
 }

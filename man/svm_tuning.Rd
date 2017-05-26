@@ -4,8 +4,9 @@
 \alias{svm_tuning}
 \title{svm_tuning}
 \usage{
-svm_tuning(formula, data, accelerate = 1, int.cv.nfold = NULL,
-  partition.fun = NULL, out.progress = "", kernel = "radial", ...)
+svm_tuning(formula = NULL, data = NULL, accelerate = 1, nfold = NULL,
+  partition.fun = NULL, kernel = "radial", type = NULL, svm_fun = "svm",
+  ...)
 }
 \arguments{
 \item{formula}{}
@@ -35,6 +36,11 @@ as error measure.
 \examples{
 data(ecuador) # Muenchow et al. (2012), see ?ecuador
 fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
-svm_tune <- svm_tuning(fo, ecuador, accelerate = 4, int.cv.nfold = 5, partition.fun = partition.kmeans) 
 
+svm_tune <- svm_tuning(fo, ecuador, accelerate = 16, nfold = 5, 
+partition.fun = "partition.kmeans", kernel = "radial", type = "C-classification") 
+
+}
+\author{
+Alexander Brenning, Patrick Schratz
 }

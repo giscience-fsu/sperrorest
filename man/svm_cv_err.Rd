@@ -5,14 +5,38 @@
 \title{svm_cv_err}
 \usage{
 svm_cv_err(cost = NULL, gamma = NULL, train = NULL, test = NULL,
-  lhs = NULL, formula = NULL, kernel = NULL, ...)
+  response = NULL, formula = NULL, kernel = NULL, type = NULL,
+  svm_fun = NULL, ...)
 }
 \arguments{
-\item{cost}{svm cost value}
+\item{cost}{cost value}
 
-\item{gamma}{svm gamma value}
+\item{gamma}{gamma value}
+
+\item{train}{training data}
+
+\item{test}{testing data}
+
+\item{response}{response variable}
+
+\item{formula}{model formula}
+
+\item{kernel}{to use for fitting. See \link{svm}}
+
+\item{type}{classification type to use. See \link{svm}}
 }
 \description{
 Calculates AUROC for different gamma and cost values
+}
+\examples{
+parti <- partition.kmeans(ecuador, nfold = 5, order.clusters = FALSE)
+train <- ecuador[parti[[1]][[1]]$train, ]
+test <- ecuador[parti[[1]][[1]]$test, ]
+response <- "slides"
+fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
+out <- svm_cv_err(cost = 0.01, gamma = 0.166, train = train, test = test,
+formula = fo, kernel = "radial", type = "C-classification", response = "slides",
+svm_function = "svm")
+
 }
 \keyword{internal}
