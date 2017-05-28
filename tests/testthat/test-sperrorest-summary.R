@@ -1,4 +1,6 @@
-context("sperrorest.R")
+context("sperrorest-summary.R")
+
+Sys.setenv(R_TESTS = "")
 
 pacman::p_load(sperrorest, rpart, testthat, MASS)
 
