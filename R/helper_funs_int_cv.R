@@ -4,6 +4,7 @@
 #' @importFrom ROCR prediction performance
 #' @importFrom e1071 svm
 #' @importFrom gmum.r SVM
+#' @importFrom kernlab ksvm
 #' 
 #' @param formula model formula
 #' 
@@ -42,8 +43,19 @@ svm_cv_err <- function(cost = NULL, gamma = NULL, train = NULL, test = NULL,
   # check type of response variable 
   if (is.factor(train[[response]])) {
     
-    args <- list(formula = formula, data = train, type = type, kernel = kernel,
-                 probability = TRUE, cost = cost, gamma = gamma)
+    if (svm_fun == "ksvm" | svm_fun == "SVM") {
+      if (svm_fun == "ksvm") {
+        args <- list(formula = formula, data = train, type = type, kernel = kernel,
+                     prob.model = TRUE, C = cost, gamma = gamma)
+      } else {
+        args <- list(formula = formula, data = train, type = type, kernel = kernel,
+                     probability = TRUE, C = cost, gamma = gamma)
+      }
+    }
+    if (svm_fun == "svm") {
+      args <- list(formula = formula, data = train, type = type, kernel = kernel,
+                   probability = TRUE, cost = cost, gamma = gamma)
+    } 
     fit <- do.call(svm_fun, args)
     
     pred <- predict(fit, newdata = test, probability = TRUE)
@@ -51,7 +63,7 @@ svm_cv_err <- function(cost = NULL, gamma = NULL, train = NULL, test = NULL,
     predobj <- prediction(pred, test[, response])
     
     auroc <- performance(predobj, measure = "auc")@y.values[[1]]
-
+    
     err <- c(err, auroc)
     
     return(mean(err))

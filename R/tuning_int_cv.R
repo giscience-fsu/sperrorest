@@ -21,8 +21,8 @@
 #' 
 #' @param additional options passed to [SVM]
 #' 
-#' @details This function tunes a support vectort machine from the [e1071] package 
-#' using (spatial) cross-validation.
+#' @details This function tunes a support vectort machine from the [e1071], [gmum.r], 
+#' [kernlab] packages using (spatial) cross-validation.
 #' 
 #' Currently this function is hard-coded to a binary response variable and AUROC 
 #' as error measure. 
@@ -36,7 +36,7 @@
 #' 
 #' @export
 svm_tuning <- function(formula = NULL, data = NULL, accelerate = 1, nfold = NULL, partition.fun = NULL,
-                       kernel = "radial", type = NULL, svm_fun = "svm", ...) {
+                       kernel = NULL, type = NULL, svm_fun = "svm", ...) {
   
   
   if (is.null(partition.fun)) {
@@ -49,6 +49,10 @@ svm_tuning <- function(formula = NULL, data = NULL, accelerate = 1, nfold = NULL
   if (is.null(nfold)) {
     nfold <- 5
     warning(sprintf("Using %s folds since 'int_cv_fold' was not set.", nfold))
+  }
+  
+  if (is.null(kernel)) {
+    stop("Please specify a kernel.")
   }
   
   response <- as.character(formula)[2]

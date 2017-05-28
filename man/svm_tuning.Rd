@@ -5,7 +5,7 @@
 \title{svm_tuning}
 \usage{
 svm_tuning(formula = NULL, data = NULL, accelerate = 1, nfold = NULL,
-  partition.fun = NULL, kernel = "radial", type = NULL, svm_fun = "svm",
+  partition.fun = NULL, kernel = NULL, type = NULL, svm_fun = "svm",
   ...)
 }
 \arguments{
@@ -27,8 +27,8 @@ for actual analysis.}
 Tuning of SVM (cost & gamma) using spatial cross-validation
 }
 \details{
-This function tunes a support vectort machine from the \link{e1071} package
-using (spatial) cross-validation.
+This function tunes a support vectort machine from the \link{e1071}, \link{gmum.r},
+\link{kernlab} packages using (spatial) cross-validation.
 
 Currently this function is hard-coded to a binary response variable and AUROC
 as error measure.
