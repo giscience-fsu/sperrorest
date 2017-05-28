@@ -25,12 +25,14 @@
 <script src="../pkgdown.js"></script>
 
 <!-- mathjax -->
-<script src='https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
+<script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
 <!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
+
+
   </head>
 
   <body>
@@ -81,26 +83,35 @@ according to some defined criterion / criteria (minimum number of samples in
 tile and/or minimum fraction of entire dataset).</p>
     
 
-    <pre><span class='fu'>get.small.tiles</span>(<span class='no'>tile</span>, <span class='kw'>min.n</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>min.frac</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>ignore</span> <span class='kw'>=</span> <span class='fu'>c</span>())</pre>
+    <pre class="usage"><span class='fu'>get.small.tiles</span>(<span class='no'>tile</span>, <span class='kw'>min.n</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>min.frac</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>ignore</span> <span class='kw'>=</span> <span class='fu'>c</span>())</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
-    <dl class="dl-horizontal">
-      <dt>tile</dt>
-      <dd>factor: tile/partition names for all samples; names must be
-coercible to class <code><a href='as.tilename.html'>tilename()</a></code>, i.e. of the form <code>&#39;X4:Y2&#39;</code> etc.</dd>
-      <dt>min.n</dt>
-      <dd>integer (optional): minimum number of samples per partition.</dd>
-      <dt>min.frac</dt>
-      <dd>numeric &gt;0, &lt;1: minimum relative size of partition as
-percentage of sample.</dd>
-      <dt>ignore</dt>
-      <dd>character vector: names of tiles to be ignored, i.e. to be
-retained even if the inclusion criteria are not met.</dd>
-    </dl>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>tile</th>
+      <td><p>factor: tile/partition names for all samples; names must be
+coercible to class <code><a href='as.tilename.html'>tilename()</a></code>, i.e. of the form <code>'X4:Y2'</code> etc.</p></td>
+    </tr>
+    <tr>
+      <th>min.n</th>
+      <td><p>integer (optional): minimum number of samples per partition.</p></td>
+    </tr>
+    <tr>
+      <th>min.frac</th>
+      <td><p>numeric &gt;0, &lt;1: minimum relative size of partition as
+percentage of sample.</p></td>
+    </tr>
+    <tr>
+      <th>ignore</th>
+      <td><p>character vector: names of tiles to be ignored, i.e. to be
+retained even if the inclusion criteria are not met.</p></td>
+    </tr>
+    </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>character vector: names of tiles that are considered &#39;small&#39;
+    <p>character vector: names of tiles that are considered 'small'
 according to these criteria</p>
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>

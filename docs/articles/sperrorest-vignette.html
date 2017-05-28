@@ -9,7 +9,7 @@
 <!-- jquery --><script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script><!-- Font Awesome icons --><link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
 <!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../jquery.sticky-kit.min.js"></script><script src="../pkgdown.js"></script><!-- mathjax --><script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!--[if lt IE 9]>
+<script src="../jquery.sticky-kit.min.js"></script><script src="../pkgdown.js"></script><!-- mathjax --><script src="https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
@@ -53,7 +53,7 @@
       <h1>Spatial Modeling Using Statistical Learning Techniques</h1>
                         <h4 class="author">Alexander Brenning, Patrick Schratz</h4>
             
-            <h4 class="date">2017-03-08</h4>
+            <h4 class="date">2017-05-28</h4>
           </div>
 
     
@@ -61,7 +61,7 @@
 <div class="contents">
 <div id="introduction" class="section level1">
 <h1 class="hasAnchor">
-<html><body><a href="#introduction" class="anchor"> </a></body></html>Introduction</h1>
+<a href="#introduction" class="anchor"></a>Introduction</h1>
 <p>Geospatial data scientists often make use of a variety of statistical and machine learning techniques for spatial prediction in applications such as landslide susceptibility modeling <span class="citation">(Goetz et al. <a href="#ref-Goetz2015">2015</a>)</span> or habitat modeling <span class="citation">(Knudby, Brenning, and LeDrew <a href="#ref-Knudby2010">2010</a>)</span>. Novel and often more flexible techniques promise improved predictive performances as they are better able to represent nonlinear relationships or higher-order interactions between predictors than less flexible linear models.</p>
 <p>Nevertheless, this increased flexibility comes with the risk of possible over-fitting to the training data. Since nearby spatial observations often tend to be more similar than distant ones, traditional random cross-validation is unable to detect this over-fitting whenever spatial observations are close to each other (e.g. <span class="citation">Brenning (<a href="#ref-Brenning2005">2005</a>)</span>). Spatial cross-validation addresses this by resampling the data not completely randomly, but using larger spatial regions. In some cases, spatial data is grouped, e.g. in remotely-sensed land use mapping grid cells belonging to the same field share the same management procedures and cultivation history, making them more similar to each other than to pixels from other fields with the same crop type.</p>
 <p>This package provides a customizable toolkit for cross-validation (and bootstrap) estimation using a variety of spatial resampling schemes. More so, this toolkit can even be extended to spatio-temporal data or other complex data structures. This vignette will walk you through a simple case study, crop classification in central Chile <span class="citation">(Peña and Brenning <a href="#ref-Pena2015">2015</a>)</span>.</p>
@@ -69,7 +69,7 @@
 </div>
 <div id="data-and-packages" class="section level1">
 <h1 class="hasAnchor">
-<html><body><a href="#data-and-packages" class="anchor"> </a></body></html>Data and Packages</h1>
+<a href="#data-and-packages" class="anchor"></a>Data and Packages</h1>
 <p>As a case study we will carry out a supervised classification analysis using remotely-sensed data to predict fruit-tree crop types in central Chile. This data set is a subsample of data from <span class="citation">(Peña and Brenning <a href="#ref-Pena2015">2015</a>)</span>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(pacman)
 <span class="kw">p_load</span>(sperrorest)</code></pre></div>
@@ -91,11 +91,11 @@ fo &lt;-<span class="st"> </span><span class="kw">as.formula</span>(<span class=
 </div>
 <div id="modeling" class="section level1">
 <h1 class="hasAnchor">
-<html><body><a href="#modeling" class="anchor"> </a></body></html>Modeling</h1>
+<a href="#modeling" class="anchor"></a>Modeling</h1>
 <p>Here we will take a look at a few classification methods with varying degrees of computational complexity and flexibility. This should give you an idea of how different models are handled by <code>sperrorest</code>, depending on the characteristics of their fitting and prediction methods. Please refer to <span class="citation">(James et al. <a href="#ref-James2013">2013</a>)</span> for background information on the models used here.</p>
 <div id="linear-discriminant-analysis-lda" class="section level2">
 <h2 class="hasAnchor">
-<html><body><a href="#linear-discriminant-analysis-lda" class="anchor"> </a></body></html>Linear Discriminant Analysis (LDA)</h2>
+<a href="#linear-discriminant-analysis-lda" class="anchor"></a>Linear Discriminant Analysis (LDA)</h2>
 <p>LDA is simple and fast, and often performs surprisingly well if the problem at hand is ‘linear enough’. As a start, let’s fit a model with all predictors and using all available data:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">p_load</span>(MASS)
 fit &lt;-<span class="st"> </span><span class="kw">lda</span>(fo, <span class="dt">data =</span> maipo)</code></pre></div>
@@ -115,7 +115,7 @@ fit &lt;-<span class="st"> </span><span class="kw">lda</span>(fo, <span class="d
 </div>
 <div id="classification-tree" class="section level2">
 <h2 class="hasAnchor">
-<html><body><a href="#classification-tree" class="anchor"> </a></body></html>Classification Tree</h2>
+<a href="#classification-tree" class="anchor"></a>Classification Tree</h2>
 <p>Classification and regresion trees (CART) take a completely different approach—they are based on yes/no questions in the predictor variables and can be referred to as a binary partitioning technique. Fit a model with all predictors and default settings:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">p_load</span>(rpart)</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fit &lt;-<span class="st"> </span><span class="kw">rpart</span>(fo, <span class="dt">data =</span> maipo)
@@ -139,7 +139,7 @@ fit &lt;-<span class="st"> </span><span class="kw">lda</span>(fo, <span class="d
 </div>
 <div id="randomforest" class="section level2">
 <h2 class="hasAnchor">
-<html><body><a href="#randomforest" class="anchor"> </a></body></html>RandomForest</h2>
+<a href="#randomforest" class="anchor"></a>RandomForest</h2>
 <p>Bagging, bundling and random forests build upon the CART technique by fitting many trees on bootstrap resamples of the original data set <span class="citation">(Breiman <a href="#ref-Breiman1996">1996</a>)</span> <span class="citation">(Breiman <a href="#ref-Breiman2001">2001</a>)</span> <span class="citation">(Hothorn and Lausen <a href="#ref-Hothorn2005">2005</a>)</span>. They differ in that random forest also samples from the predictors, and bundling adds an ancillary classifier for improved classification. We will use the nowadays widely used <code>randomForest()</code> here.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">p_load</span>(randomForest)</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fit &lt;-<span class="st"> </span><span class="kw">randomForest</span>(fo, <span class="dt">data =</span> maipo, <span class="dt">coob =</span> <span class="ot">TRUE</span>)
@@ -175,12 +175,12 @@ Too good to be true? We’ll see…</p>
 </div>
 <div id="cross-validation-estimation-of-predictive-performance" class="section level1">
 <h1 class="hasAnchor">
-<html><body><a href="#cross-validation-estimation-of-predictive-performance" class="anchor"> </a></body></html>Cross-Validation Estimation of Predictive Performance</h1>
+<a href="#cross-validation-estimation-of-predictive-performance" class="anchor"></a>Cross-Validation Estimation of Predictive Performance</h1>
 <p>Of course we can’t take the MER on the training set too seriously—it is biased. But we’ve heard of cross-validation, in which disjoint subsets are used for model training and testing. Let’s use <code>sperrorest</code> for cross-validation.</p>
 <p>Also, at this point we should highlight that the observations in this data set are pixels, and multiple grid cells belong to the same field. In a predictive situation, and when field boundaries are known (as is the case here), we would want to predict the same class for all grid cells that belong to the same field. Here we will use a majority filter. This filter ensures that the final predicted class type of every field is the most often predicted croptype within one field.</p>
 <div id="linear-discriminant-analysis-lda-1" class="section level2">
 <h2 class="hasAnchor">
-<html><body><a href="#linear-discriminant-analysis-lda-1" class="anchor"> </a></body></html>Linear Discriminant Analysis (LDA)</h2>
+<a href="#linear-discriminant-analysis-lda-1" class="anchor"></a>Linear Discriminant Analysis (LDA)</h2>
 <p>First, we need to create a wrapper predict method for LDA for <code><a href="../reference/sperrorest.html">sperrorest()</a></code>. This is necessary in order to accomodate the majority filter, and also because class predictions from <code>lda</code>’s predict method are hidden in the <code>$class</code> component of the returned object.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">lda.predfun &lt;-<span class="st"> </span><span class="cf">function</span>(object, newdata, <span class="dt">fac =</span> <span class="ot">NULL</span>) {
   
@@ -276,7 +276,7 @@ res.lda.sp<span class="op">$</span>benchmark<span class="op">$</span>runtime.per
 </div>
 <div id="randomforest-1" class="section level2">
 <h2 class="hasAnchor">
-<html><body><a href="#randomforest-1" class="anchor"> </a></body></html>RandomForest</h2>
+<a href="#randomforest-1" class="anchor"></a>RandomForest</h2>
 <p>In the case of Random Forest, the customized <code>pred.fun</code> looks as follows; it is only required because of the majority filter, without it, we could just omit the <code>pred.fun</code> and <code>pred.args</code> arguments below.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">rf.predfun &lt;-<span class="st"> </span><span class="cf">function</span>(object, newdata, <span class="dt">fac =</span> <span class="ot">NULL</span>) {
   
@@ -370,7 +370,7 @@ res.rf.sp$benchmark$runtime.performance
 </div>
 <div id="parallelized-cross-validation" class="section level2">
 <h2 class="hasAnchor">
-<html><body><a href="#parallelized-cross-validation" class="anchor"> </a></body></html>Parallelized Cross-Validation</h2>
+<a href="#parallelized-cross-validation" class="anchor"></a>Parallelized Cross-Validation</h2>
 <p>To speed things up, we can use <code><a href="../reference/parsperrorest.html">parsperrorest()</a></code> and inspect the runtime difference. Note that we have two parallel modes to choose from!<br>
 In this example we will use both <code>par.mode = 1</code> and <code>par.mode = 2</code> to show you the runtime differences.</p>
 <p><strong>Details of argument <code>par.mode</code></strong></p>
@@ -403,7 +403,7 @@ In this example we will use both <code>par.mode = 1</code> and <code>par.mode = 
 <p>Both the differences of the parallel methods (<code><a href="../reference/parsperrorest.html">parsperrorest()</a></code>) compared to the sequential one (<code><a href="../reference/sperrorest.html">sperrorest()</a></code>) and between the parallel modes themselves can be seen as variance among the repetitions. If you would use more repetitions (e.g. 100), this difference would converge towards zero.</p>
 <div id="results-of-par-mode-1" class="section level3">
 <h3 class="hasAnchor">
-<html><body><a href="#results-of-par-mode-1" class="anchor"> </a></body></html>Results of par.mode = 1</h3>
+<a href="#results-of-par-mode-1" class="anchor"></a>Results of par.mode = 1</h3>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(res.rf.sp.par1<span class="op">$</span>error.rep<span class="op">$</span>test.error)</code></pre></div>
 <pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
 ##  0.0744  0.0813  0.0852  0.0862  0.0903  0.1090</code></pre>
@@ -413,7 +413,7 @@ In this example we will use both <code>par.mode = 1</code> and <code>par.mode = 
 </div>
 <div id="results-of-par-mode-2" class="section level3">
 <h3 class="hasAnchor">
-<html><body><a href="#results-of-par-mode-2" class="anchor"> </a></body></html>Results of par.mode = 2</h3>
+<a href="#results-of-par-mode-2" class="anchor"></a>Results of par.mode = 2</h3>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(res.rf.sp.par2<span class="op">$</span>error.rep<span class="op">$</span>test.error)</code></pre></div>
 <pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
 ##  0.0638  0.0832  0.0874  0.0872  0.0926  0.1130</code></pre>
@@ -425,7 +425,7 @@ In this example we will use both <code>par.mode = 1</code> and <code>par.mode = 
 </div>
 <div id="usage-advices" class="section level1">
 <h1 class="hasAnchor">
-<html><body><a href="#usage-advices" class="anchor"> </a></body></html>Usage Advices</h1>
+<a href="#usage-advices" class="anchor"></a>Usage Advices</h1>
 <p>Given all the different sampling functions and the custom predict function (<code>rf.predfun()</code>) you might be a little confused which function to use for your use case.<br>
 If you want to do a “normal”, i.e. <strong>non-spatial cross-validation</strong> we recommend to use <code><a href="../reference/partition.cv.html">partition.cv()</a></code> as <code>smp.fun</code> in <code><a href="../reference/sperrorest.html">sperrorest()</a></code> or <code><a href="../reference/parsperrorest.html">parsperrorest()</a></code>.<br>
 If you want to perform a <strong>spatial cross-validation</strong> and you do not have a grouping structure like fields in our example, you should use <code><a href="../reference/partition.kmeans.html">partition.kmeans()</a></code> as <code>smp.fun</code>. This creates a spatial k-means clustering within your cross-validation runs.</p>
@@ -447,7 +447,7 @@ Also sometimes you may encounter errors when providing spatial correlation struc
 </div>
 <div id="references" class="section level1 unnumbered">
 <h1 class="hasAnchor">
-<html><body><a href="#references" class="anchor"> </a></body></html>References</h1>
+<a href="#references" class="anchor"></a>References</h1>
 <div id="refs" class="references">
 <div id="ref-Breiman1996">
 <p>Breiman, Leo. 1996. “Bagging Predictors.” <em>Machine Learning</em> 24 (2). Springer Nature: 123–40. doi:<a href="https://doi.org/10.1007/bf00058655">10.1007/bf00058655</a>.</p>
