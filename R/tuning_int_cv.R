@@ -31,11 +31,11 @@
 #' data(ecuador) # Muenchow et al. (2012), see ?ecuador
 #' fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
 #' 
-#' svm_tune <- svm_tuning(fo, ecuador, accelerate = 16, nfold = 5, 
+#' svm_tune <- sptune_svm(fo, ecuador, accelerate = 16, nfold = 5, 
 #' partition.fun = "partition.kmeans", kernel = "radial", type = "C-classification") 
 #' 
 #' @export
-svm_tuning <- function(formula = NULL, data = NULL, accelerate = 1, nfold = NULL, partition.fun = NULL,
+sptune_svm <- function(formula = NULL, data = NULL, accelerate = 1, nfold = NULL, partition.fun = NULL,
                        kernel = NULL, type = NULL, svm_fun = "svm", ...) {
   
   
