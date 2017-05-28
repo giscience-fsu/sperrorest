@@ -126,13 +126,6 @@ test_that("importance = T and err.fold = F", {
                             smp.fun = partition.cv, 
                             smp.args = list(repetition = 1:2, nfold = 2),
                             importance = TRUE, error.fold = FALSE))
-  
-  expect_warning(sperrorest(data = ecuador, formula = fo,
-                          model.fun = glm,
-                          pred.fun = predict,
-                          smp.fun = partition.cv, 
-                          smp.args = list(repetition = 1:2, nfold = 2),
-                          someargument = NULL))
 })
 
 # sperrorest depr. args Thu Feb  9 22:42:48 2017 ------------------------------

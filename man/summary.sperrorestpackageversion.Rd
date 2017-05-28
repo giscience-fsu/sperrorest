@@ -8,7 +8,7 @@
 }
 \arguments{
 \item{object}{\code{sperrorestpackageversion} object calculated by
-\code{\link[=sperrorest]{sperrorest()}}}
+\link{sperrorest}}
 
 \item{...}{additional arguments (currently ignored)}
 }

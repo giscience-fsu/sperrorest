@@ -118,8 +118,8 @@ summary.sperrorestreperror <- function(object, level = 0, na.rm = TRUE, ...) {
 #' @name summary.sperrorestimportance
 #' @method summary sperrorestimportance
 #' 
-#' @param object [sperrorestimportance()] object calculated by 
-#' [sperrorest()] called with argument `importance=TRUE`
+#' @param object `sperrorestimportance` object calculated by 
+#' [sperrorest] called with argument `importance = TRUE`
 #' @inheritParams summary.sperroresterror
 #' @param which optional character vector specifying selected variables for 
 #' which the importances should be summarized (to do: check implementation)
@@ -165,7 +165,7 @@ summary.sperrorestimportance <- function(object, level = 0, na.rm = TRUE,
 #' @inheritParams summary.sperroresterror
 #' 
 #' @param object `sperrorestbenchmarks` object returned class by 
-#' [sperrorest()] 
+#' [sperrorest] 
 #' @return List of length seven
 #' 
 #' @export
@@ -185,7 +185,7 @@ summary.sperrorestbenchmarks <- function(object, ...) {
 #' @inheritParams summary.sperroresterror
 #' 
 #' @param object `sperrorestpackageversion` object calculated by 
-#' [sperrorest()] 
+#' [sperrorest] 
 #' @return character vector of length one
 #' 
 #' @export
@@ -201,16 +201,15 @@ summary.sperrorestpackageversion <- function(object, ...) {
 #' 
 #' @method summary sperrorest
 #' 
-#' @param object a [sperrorest()] object
-#' @param ... additional arguments for [summary.sperroresterror()] 
-#' or [summary.sperrorestimportance()]
-#' @param x Depending on method, a [sperrorest()], 
-#' [sperroresterror()] or [sperrorestimportance()] object
+#' @param object a [sperrorest] object
+#' @param ... additional arguments for [summary.sperroresterror] 
+#' or [summary.sperrorestimportance]
+#' @param x Depending on method, a [sperrorest], 
+#' `sperroresterror` or `sperrorestimportance` object
 #' 
-#' @seealso [sperrorest()], [sperroresterror()], 
-#' [sperrorestimportance()], 
-#' [summary.sperroresterror()], 
-#' [summary.sperrorestimportance()]
+#' @seealso [sperrorest],
+#' [summary.sperroresterror], 
+#' [summary.sperrorestimportance]
 #' 
 #' @export
 summary.sperrorest <- function(object, ...) {

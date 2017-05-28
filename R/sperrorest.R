@@ -14,7 +14,6 @@
 #' @import foreach
 #' @import future
 #' @import doFuture
-#' @import doParallel
 #' @import rpart
 #' @importFrom utils packageVersion 
 #' @importFrom purrr walk map
@@ -92,8 +91,6 @@
 #' 
 #' @param importance logical: perform permutation-based variable 
 #' importance assessment?
-#' 
-#' @param ... currently not used
 #' 
 #' @param distance logical (default: `FALSE`): if `TRUE`, calculate 
 #' mean nearest-neighbour distances from test samples to training samples using 
@@ -670,6 +667,10 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
   if (importance) {
     impo <- myRes_mod$impo
     class(impo) <- "sperrorestimportance"
+  }
+  
+  if (error.fold == FALSE) {
+    myRes_mod <- NULL
   }
   
   if (benchmark) {

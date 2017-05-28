@@ -124,8 +124,6 @@ for Windows-systems.}
 \item{benchmark}{(optional) logical (default: \code{FALSE}): if \code{TRUE},
 perform benchmarking and return \code{sperrorestbenchmarks} object}
 
-\item{...}{currently not used}
-
 \item{...}{Further options passed to \link{makeCluster}}
 }
 \value{

@@ -8,8 +8,8 @@
   which = NULL, ...)
 }
 \arguments{
-\item{object}{\code{\link[=sperrorestimportance]{sperrorestimportance()}} object calculated by
-\code{\link[=sperrorest]{sperrorest()}} called with argument \code{importance=TRUE}}
+\item{object}{\code{sperrorestimportance} object calculated by
+\link{sperrorest} called with argument \code{importance = TRUE}}
 
 \item{level}{Level at which errors are summarized:
 0: overall; 1: repetition; 2: fold}

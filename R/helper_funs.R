@@ -13,7 +13,8 @@ runfolds <- function(j = NULL, currentSample = NULL, data = NULL, formula = NULL
                      currentImpo = NULL, pred.args = NULL, progress = NULL, 
                      pooled.obs.train = NULL, pooled.obs.test = NULL, pooled.pred.train = NULL,
                      response = NULL, is.factor.prediction = NULL, pooled.pred.test = NULL,
-                     coords = NULL, test.fun = NULL, imp.one.rep = NULL, i = NULL) { 
+                     coords = NULL, test.fun = NULL, imp.one.rep = NULL, i = NULL,
+                     do.gc = NULL, test.param = NULL, train.param = NULL) { 
   if (importance == FALSE) {
     
     if (par.mode == "foreach" | par.mode == "sequential" | par.mode == "foreach-old" && progress == "TRUE" | progress == 1) {

@@ -28,26 +28,25 @@
 \method{print}{sperrorestpackageversion}(x, ...)
 }
 \arguments{
-\item{object}{a \code{\link[=sperrorest]{sperrorest()}} object}
+\item{object}{a \link{sperrorest} object}
 
 \item{level}{Level at which errors are summarized:
 0: overall; 1: repetition; 2: fold}
 
 \item{na.rm}{Remove \code{NA} values? See \link{mean} etc.}
 
-\item{...}{additional arguments for \code{\link[=summary.sperroresterror]{summary.sperroresterror()}}
-or \code{\link[=summary.sperrorestimportance]{summary.sperrorestimportance()}}}
+\item{...}{additional arguments for \link{summary.sperroresterror}
+or \link{summary.sperrorestimportance}}
 
-\item{x}{Depending on method, a \code{\link[=sperrorest]{sperrorest()}},
-\code{\link[=sperroresterror]{sperroresterror()}} or \code{\link[=sperrorestimportance]{sperrorestimportance()}} object}
+\item{x}{Depending on method, a \link{sperrorest},
+\code{sperroresterror} or \code{sperrorestimportance} object}
 }
 \description{
 Summary methods provide varying level of detail while print methods
 provide full details.
 }
 \seealso{
-\code{\link[=sperrorest]{sperrorest()}}, \code{\link[=sperroresterror]{sperroresterror()}},
-\code{\link[=sperrorestimportance]{sperrorestimportance()}},
-\code{\link[=summary.sperroresterror]{summary.sperroresterror()}},
-\code{\link[=summary.sperrorestimportance]{summary.sperrorestimportance()}}
+\link{sperrorest},
+\link{summary.sperroresterror},
+\link{summary.sperrorestimportance}
 }

@@ -8,7 +8,7 @@
 }
 \arguments{
 \item{object}{\code{sperrorestbenchmarks} object returned class by
-\code{\link[=sperrorest]{sperrorest()}}}
+\link{sperrorest}}
 
 \item{...}{additional arguments (currently ignored)}
 }
