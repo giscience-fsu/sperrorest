@@ -21,11 +21,11 @@ type of prediction problem:
 if two classes, sensitivity, specificity, positive predictive value (PPV),
 negative predictive value (NPV), kappa}
 \item{'soft' classification}{area under the ROC curve, error and accuracy
-at a obs>0.5 dichotomization, false-positive rate (FPR; 1-specificity)
+at a obs > 0.5 dichotomization, false-positive rate (FPR; 1-specificity)
 at 70, 80 and 90 percent sensitivity, true-positive rate (sensitivity)
 at 80, 90 and 95 percent specificity}
 \item{regression}{bias, standard deviation, mean squared error,
-MAD (\code{\link[=mad]{mad()}}), median, interquartile range (\code{\link[=IQR]{IQR()}})
+MAD (\link{mad}), median, interquartile range (\link{IQR})
 of residuals}
 }
 \description{
@@ -39,12 +39,12 @@ i.e. they will result in an error.
 \examples{
 obs <- rnorm(1000)
 # Two mock (soft) classification examples:
-err.default( obs > 0, rnorm(1000) ) # just noise
-err.default( obs > 0, obs + rnorm(1000) ) # some discrimination
+err.default(obs > 0, rnorm(1000)) # just noise
+err.default(obs > 0, obs + rnorm(1000)) # some discrimination
 # Three mock regression examples:
-err.default( obs, rnorm(1000) ) # just noise, but no bias
-err.default( obs, obs + rnorm(1000) ) # some association, no bias
-err.default( obs, obs + 1 ) # perfect correlation, but with bias
+err.default(obs, rnorm(1000)) # just noise, but no bias
+err.default(obs, obs + rnorm(1000)) # some association, no bias
+err.default(obs, obs + 1) # perfect correlation, but with bias
 
 }
 \seealso{

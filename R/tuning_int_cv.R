@@ -7,22 +7,29 @@
 #' @import parallel
 #' @import foreach
 #' 
-#' @param formula
+#' @param formula formula
 #' 
-#' @param data
+#' @param data data frame
 #' 
 #' @param accelerate option to speed up tuning using less cost and gamma values. 
 #' Use `accelerate = 2` or `accelerate = 4` for test runs, but `accelerate = 1` 
 #' for actual analysis.
 #' 
-#' @param int_cv_fold number of folds for cross-validation
+#' @param nfold number of folds for cross-validation
 #' 
-#' @param partition.fun method for partitioning the data (e.g. [partition.kmeans])
+#' @param partition_fun method for partitioning the data 
+#' (e.g. [partition.kmeans])
 #' 
-#' @param additional options passed to [SVM]
+#' @param svm_fun which R svm package to use. See details. 
 #' 
-#' @details This function tunes a support vectort machine from the [e1071], [gmum.r], 
-#' [kernlab] packages using (spatial) cross-validation.
+#' @param type classification type of svm classifier
+#' 
+#' @param kernel kernel type of svm classifier
+#' 
+#' @param ... additional options passed to [SVM]
+#' 
+#' @details This function tunes a support vectort machine from the [e1071], 
+#' [gmum.r], [kernlab] packages using (spatial) cross-validation.
 #' 
 #' Currently this function is hard-coded to a binary response variable and AUROC 
 #' as error measure. 
@@ -32,23 +39,25 @@
 #' fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
 #' 
 #' svm_tune <- sptune_svm(fo, ecuador, accelerate = 16, nfold = 5, 
-#' partition.fun = "partition.kmeans", kernel = "radial", type = "C-classification") 
+#' partition.fun = "partition.kmeans", kernel = "radial", 
+#' type = "C-classification") 
 #' 
 #' @export
-sptune_svm <- function(formula = NULL, data = NULL, accelerate = 1, nfold = NULL, partition.fun = NULL,
+sptune_svm <- function(formula = NULL, data = NULL, accelerate = 1, 
+                       nfold = NULL, partition_fun = NULL,
                        kernel = NULL, type = NULL, svm_fun = "svm", ...) {
   
   
-  if (is.null(partition.fun)) {
+  if (is.null(partition_fun)) {
     message("Partitioning method: 'partition.kmeans'.")
-    partition.fun <- "partition.kmeans"
+    partition_fun <- "partition.kmeans"
   } else {
-    message(sprintf("Partitioning method: '%s'.", partition.fun))
+    message(sprintf("Partitioning method: '%s'.", partition_fun))
   }
   
   if (is.null(nfold)) {
     nfold <- 5
-    warning(sprintf("Using %s folds since 'int_cv_fold' was not set.", nfold))
+    warning(sprintf("Using %s folds since 'nfold' was not set.", nfold))
   }
   
   if (is.null(kernel)) {
@@ -59,13 +68,14 @@ sptune_svm <- function(formula = NULL, data = NULL, accelerate = 1, nfold = NULL
   
   # partition the data 
   partition_args <- list(data = data, nfold = nfold, order.cluster = FALSE)
-  parti <- do.call(partition.fun, args = partition_args)
+  parti <- do.call(partition_fun, args = partition_args)
   train <- data[parti[[1]][[1]]$train, ]
   test <- data[parti[[1]][[1]]$test, ]
   
   # Perform a complete grid search over the following range of values:
   costs <- 10^seq(-2, 4, by = 0.5 * accelerate)
-  default.gamma <- 1 / length(strsplit(as.character(formula)[3], "+", fixed = TRUE)[[1]])
+  default.gamma <- 1 / length(strsplit(as.character(formula)[3], "+", 
+                                       fixed = TRUE)[[1]])
   gammas <- unique(c(default.gamma, 10^seq(-4, 1, by = 0.5 * accelerate)))
   
   # Set up variables for loop:
