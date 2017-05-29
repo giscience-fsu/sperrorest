@@ -2,9 +2,9 @@
 #' @description Calculates AUROC for different gamma and cost values
 #' 
 #' @importFrom ROCR prediction performance
-#' @import e1071 svm
-#' @import gmum.r 
-#' @import kernlab 
+#' @importFrom e1071 svm 
+#' @importFrom gmum.r SVM 
+#' @importFrom kernlab ksvm predict.ksvm
 #' 
 #' @param formula model formula
 #' 
