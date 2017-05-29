@@ -595,8 +595,8 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
                       .multicombine = TRUE, .verbose = FALSE) %dopar% {
                         
                         if (err_train) {
-                          pooled_obs_train <- pooled.pred.train <- c()
-                          pooled_obs_test <- pooled.pred.test <- c()
+                          pooled_obs_train <- pooled_pred_train <- c()
+                          pooled_obs_test <- pooled_pred_test <- c()
                         }
                         
                         current_res <- NULL
@@ -672,25 +672,25 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
                             pooled_only$pooled_obs_test <- factor(lev[pooled_only$pooled_obs_test], levels = lev)
                             if (is_factor_prediction) {
                               if (err_train) {
-                                pooled_only$pooled.pred.train <- factor(lev[pooled_only$pooled.pred.train], levels = lev)
+                                pooled_only$pooled_pred_train <- factor(lev[pooled_only$pooled_pred_train], levels = lev)
                               }
-                              pooled_only$pooled.pred.test <- factor(lev[pooled_only$pooled.pred.test], levels = lev)
+                              pooled_only$pooled_pred_test <- factor(lev[pooled_only$pooled_pred_test], levels = lev)
                             }
                           } 
                           pooled_err_train <- NULL
                           if (err_train) {
                             pooled_err_train <- err_fun(pooled_only$pooled_obs_train,
-                                                        pooled_only$pooled.pred.train)
+                                                        pooled_only$pooled_pred_train)
                           }
                           
-                          list(train = pooled_err_train, 
-                               test = err_fun(pooled_only$pooled_obs_test,
-                                              pooled_only$pooled.pred.test)) %>%
-                            unlist() %>%
-                            t() -> currentpooled_err
+                          # list(train = pooled_err_train, 
+                          #      test = err_fun(pooled_only$pooled_obs_test,
+                          #                     pooled_only$pooled_pred_test)) %>%
+                          #   unlist() %>%
+                          #   t() -> currentpooled_err
                           
-                          # currentpooled_err <- t(unlist(list(train = pooled_err_train, test = err_fun(pooled_only$pooled_obs_test,
-                          # pooled_only$pooled.pred.test))))
+                          currentpooled_err <- t(unlist(list(train = pooled_err_train, test = err_fun(pooled_only$pooled_obs_test,
+                                                                                                      pooled_only$pooled_pred_test))))
                           if (do_gc >= 2) {
                             gc()
                           }

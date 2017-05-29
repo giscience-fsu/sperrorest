@@ -72,10 +72,10 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
     pargs <- c(list(object = fit, newdata = nd), pred_args)
     if (is.null(pred_fun))
     {
-      pred.train <- do.call(predict, args = pargs)
+      pred_train <- do.call(predict, args = pargs)
     } else
     {
-      pred.train <- do.call(pred_fun, args = pargs)
+      pred_train <- do.call(pred_fun, args = pargs)
     }
     rm(pargs)
     
@@ -83,19 +83,19 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
     if (error_fold == TRUE) {
       if (do_try)
       {
-        err.try <- try(err_fun(nd[, response], pred.train))
+        err.try <- try(err_fun(nd[, response], pred_train))
         if (class(err.try) == "try-error") {
           err.try <- NULL
         }
         current_res[[j]]$train <- err.try  #res[[i]][[j]]$train = err.try
       } else {
-        current_res[[j]]$train <- err_fun(nd[, response], pred.train)  
-        #res[[i]][[j]]$train = err_fun(nd[,response], pred.train)
+        current_res[[j]]$train <- err_fun(nd[, response], pred_train)  
+        #res[[i]][[j]]$train = err_fun(nd[,response], pred_train)
       }
     }
     if (error_rep == TRUE) {
       pooled_obs_train <- c(pooled_obs_train, nd[, response])
-      pooled_pred_train <- c(pooled_pred_train, pred.train)
+      pooled_pred_train <- c(pooled_pred_train, pred_train)
     }
   } else {
     if (error_fold == TRUE) {
@@ -245,7 +245,7 @@ runreps <- function(current_sample = NULL, data = NULL, formula = NULL,
   # output data structures
   current_res <- NULL
   current_impo <- current_sample
-  currentPooled.err <- NULL
+  current_pooled_err <- NULL
   
   if (error_fold) {
     current_res <- lapply(current_sample, unclass)
@@ -309,35 +309,27 @@ runreps <- function(current_sample = NULL, data = NULL, formula = NULL,
     if (is.factor(data[, response])) {
       lev <- levels(data[, response])
       if (err_train) {
-        lev[pooled_only$pooled_obs_train] %>% 
-          factor(levels = lev) -> pooled_only$pooled_obs_train
-        # pooled_only$pooled_obs_train <- factor(lev[pooled_only$pooled_obs_train], levels = lev)
+        pooled_only$pooled_obs_train <- factor(lev[pooled_only$pooled_obs_train], levels = lev)
       }
-      lev[pooled_only$pooled_obs_test] %>% 
-        factor(levels = lev) -> pooled_only$pooled_obs_test
-      # pooled_only$pooled_obs_test <- factor(lev[pooled_only$pooled_obs_test], levels = lev)
+      pooled_only$pooled_obs_test <- factor(lev[pooled_only$pooled_obs_test], levels = lev)
       if (is_factor_prediction) {
         if (err_train) {
-          lev[pooled_only$pooled_pred_train] %>% 
-            factor(levels = lev) -> pooled_only$pooled_pred_train
-          # pooled_only$pooled_pred_train <- factor(lev[pooled_only$pooled_pred_train], levels = lev)
+          pooled_only$pooled_pred_train <- factor(lev[pooled_only$pooled_pred_train], levels = lev)
         }
-        lev[pooled_only$pooled_obs_test] %>% 
-          factor(levels = lev) -> pooled_only$pooled_obs_test
-        # pooled_only$pooled_pred_test <- factor(lev[pooled_only$pooled_pred_test], levels = lev)
+        pooled_only$pooled_pred_test <- factor(lev[pooled_only$pooled_pred_test], levels = lev)
       }
     } 
-    pooled.err_train <- NULL
+    pooled_err_train <- NULL
     if (err_train) {
-      pooled.err_train <- err_fun(pooled_only$pooled_obs_train, 
+      pooled_err_train <- err_fun(pooled_only$pooled_obs_train, 
                                   pooled_only$pooled_pred_train)
     }
     
-    list(train = pooled.err_train, 
+    list(train = pooled_err_train, 
          test = err_fun(pooled_only$pooled_obs_test,
                         pooled_only$pooled_pred_test)) %>% 
       unlist() %>% 
-      t() -> currentPooled.err
+      t() -> current_pooled_err
     
     if (do_gc >= 2) {
       gc()
@@ -355,7 +347,7 @@ runreps <- function(current_sample = NULL, data = NULL, formula = NULL,
   }
   
   return(list(error = runfolds_merged$current_res, 
-              pooled.error = currentPooled.err, importance = impo_only))
+              pooled_err = current_pooled_err, importance = impo_only))
 }
 
 
@@ -363,21 +355,21 @@ runreps <- function(current_sample = NULL, data = NULL, formula = NULL,
 #' @description transfers output of parallel calls to runreps
 #' @keywords internal
 #' @export
-transfer_parallel_output <- function(myRes = NULL, res = NULL, impo = NULL,
-                                     pooled.err = NULL) {
+transfer_parallel_output <- function(my_res = NULL, res = NULL, impo = NULL,
+                                     pooled_err = NULL) {
   
-  for (i in seq_along(myRes)) {
+  for (i in seq_along(my_res)) {
     if (i == 1) {
-      pooled.err <- myRes[[i]]$pooled.error
-      impo[[i]] <- myRes[[i]]$importance
-      res[[i]] <- myRes[[i]]$error
+      pooled_err <- my_res[[i]]$pooled_err
+      impo[[i]] <- my_res[[i]]$importance
+      res[[i]] <- my_res[[i]]$error
     } else {
-      pooled.err <- rbind(pooled.err, myRes[[i]]$pooled.error)
-      impo[[i]] <- myRes[[i]]$importance
-      res[[i]] <- myRes[[i]]$error
+      pooled_err <- rbind(pooled_err, my_res[[i]]$pooled_err)
+      impo[[i]] <- my_res[[i]]$importance
+      res[[i]] <- my_res[[i]]$error
     }
   }
   
-  return(list(pooled.err = pooled.err, impo = impo,
+  return(list(pooled_err = pooled_err, impo = impo,
               res = res))
 }

@@ -12,13 +12,13 @@ test_that("output type (= list) for different logical combinations of
             
             skip_on_cran()
             
-            lda.predfun <- function(object, newdata, fac = NULL) {
+            lda_predfun <- function(object, newdata, fac = NULL) {
               library(nnet)
               majority <- function(x) {
                 levels(x)[which.is.max(table(x))]
               }
               
-              majority.filter <- function(x, fac) {
+              majority_filter <- function(x, fac) {
                 for (lev in levels(fac)) {
                   x[fac == lev] <- majority(x[fac == lev])
                 }
@@ -26,7 +26,7 @@ test_that("output type (= list) for different logical combinations of
               }
               
               pred <- predict(object, newdata = newdata)$class
-              if (!is.null(fac)) pred <- majority.filter(pred, newdata[, fac])
+              if (!is.null(fac)) pred <- majority_filter(pred, newdata[, fac])
               return(pred)
             }
             
@@ -45,7 +45,7 @@ test_that("output type (= list) for different logical combinations of
             # err.rep = TRUE, err.fold = TRUE
             out <- sperrorest(fo, data = maipo, coords = c("utmx","utmy"),
                               model_fun = lda,
-                              pred_fun = lda.predfun,
+                              pred_fun = lda_predfun,
                               smp_fun = partition_cv,
                               smp_args = list(repetition = 1:2, nfold = 4),
                               error_rep = TRUE, error_fold = TRUE,
@@ -59,7 +59,7 @@ test_that("output type (= list) for different logical combinations of
             # err.rep = TRUE, err.fold = FALSE
             out <- sperrorest(fo, data = maipo, coords = c("utmx","utmy"),
                               model_fun = lda,
-                              pred_fun = lda.predfun,
+                              pred_fun = lda_predfun,
                               smp_fun = partition_cv,
                               smp_args = list(repetition = 1:2, nfold = 5),
                               par_args = list(par_mode = "foreach", 
@@ -73,7 +73,7 @@ test_that("output type (= list) for different logical combinations of
             # err.rep = FALSE, err.fold = TRUE
             out <- sperrorest(fo, data = maipo, coords = c("utmx","utmy"),
                               model_fun = lda,
-                              pred_fun = lda.predfun,
+                              pred_fun = lda_predfun,
                               smp_fun = partition_cv,
                               smp_args = list(repetition = 1:2, nfold = 2),
                               par_args = list(par_mode = "foreach", 
@@ -215,13 +215,13 @@ test_that("output type (= list) for different logical combinations of
             
             skip("par_mode = 'future' does not work on LDA example")
             
-            lda.predfun <- function(object, newdata, fac = NULL) {
+            lda_predfun <- function(object, newdata, fac = NULL) {
               library(nnet)
               majority <- function(x) {
                 levels(x)[which.is.max(table(x))]
               }
               
-              majority.filter <- function(x, fac) {
+              majority_filter <- function(x, fac) {
                 for (lev in levels(fac)) {
                   x[ fac == lev ] <- majority(x[ fac == lev ])
                 }
@@ -229,7 +229,7 @@ test_that("output type (= list) for different logical combinations of
               }
               
               pred <- predict(object, newdata = newdata)$class
-              if (!is.null(fac)) pred <- majority.filter(pred, newdata[,fac])
+              if (!is.null(fac)) pred <- majority_filter(pred, newdata[,fac])
               return(pred)
             }
             
@@ -246,7 +246,7 @@ test_that("output type (= list) for different logical combinations of
             # err.rep = TRUE, err.fold = TRUE
             out <- sperrorest(fo, data = maipo, coords = c("utmx","utmy"),
                               model_fun = lda,
-                              pred_fun = lda.predfun,
+                              pred_fun = lda_predfun,
                               smp_fun = partition_cv,
                               smp_args = list(repetition = 1:4, nfold = 2),
                               par_args = list(par_mode = "future", 
@@ -261,7 +261,7 @@ test_that("output type (= list) for different logical combinations of
             # err.rep = TRUE, err.fold = FALSE
             out <- sperrorest(fo, data = maipo, coords = c("utmx","utmy"),
                               model_fun = lda,
-                              pred_fun = lda.predfun,
+                              pred_fun = lda_predfun,
                               smp_fun = partition_cv,
                               smp_args = list(repetition = 1:2, nfold = 2),
                               par_args = list(par_mode = "future", par_units = 2),
@@ -274,7 +274,7 @@ test_that("output type (= list) for different logical combinations of
             # err.rep = FALSE, err.fold = TRUE
             out <- sperrorest(fo, data = maipo, coords = c("utmx","utmy"),
                               model_fun = lda,
-                              pred_fun = lda.predfun,
+                              pred_fun = lda_predfun,
                               smp_fun = partition_cv,
                               smp_args = list(repetition = 1:2, nfold = 2),
                               par_args = list(par_mode = "future", par_units = 2),
@@ -292,13 +292,13 @@ test_that("do.try argument", {
   
   skip("par_mode = 'future' does not work on LDA example")
   
-  lda.predfun <- function(object, newdata, fac = NULL) {
+  lda_predfun <- function(object, newdata, fac = NULL) {
     library(nnet)
     majority <- function(x) {
       levels(x)[which.is.max(table(x))]
     }
     
-    majority.filter <- function(x, fac) {
+    majority_filter <- function(x, fac) {
       for (lev in levels(fac)) {
         x[ fac == lev ] <- majority(x[ fac == lev ])
       }
@@ -306,7 +306,7 @@ test_that("do.try argument", {
     }
     
     pred <- predict(object, newdata = newdata)$class
-    if (!is.null(fac)) pred <- majority.filter(pred, newdata[,fac])
+    if (!is.null(fac)) pred <- majority_filter(pred, newdata[,fac])
     return(pred)
   }
   
@@ -322,7 +322,7 @@ test_that("do.try argument", {
   # err.rep = TRUE, err.fold = TRUE
   out <- sperrorest(fo, data = maipo, coords = c("utmx","utmy"),
                     model_fun = lda,
-                    pred_fun = lda.predfun,
+                    pred_fun = lda_predfun,
                     smp_fun = partition_cv,
                     smp_args = list(repetition = 1:2, nfold = 2),
                     par_args = list(par_mode = "future", par_units = 2),
@@ -451,13 +451,13 @@ test_that("partition.factor.cv works (LDA)", {
   
   skip("par_mode = 'apply' does not work on LDA example") # only skip on macOS??
   
-  lda.predfun <- function(object, newdata, fac = NULL) {
+  lda_predfun <- function(object, newdata, fac = NULL) {
     library(nnet)
     majority <- function(x) {
       levels(x)[which.is.max(table(x))]
     }
     
-    majority.filter <- function(x, fac) {
+    majority_filter <- function(x, fac) {
       for (lev in levels(fac)) {
         x[ fac == lev ] <- majority(x[ fac == lev ])
       }
@@ -465,7 +465,7 @@ test_that("partition.factor.cv works (LDA)", {
     }
     
     pred <- predict(object, newdata = newdata)$class
-    if (!is.null(fac)) pred <- majority.filter(pred, newdata[,fac])
+    if (!is.null(fac)) pred <- majority_filter(pred, newdata[,fac])
     return(pred)
   }
   
@@ -477,7 +477,7 @@ test_that("partition.factor.cv works (LDA)", {
   
   res.lda.sp.par <- sperrorest(fo, data = maipo, coords = c("utmx","utmy"),
                                model_fun = lda,
-                               pred_fun = lda.predfun,
+                               pred_fun = lda_predfun,
                                pred_args = list(fac = "field"),
                                smp_fun = partition.factor.cv,
                                smp_args = list(fac = "field", repetition = 1:2, 
@@ -496,13 +496,13 @@ test_that("output type (= list) for different logical combinations of error_rep
             
             skip_on_cran()
             
-            lda.predfun <- function(object, newdata, fac = NULL) {
+            lda_predfun <- function(object, newdata, fac = NULL) {
               library(nnet)
               majority <- function(x) {
                 levels(x)[which.is.max(table(x))]
               }
               
-              majority.filter <- function(x, fac) {
+              majority_filter <- function(x, fac) {
                 for (lev in levels(fac)) {
                   x[fac == lev] <- majority(x[fac == lev])
                 }
@@ -510,7 +510,7 @@ test_that("output type (= list) for different logical combinations of error_rep
               }
               
               pred <- predict(object, newdata = newdata)$class
-              if (!is.null(fac)) pred <- majority.filter(pred, newdata[, fac])
+              if (!is.null(fac)) pred <- majority_filter(pred, newdata[, fac])
               return(pred)
             }
             
@@ -529,9 +529,10 @@ test_that("output type (= list) for different logical combinations of error_rep
             # err.rep = TRUE, err.fold = TRUE
             out <- sperrorest(fo, data = maipo, coords = c("utmx","utmy"),
                               model_fun = lda,
-                              pred_fun = lda.predfun,
+                              pred_fun = lda_predfun,
                               smp_fun = partition_cv,
                               smp_args = list(repetition = 1:2, nfold = 4),
+                              par_args = list(par_mode = "sequential"),
                               error_rep = TRUE, error_fold = TRUE,
                               benchmark = TRUE, progress = T)
             
@@ -543,7 +544,7 @@ test_that("output type (= list) for different logical combinations of error_rep
             # err.rep = TRUE, err.fold = FALSE
             out <- sperrorest(fo, data = maipo, coords = c("utmx","utmy"),
                               model_fun = lda,
-                              pred_fun = lda.predfun,
+                              pred_fun = lda_predfun,
                               smp_fun = partition_cv,
                               smp_args = list(repetition = 1:2, nfold = 5),
                               par_args = list(par_mode = "sequential"),
@@ -556,7 +557,7 @@ test_that("output type (= list) for different logical combinations of error_rep
             # err.rep = FALSE, err.fold = TRUE
             out <- sperrorest(fo, data = maipo, coords = c("utmx","utmy"),
                               model_fun = lda,
-                              pred_fun = lda.predfun,
+                              pred_fun = lda_predfun,
                               smp_fun = partition_cv,
                               smp_args = list(repetition = 1:2, nfold = 2),
                               par_args = list(par_mode = "sequential"),
