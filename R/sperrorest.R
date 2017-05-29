@@ -125,7 +125,7 @@
 #' `par.option` (optional settings for `par_mode = "future"`),
 #'
 #' @param benchmark (optional) logical (default: `FALSE`): if `TRUE`,
-#' perform benchmarking and return `sperrorestbenchmarks` object
+#' perform benchmarking and return `sperrorestbenchmark` object
 #'
 #' @param ... Further options passed to [makeCluster]
 #'
@@ -137,7 +137,7 @@
 #' \item{represampling}{a [represampling()] object}
 #' \item{importance}{a `sperrorestimportance` object containing
 #' permutation-based variable importances at the fold level}
-#' \item{benchmarks}{a `sperrorestbenchmarks` object containing
+#' \item{benchmark}{a `sperrorestbenchmark` object containing
 #' information on the system the code is running on, starting and
 #' finishing times, number of available CPU cores, parallelization mode,
 #' number of parallel units, and runtime performance}
@@ -342,7 +342,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
     res <- NULL
   }
 
-  pooled_err <- NULL
+  pooled_error <- NULL
 
   # required to be able to assign levels to predictions if appropriate:
   is_factor_prediction <- NULL
@@ -601,7 +601,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
 
                         current_res <- NULL
                         currentImpo <- resamp[[i]]
-                        currentpooled_err <- NULL
+                        currentpooled_error <- NULL
 
 
                         if (error_fold) {
@@ -662,7 +662,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
                                                 pooled_only[names(pooled_only) == x])), simplify = FALSE)
 
                         # Put the results from the pooled estimation into the
-                        # pooled_err data structure:
+                        # pooled_error data structure:
                         if (error_rep) {
                           if (is.factor(data[, response])) {
                             lev <- levels(data[, response])
@@ -677,19 +677,19 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
                               pooled_only$pooled_pred_test <- factor(lev[pooled_only$pooled_pred_test], levels = lev)
                             }
                           }
-                          pooled_err_train <- NULL
+                          pooled_error_train <- NULL
                           if (err_train) {
-                            pooled_err_train <- err_fun(pooled_only$pooled_obs_train,
+                            pooled_error_train <- err_fun(pooled_only$pooled_obs_train,
                                                         pooled_only$pooled_pred_train)
                           }
 
-                          # list(train = pooled_err_train,
+                          # list(train = pooled_error_train,
                           #      test = err_fun(pooled_only$pooled_obs_test,
                           #                     pooled_only$pooled_pred_test)) %>%
                           #   unlist() %>%
-                          #   t() -> currentpooled_err
+                          #   t() -> currentpooled_error
 
-                          currentpooled_err <- t(unlist(list(train = pooled_err_train, test = err_fun(pooled_only$pooled_obs_test,
+                          currentpooled_error <- t(unlist(list(train = pooled_error_train, test = err_fun(pooled_only$pooled_obs_test,
                                                                                                       pooled_only$pooled_pred_test))))
                           if (do_gc >= 2) {
                             gc()
@@ -707,7 +707,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
                         }
 
                         result <- list(error = runfolds_merged$current_res,
-                                       pooled_error = currentpooled_err,
+                                       pooled_erroror = currentpooled_error,
                                        importance = impo_only)
                         return(list(result))
                       }
@@ -726,17 +726,17 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
 
   # assign names to sublists - otherwise `transfer_parallel_output` doesn't work
   for (i in 1:length(my_res)) {
-    names(my_res[[i]]) <- c("error", "pooled_error", "importance")
+    names(my_res[[i]]) <- c("error", "pooled_erroror", "importance")
   }
 
   # transfer results of lapply() to respective data objects
-  my_res_mod <- transfer_parallel_output(my_res, res, impo, pooled_err)
+  my_res_mod <- transfer_parallel_output(my_res, res, impo, pooled_error)
 
   # convert matrix(?) to data.frame:
   if (error_rep) {
-    pooled_err <- as.data.frame(my_res_mod$pooled_err)
-    rownames(pooled_err) <- NULL
-    class(pooled_err) <- "sperrorestreperror"
+    pooled_error <- as.data.frame(my_res_mod$pooled_error)
+    rownames(pooled_error) <- NULL
+    class(pooled_error) <- "sperrorestreperror"
   }
 
   if (importance) {
@@ -755,7 +755,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
                      par_mode = par_args$par_mode,
                      par_units = par_args$par_units,
                      runtime_performance = end_time - start_time)
-    class(my_bench) <- "sperrorestbenchmarks"
+    class(my_bench) <- "sperrorestbenchmark"
   } else {
     my_bench <- NULL
   }
@@ -763,8 +763,8 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
   package_version <- packageVersion("sperrorest")
   class(package_version) <- "sperrorestpackageversion"
 
-  RES <- list(error_rep = pooled_err, error_fold = my_res_mod$res,
-              represampling = resamp, importance = impo, benchmarks = my_bench,
+  RES <- list(error_rep = pooled_error, error_fold = my_res_mod$res,
+              represampling = resamp, importance = impo, benchmark = my_bench,
               package_version = package_version)
   class(RES) <- "sperrorest"
 

@@ -124,7 +124,7 @@ file output ('sperrorest.progress.txt') in the current working directory
 for Windows-systems.}
 
 \item{benchmark}{(optional) logical (default: \code{FALSE}): if \code{TRUE},
-perform benchmarking and return \code{sperrorestbenchmarks} object}
+perform benchmarking and return \code{sperrorestbenchmark} object}
 
 \item{...}{Further options passed to \link{makeCluster}}
 }
@@ -137,7 +137,7 @@ performances at the fold level}
 \item{represampling}{a \code{\link[=represampling]{represampling()}} object}
 \item{importance}{a \code{sperrorestimportance} object containing
 permutation-based variable importances at the fold level}
-\item{benchmarks}{a \code{sperrorestbenchmarks} object containing
+\item{benchmark}{a \code{sperrorestbenchmark} object containing
 information on the system the code is running on, starting and
 finishing times, number of available CPU cores, parallelization mode,
 number of parallel units, and runtime performance}
