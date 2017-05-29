@@ -49,7 +49,7 @@ test_that("output type (= list) for different logical combinations of
                               smp_fun = partition_cv,
                               smp_args = list(repetition = 1:2, nfold = 4),
                               error_rep = TRUE, error_fold = TRUE,
-                              benchmark = TRUE, progress = T)
+                              benchmark = TRUE, progress = 2)
 
             expect_equal(typeof(out$error_rep), "list")
             expect_equal(typeof(out$error_fold), "list")
