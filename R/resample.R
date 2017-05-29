@@ -143,7 +143,7 @@ resample_uniform <- function(data, param = list(n = Inf, replace = FALSE)) {
 #' @return a `data.frame` containing a subset of the rows of `data`.
 #' 
 #' @details If `param$replace=FALSE`, a subsample of 
-#' `min(param$n,nlevel(data[,fac]))` groups will be drawn from `data`. 
+#' `min(param$n,nlevel(data[,fac]))` groups will be drawn from `data`.
 #' If `param$replace=TRUE`, the number of groups to be drawn is `param$n`.
 #' 
 #' @seealso [resample_strat_uniform()], [sample()]
@@ -163,15 +163,15 @@ resample_factor <- function(data, param = list(fac = "class", n = Inf,
   if (is.null(param$replace)) {
     param$replace <- FALSE
   }
-  stopifnot((length(param$fac) == 1) || (length(param$fac) == nrow(data)))
+  stopifnot( (length(param$fac) == 1) || (length(param$fac) == nrow(data)))
   if (length(param$fac == 1)) {
     fac <- data[, param$fac]
   } else {
     fac <- param$fac
   }
   if (!is.factor(fac)) {
-    stop("'fac' must either be a vector of factor type, or the name of a 
-         factor variable in 'data'")
+    stop(paste0("'fac' must either be a vector of factor type, or the name of",
+                "a factor variable in 'data'."))
   }
   fac <- factor(fac)
   if (is.null(param$n) || is.infinite(param$n)) {

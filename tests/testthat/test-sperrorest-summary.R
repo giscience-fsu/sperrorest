@@ -122,7 +122,7 @@ test_that("summary.sperroresterror() with pooled = FALSE produces correct
 
 # sperrorest warnings Thu Feb  9 22:34:08 2017 ------------------------------
 
-test_that("importance = T and err.fold = F", { 
+test_that("importance = T and error_fold = F", { 
   data(ecuador) # Muenchow et al. (2012), see ?ecuador
   fo <- slope ~ hcurv + vcurv + log.carea + cslope
   
