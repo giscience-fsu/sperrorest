@@ -569,8 +569,8 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
       cl <- makeCluster(availableCores(), outfile = out_progress, ...)
       plan(cluster, workers = cl)
       # plan(multisession)
-      message(sprintf("Using 'foreach' parallel mode with %s cores and",
-                      "'%s' option.", availableCores(), par_args$par.option))
+      message(sprintf(paste0("Using 'foreach' parallel mode with %s cores and",
+                             " '%s' option."), availableCores(), par_args$par.option))
     }
     if (!is.null(par_args$par_units) && !par_args$par_mode == "sequential" && 
         par_args$par_mode == "foreach") {
@@ -578,8 +578,8 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
       cl <- makeCluster(par_args$par_units, outfile = out_progress, ...)
       plan(cluster, workers = cl)
       
-      message(sprintf("Using 'foreach' parallel mode with %s cores and",
-                      "'%s' option.", 
+      message(sprintf(paste0("Using 'foreach' parallel mode with %s cores and",
+                             " '%s' option."),
                       par_args$par_units, par_args$par.option))
     }
     if (par_args$par_mode == "sequential") {
@@ -667,22 +667,14 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
                           if (is.factor(data[, response])) {
                             lev <- levels(data[, response])
                             if (err_train) {
-                              lev[pooled_only$pooled_obs_train] %>%
-                                factor(levels = lev) -> pooled_only$pooled_obs_train
-                              # pooled_only$pooled_obs_train <- factor(lev[pooled_only$pooled_obs_train], levels = lev)
+                              pooled_only$pooled_obs_train <- factor(lev[pooled_only$pooled_obs_train], levels = lev)
                             }
-                            lev[pooled_only$pooled_obs_test] %>%
-                              factor(levels = lev) -> pooled_only$pooled_obs_test
-                            # pooled_only$pooled_obs_test <- factor(lev[pooled_only$pooled_obs_test], levels = lev)
+                            pooled_only$pooled_obs_test <- factor(lev[pooled_only$pooled_obs_test], levels = lev)
                             if (is_factor_prediction) {
                               if (err_train) {
-                                lev[pooled_only$pooled.pred.train] %>%
-                                  factor(levels = lev) -> pooled_only$pooled.pred.train
-                                # pooled_only$pooled.pred.train <- factor(lev[pooled_only$pooled.pred.train], levels = lev)
+                                pooled_only$pooled.pred.train <- factor(lev[pooled_only$pooled.pred.train], levels = lev)
                               }
-                              lev[pooled_only$pooled_obs_test] %>%
-                                factor(levels = lev) -> pooled_only$pooled_obs_test
-                              # pooled_only$pooled.pred.test <- factor(lev[pooled_only$pooled.pred.test], levels = lev)
+                              pooled_only$pooled.pred.test <- factor(lev[pooled_only$pooled.pred.test], levels = lev)
                             }
                           } 
                           pooled_err_train <- NULL
@@ -719,7 +711,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
                                        importance = impo_only)
                         return(list(result))
                       }
-    if (par_args$par_mode == "foreach-old")
+    if (par_args$par_mode == "foreach-old" | par_args$par_mode == "foreach")
       stopCluster(cl)
   }
   
