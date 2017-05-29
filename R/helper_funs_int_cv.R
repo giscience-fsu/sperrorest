@@ -132,7 +132,7 @@ rf_cv_err <- function(ntree = NULL, mtry = NULL, train = NULL, test = NULL,
     } else {
       pred <- predict(fit, newdata = test)
     }
-    if (rf_fun == "randomForest") {
+    if (rf_fun == "randomForest" | rf_fun == "rfsrc") {
       predobj <- prediction(pred[, 2], test[, response])
     } else {
       pred <-  attr(pred, "probabilities")[, 2]

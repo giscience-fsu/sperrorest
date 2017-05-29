@@ -211,7 +211,7 @@ sptune_rf <- function(formula = NULL, data = NULL, accelerate = 1,
   test <- data[parti[[1]][[1]]$test, ]
   
   # Perform a complete grid search over the following range of values:
-  ntree <- seq(50, 2500, by = 0.5 * accelerate)
+  ntree <- seq(5, 2500, by = 0.5 * accelerate)
   default_mtry <- floor(sqrt(ncol(data))) 
   n_variables <- length(attr(terms(formula), "term.labels"))
   mtrys <- unique(c(default_mtry, seq(1, n_variables, by = 1)))
