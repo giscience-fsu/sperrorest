@@ -50,7 +50,7 @@ nsp.parti <- add.distance(nsp.parti, ecuador)
 sp.parti <- add.distance(sp.parti, ecuador)
 # non-spatial partioning: very small test-training distance:
 nsp.parti[[1]][[1]]$distance
-# spatial partitioning: more substantial distance, depending on number of 
+# spatial partitioning: more substantial distance, depending on number of
 # folds etc.
 sp.parti[[1]][[1]]$distance
 

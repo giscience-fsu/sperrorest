@@ -180,12 +180,12 @@ fit <- rpart(fo, data = ecuador, control = ctrl)
 # Non-spatial 5-repeated 10-fold cross-validation:
 mypred.rpart <- function(object, newdata) predict(object, newdata)[,2]
 par.nsp.res <- sperrorest(data = ecuador, formula = fo,
-                          model_fun = rpart, 
+                          model_fun = rpart,
                           model_args = list(control = ctrl),
                           pred_fun = mypred.rpart,
                           progress = TRUE,
-                          smp_fun = partition_cv, 
-                          smp_args = list(repetition = 1:5, nfold = 10), 
+                          smp_fun = partition_cv,
+                          smp_args = list(repetition = 1:5, nfold = 10),
                           error_rep = TRUE, error_fold = TRUE)
 summary(par.nsp.res$error_rep)
 summary(par.nsp.res$error_fold)
@@ -194,12 +194,12 @@ summary(par.nsp.res$represampling)
 
 # Spatial 5-repeated 10-fold spatial cross-validation:
 par.sp.res <- sperrorest(data = ecuador, formula = fo,
-                         model_fun = rpart, 
+                         model_fun = rpart,
                          model_args = list(control = ctrl),
                          pred_fun = mypred.rpart,
                          progress = TRUE,
-                         smp_fun = partition_kmeans, 
-                         smp_args = list(repetition = 1:5, nfold = 10), 
+                         smp_fun = partition_kmeans,
+                         smp_args = list(repetition = 1:5, nfold = 10),
                          par_args = list(par_units = 2, par_mode = "future"),
                          error_rep = TRUE, error_fold = TRUE)
 summary(par.sp.res$error_rep)
@@ -212,10 +212,10 @@ smry <- data.frame(
     nonspat.test     = unlist(summary(par.nsp.res$error_rep, level = 1)$test.auroc),
     spatial.training = unlist(summary(par.sp.res$error_rep, level = 1)$train.auroc),
     spatial.test     = unlist(summary(par.sp.res$error_rep, level = 1)$test.auroc))
-boxplot(smry, col = c('red','red','red','green'), 
+boxplot(smry, col = c('red','red','red','green'),
     main = 'Training vs. test, nonspatial vs. spatial',
     ylab = 'Area under the ROC curve')
-}    
+}
 }
 \references{
 Brenning, A. 2012. Spatial cross-validation and bootstrap for
