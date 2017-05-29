@@ -211,9 +211,10 @@ sptune_rf <- function(formula = NULL, data = NULL, accelerate = 1,
   test <- data[parti[[1]][[1]]$test, ]
   
   # Perform a complete grid search over the following range of values:
-  ntree <- 10^seq(50, 10000, by = 0.5 * accelerate)
+  ntree <- seq(50, 2500, by = 0.5 * accelerate)
   default_mtry <- floor(sqrt(ncol(data))) 
-  mtrys <- unique(c(default_mtry, seq(1, default_mtry + default_mtry, by = 1 * accelerate)))
+  n_variables <- length(attr(terms(formula), "term.labels"))
+  mtrys <- unique(c(default_mtry, seq(1, n_variables, by = 1)))
   
   # Set up variables for loop:
   n_tree <- length(ntree)
@@ -223,8 +224,8 @@ sptune_rf <- function(formula = NULL, data = NULL, accelerate = 1,
   
   # Calculate AUROC for all combinations of cost and gamma values:
   
-  for (i in 1:length(costs)) {
-    auroc[i] <- svm_cv_err(ntree = ntrees[i], mtry = mtrys[i], train = train,
+  for (i in 1:length(ntrees)) {
+    auroc[i] <- rf_cv_err(ntree = ntrees[i], mtry = mtrys[i], train = train,
                            test = test, response = response, formula = formula,  
                            rf_fun = rf_fun,
                            ...)   
@@ -237,8 +238,8 @@ sptune_rf <- function(formula = NULL, data = NULL, accelerate = 1,
     warning("all AUROCs are NA in internal cross-validation")
   } else {
     wh <- which(auroc == max(auroc, na.rm = TRUE))[1]
-    ntree <- ntree[wh]
-    mtry <- mtry[wh]
+    ntree <- ntrees[wh]
+    mtry <- mtrys[wh]
   }
   
   # Output on screen:

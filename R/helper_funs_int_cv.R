@@ -112,7 +112,7 @@ svm_cv_err <- function(cost = NULL, gamma = NULL, train = NULL, test = NULL,
 #' 
 #' @export
 rf_cv_err <- function(ntree = NULL, mtry = NULL, train = NULL, test = NULL,
-                      response = NULL, formula = NULL, rf_fun = NULL, ...) {
+                      response = NULL, formula = NULL, rf_fun = NULL, ...) { 
   err <- c()
   
   # check type of response variable 
@@ -128,12 +128,16 @@ rf_cv_err <- function(ntree = NULL, mtry = NULL, train = NULL, test = NULL,
     fit <- do.call(rf_fun, args)
     
     if (rf_fun == "randomForest") {
-      pred <- predict(fit, newdata = test, type = "probabilities")
+      pred <- predict(fit, newdata = test, type = "prob")
     } else {
       pred <- predict(fit, newdata = test)
     }
-    pred <-  attr(pred, "probabilities")[, 2]
-    predobj <- prediction(pred, test[, response])
+    if (rf_fun == "randomForest") {
+      predobj <- prediction(pred[, 2], test[, response])
+    } else {
+      pred <-  attr(pred, "probabilities")[, 2]
+      predobj <- prediction(pred, test[, response]) 
+    }  
     
     auroc <- performance(predobj, measure = "auc")@y.values[[1]]
     
