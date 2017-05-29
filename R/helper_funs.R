@@ -21,8 +21,10 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
                      do_gc = NULL, test_param = NULL, train_param = NULL) {
   if (importance == FALSE) {
     if (par_mode == "foreach" | par_mode == "sequential" |
-        par_mode == "foreach-old" && progress == "TRUE" | progress == 1) {
-      cat(date(), "Repetition", i, "- Fold", j, "\n")
+        par_mode == "foreach-old") {
+      if (progress == "TRUE" | progress == 1) {
+        cat(date(), "Repetition", i, "- Fold", j, "\n")
+      }
     }
   }
 
@@ -181,12 +183,12 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
             } else {
               imp_temp[[vnm]][[cnt]] <- as.list(unlist(current_res[[j]]$test) -
                                                   unlist(permut_err))
-              }
+            }
           } else {
             permut_err <- err_fun(nd[, response], pred_test)
             imp_temp[[vnm]][[cnt]] <- as.list(unlist(current_res[[j]]$test) -
                                                 unlist(permut_err))
-            }
+          }
         }
       }
       # average the results obtained in each permutation:
