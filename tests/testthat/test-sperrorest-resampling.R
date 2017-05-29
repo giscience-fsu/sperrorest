@@ -2,7 +2,7 @@ context("sperrorest-resampling.R")
 
 pacman::p_load(sperrorest, testthat)
 
-# partition_cv() Mon Feb  6 21:57:08 2017 ------------------------------ 
+# partition_cv() Mon Feb  6 21:57:08 2017 ------------------------------
 
 test_that("partition_cv() output is of correct length", {
   data(ecuador)
@@ -14,20 +14,20 @@ test_that("partition_cv() output is of correct length", {
 
 test_that("partition_cv.strat() output is of correct length", {
   data(ecuador)
-  parti <- partition_cv_strat(ecuador, strat = 'slides', nfold = 5, 
+  parti <- partition_cv_strat(ecuador, strat = 'slides', nfold = 5,
                               repetition = 1)
   expect_equal(length(parti[[1]]), 5)
 })
 
 # partition_factor() Mon Feb  6 22:01:05 2017 ------------------------------
 
-test_that("partition_factor() output is of correct length", { 
+test_that("partition_factor() output is of correct length", {
   data(ecuador)
   breaks <- quantile(ecuador$dem, seq(0, 1, length = 6))
   ecuador$zclass <- cut(ecuador$dem, breaks, include.lowest = TRUE)
   parti <- partition_factor(ecuador, fac = 'zclass')
   expect_equal(length(parti[[1]]), 5)
-})  
+})
 
 # partition_factor_cv() Mon Feb  6 22:05:11 2017 ------------------------------
 
@@ -58,7 +58,7 @@ test_that("partition_kmeans() output is of correct length", {
 
 test_that("partition_disc() output is of correct length", {
   data(ecuador)
-  parti <- partition_disc(ecuador, radius = 200, buffer = 200, 
+  parti <- partition_disc(ecuador, radius = 200, buffer = 200,
                           ndisc = 5, repetition = 1:1)
   expect_equal(length(parti[[1]]), 5)
 })
@@ -67,7 +67,7 @@ test_that("partition_disc() output is of correct length", {
 
 test_that("partition_loo() output is of correct length", {
   data(ecuador)
-  parti <- partition_loo(ecuador, buffer = 200, 
+  parti <- partition_loo(ecuador, buffer = 200,
                           ndisc = 5, repetition = 1:1)
   expect_equal(length(parti[[1]]), 5)
 })
@@ -85,8 +85,8 @@ test_that("represampling_bootstrap() output is of correct length()", {
 
 test_that("represampling_factor_bootstrap() output is of correct length()", {
   data(ecuador)
-  parti <- represampling_factor_bootstrap(ecuador, 
-                                          factor(floor(ecuador$dem / 100)), 
+  parti <- represampling_factor_bootstrap(ecuador,
+                                          factor(floor(ecuador$dem / 100)),
                                           oob = TRUE)
   expect_equal(length(parti[[1]][[1]]), 2)
 })
@@ -95,7 +95,7 @@ test_that("represampling_factor_bootstrap() output is of correct length()", {
 
 test_that("represampling_tile_bootstrap() output is of correct length()", {
   data(ecuador)
-  parti <- represampling_tile_bootstrap(ecuador, nsplit = c(4,2), 
+  parti <- represampling_tile_bootstrap(ecuador, nsplit = c(4,2),
                                         reassign = FALSE)
   expect_equal(length(parti[[1]][[1]]), 2)
 })
@@ -104,7 +104,7 @@ test_that("represampling_tile_bootstrap() output is of correct length()", {
 
 test_that("represampling_kmeans_bootstrap() output is of correct length()", {
   data(ecuador)
-  parti <- represampling_kmeans_bootstrap(ecuador, nsplit = c(4,2), 
+  parti <- represampling_kmeans_bootstrap(ecuador, nsplit = c(4,2),
                                           reassign = FALSE,
                                           nfold = 5)
   expect_equal(length(parti[[1]][[1]]), 2)
@@ -114,13 +114,13 @@ test_that("represampling_kmeans_bootstrap() output is of correct length()", {
 
 test_that("represampling_disc_bootstrap() output is of correct length()", {
   data(ecuador)
-  parti <- represampling_disc_bootstrap(ecuador, radius = 200, nboot = 20, 
+  parti <- represampling_disc_bootstrap(ecuador, radius = 200, nboot = 20,
                                         oob = FALSE)
   expect_equal(length(parti[[1]][[1]]), 2)
 })
 
 # plot.represampling() Mon Feb  6 22:54:18 2017 ------------------------------
-# possible option to test base plots: 
+# possible option to test base plots:
 # http://stackoverflow.com/a/30286668/4185785
 
 # test_that("plot.represampling is adjusting to repetitions", {

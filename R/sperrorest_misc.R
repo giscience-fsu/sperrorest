@@ -1,43 +1,43 @@
 
 #' Calculate mean nearest-neighbour distance between point datasets
 #'
-#' `dataset_distance` calculates Euclidean nearest-neighbour distances 
-#' between two point datasets and summarizes these distances using some 
+#' `dataset_distance` calculates Euclidean nearest-neighbour distances
+#' between two point datasets and summarizes these distances using some
 #' function, by default the mean.
 #'
-#' @param d1 a `data.frame` with (at least) columns with names given by 
-#' `x.name` and `y.name`; these contain the x and y coordinates, 
+#' @param d1 a `data.frame` with (at least) columns with names given by
+#' `x.name` and `y.name`; these contain the x and y coordinates,
 #' respectively.
 #' @param d2 see `d1`  - second set of points
-#' @param x.name name of column in `d1` and `d2` containing the x 
+#' @param x.name name of column in `d1` and `d2` containing the x
 #' coordinates of points.
 #' @param y.name same for y coordinates
-#' @param fun function to be applied to the vector of nearest-neighbor 
+#' @param fun function to be applied to the vector of nearest-neighbor
 #' distances of `d1` from `d2`.
-#' @param method type of distance metric to be used; only `'euclidean'` 
+#' @param method type of distance metric to be used; only `'euclidean'`
 #' is currently supported.
 #' @param ... additional arguments to `fun`.
-#' 
+#'
 #' @return depends on `fun`; typically (e.g., `mean`) a numeric vector
 #' of length 1
-#' 
-#' @details Nearest-neighbour distances are calculated for each point in 
-#' `d1`, resulting in a vector of length `nrow(d1)`, and `fun` 
+#'
+#' @details Nearest-neighbour distances are calculated for each point in
+#' `d1`, resulting in a vector of length `nrow(d1)`, and `fun`
 #' is applied to this vector.
-#' 
+#'
 #' @examples
 #' df <- data.frame(x = rnorm(100), y = rnorm(100))
 #' dataset_distance(df, df) # == 0
-#' 
+#'
 #' @export
-#' 
+#'
 #' @name dataset_distance
-#' 
+#'
 #' @aliases dataset_distance
-#' 
+#'
 #' @seealso [add.distance]
-#' 
-dataset_distance <- function(d1, d2, x.name = "x", y.name = "y", fun = mean, 
+#'
+dataset_distance <- function(d1, d2, x.name = "x", y.name = "y", fun = mean,
                              method = "euclidean", ...) {
   method <- tolower(method)
   if (method != "euclidean") {
@@ -50,8 +50,8 @@ dataset_distance <- function(d1, d2, x.name = "x", y.name = "y", fun = mean,
     }
   }
   di <- rep(NA, nrow(d1))
-  for (i in 1:nrow(d1)) { 
-    di[i] <- min(sqrt((d2[, x.name] - d1[i, x.name])^2 + 
+  for (i in 1:nrow(d1)) {
+    di[i] <- min(sqrt((d2[, x.name] - d1[i, x.name])^2 +
                         (d2[, y.name] - d1[i, y.name])^2))
   }
   if (!is.null(fun)) {
@@ -64,29 +64,29 @@ dataset_distance <- function(d1, d2, x.name = "x", y.name = "y", fun = mean,
 #' Add distance information to resampling objects
 #'
 #' @name add.distance
-#' 
+#'
 #' @inheritParams partition_cv
-#' 
+#'
 #' @param object [resampling] or [represampling] object.
-#' @param ... Additional arguments to [dataset_distance] and 
+#' @param ... Additional arguments to [dataset_distance] and
 #' [add.distance.resampling], respectively.
-#' 
-#' @return A [resampling] or [represampling] object 
+#'
+#' @return A [resampling] or [represampling] object
 #' containing an additional.
-#' `$distance` component in each [resampling] object. 
-#' The `distance` component is a single numeric value indicating, for 
-#' each `train` / `test` pair, the (by default, mean) 
+#' `$distance` component in each [resampling] object.
+#' The `distance` component is a single numeric value indicating, for
+#' each `train` / `test` pair, the (by default, mean)
 #' nearest-neighbour distance between the two sets.
-#' 
-#' @details Nearest-neighbour distances are calculated for each sample in the 
-#' test set. These `nrow(???$test)` nearest-neighbour distances are then 
-#' averaged. Aggregation methods other than `mean` can be chosen using 
-#' the `fun` argument, which will be passed on to 
+#'
+#' @details Nearest-neighbour distances are calculated for each sample in the
+#' test set. These `nrow(???$test)` nearest-neighbour distances are then
+#' averaged. Aggregation methods other than `mean` can be chosen using
+#' the `fun` argument, which will be passed on to
 #' [dataset_distance].
-#' 
-#' @seealso [dataset_distance] [represampling] 
+#'
+#' @seealso [dataset_distance] [represampling]
 #' [resampling]
-#' 
+#'
 #' @examples
 #' data(ecuador) # Muenchow et al. (2012), see ?ecuador
 #' nsp.parti <- partition_cv(ecuador)
@@ -95,10 +95,10 @@ dataset_distance <- function(d1, d2, x.name = "x", y.name = "y", fun = mean,
 #' sp.parti <- add.distance(sp.parti, ecuador)
 #' # non-spatial partioning: very small test-training distance:
 #' nsp.parti[[1]][[1]]$distance
-#' # spatial partitioning: more substantial distance, depending on number of 
+#' # spatial partitioning: more substantial distance, depending on number of
 #' # folds etc.
 #' sp.parti[[1]][[1]]$distance
-#' 
+#'
 #' @export
 add.distance <- function(object, ...) UseMethod("add.distance")
 
@@ -109,8 +109,8 @@ add.distance <- function(object, ...) UseMethod("add.distance")
 #' @export
 add.distance.resampling <- function(object, data, coords = c("x", "y"), ...) {
   for (j in 1:length(object)) {
-    test.dist <- dataset_distance(data[object[[j]]$test, coords], 
-                                  data[object[[j]]$train, coords], 
+    test.dist <- dataset_distance(data[object[[j]]$test, coords],
+                                  data[object[[j]]$train, coords],
                                   x.name = coords[1], y.name = coords[2], ...)
     object[[j]]$distance <- test.dist
   }
@@ -129,28 +129,28 @@ add.distance.represampling <- function(object, ...) {
 
 #' Alphanumeric tile names
 #'
-#' Functions for generating and handling alphanumeric tile names of the 
-#' form `'X2:Y7'` as used by [partition_tiles] and 
+#' Functions for generating and handling alphanumeric tile names of the
+#' form `'X2:Y7'` as used by [partition_tiles] and
 #' [represampling_tile_bootstrap].
 #'
 #' @name as.tilename
-#' 
+#'
 #' @aliases tilename
-#' 
-#' @param x object of class `tilename`, `character`, or 
+#'
+#' @param x object of class `tilename`, `character`, or
 #' `numeric` (of length 2).
 #' @param ... additional arguments (currently ignored).
-#' 
-#' @return object of class `tilename`, `character`, or numeric 
+#'
+#' @return object of class `tilename`, `character`, or numeric
 #' vector of length 2
-#' 
+#'
 #' @examples
 #' tnm <- as.tilename(c(2,3))
 #' tnm # 'X2:Y3'
 #' as.numeric(tnm) # c(2,3)
-#' @seealso [partition_tiles], [represampling], 
+#' @seealso [partition_tiles], [represampling],
 #' [represampling_tile_bootstrap]
-#' 
+#'
 #' @export
 as.tilename <- function(x, ...) UseMethod("as.tilename")
 
@@ -217,23 +217,23 @@ print.tilename <- function(x, ...) {
 
 #' Identify small partitions that need to be fixed.
 #'
-#' `get_small_tiles` identifies partitions (tiles) that are too small 
-#' according to some defined criterion / criteria (minimum number of samples in 
+#' `get_small_tiles` identifies partitions (tiles) that are too small
+#' according to some defined criterion / criteria (minimum number of samples in
 #' tile and/or minimum fraction of entire dataset).
-#' 
-#' @param tile factor: tile/partition names for all samples; names must be 
+#'
+#' @param tile factor: tile/partition names for all samples; names must be
 #' coercible to class [tilename], i.e. of the form `'X4:Y2'` etc.
 #' @param min_n integer (optional): minimum number of samples per partition_
-#' @param min_frac numeric >0, <1: minimum relative size of partition as 
+#' @param min_frac numeric >0, <1: minimum relative size of partition as
 #' percentage of sample.
-#' @param ignore character vector: names of tiles to be ignored, i.e. to be 
+#' @param ignore character vector: names of tiles to be ignored, i.e. to be
 #' retained even if the inclusion criteria are not met.
-#' 
-#' @return character vector: names of tiles that are considered 'small' 
+#'
+#' @return character vector: names of tiles that are considered 'small'
 #' according to these criteria
-#' 
+#'
 #' @seealso [partition_tiles], [tilename]
-#' 
+#'
 #' @examples
 #' data(ecuador) # Muenchow et al. (2012), see ?ecuador
 #' # Rectangular partitioning without removal of small tiles:
@@ -241,10 +241,10 @@ print.tilename <- function(x, ...) {
 #' summary(parti)
 #' length(parti[[1]])
 #' # Same in factor format for the application of get_small_tiles:
-#' parti.fac <- partition_tiles(ecuador, nsplit = c(10, 10), reassign = FALSE, 
+#' parti.fac <- partition_tiles(ecuador, nsplit = c(10, 10), reassign = FALSE,
 #'                              return.factor = TRUE)
 #' get_small_tiles(parti.fac[[1]], min_n = 20) # tiles with less than 20 samples
-#' parti2 <- partition_tiles(ecuador, nsplit = c(10, 10), reassign = TRUE, 
+#' parti2 <- partition_tiles(ecuador, nsplit = c(10, 10), reassign = TRUE,
 #'                           min_n = 20, min_frac = 0)
 #' length(parti2[[1]]) # < length(parti[[1]])
 #' @export
@@ -257,7 +257,7 @@ get_small_tiles <- function(tile, min_n = NULL, min_frac = 0, ignore = c()) {
   # Find the small ones:
   small_tile <- rep(FALSE, n_tiles)
   if (is.null(min_n) & is.null(min_frac)) {
-    stop("either 'min_n' or 'min_frac' must be specified in 
+    stop("either 'min_n' or 'min_frac' must be specified in
        'get_small_tiles'")
   }
   if (!is.null(min_n)) {
@@ -286,19 +286,19 @@ get_small_tiles <- function(tile, min_n = NULL, min_frac = 0, ignore = c()) {
 #' Determine the names of neighbouring tiles in a rectangular pattern
 #'
 #' This based on 'counting' up and down based on the tile name.
-#' 
+#'
 #' @param nm Character string or factor: name of a tile, e.g., `'X4:Y6'`
-#' @param tileset Admissible tile names; if missing and `nm` is a factor 
+#' @param tileset Admissible tile names; if missing and `nm` is a factor
 #' variable, then `levels(nm)` is used as a default for `tileset`.
-#' @param iterate internal - do not change default: to control behaviour in an 
+#' @param iterate internal - do not change default: to control behaviour in an
 #' interative call to this function.
-#' @param diagonal if `TRUE`, diagonal neighbours are also considered 
+#' @param diagonal if `TRUE`, diagonal neighbours are also considered
 #' neighbours.
-#' 
+#'
 #' @return Character string.
-#' 
+#'
 #' @name tile_neighbors
-#' 
+#'
 #' @export
 tile_neighbors <- function(nm, tileset, iterate = 0, diagonal = FALSE) {
   if (missing(tileset)) {
@@ -311,7 +311,7 @@ tile_neighbors <- function(nm, tileset, iterate = 0, diagonal = FALSE) {
   }
   nm <- as.character(nm)
   wh <- as.numeric.tilename(as.tilename(nm))
-  
+
   # Initial neighbors list:
   nbr <- c()
   for (i in c(-1, 0, 1)) {
@@ -329,75 +329,75 @@ tile_neighbors <- function(nm, tileset, iterate = 0, diagonal = FALSE) {
       }
     }
   }
-  
+
   if (!is.null(tileset)) {
-    # If neighbors are not in 'tileset' (i.e. have been removed e.g. because 
+    # If neighbors are not in 'tileset' (i.e. have been removed e.g. because
     # they were too small) then continue search up to 'iterate' times/steps:
     if (!any(nbr %in% tileset) & (iterate > 0)) {
       nbrs <- c()
-      for (a.nbr in nbr) { 
-        nbrs <- c(nbrs, tile_neighbors(nm = a.nbr, 
-                                       tileset = tileset, 
+      for (a.nbr in nbr) {
+        nbrs <- c(nbrs, tile_neighbors(nm = a.nbr,
+                                       tileset = tileset,
                                        iterate = iterate - 1))
       }
       nbr <- nbrs
       nbr <- nbr[nbr != nm]
     }
-    # Now remove any neighbor tiles that are not contained in the 'tileset', 
-    # i.e. have been removed previously (presumably because they were too small, 
+    # Now remove any neighbor tiles that are not contained in the 'tileset',
+    # i.e. have been removed previously (presumably because they were too small,
     # or out of range):
     nbr <- nbr[nbr %in% tileset]
   }
-  
+
   if (!is.null(tileset)) {
     nbr <- factor(nbr, levels = tileset)
   }
-  
+
   return(nbr)
 }
 
 
 #' Resampling objects such as partitionings or bootstrap samples
 #'
-#' Create/coerce and print resampling objects, e.g., partitionings or boostrap 
+#' Create/coerce and print resampling objects, e.g., partitionings or boostrap
 #' samples derived from a data set.
 #'
-#' @param object depending on the function/method, a list or a vector of type 
+#' @param object depending on the function/method, a list or a vector of type
 #' factor defining a partitioning of the dataset.
 #' @param x object of class `resampling`.
 #' @param ... currently not used.
-#' 
+#'
 #' @name as.resampling
-#' 
+#'
 #' @return `as.resampling` methods: An object of class `resampling`.
-#' 
-#' @details A `resampling` object is a list of lists defining a set of 
+#'
+#' @details A `resampling` object is a list of lists defining a set of
 #' training and test samples.
 #'
-#' In the case of `k`-fold cross-validation partitioning, for example, 
-#' the corresponding `resampling` object would be of length `k`, 
+#' In the case of `k`-fold cross-validation partitioning, for example,
+#' the corresponding `resampling` object would be of length `k`,
 #' i.e. contain `k` lists. Each of these `k` lists defines a training
-#' set of size `n(k-1)/k` (where `n` is the overall sample size), and 
+#' set of size `n(k-1)/k` (where `n` is the overall sample size), and
 #' a test set of size `n/k`.
-#' The `resampling` object does, however, not contain the data itself, but 
-#' only indices between `1` and `n` identifying the seleciton 
+#' The `resampling` object does, however, not contain the data itself, but
+#' only indices between `1` and `n` identifying the seleciton
 #' (see Examples).
 #'
-#' Another example is bootstrap resampling. [represampling_bootstrap] 
-#' with argument `oob = TRUE` generates [`rep`]`resampling` objects 
-#' with indices of a bootstrap sample in the `train` component and indices 
+#' Another example is bootstrap resampling. [represampling_bootstrap]
+#' with argument `oob = TRUE` generates [`rep`]`resampling` objects
+#' with indices of a bootstrap sample in the `train` component and indices
 #' of the out-of-bag sample in the test component (see Examples below).
 #'
-#' `as.resampling.factor`: For each factor level of the input variable, 
-#' `as.resampling.factor` determines the indices of samples in this level 
-#' (= test samples) and outside this level (= training samples). Empty levels of 
+#' `as.resampling.factor`: For each factor level of the input variable,
+#' `as.resampling.factor` determines the indices of samples in this level
+#' (= test samples) and outside this level (= training samples). Empty levels of
 #' `object` are dropped without warning.
 #'
-#' `as.resampling_list` checks if the list in `object` has a valid 
-#' `resampling` object structure (with components `train` and 
-#' `test` etc.) and assigns the class attribute `'resampling'` if 
+#' `as.resampling_list` checks if the list in `object` has a valid
+#' `resampling` object structure (with components `train` and
+#' `test` etc.) and assigns the class attribute `'resampling'` if
 #' successful.
-#' 
+#'
 #' @examples
 #' data(ecuador) # Muenchow et al. (2012), see ?ecuador
 #'
@@ -407,7 +407,7 @@ tile_neighbors <- function(nm, tileset, iterate = 0, diagonal = FALSE) {
 #' summary(smp)
 #' # Compare:
 #' summary(parti)
-#' 
+#'
 #' # k-fold (non-spatial) cross-validation partitioning:
 #' parti <- partition_cv(ecuador)
 #' parti <- parti[[1]] # the first (and only) resampling object in parti
@@ -423,12 +423,12 @@ tile_neighbors <- function(nm, tileset, iterate = 0, diagonal = FALSE) {
 #' str( ecuador[ parti[[1]]$test , ])
 #' # bootstrap training sample: same size as nrow(ecuador):
 #' str( ecuador[ parti[[1]]$train , ])
-#' 
-#' @seealso [represampling], [partition_cv], 
+#'
+#' @seealso [represampling], [partition_cv],
 #' [partition_kmeans], [represampling_bootstrap], etc.
-#' 
+#'
 #' @aliases as.resampling resampling
-#' 
+#'
 #' @export
 as.resampling <- function(object, ...) {
   if (inherits(object, "resampling")) {
@@ -454,9 +454,9 @@ as.resampling.default <- function(object, ...) {
 #' @export
 as.resampling.factor <- function(object, ...) {
   object <- factor(object)  # drop empty leve
-  
+
   # Turn factor levels into test sets, one after the other:
-  resampling <- lapply(levels(object), function(x, spl) 
+  resampling <- lapply(levels(object), function(x, spl)
     list(train = which(spl != x), test = which(spl == x)), spl = object)
   # result is a list with nlevels (object) levels
   names(resampling) <- levels(object)
@@ -514,39 +514,39 @@ print.resampling <- function(x, ...) {
 }
 
 
-#' Resampling objects with repetition, i.e. sets of partitionings or boostrap 
+#' Resampling objects with repetition, i.e. sets of partitionings or boostrap
 #' samples
 #'
-#' Functions for handling `represampling` objects, i.e. `list`s of 
+#' Functions for handling `represampling` objects, i.e. `list`s of
 #' [resampling] objects.
-#' 
-#' @param object object of class `represampling`, or a list to be coerced 
+#'
+#' @param object object of class `represampling`, or a list to be coerced
 #' to this class.
 #' @param x object of class `represampling`.
 #' @param ... currently not used.
-#' 
+#'
 #' @name as.represampling
-#' 
-#' @return `as.represampling` methods return an object of class 
+#'
+#' @return `as.represampling` methods return an object of class
 #' `represampling` with the contents of `object`.
-#' 
-#' @details `represampling` objects are (names) lists of 
-#' [resampling] objects. Such objects are typically created by 
+#'
+#' @details `represampling` objects are (names) lists of
+#' [resampling] objects. Such objects are typically created by
 #' [partition_cv], [partition_kmeans],
 #' [represampling_disc_bootstrap] and related functions.
 #'
-#' In `r`-repeated `k`-fold cross-validation, for example, the 
-#' corresponding `represampling` object has length `r`, and each of 
+#' In `r`-repeated `k`-fold cross-validation, for example, the
+#' corresponding `represampling` object has length `r`, and each of
 #' its `r` [resampling] objects has length `k`.
 #'
-#' `as.resampling_list` coerces `object` to class `represampling` 
-#' while coercing its elements to [resampling] objects. 
+#' `as.resampling_list` coerces `object` to class `represampling`
+#' while coercing its elements to [resampling] objects.
 #' Some validity checks are performed.
-#' 
-#' @seealso [resampling], [partition_cv], 
-#' [partition_kmeans], 
+#'
+#' @seealso [resampling], [partition_cv],
+#' [partition_kmeans],
 #' [represampling_disc_bootstrap], etc.
-#' 
+#'
 #' @examples
 #' data(ecuador) # Muenchow et al. (2012), see ?ecuador
 #' # Partitioning by elevation classes in 200 m steps:
@@ -562,7 +562,7 @@ print.resampling <- function(x, ...) {
 as.represampling <- function(object, ...) {
   if (inherits(object, "represampling")) {
     object
-  } 
+  }
   else {
     UseMethod("as.represampling")
   }
@@ -576,8 +576,8 @@ as.represampling <- function(object, ...) {
 as.represampling.list <- function(object, ...) {
   valid <- sapply(object, validate_resampling)
   if (any(!valid)) {
-    msg <- paste("cannot coerce to 'represampling' object: invalid list 
-          elements number\n   ", 
+    msg <- paste("cannot coerce to 'represampling' object: invalid list
+          elements number\n   ",
                  paste(which(!valid), collapse = " "))
     stop(msg)
   }
@@ -607,23 +607,23 @@ is_represampling <- function(object) inherits(object, "represampling")
 
 #' Summary statistics for a resampling objects
 #'
-#' Calculates sample sizes of training and test sets within repetitions and 
+#' Calculates sample sizes of training and test sets within repetitions and
 #' folds of a `resampling` or `represampling` object.
-#' 
+#'
 #' @name summary.represampling
-#' 
+#'
 #' @method summary represampling
-#' 
+#'
 #' @param object A `resampling` or `represampling` object.
 #' @param ... currently ignored.
-#' 
-#' @return A list of `data.frame`s summarizing the sample sizes of training 
+#'
+#' @return A list of `data.frame`s summarizing the sample sizes of training
 #' and test sets in each fold of each repetition.
-#' 
+#'
 #' @export
 summary.represampling <- function(object, ...) {
-  lapply(object, function(x) as.data.frame(t(sapply(x, function(y) 
-    data.frame(n.train = length(y$train), 
+  lapply(object, function(x) as.data.frame(t(sapply(x, function(y)
+    data.frame(n.train = length(y$train),
                n.test = length(y$test))))))
 }
 
@@ -632,7 +632,7 @@ summary.represampling <- function(object, ...) {
 #' @method summary resampling
 #' @export
 summary.resampling <- function(object, ...) {
-  as.data.frame(t(sapply(object, function(y) 
-    data.frame(n.train = length(y$train), 
+  as.data.frame(t(sapply(object, function(y)
+    data.frame(n.train = length(y$train),
                n.test = length(y$test)))))
 }
