@@ -10,7 +10,7 @@ get_small_tiles(tile, min_n = NULL, min_frac = 0, ignore = c())
 \item{tile}{factor: tile/partition names for all samples; names must be
 coercible to class \link{tilename}, i.e. of the form \code{'X4:Y2'} etc.}
 
-\item{min_n}{integer (optional): minimum number of samples per partition.}
+\item{min_n}{integer (optional): minimum number of samples per partition_}
 
 \item{min_frac}{numeric >0, <1: minimum relative size of partition as
 percentage of sample.}

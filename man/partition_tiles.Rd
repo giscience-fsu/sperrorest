@@ -6,8 +6,8 @@
 \usage{
 partition_tiles(data, coords = c("x", "y"), dsplit = NULL, nsplit = NULL,
   rotation = c("none", "random", "user"), user.rotation, offset = c("none",
-  "random", "user"), user.offset, reassign = TRUE, min.frac = 0.025,
-  min.n = 5, iterate = 1, return.factor = FALSE, repetition = 1,
+  "random", "user"), user.offset, reassign = TRUE, min_frac = 0.025,
+  min_n = 5, iterate = 1, return.factor = FALSE, repetition = 1,
   seed1 = NULL)
 }
 \arguments{
@@ -50,19 +50,19 @@ direction, respectively, and will therefore be recycled as needed
 (\code{length(repetition)} times each).}
 
 \item{reassign}{logical (default \code{TRUE}): if \code{TRUE}, 'small' tiles
-(as per \code{min.frac} and \code{min.n} arguments and
-\link{get.small.tiles}) are merged with (smallest) adjacent tiles.
+(as per \code{min_frac} and \code{min_n} arguments and
+\link{get_small_tiles}) are merged with (smallest) adjacent tiles.
 If \code{FALSE}, small tiles are 'eliminated', i.e. set to \code{NA}.}
 
-\item{min.frac}{numeric >=0, <1: minimum relative size of partition as
-percentage of sample; argument passed to \link{get.small.tiles}.
+\item{min_frac}{numeric >=0, <1: minimum relative size of partition as
+percentage of sample; argument passed to \link{get_small_tiles}.
 Will be ignored if \code{NULL}.}
 
-\item{min.n}{integer >=0: minimum number of samples per partition;
-argument passed to \link{get.small.tiles}.
+\item{min_n}{integer >=0: minimum number of samples per partition;
+argument passed to \link{get_small_tiles}.
 Will be ignored if \code{NULL}.}
 
-\item{iterate}{argument to be passed to \link{tile.neighbors}}
+\item{iterate}{argument to be passed to \link{tile_neighbors}}
 
 \item{return.factor}{if \code{FALSE} (default), return a
 \link{represampling} object; if \code{TRUE} (used internally by
@@ -84,7 +84,7 @@ A \link{represampling} object.
 Contains \code{length(repetition)} \link{resampling} objects as
 repetitions. The exact number of folds / test-set tiles within each
 \link{resampling} objects depends on the spatial configuration of
-the data set and possible cleaning steps (see \code{min.frac}, \code{min.n}).
+the data set and possible cleaning steps (see \code{min_frac}, \code{min_n}).
 }
 \description{
 \code{partition_tiles} divides the study area into a specified number of
@@ -109,18 +109,18 @@ summary(parti) # tile A4 has only 55 samples
 # same partitioning, but now merge tiles with less than 100 samples to 
 # adjacent tiles:
 parti2 <- partition_tiles(ecuador, nsplit = c(4,3), reassign = TRUE, 
-min.n = 100)
+min_n = 100)
 # plot(parti2,ecuador)
 summary(parti2)
 # tile B4 (in 'parti') was smaller than A3, therefore A4 was merged with B4, 
 # not with A3
 # now with random rotation and offset, and tiles of 2000 m length:
 parti3 <- partition_tiles(ecuador, dsplit = 2000, offset = 'random', 
-rotation = 'random', reassign = TRUE, min.n = 100)
+rotation = 'random', reassign = TRUE, min_n = 100)
 # plot(parti3, ecuador)
 summary(parti3)
 }
 \seealso{
 \link{sperrorest}, \link{as.resampling.factor},
-\link{get.small.tiles}, \link{tile.neighbors}
+\link{get_small_tiles}, \link{tile_neighbors}
 }

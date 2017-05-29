@@ -50,7 +50,7 @@
 #' which are provided by `sperrorest`)
 #' 
 #' @param smp_fun A function for sampling training and test sets from 
-#' `data`. E.g., [partition.kmeans] for 
+#' `data`. E.g., [partition_kmeans] for 
 #' spatial cross-validation using spatial \emph{k}-means clustering.
 #' 
 #' @param smp_args (optional) Arguments to be passed to `smp_fun`
@@ -59,7 +59,7 @@
 #' training sample in order to achieve, e.g., uniform sample sizes on all 
 #' training sets, or maintaining a certain ratio of positives and negatives 
 #' in training sets. 
-#' E.g., [resample.uniform] or [resample.strat.uniform]
+#' E.g., [resample_uniform] or [resample_strat_uniform]
 #' 
 #' @param train_param (optional) Arguments to be passed to `resample.fun`
 #' 
@@ -69,7 +69,7 @@
 #' 
 #' @param err_fun A function that calculates selected error measures from the 
 #' known responses in `data` and the model predictions delivered 
-#' by `pred_fun`. E.g., [err.default] (the default). 
+#' by `pred_fun`. E.g., [err_default] (the default). 
 #' See example and details below.
 #' 
 #' @param error_fold logical (default: `TRUE`) if `importance` is 
@@ -216,7 +216,7 @@
 #'                          model_args = list(control = ctrl),
 #'                          pred_fun = mypred.rpart,
 #'                          progress = TRUE,
-#'                          smp_fun = partition.kmeans, 
+#'                          smp_fun = partition_kmeans, 
 #'                          smp_args = list(repetition = 1:5, nfold = 10), 
 #'                          par_args = list(par_units = 2, par_mode = "future"),
 #'                          error_rep = TRUE, error_fold = TRUE)
@@ -238,9 +238,9 @@
 sperrorest <- function(formula, data, coords = c("x", "y"), 
                        model_fun, model_args = list(), 
                        pred_fun = NULL, pred_args = list(), 
-                       smp_fun = partition.loo, smp_args = list(), 
+                       smp_fun = partition_loo, smp_args = list(), 
                        train_fun = NULL, train_param = NULL, test_fun = NULL, 
-                       test_param = NULL, err_fun = err.default, 
+                       test_param = NULL, err_fun = err_default, 
                        error_fold = TRUE, error_rep = TRUE, err_train = TRUE, 
                        imp_variables = NULL, 
                        imp_permutations = 1000, 

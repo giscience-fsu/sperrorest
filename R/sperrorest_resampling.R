@@ -90,15 +90,15 @@ partition_cv <- function(data, coords = c("x", "y"), nfold = 10, repetition = 1,
 #' \code{nrow(data)}: variable over which to stratify
 #' 
 #' @return A \code{\link{represampling}} object, see also 
-#' \code{\link{partition_cv}}. \code{partition.strat.cv}, however, 
+#' \code{\link{partition_cv}}. \code{partition_strat_cv}, however, 
 #' stratified with respect to the variable \code{data[,strat]}; 
 #' i.e., cross-validation partitioning is done within each set 
-#' \code{data[data[,strat]==i,]} (\code{i} in \code{levels(data[,strat])}), and 
+#' \code{data[data[,strat]==i,]} (\code{i} in \code{levels(data[, strat])}), and 
 #' the \code{i}th folds of all levels are combined into one cross-validation 
 #' fold.
 #' 
 #' @seealso \code{\link{sperrorest}}, \code{\link{as.resampling}}, 
-#' \code{\link{resample.strat.uniform}}
+#' \code{\link{resample_strat_uniform}}
 #' 
 #' @examples
 #' data(ecuador)
@@ -310,25 +310,25 @@ partition_factor_cv <- function(data, coords = c("x", "y"), fac, nfold = 10,
 #' (`length(repetition)` times each).
 #' 
 #' @param reassign logical (default `TRUE`): if `TRUE`, 'small' tiles 
-#' (as per `min.frac` and `min.n` arguments and 
-#' [get.small.tiles]) are merged with (smallest) adjacent tiles. 
+#' (as per `min_frac` and `min_n` arguments and 
+#' [get_small_tiles]) are merged with (smallest) adjacent tiles. 
 #' If `FALSE`, small tiles are 'eliminated', i.e. set to `NA`.
 #' 
-#' @param min.frac numeric >=0, <1: minimum relative size of partition as 
-#' percentage of sample; argument passed to [get.small.tiles]. 
+#' @param min_frac numeric >=0, <1: minimum relative size of partition as 
+#' percentage of sample; argument passed to [get_small_tiles]. 
 #' Will be ignored if `NULL`.
 #' 
-#' @param min.n integer >=0: minimum number of samples per partition; 
-#' argument passed to [get.small.tiles]. 
+#' @param min_n integer >=0: minimum number of samples per partition; 
+#' argument passed to [get_small_tiles]. 
 #' Will be ignored if `NULL`.
 #' 
-#' @param iterate argument to be passed to [tile.neighbors]
+#' @param iterate argument to be passed to [tile_neighbors]
 #' 
 #' @return A [represampling] object. 
 #' Contains `length(repetition)` [resampling] objects as 
 #' repetitions. The exact number of folds / test-set tiles within each 
 #' [resampling] objects depends on the spatial configuration of 
-#' the data set and possible cleaning steps (see `min.frac`, `min.n`).
+#' the data set and possible cleaning steps (see `min_frac`, `min_n`).
 #' 
 #' @note Default parameter settings may change in future releases. 
 #' This function, especially the rotation and shifting part of it and the 
@@ -340,7 +340,7 @@ partition_factor_cv <- function(data, coords = c("x", "y"), fac, nfold = 10,
 #' thresholds is therefore recommended for non-zero (including random) offsets.
 #' 
 #' @seealso [sperrorest], [as.resampling.factor], 
-#' [get.small.tiles], [tile.neighbors]
+#' [get_small_tiles], [tile_neighbors]
 #' 
 #' @examples
 #' data(ecuador)
@@ -350,14 +350,14 @@ partition_factor_cv <- function(data, coords = c("x", "y"), fac, nfold = 10,
 #' # same partitioning, but now merge tiles with less than 100 samples to 
 #' # adjacent tiles:
 #' parti2 <- partition_tiles(ecuador, nsplit = c(4,3), reassign = TRUE, 
-#' min.n = 100)
+#' min_n = 100)
 #' # plot(parti2,ecuador)
 #' summary(parti2)
 #' # tile B4 (in 'parti') was smaller than A3, therefore A4 was merged with B4, 
 #' # not with A3
 #' # now with random rotation and offset, and tiles of 2000 m length:
 #' parti3 <- partition_tiles(ecuador, dsplit = 2000, offset = 'random', 
-#' rotation = 'random', reassign = TRUE, min.n = 100)
+#' rotation = 'random', reassign = TRUE, min_n = 100)
 #' # plot(parti3, ecuador)
 #' summary(parti3)
 #' @export
@@ -365,13 +365,13 @@ partition_tiles <- function(data, coords = c("x", "y"), dsplit = NULL,
                             nsplit = NULL, 
                             rotation = c("none", "random", "user"), 
                             user.rotation, offset = c("none", "random", "user"),
-                            user.offset, reassign = TRUE, min.frac = 0.025, 
-                            min.n = 5, iterate = 1, 
+                            user.offset, reassign = TRUE, min_frac = 0.025, 
+                            min_n = 5, iterate = 1, 
                             return.factor = FALSE, repetition = 1, 
                             seed1 = NULL) {
   # Some basic argument checks:
-  stopifnot(is.numeric(min.frac) && length(min.frac) == 1)
-  stopifnot(is.numeric(min.n) && length(min.n) == 1)
+  stopifnot(is.numeric(min_frac) && length(min_frac) == 1)
+  stopifnot(is.numeric(min_n) && length(min_n) == 1)
   stopifnot(is.numeric(iterate) && length(iterate) == 1)
   stopifnot(!is.null(nsplit) | !is.null(dsplit))
   
@@ -521,7 +521,7 @@ partition_tiles <- function(data, coords = c("x", "y"), dsplit = NULL,
     tile <- factor(tile)
     
     # Identify and process small tiles:
-    s.tiles <- get.small.tiles(tile, min.n = min.n, min.frac = min.frac)
+    s.tiles <- get_small_tiles(tile, min_n = min_n, min_frac = min_frac)
     if (length(s.tiles) > 0) {
       # any small tiles?
       if (reassign) {
@@ -530,7 +530,7 @@ partition_tiles <- function(data, coords = c("x", "y"), dsplit = NULL,
         # Repeat until no small tiles are left:
         while ((length(s.tiles) > 0) & (length(levels(tile)) > 1)) {
           # Start with smallest small tile:
-          nbrs <- tile.neighbors(s.tiles[1], tileset = levels(tile), 
+          nbrs <- tile_neighbors(s.tiles[1], tileset = levels(tile), 
                                  iterate = iterate)
           if (length(nbrs) == 0) {
             ignore <- c(ignore, as.character(s.tiles[1]))
@@ -542,7 +542,7 @@ partition_tiles <- function(data, coords = c("x", "y"), dsplit = NULL,
             tile <- factor(as.character(tile))
           }
           # Update small tiles list:
-          s.tiles <- get.small.tiles(tile, min.n = min.n, min.frac = min.frac, 
+          s.tiles <- get_small_tiles(tile, min_n = min_n, min_frac = min_frac, 
                                      ignore = ignore)
         }
       } else {
@@ -908,7 +908,7 @@ represampling_bootstrap <- function(data, coords = c("x", "y"),
 #' not be greater than `nlevels(fac)`, `nlevels(fac)` being the 
 #' default as per `nboot = -1`.
 #' 
-#' @seealso [ represampling_disc_bootstrap], 
+#' @seealso [represampling_disc_bootstrap], 
 #' [represampling_tile_bootstrap]
 #' 
 #' @examples
@@ -922,7 +922,7 @@ represampling_bootstrap <- function(data, coords = c("x", "y"),
 #' # using the factor bootstrap for a non-overlapping block bootstrap
 #' # (see also represampling_tile_bootstrap):
 #' fac <- partition_tiles(ecuador, return.factor = TRUE, repetition = c(1:3), 
-#'                        dsplit = 500, min.n = 200, rotation = 'random', 
+#'                        dsplit = 500, min_n = 200, rotation = 'random', 
 #'                        offset = 'random')
 #' parti <- represampling_factor_bootstrap(ecuador, fac, oob = TRUE, 
 #' repetition = c(1:3))

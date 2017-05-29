@@ -2,7 +2,7 @@
 #'
 #' `resample_strat_uniform` draws a stratified random sample 
 #' (with or without replacement) from the samples in `data`. 
-#' Stratification is over the levels of `data[,param$response]`. 
+#' Stratification is over the levels of `data[, param$response]`. 
 #' The same number of samples is drawn within each level.
 #' 
 #' @param data a `data.frame`, rows represent samples

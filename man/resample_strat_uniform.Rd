@@ -22,7 +22,7 @@ a \code{data.frame} containing a subset of the rows of \code{data}.
 \description{
 \code{resample_strat_uniform} draws a stratified random sample
 (with or without replacement) from the samples in \code{data}.
-Stratification is over the levels of \code{data[,param$response]}.
+Stratification is over the levels of \code{data[, param$response]}.
 The same number of samples is drawn within each level.
 }
 \details{

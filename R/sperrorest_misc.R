@@ -69,7 +69,7 @@ dataset_distance <- function(d1, d2, x.name = "x", y.name = "y", fun = mean,
 #' 
 #' @param object [resampling] or [represampling] object.
 #' @param ... Additional arguments to [dataset_distance] and 
-#' [add.distance_resampling], respectively.
+#' [add.distance.resampling], respectively.
 #' 
 #' @return A [resampling] or [represampling] object 
 #' containing an additional.
@@ -90,7 +90,7 @@ dataset_distance <- function(d1, d2, x.name = "x", y.name = "y", fun = mean,
 #' @examples
 #' data(ecuador) # Muenchow et al. (2012), see ?ecuador
 #' nsp.parti <- partition_cv(ecuador)
-#' sp.parti <- partition.kmeans(ecuador)
+#' sp.parti <- partition_kmeans(ecuador)
 #' nsp.parti <- add.distance(nsp.parti, ecuador)
 #' sp.parti <- add.distance(sp.parti, ecuador)
 #' # non-spatial partioning: very small test-training distance:
@@ -104,7 +104,7 @@ add.distance <- function(object, ...) UseMethod("add.distance")
 
 
 #' @rdname add.distance
-#' @name add.distance_resampling
+#' @name add.distance.resampling
 #' @method add.distance resampling
 #' @export
 add.distance.resampling <- function(object, data, coords = c("x", "y"), ...) {
@@ -122,7 +122,7 @@ add.distance.resampling <- function(object, data, coords = c("x", "y"), ...) {
 #' @method add.distance represampling
 #' @export
 add.distance.represampling <- function(object, ...) {
-  object <- lapply(object, add.distance_resampling, ...)
+  object <- lapply(object, add.distance.resampling, ...)
   class(object) <- "represampling"
   return(object)
 }
@@ -131,7 +131,7 @@ add.distance.represampling <- function(object, ...) {
 #'
 #' Functions for generating and handling alphanumeric tile names of the 
 #' form `'X2:Y7'` as used by [partition_tiles] and 
-#' [represampling.tile.bootstrap].
+#' [represampling_tile_bootstrap].
 #'
 #' @name as.tilename
 #' 
@@ -149,7 +149,7 @@ add.distance.represampling <- function(object, ...) {
 #' tnm # 'X2:Y3'
 #' as.numeric(tnm) # c(2,3)
 #' @seealso [partition_tiles], [represampling], 
-#' [represampling.tile.bootstrap]
+#' [represampling_tile_bootstrap]
 #' 
 #' @export
 as.tilename <- function(x, ...) UseMethod("as.tilename")
@@ -173,13 +173,13 @@ as.tilename.numeric <- function(x, ...) {
 #' @method as.character tilename
 #' @export
 as.character.tilename <- function(x, ...) {
-  y <- as.numeric_tilename(x)  # just testing
+  y <- as.numeric.tilename(x)  # just testing
   class(x) <- "character"
   return(x)
 }
 
 #' @rdname as.tilename
-#' @name as.numeric_tilename
+#' @name as.numeric.tilename
 #' @method as.numeric tilename
 #' @export
 as.numeric.tilename <- function(x, ...) {
@@ -199,7 +199,7 @@ as.numeric.tilename <- function(x, ...) {
 #' @export
 as.tilename.character <- function(x, ...) {
   stopifnot(length(x) == 1)
-  y <- as.numeric_tilename(x)  # just testing
+  y <- as.numeric.tilename(x)  # just testing
   class(x) <- "tilename"
   return(x)
 }
@@ -223,7 +223,7 @@ print.tilename <- function(x, ...) {
 #' 
 #' @param tile factor: tile/partition names for all samples; names must be 
 #' coercible to class [tilename], i.e. of the form `'X4:Y2'` etc.
-#' @param min_n integer (optional): minimum number of samples per partition.
+#' @param min_n integer (optional): minimum number of samples per partition_
 #' @param min_frac numeric >0, <1: minimum relative size of partition as 
 #' percentage of sample.
 #' @param ignore character vector: names of tiles to be ignored, i.e. to be 
@@ -310,7 +310,7 @@ tile_neighbors <- function(nm, tileset, iterate = 0, diagonal = FALSE) {
     }
   }
   nm <- as.character(nm)
-  wh <- as.numeric_tilename(as.tilename(nm))
+  wh <- as.numeric.tilename(as.tilename(nm))
   
   # Initial neighbors list:
   nbr <- c()
@@ -383,13 +383,13 @@ tile_neighbors <- function(nm, tileset, iterate = 0, diagonal = FALSE) {
 #' only indices between `1` and `n` identifying the seleciton 
 #' (see Examples).
 #'
-#' Another example is bootstrap resampling. [represampling.bootstrap] 
+#' Another example is bootstrap resampling. [represampling_bootstrap] 
 #' with argument `oob = TRUE` generates [`rep`]`resampling` objects 
 #' with indices of a bootstrap sample in the `train` component and indices 
 #' of the out-of-bag sample in the test component (see Examples below).
 #'
-#' `as.resampling_factor`: For each factor level of the input variable, 
-#' `as.resampling_factor` determines the indices of samples in this level 
+#' `as.resampling.factor`: For each factor level of the input variable, 
+#' `as.resampling.factor` determines the indices of samples in this level 
 #' (= test samples) and outside this level (= training samples). Empty levels of 
 #' `object` are dropped without warning.
 #'
@@ -412,20 +412,20 @@ tile_neighbors <- function(nm, tileset, iterate = 0, diagonal = FALSE) {
 #' parti <- partition_cv(ecuador)
 #' parti <- parti[[1]] # the first (and only) resampling object in parti
 #' # data corresponding to the test sample of the first fold:
-#' str( ecuador[ parti[[1]]$test , ] )
+#' str( ecuador[ parti[[1]]$test , ])
 #' # the corresponding training sample - larger:
-#' str( ecuador[ parti[[1]]$train , ] )
+#' str( ecuador[ parti[[1]]$train , ])
 #'
 #' # Bootstrap training sets, out-of-bag test sets:
-#' parti <- represampling.bootstrap(ecuador, oob = TRUE)
+#' parti <- represampling_bootstrap(ecuador, oob = TRUE)
 #' parti <- parti[[1]] # the first (and only) resampling object in parti
 #' # out-of-bag test sample: approx. one-third of nrow(ecuador):
-#' str( ecuador[ parti[[1]]$test , ] )
+#' str( ecuador[ parti[[1]]$test , ])
 #' # bootstrap training sample: same size as nrow(ecuador):
-#' str( ecuador[ parti[[1]]$train , ] )
+#' str( ecuador[ parti[[1]]$train , ])
 #' 
 #' @seealso [represampling], [partition_cv], 
-#' [partition.kmeans], [represampling.bootstrap], etc.
+#' [partition_kmeans], [represampling_bootstrap], etc.
 #' 
 #' @aliases as.resampling resampling
 #' 
@@ -445,11 +445,11 @@ as.resampling <- function(object, ...) {
 #' @method as.resampling default
 #' @export
 as.resampling.default <- function(object, ...) {
-  as.resampling_factor(factor(object))
+  as.resampling.factor(factor(object))
 }
 
 #' @rdname as.resampling
-#' @name as.resampling_factor
+#' @name as.resampling.factor
 #' @method as.resampling factor
 #' @export
 as.resampling.factor <- function(object, ...) {
@@ -532,8 +532,8 @@ print.resampling <- function(x, ...) {
 #' 
 #' @details `represampling` objects are (names) lists of 
 #' [resampling] objects. Such objects are typically created by 
-#' [partition_cv], [partition.kmeans],
-#' [represampling.disc.bootstrap] and related functions.
+#' [partition_cv], [partition_kmeans],
+#' [represampling_disc_bootstrap] and related functions.
 #'
 #' In `r`-repeated `k`-fold cross-validation, for example, the 
 #' corresponding `represampling` object has length `r`, and each of 
@@ -544,8 +544,8 @@ print.resampling <- function(x, ...) {
 #' Some validity checks are performed.
 #' 
 #' @seealso [resampling], [partition_cv], 
-#' [partition.kmeans], 
-#' [represampling.disc.bootstrap], etc.
+#' [partition_kmeans], 
+#' [represampling_disc_bootstrap], etc.
 #' 
 #' @examples
 #' data(ecuador) # Muenchow et al. (2012), see ?ecuador

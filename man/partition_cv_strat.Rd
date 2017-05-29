@@ -38,10 +38,10 @@ over which the partitioning should be stratified; or factor vector of length
 }
 \value{
 A \code{\link{represampling}} object, see also 
-\code{\link{partition_cv}}. \code{partition.strat.cv}, however, 
+\code{\link{partition_cv}}. \code{partition_strat_cv}, however, 
 stratified with respect to the variable \code{data[,strat]}; 
 i.e., cross-validation partitioning is done within each set 
-\code{data[data[,strat]==i,]} (\code{i} in \code{levels(data[,strat])}), and 
+\code{data[data[,strat]==i,]} (\code{i} in \code{levels(data[, strat])}), and 
 the \code{i}th folds of all levels are combined into one cross-validation 
 fold.
 }
@@ -64,5 +64,5 @@ mean(ecuador$slides[idx] == 'TRUE') / mean(ecuador$slides == 'TRUE')
 }
 \seealso{
 \code{\link{sperrorest}}, \code{\link{as.resampling}}, 
-\code{\link{resample.strat.uniform}}
+\code{\link{resample_strat_uniform}}
 }

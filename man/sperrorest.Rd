@@ -7,9 +7,9 @@ in parallel}
 \usage{
 sperrorest(formula, data, coords = c("x", "y"), model_fun,
   model_args = list(), pred_fun = NULL, pred_args = list(),
-  smp_fun = partition.loo, smp_args = list(), train_fun = NULL,
+  smp_fun = partition_loo, smp_args = list(), train_fun = NULL,
   train_param = NULL, test_fun = NULL, test_param = NULL,
-  err_fun = err.default, error_fold = TRUE, error_rep = TRUE,
+  err_fun = err_default, error_fold = TRUE, error_rep = TRUE,
   err_train = TRUE, imp_variables = NULL, imp_permutations = 1000,
   importance = !is.null(imp_variables), distance = FALSE,
   par_args = list(par_mode = "foreach", par_units = NULL), do_gc = 1,
@@ -49,7 +49,7 @@ fitted model object and the \code{newdata} argument,
 which are provided by \code{sperrorest})}
 
 \item{smp_fun}{A function for sampling training and test sets from
-\code{data}. E.g., \link{partition.kmeans} for
+\code{data}. E.g., \link{partition_kmeans} for
 spatial cross-validation using spatial \emph{k}-means clustering.}
 
 \item{smp_args}{(optional) Arguments to be passed to \code{smp_fun}}
@@ -58,7 +58,7 @@ spatial cross-validation using spatial \emph{k}-means clustering.}
 training sample in order to achieve, e.g., uniform sample sizes on all
 training sets, or maintaining a certain ratio of positives and negatives
 in training sets.
-E.g., \link{resample.uniform} or \link{resample.strat.uniform}}
+E.g., \link{resample_uniform} or \link{resample_strat_uniform}}
 
 \item{train_param}{(optional) Arguments to be passed to \code{resample.fun}}
 
@@ -68,7 +68,7 @@ E.g., \link{resample.uniform} or \link{resample.strat.uniform}}
 
 \item{err_fun}{A function that calculates selected error measures from the
 known responses in \code{data} and the model predictions delivered
-by \code{pred_fun}. E.g., \link{err.default} (the default).
+by \code{pred_fun}. E.g., \link{err_default} (the default).
 See example and details below.}
 
 \item{error_fold}{logical (default: \code{TRUE}) if \code{importance} is
@@ -198,7 +198,7 @@ par.sp.res <- sperrorest(data = ecuador, formula = fo,
                          model_args = list(control = ctrl),
                          pred_fun = mypred.rpart,
                          progress = TRUE,
-                         smp_fun = partition.kmeans, 
+                         smp_fun = partition_kmeans, 
                          smp_args = list(repetition = 1:5, nfold = 10), 
                          par_args = list(par_units = 2, par_mode = "future"),
                          error_rep = TRUE, error_fold = TRUE)

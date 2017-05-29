@@ -37,8 +37,8 @@ Functions for handling \code{represampling} objects, i.e. \code{list}s of
 \details{
 \code{represampling} objects are (names) lists of
 \link{resampling} objects. Such objects are typically created by
-\link{partition_cv}, \link{partition.kmeans},
-\link{represampling.disc.bootstrap} and related functions.
+\link{partition_cv}, \link{partition_kmeans},
+\link{represampling_disc_bootstrap} and related functions.
 
 In \code{r}-repeated \code{k}-fold cross-validation, for example, the
 corresponding \code{represampling} object has length \code{r}, and each of
@@ -61,6 +61,6 @@ summary(parti)
 }
 \seealso{
 \link{resampling}, \link{partition_cv},
-\link{partition.kmeans},
-\link{represampling.disc.bootstrap}, etc.
+\link{partition_kmeans},
+\link{represampling_disc_bootstrap}, etc.
 }

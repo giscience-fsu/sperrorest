@@ -66,7 +66,7 @@ parti <- represampling_factor_bootstrap(ecuador,
 # using the factor bootstrap for a non-overlapping block bootstrap
 # (see also represampling_tile_bootstrap):
 fac <- partition_tiles(ecuador, return.factor = TRUE, repetition = c(1:3), 
-                       dsplit = 500, min.n = 200, rotation = 'random', 
+                       dsplit = 500, min_n = 200, rotation = 'random', 
                        offset = 'random')
 parti <- represampling_factor_bootstrap(ecuador, fac, oob = TRUE, 
 repetition = c(1:3))
@@ -74,6 +74,6 @@ repetition = c(1:3))
 
 }
 \seealso{
-\link{ represampling_disc_bootstrap},
+\link{represampling_disc_bootstrap},
 \link{represampling_tile_bootstrap}
 }

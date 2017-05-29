@@ -6,7 +6,6 @@
 \alias{as.tilename_numeric}
 \alias{as.tilename.numeric}
 \alias{as.character.tilename}
-\alias{as.numeric_tilename}
 \alias{as.numeric.tilename}
 \alias{as.tilename_character}
 \alias{as.tilename.character}
@@ -38,7 +37,7 @@ vector of length 2
 \description{
 Functions for generating and handling alphanumeric tile names of the
 form \code{'X2:Y7'} as used by \link{partition_tiles} and
-\link{represampling.tile.bootstrap}.
+\link{represampling_tile_bootstrap}.
 }
 \examples{
 tnm <- as.tilename(c(2,3))
@@ -47,5 +46,5 @@ as.numeric(tnm) # c(2,3)
 }
 \seealso{
 \link{partition_tiles}, \link{represampling},
-\link{represampling.tile.bootstrap}
+\link{represampling_tile_bootstrap}
 }

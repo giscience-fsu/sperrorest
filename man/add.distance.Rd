@@ -2,7 +2,6 @@
 % Please edit documentation in R/sperrorest_misc.R
 \name{add.distance}
 \alias{add.distance}
-\alias{add.distance_resampling}
 \alias{add.distance.resampling}
 \alias{add.distance_represampling}
 \alias{add.distance.represampling}
@@ -18,7 +17,7 @@ add.distance(object, ...)
 \item{object}{\link{resampling} or \link{represampling} object.}
 
 \item{...}{Additional arguments to \link{dataset_distance} and
-\link{add.distance_resampling}, respectively.}
+\link{add.distance.resampling}, respectively.}
 
 \item{data}{\code{data.frame} containing at least the columns specified
 by \code{coords}}
@@ -46,7 +45,7 @@ the \code{fun} argument, which will be passed on to
 \examples{
 data(ecuador) # Muenchow et al. (2012), see ?ecuador
 nsp.parti <- partition_cv(ecuador)
-sp.parti <- partition.kmeans(ecuador)
+sp.parti <- partition_kmeans(ecuador)
 nsp.parti <- add.distance(nsp.parti, ecuador)
 sp.parti <- add.distance(sp.parti, ecuador)
 # non-spatial partioning: very small test-training distance:
