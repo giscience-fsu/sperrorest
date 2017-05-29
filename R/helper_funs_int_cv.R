@@ -46,7 +46,7 @@ svm_cv_err <- function(cost = NULL, gamma = NULL, train = NULL, test = NULL,
     if (svm_fun == "ksvm" | svm_fun == "SVM") {
       if (svm_fun == "ksvm") {
         args <- list(x = formula, data = train, type = type, kernel = kernel,
-                     prob.model = TRUE, C = cost, gamma = gamma)
+                     prob.model = FALSE, C = cost, gamma = gamma)
       } else {
         args <- list(formula = formula, data = train, type = type, kernel = kernel,
                      probability = TRUE, C = cost, gamma = gamma)
@@ -58,7 +58,11 @@ svm_cv_err <- function(cost = NULL, gamma = NULL, train = NULL, test = NULL,
     } 
     fit <- do.call(svm_fun, args)
     
-    pred <- predict(fit, newdata = test, probability = TRUE)
+    if (svm_fun == "ksvm") {
+      pred <- predict(fit, newdata = test, type = "probabilities")
+    } else {
+      pred <- predict(fit, newdata = test, probabilities = TRUE)
+    }
     pred <-  attr(pred, "probabilities")[, 2]
     predobj <- prediction(pred, test[, response])
     
