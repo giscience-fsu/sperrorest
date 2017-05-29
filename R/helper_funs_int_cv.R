@@ -4,7 +4,7 @@
 #' @importFrom ROCR prediction performance
 #' @importFrom e1071 svm 
 #' @importFrom gmum.r SVM 
-#' @importFrom kernlab ksvm predict.ksvm
+#' @importFrom kernlab ksvm predict
 #' 
 #' @param formula model formula
 #' 
