@@ -45,7 +45,7 @@ svm_cv_err <- function(cost = NULL, gamma = NULL, train = NULL, test = NULL,
     
     if (svm_fun == "ksvm" | svm_fun == "SVM") {
       if (svm_fun == "ksvm") {
-        args <- list(formula = formula, data = train, type = type, kernel = kernel,
+        args <- list(x = formula, data = train, type = type, kernel = kernel,
                      prob.model = TRUE, C = cost, gamma = gamma)
       } else {
         args <- list(formula = formula, data = train, type = type, kernel = kernel,
