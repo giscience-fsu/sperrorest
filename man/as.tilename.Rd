@@ -3,11 +3,11 @@
 \name{as.tilename}
 \alias{as.tilename}
 \alias{tilename}
-\alias{as.tilename.numeric}
-\alias{as.character.tilename}
-\alias{as.numeric.tilename}
-\alias{as.tilename.character}
-\alias{print.tilename}
+\alias{as_tilename_numeric}
+\alias{as_character_tilename}
+\alias{as_numeric_tilename}
+\alias{as_tilename_character}
+\alias{print_tilename}
 \title{Alphanumeric tile names}
 \usage{
 as.tilename(x, ...)
@@ -34,7 +34,7 @@ vector of length 2
 }
 \description{
 Functions for generating and handling alphanumeric tile names of the
-form \code{'X2:Y7'} as used by \code{\link[=partition.tiles]{partition.tiles()}} and
+form \code{'X2:Y7'} as used by \code{\link[=partition_tiles]{partition_tiles()}} and
 \code{\link[=represampling.tile.bootstrap]{represampling.tile.bootstrap()}}.
 }
 \examples{
@@ -43,6 +43,6 @@ tnm # 'X2:Y3'
 as.numeric(tnm) # c(2,3)
 }
 \seealso{
-\code{\link[=partition.tiles]{partition.tiles()}}, \code{\link[=represampling]{represampling()}},
+\code{\link[=partition_tiles]{partition_tiles()}}, \code{\link[=represampling]{represampling()}},
 \code{\link[=represampling.tile.bootstrap]{represampling.tile.bootstrap()}}
 }

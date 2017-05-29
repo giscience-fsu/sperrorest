@@ -4,18 +4,19 @@
 \alias{runreps}
 \title{runreps}
 \usage{
-runreps(currentSample = NULL, data = NULL, formula = NULL,
-  model.args = NULL, par.cl = NULL, do.gc = NULL, imp.one.rep = NULL,
-  do.try = NULL, model.fun = NULL, error.fold = NULL, error.rep = NULL,
-  pred.fun = NULL, imp.variables = NULL, imp.permutations = NULL,
-  err.fun = NULL, train.fun = NULL, err.train = NULL, importance = NULL,
-  currentRes = NULL, currentImpo = NULL, pred.args = NULL,
-  progress = NULL, pooled.obs.train = NULL, pooled.obs.test = NULL,
-  pooled.pred.train = NULL, response = NULL, is.factor.prediction = NULL,
-  pooled.pred.test = NULL, coords = NULL, test.fun = NULL,
-  par.mode = NULL, i = NULL)
+runreps(current_sample = NULL, data = NULL, formula = NULL,
+  model_args = NULL, par_cl = NULL, do_gc = NULL, imp_one_rep = NULL,
+  do_try = NULL, model_fun = NULL, error_fold = NULL, error_rep = NULL,
+  pred_fun = NULL, imp_variables = NULL, imp_permutations = NULL,
+  err_fun = NULL, train_fun = NULL, err_train = NULL, importance = NULL,
+  current_res = NULL, current_impo = NULL, pred_args = NULL,
+  progress = NULL, pooled_obs_train = NULL, pooled_obs_test = NULL,
+  pooled_pred_train = NULL, response = NULL, is_factor_prediction = NULL,
+  pooled_pred_test = NULL, coords = NULL, test_fun = NULL,
+  par_mode = NULL, i = NULL)
 }
 \description{
-Runs model fitting, error estimation and variable importance on fold level
+Runs model fitting, error estimation and variable importance
+on fold level
 }
 \keyword{internal}

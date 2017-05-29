@@ -2,8 +2,8 @@
 % Please edit documentation in R/sperrorest_misc.R
 \name{add.distance}
 \alias{add.distance}
-\alias{add.distance.resampling}
-\alias{add.distance.represampling}
+\alias{add_distance_resampling}
+\alias{add_distance_represampling}
 \title{Add distance information to resampling objects}
 \usage{
 add.distance(object, ...)
@@ -15,13 +15,8 @@ add.distance(object, ...)
 \arguments{
 \item{object}{\code{\link[=resampling]{resampling()}} or \code{\link[=represampling]{represampling()}} object.}
 
-\item{...}{Additional arguments to \code{\link[=dataset.distance]{dataset.distance()}} and
-\code{\link[=add.distance.resampling]{add.distance.resampling()}}, respectively.}
-
-\item{data}{\code{data.frame} containing at least the columns specified
-by \code{coords}}
-
-\item{coords}{(ignored by \code{partition.cv})}
+\item{...}{Additional arguments to \code{\link[=dataset_distance]{dataset_distance()}} and
+\code{\link[=add_distance_resampling]{add_distance_resampling()}}, respectively.}
 }
 \value{
 A \code{\link[=resampling]{resampling()}} or \code{\link[=represampling]{represampling()}} object
@@ -39,7 +34,7 @@ Nearest-neighbour distances are calculated for each sample in the
 test set. These \code{nrow(???$test)} nearest-neighbour distances are then
 averaged. Aggregation methods other than \code{mean} can be chosen using
 the \code{fun} argument, which will be passed on to
-\code{\link[=dataset.distance]{dataset.distance()}}.
+\code{\link[=dataset_distance]{dataset_distance()}}.
 }
 \examples{
 data(ecuador) # Muenchow et al. (2012), see ?ecuador
@@ -55,6 +50,6 @@ sp.parti[[1]][[1]]$distance
 
 }
 \seealso{
-\code{\link[=dataset.distance]{dataset.distance()}} \code{\link[=represampling]{represampling()}}
+\code{\link[=dataset_distance]{dataset_distance()}} \code{\link[=represampling]{represampling()}}
 \code{\link[=resampling]{resampling()}}
 }

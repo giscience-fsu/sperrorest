@@ -2,7 +2,8 @@
 
 #' J. Muenchow's Ecuador landslide data set
 #'
-#' Data set created by Jannes Muenchow, University of Erlangen-Nuremberg, Germany.
+#' Data set created by Jannes Muenchow, University of Erlangen-Nuremberg, 
+#' Germany.
 #' These data should be cited as Muenchow et al. (2012) (see reference below). 
 #' This publication also contains additional information on data collection and 
 #' the geomorphology of the area. The data set provded here is (a subset of) the 

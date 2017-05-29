@@ -4,7 +4,7 @@
 #' Calculate a variety of accuracy measures from observations and predictions 
 #' of numerical and categorical response variables.
 #'
-#' @name err.default
+#' @name err_default
 #' 
 #' @param obs factor, logical, or numeric vector with observations
 #' @param pred factor, logical, or numeric vector with predictions. Must be of 
@@ -33,47 +33,43 @@
 #' @examples
 #' obs <- rnorm(1000)
 #' # Two mock (soft) classification examples:
-#' err.default( obs > 0, rnorm(1000) ) # just noise
-#' err.default( obs > 0, obs + rnorm(1000) ) # some discrimination
+#' err_default( obs > 0, rnorm(1000) ) # just noise
+#' err_default( obs > 0, obs + rnorm(1000) ) # some discrimination
 #' # Three mock regression examples:
-#' err.default( obs, rnorm(1000) ) # just noise, but no bias
-#' err.default( obs, obs + rnorm(1000) ) # some association, no bias
-#' err.default( obs, obs + 1 ) # perfect correlation, but with bias
+#' err_default( obs, rnorm(1000) ) # just noise, but no bias
+#' err_default( obs, obs + rnorm(1000) ) # some association, no bias
+#' err_default( obs, obs + 1 ) # perfect correlation, but with bias
 #' 
 #' @export
-err.default <- function(obs, pred)
-{
+err_default <- function(obs, pred) {
   # The following wrapper functions are used in order to avoid warning messages:
-  mmin <- function(x, ...)
-  {
+  mmin <- function(x, ...) {
     if (length(x) == 0) 
       x <- Inf
     min(x, ...)
   }
-  mmax <- function(x, ...)
-  {
+  mmax <- function(x, ...) {
     if (length(x) == 0) 
       x <- -Inf
     max(x, ...)
   }
   
   # Convert logical to factor if necessary:
-  if (is.logical(obs)) 
+  if (is.logical(obs)) {
     obs <- factor(obs, levels = c("FALSE", "TRUE"))
-  if (is.logical(pred)) 
+  }
+  if (is.logical(pred)) {
     pred <- factor(pred, levels = c("FALSE", "TRUE"))
+  }
   
   # Classification problem:
-  if (is.factor(obs))
-  {
-    if (is.factor(pred))
-    {
+  if (is.factor(obs)) {
+    if (is.factor(pred)) {
       # 'hard' classification:
       pred <- as.character(pred)
       pred <- factor(pred, levels = levels(obs))
       err <- list(error = mean(obs != pred), accuracy = mean(obs == pred))
-      if (nlevels(obs) == 2)
-      {
+      if (nlevels(obs) == 2) {
         npos <- sum(obs == levels(obs)[2])
         nneg <- sum(obs == levels(obs)[1])
         ntruepos <- sum((obs == levels(obs)[2]) & (pred == levels(obs)[2]))
@@ -82,17 +78,15 @@ err.default <- function(obs, pred)
         err$specificity <- ntrueneg/nneg
         npospred <- sum(pred == levels(obs)[2])
         nnegpred <- sum(pred == levels(obs)[1])
-        err$ppv <- ntruepos/npospred
-        err$npv <- ntrueneg/nnegpred
+        err$ppv <- ntruepos / npospred
+        err$npv <- ntrueneg / nnegpred
         n <- length(obs)
         pexp <- (npos/n) * (npospred/n) + (nneg/n) * (nnegpred/n)
-        if (pexp == 1)
-        {
+        if (pexp == 1) {
           err$kappa <- NA
         } else err$kappa <- (err$accuracy - pexp)/(1 - pexp)
       }
-    } else
-    {
+    } else {
       # 'soft' classification: Calculate area under the ROC curve:
       predobj <- prediction(pred, obs)
       auroc <- performance(predobj, measure = "auc")@y.values[[1]]
@@ -104,10 +98,10 @@ err.default <- function(obs, pred)
       err$error <- mean((obs == pos) != (pred >= 0.5))
       err$accuracy <- 1 - err$error
       
-      # internal functions for calculating false positive rate (1-specificity) and true
-      # positive rate (sensitivity) for a given decision threshold:
-      tpr <- function(o, p, np, t) sum(o & (p >= t))/np
-      fpr <- function(o, p, nn, t) sum(!o & (p >= t))/nn
+      # internal functions for calculating false positive rate (1-specificity) 
+      # and true positive rate (sensitivity) for a given decision threshold:
+      tpr <- function(o, p, np, t) sum(o & (p >= t)) / np
+      fpr <- function(o, p, nn, t) sum(!o & (p >= t)) / nn
       
       # Number of positive and negative predictions:
       npos <- sum(obs == pos)
@@ -144,9 +138,9 @@ err.default <- function(obs, pred)
   } else
   {
     # Regression problem:
-    err <- list(bias = mean(obs - pred), stddev = sd(obs - pred), mse = mean((obs - 
-      pred)^2), mad = mad(obs - pred), median = median(obs - pred), iqr = IQR(obs - 
-      pred))
+    err <- list(bias = mean(obs - pred), stddev = sd(obs - pred), 
+                mse = mean((obs - pred)^2), mad = mad(obs - pred), 
+                median = median(obs - pred), iqr = IQR(obs - pred))
   }
   # Number of observations available:
   err$count <- length(obs)
