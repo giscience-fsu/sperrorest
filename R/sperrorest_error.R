@@ -22,7 +22,7 @@
 #' at 70, 80 and 90 percent sensitivity, true-positive rate (sensitivity) 
 #' at 80, 90 and 95 percent specificity}
 #' \item{regression}{bias, standard deviation, mean squared error, 
-#' MAD ([mad()]), median, interquartile range ([IQR()]) 
+#' MAD ([mad]), median, interquartile range ([IQR]) 
 #' of residuals}
 #' 
 #' @note `NA` values are currently not handled by this function, 

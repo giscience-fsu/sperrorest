@@ -30,15 +30,15 @@ a separate test set. Defaults to \code{nrow(data)}, i.e. one disc around
 each sample.}
 
 \item{seed1}{\code{seed1+i} is the random seed that will be used by
-\code{\link[=set.seed]{set.seed()}} in repetition \code{i} (\code{i} in \code{repetition})
+\link{set.seed} in repetition \code{i} (\code{i} in \code{repetition})
 to initialize the random number generator before sampling from the data set.}
 
 \item{return.train}{If \code{FALSE}, returns only test sample;
 if \code{TRUE}, also the training area.}
 
-\item{prob}{optional argument to \code{\link[=sample]{sample()}}.}
+\item{prob}{optional argument to \link{sample}.}
 
-\item{replace}{optional argument to \code{\link[=sample]{sample()}}: sampling with or
+\item{replace}{optional argument to \link{sample}: sampling with or
 without replacement?}
 
 \item{repetition}{see \code{partition_cv}; however,
@@ -47,7 +47,7 @@ see Note below: \code{repetition} should normally be \code{= 1} in this function
 \item{...}{arguments to be passed to \code{partition_disc}}
 }
 \value{
-A \code{\link[=represampling]{represampling()}} object.
+A \link{represampling} object.
 Contains \code{length(repetition)} \code{resampling} objects.
 Each of these contains \code{ndisc} lists with indices of test and
 (if \code{return.train = TRUE}) training sets.
@@ -86,6 +86,6 @@ hazards: review, comparison and evaluation. Natural Hazards and Earth System
 Sciences, 5(6): 853-862.
 }
 \seealso{
-\code{\link[=sperrorest]{sperrorest()}}, \code{\link[=partition_cv]{partition_cv()}},
-\code{\link[=partition_kmeans]{partition_kmeans()}}
+\link{sperrorest}, \link{partition_cv},
+\link{partition_kmeans}
 }

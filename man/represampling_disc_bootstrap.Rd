@@ -25,17 +25,17 @@ to obtain (the 'first') 100 repetitions, and \code{repetition = c(101:200)}
 to obtain a different set of 100 repetitions.}
 
 \item{seed1}{\code{seed1+i} is the random seed that will be used by
-\code{\link[=set.seed]{set.seed()}} in repetition \code{i} (\code{i} in \code{repetition})
+\link{set.seed} in repetition \code{i} (\code{i} in \code{repetition})
 to initialize the random number generator before sampling from the data set.}
 
 \item{oob}{logical (default \code{FALSE}): if \code{TRUE}, use the out-of-bag
 sample as the test sample (the complement of the \code{nboot[1]} test set
 discs, minus the buffer area as specified in the \code{...} arguments to
-\code{\link[=partition_disc]{partition_disc()}}); if \code{FALSE}, draw a second bootstrap
+\link{partition_disc}); if \code{FALSE}, draw a second bootstrap
 sample of size \code{nboot} independently to obtain a test sample
 (sets of overlapping discs drawn with replacement).}
 
-\item{...}{additional arguments to be passed to \code{\link[=partition_disc]{partition_disc()}};
+\item{...}{additional arguments to be passed to \link{partition_disc};
 note that a \code{buffer} argument has not effect if \code{oob=FALSE};
 see example below}
 }
@@ -52,7 +52,8 @@ blocks are circular.
 \examples{
 data(ecuador)
 # Overlapping disc bootstrap:
-parti <-  represampling_disc_bootstrap(ecuador, radius = 200, nboot = 20, oob = FALSE)
+parti <-  represampling_disc_bootstrap(ecuador, radius = 200, nboot = 20, 
+oob = FALSE)
 # plot(parti, ecuador)
 # Note that a 'buffer' argument would make no difference because boostrap 
 # sets of discs are drawn independently for the training and test sample.

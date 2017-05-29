@@ -1,9 +1,9 @@
 #' Summarize error statistics obtained by `sperrorest`
 #'
-#' `summary_sperroresterror` calculates mean, standard deviation, 
+#' `summary.sperroresterror` calculates mean, standard deviation, 
 #' median etc. of the calculated error measures at the specified level 
 #' (overall, repetition, or fold).
-#' `summary_sperrorestreperror` does the same with the pooled error, 
+#' `summary.sperrorestreperror` does the same with the pooled error, 
 #' at the overall or repetition level.
 #' 
 #' @import rpart
@@ -11,7 +11,7 @@
 #' rnorm runif sd terms weighted.mean 
 #' @importFrom graphics par plot points
 #' @importFrom ROCR performance prediction
-#' @name summary_sperroresterror
+#' @name summary.sperroresterror
 #' @method summary sperroresterror
 #' 
 #' @param object `sperroresterror` resp. `sperrorestcombinederror` 
@@ -48,7 +48,7 @@
 #' @seealso [sperrorest]
 #' 
 #' @export
-summary_sperroresterror <- function(object, level = 0, pooled = TRUE, 
+summary.sperroresterror <- function(object, level = 0, pooled = TRUE, 
                                     na.rm = TRUE, ...) {
   err <- unclass(object)
   if (pooled) {
@@ -95,12 +95,12 @@ summary_sperroresterror <- function(object, level = 0, pooled = TRUE,
   return(err)
 }
 
-#' @rdname summary_sperrorest
-#' @inheritParams summary_sperroresterror
-#' @name summary_sperrorestreperror
+#' @rdname summary.sperrorest
+#' @inheritParams summary.sperroresterror
+#' @name summary.sperrorestreperror
 #' @method summary sperrorestreperror
 #' @export
-summary_sperrorestreperror <- function(object, level = 0, na.rm = TRUE, ...) {
+summary.sperrorestreperror <- function(object, level = 0, na.rm = TRUE, ...) {
   class(object) <- NULL
   object <- as.data.frame(object)
   if (level <= 0) {
@@ -112,22 +112,22 @@ summary_sperrorestreperror <- function(object, level = 0, na.rm = TRUE, ...) {
 
 #' Summarize variable importance statistics obtained by `sperrorest`
 #'
-#' `summary_sperrorestimportance` calculated mean, standard deviation, 
+#' `summary.sperrorestimportance` calculated mean, standard deviation, 
 #' median etc. of the calculated error measures at the specified level 
 #' (overall, repetition, or fold).
-#' @name summary_sperrorestimportance
+#' @name summary.sperrorestimportance
 #' @method summary sperrorestimportance
 #' 
 #' @param object `sperrorestimportance` object calculated by 
 #' [sperrorest] called with argument `importance = TRUE`
-#' @inheritParams summary_sperroresterror
+#' @inheritParams summary.sperroresterror
 #' @param which optional character vector specifying selected variables for 
 #' which the importances should be summarized (to do: check implementation)
 #' 
 #' @return a list or data.frame, depending on the `level` of aggregation
 #' 
 #' @export
-summary_sperrorestimportance <- function(object, level = 0, na.rm = TRUE, 
+summary.sperrorestimportance <- function(object, level = 0, na.rm = TRUE, 
                                          which = NULL, ...) {
   arrdim <- c(length(object), length(object[[1]]), dim(object[[1]][[1]]))
   arrdimnames <- list(names(object), names(object[[1]]), rownames(object[[1]][[1]]), 
@@ -158,18 +158,18 @@ summary_sperrorestimportance <- function(object, level = 0, na.rm = TRUE,
 
 #' Summarize benchmark information obtained by `sperrorest`
 #' 
-#' `summary_sperrorestbenchmarks` shows information on runtime performance, 
+#' `summary.sperrorestbenchmarks` shows information on runtime performance, 
 #' used cores and system information
-#' @name summary_sperrorestbenchmarks
+#' @name summary.sperrorestbenchmarks
 #' @method summary sperrorestbenchmarks
-#' @inheritParams summary_sperroresterror
+#' @inheritParams summary.sperroresterror
 #' 
 #' @param object `sperrorestbenchmarks` object returned class by 
 #' [sperrorest] 
 #' @return List of length seven
 #' 
 #' @export
-summary_sperrorestbenchmarks <- function(object, ...) {
+summary.sperrorestbenchmarks <- function(object, ...) {
   class(object) <- NULL
   object <- unlist(object)
   object <- as.matrix(object)
@@ -179,17 +179,17 @@ summary_sperrorestbenchmarks <- function(object, ...) {
 
 #' Summarize package version information obtained by `sperrorest`
 #' 
-#' `summary_sperrorestpackageversion` returns the package version of sperrorest
-#' @name summary_sperrorestpackageversion
+#' `summary.sperrorestpackageversion` returns the package version of sperrorest
+#' @name summary.sperrorestpackageversion
 #' @method summary sperrorestpackageversion
-#' @inheritParams summary_sperroresterror
+#' @inheritParams summary.sperroresterror
 #' 
 #' @param object `sperrorestpackageversion` object calculated by 
 #' [sperrorest] 
 #' @return character vector of length one
 #' 
 #' @export
-summary_sperrorestpackageversion <- function(object, ...) {
+summary.sperrorestpackageversion <- function(object, ...) {
   paste(object[[1]], collapse = ".")
 }
 
@@ -197,22 +197,22 @@ summary_sperrorestpackageversion <- function(object, ...) {
 #'
 #' Summary methods provide varying level of detail while print methods 
 #' provide full details.
-#' @name summary_sperrorest
+#' @name summary.sperrorest
 #' 
 #' @method summary sperrorest
 #' 
 #' @param object a [sperrorest] object
-#' @param ... additional arguments for [summary_sperroresterror] 
-#' or [summary_sperrorestimportance]
+#' @param ... additional arguments for [summary.sperroresterror] 
+#' or [summary.sperrorestimportance]
 #' @param x Depending on method, a [sperrorest], 
 #' `sperroresterror` or `sperrorestimportance` object
 #' 
 #' @seealso [sperrorest],
-#' [summary_sperroresterror], 
-#' [summary_sperrorestimportance]
+#' [summary.sperroresterror], 
+#' [summary.sperrorestimportance]
 #' 
 #' @export
-summary_sperrorest <- function(object, ...) {
+summary.sperrorest <- function(object, ...) {
   list(error.rep = summary(object$error.rep, ...), 
        error.fold = summary(object$error.fold, ...), 
        represampling = summary(object$represampling, ...), 
@@ -221,52 +221,52 @@ summary_sperrorest <- function(object, ...) {
        packageVersion = summary(object$package.version, ...))
 }
 
-#' @rdname summary_sperrorest
-#' @name print_sperrorestimportance
+#' @rdname summary.sperrorest
+#' @name print.sperrorestimportance
 #' @method print sperrorestimportance
 #' @export
-print_sperrorestimportance <- function(x, ...) {
+print.sperrorestimportance <- function(x, ...) {
   print(unclass(summary(x, level = Inf, ...)))
 }
 
-#' @rdname summary_sperrorest
-#' @name print_sperroresterror
+#' @rdname summary.sperrorest
+#' @name print.sperroresterror
 #' @method print sperroresterror
 #' @export
-print_sperroresterror <- function(x, ...) {
+print.sperroresterror <- function(x, ...) {
   print(unclass(summary(x, level = Inf, ...)))
 }
 
-#' @rdname summary_sperrorest
-#' @name print_sperrorestreperror
+#' @rdname summary.sperrorest
+#' @name print.sperrorestreperror
 #' @method print sperrorestreperror
 #' @export
-print_sperrorestreperror <- function(x, ...) {
+print.sperrorestreperror <- function(x, ...) {
   print(unclass(summary(x, level = Inf, 
   ...)))
 }
 
-#' @rdname summary_sperrorest
-#' @name print_sperrorest
+#' @rdname summary.sperrorest
+#' @name print.sperrorest
 #' @method print sperrorest
 #' @export
-print_sperrorest <- function(x, ...) {
+print.sperrorest <- function(x, ...) {
   print(unclass(summary(x, level = Inf, ...)))
 }
 
-#' @rdname summary_sperrorest
-#' @name print_sperrorestbenchmarks
+#' @rdname summary.sperrorest
+#' @name print.sperrorestbenchmarks
 #' @method print sperrorestbenchmarks
 #' @export
-print_sperrorestbenchmarks <- function(x, ...) {
+print.sperrorestbenchmarks <- function(x, ...) {
   print(summary(x), ...)
 }
 
-#' @rdname summary_sperrorest
-#' @name print_sperrorestpackageversion
+#' @rdname summary.sperrorest
+#' @name print.sperrorestpackageversion
 #' @method print sperrorestpackageversion
 #' @export
-print_sperrorestpackageversion <- function(x, ...) {
+print.sperrorestpackageversion <- function(x, ...) {
   print(summary(x))
 }
 

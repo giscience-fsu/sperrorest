@@ -51,21 +51,21 @@ direction, respectively, and will therefore be recycled as needed
 
 \item{reassign}{logical (default \code{TRUE}): if \code{TRUE}, 'small' tiles
 (as per \code{min.frac} and \code{min.n} arguments and
-\code{\link[=get.small.tiles]{get.small.tiles()}}) are merged with (smallest) adjacent tiles.
+\link{get.small.tiles}) are merged with (smallest) adjacent tiles.
 If \code{FALSE}, small tiles are 'eliminated', i.e. set to \code{NA}.}
 
 \item{min.frac}{numeric >=0, <1: minimum relative size of partition as
-percentage of sample; argument passed to \code{\link[=get.small.tiles]{get.small.tiles()}}.
+percentage of sample; argument passed to \link{get.small.tiles}.
 Will be ignored if \code{NULL}.}
 
 \item{min.n}{integer >=0: minimum number of samples per partition;
-argument passed to \code{\link[=get.small.tiles]{get.small.tiles()}}.
+argument passed to \link{get.small.tiles}.
 Will be ignored if \code{NULL}.}
 
-\item{iterate}{argument to be passed to \code{\link[=tile.neighbors]{tile.neighbors()}}}
+\item{iterate}{argument to be passed to \link{tile.neighbors}}
 
 \item{return.factor}{if \code{FALSE} (default), return a
-\code{\link[=represampling]{represampling()}} object; if \code{TRUE} (used internally by
+\link{represampling} object; if \code{TRUE} (used internally by
 other \code{sperrorest} functions), return a \code{list} containing factor
 vectors (see Value)}
 
@@ -76,14 +76,14 @@ to obtain (the 'first') 100 repetitions, and \code{repetition = c(101:200)}
 to obtain a different set of 100 repetitions.}
 
 \item{seed1}{\code{seed1+i} is the random seed that will be used by
-\code{\link[=set.seed]{set.seed()}} in repetition \code{i} (\code{i} in \code{repetition})
+\link{set.seed} in repetition \code{i} (\code{i} in \code{repetition})
 to initialize the random number generator before sampling from the data set.}
 }
 \value{
-A \code{\link[=represampling]{represampling()}} object.
-Contains \code{length(repetition)} \code{\link[=resampling]{resampling()}} objects as
+A \link{represampling} object.
+Contains \code{length(repetition)} \link{resampling} objects as
 repetitions. The exact number of folds / test-set tiles within each
-\code{\link[=resampling]{resampling()}} objects depends on the spatial configuration of
+\link{resampling} objects depends on the spatial configuration of
 the data set and possible cleaning steps (see \code{min.frac}, \code{min.n}).
 }
 \description{
@@ -108,7 +108,8 @@ parti <- partition_tiles(ecuador, nsplit = c(4,3), reassign = FALSE)
 summary(parti) # tile A4 has only 55 samples
 # same partitioning, but now merge tiles with less than 100 samples to 
 # adjacent tiles:
-parti2 <- partition_tiles(ecuador, nsplit = c(4,3), reassign = TRUE, min.n = 100)
+parti2 <- partition_tiles(ecuador, nsplit = c(4,3), reassign = TRUE, 
+min.n = 100)
 # plot(parti2,ecuador)
 summary(parti2)
 # tile B4 (in 'parti') was smaller than A3, therefore A4 was merged with B4, 
@@ -120,6 +121,6 @@ rotation = 'random', reassign = TRUE, min.n = 100)
 summary(parti3)
 }
 \seealso{
-\code{\link[=sperrorest]{sperrorest()}}, \code{\link[=as.resampling.factor]{as.resampling.factor()}},
-\code{\link[=get.small.tiles]{get.small.tiles()}}, \code{\link[=tile.neighbors]{tile.neighbors()}}
+\link{sperrorest}, \link{as.resampling.factor},
+\link{get.small.tiles}, \link{tile.neighbors}
 }

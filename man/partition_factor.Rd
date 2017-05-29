@@ -20,7 +20,7 @@ of type factor and length \code{nrow(data)} that contains the partitions
 to be used for defining training and test samples.}
 
 \item{return.factor}{if \code{FALSE} (default), return a
-\code{\link[=represampling]{represampling()}} object; if \code{TRUE} (used internally by
+\link{represampling} object; if \code{TRUE} (used internally by
 other \code{sperrorest} functions), return a \code{list} containing factor
 vectors (see Value)}
 
@@ -31,12 +31,12 @@ to obtain (the 'first') 100 repetitions, and \code{repetition = c(101:200)}
 to obtain a different set of 100 repetitions.}
 }
 \value{
-A \code{\link[=represampling]{represampling()}} object,
-see also \code{\link[=partition_cv]{partition_cv()}} for details.
+A \link{represampling} object,
+see also \link{partition_cv} for details.
 }
 \description{
-\code{partition_factor} creates a \code{\link[=represampling]{represampling()}} object,
-i.e. a set of sample indices defining cross-validation test and training sets.
+\code{partition_factor} creates a \link{represampling} object, i.e. a set of sample
+indices defining cross-validation test and training sets.
 }
 \note{
 In this partitioning approach, all \code{repetition}s are identical and
@@ -54,6 +54,6 @@ parti <- partition_factor(ecuador, fac = 'zclass')
 summary(parti)
 }
 \seealso{
-\code{\link[=sperrorest]{sperrorest()}}, \code{\link[=partition_cv]{partition_cv()}},
-\code{\link[=as.resampling.factor]{as.resampling.factor()}}
+\link{sperrorest}, \link{partition_cv},
+\link{as.resampling.factor}
 }

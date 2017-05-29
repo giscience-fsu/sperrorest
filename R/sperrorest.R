@@ -6,7 +6,7 @@
 #' and bootstrap error estimation and parallelized permutation-based 
 #' assessment of spatial variable importance.
 #' 
-#' @inheritParams partition.cv
+#' @inheritParams partition_cv
 #' 
 #' @import pbapply
 #' @import magrittr
@@ -202,7 +202,7 @@
 #'                           model_args = list(control = ctrl),
 #'                           pred_fun = mypred.rpart,
 #'                           progress = TRUE,
-#'                           smp_fun = partition.cv, 
+#'                           smp_fun = partition_cv, 
 #'                           smp_args = list(repetition = 1:5, nfold = 10), 
 #'                           error_rep = TRUE, error_fold = TRUE)
 #' summary(par.nsp.res$error_rep)
@@ -345,7 +345,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
   pooled_err <- NULL
   
   # required to be able to assign levels to predictions if appropriate:
-  is.factor.prediction <- NULL
+  is_factor_prediction <- NULL
   
   ### Permutation-based variable importance assessment (optional):
   impo <- NULL
@@ -431,7 +431,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
         message(sprintf("Using 'parApply' parallel mode with %s cores.", 
                         par_args$par_units))
         my_res <- try(pblapply(cl = par_cl, resamp, function(X) 
-          runreps(currentSample = X, data = data, par_mode = par_args$par_mode,
+          runreps(current_sample = X, data = data, par_mode = par_args$par_mode,
                   formula = formula, do_gc = do_gc, imp_one_rep = imp_one_rep, 
                   pred_fun = pred_fun,
                   model_args = model_args, do_try = do_try, 
@@ -439,7 +439,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
                   error_fold = error_fold, error_rep = error_rep, 
                   imp_permutations = imp_permutations,
                   imp_variables = imp_variables, 
-                  is.factor.prediction = is.factor.prediction,
+                  is_factor_prediction = is_factor_prediction,
                   err_train = err_train, importance = importance, 
                   current_res = current_res,
                   pred_args = pred_args, response = response, par_cl = par_cl,
@@ -453,7 +453,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
           message(sprintf("Using 'mclapply' parallel mode with %s cores.", 
                           par_args$par_units))
           my_res <- try(mclapply(mc.cores = par_cl, resamp, function(X) 
-            runreps(currentSample = X, data = data, 
+            runreps(current_sample = X, data = data, 
                     par_mode = par_args$par_mode,
                     formula = formula, do_gc = do_gc, imp_one_rep = imp_one_rep, 
                     pred_fun = pred_fun,
@@ -462,7 +462,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
                     error_fold = error_fold, error_rep = error_rep, 
                     imp_permutations = imp_permutations,
                     imp_variables = imp_variables, 
-                    is.factor.prediction = is.factor.prediction,
+                    is_factor_prediction = is_factor_prediction,
                     err_train = err_train, importance = importance, 
                     current_res = current_res,
                     pred_args = pred_args, response = response, par_cl = par_cl,
@@ -478,7 +478,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
           message(sprintf("Using 'pbmclapply' parallel mode with %s cores.", 
                           par_args$par_units))
           my_res <- try(pbmclapply(mc.cores = par_cl, resamp, function(X) 
-            runreps(currentSample = X, data = data, 
+            runreps(current_sample = X, data = data, 
                     par_mode = par_args$par_mode,
                     formula = formula, do_gc = do_gc, imp_one_rep = imp_one_rep, 
                     pred_fun = pred_fun,
@@ -487,7 +487,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
                     error_fold = error_fold, error_rep = error_rep, 
                     imp_permutations = imp_permutations,
                     imp_variables = imp_variables, 
-                    is.factor.prediction = is.factor.prediction,
+                    is_factor_prediction = is_factor_prediction,
                     err_train = err_train, importance = importance, 
                     current_res = current_res,
                     pred_args = pred_args, response = response, par_cl = par_cl,
@@ -517,14 +517,14 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
       message(sprintf("Using parallel framework 'future' with 'future_lapply'",
                       "and '%s' option.", par_args$par.option))
       my_res <- try(future_lapply(resamp, function(X) 
-        runreps(currentSample = X, data = data, par_mode = par_args$par_mode,
+        runreps(current_sample = X, data = data, par_mode = par_args$par_mode,
                 formula = formula, do_gc = do_gc, imp_one_rep = imp_one_rep, 
                 pred_fun = pred_fun,
                 model_args = model_args, do_try = do_try, model_fun = model_fun,
                 error_fold = error_fold, error_rep = error_rep, 
                 imp_permutations = imp_permutations,
                 imp_variables = imp_variables, 
-                is.factor.prediction = is.factor.prediction,
+                is_factor_prediction = is_factor_prediction,
                 err_train = err_train, importance = importance, 
                 current_res = current_res,
                 pred_args = pred_args, response = response, par_cl = par_cl,
@@ -618,7 +618,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
                         
                         try(map(seq_along(resamp[[i]]), function(rep) 
                           runfolds(j = rep, data = data, 
-                                   currentSample = resamp[[i]],
+                                   current_sample = resamp[[i]],
                                    formula = formula, 
                                    par_mode = par_args$par_mode, i = i, 
                                    imp_one_rep = imp_one_rep, 
@@ -629,7 +629,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
                                    error_rep = error_rep, 
                                    imp_permutations = imp_permutations,
                                    imp_variables = imp_variables, 
-                                   is.factor.prediction = is.factor.prediction,
+                                   is_factor_prediction = is_factor_prediction,
                                    err_train = err_train, 
                                    importance = importance, 
                                    current_res = current_res,
@@ -674,7 +674,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
                             lev[pooled_only$pooled_obs_test] %>%
                               factor(levels = lev) -> pooled_only$pooled_obs_test
                             # pooled_only$pooled_obs_test <- factor(lev[pooled_only$pooled_obs_test], levels = lev)
-                            if (is.factor.prediction) {
+                            if (is_factor_prediction) {
                               if (err_train) {
                                 lev[pooled_only$pooled.pred.train] %>%
                                   factor(levels = lev) -> pooled_only$pooled.pred.train

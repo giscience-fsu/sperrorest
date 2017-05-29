@@ -25,7 +25,7 @@ at a obs>0.5 dichotomization, false-positive rate (FPR; 1-specificity)
 at 70, 80 and 90 percent sensitivity, true-positive rate (sensitivity)
 at 80, 90 and 95 percent specificity}
 \item{regression}{bias, standard deviation, mean squared error,
-MAD (\code{\link[=mad]{mad()}}), median, interquartile range (\code{\link[=IQR]{IQR()}})
+MAD (\link{mad}), median, interquartile range (\link{IQR})
 of residuals}
 }
 \description{

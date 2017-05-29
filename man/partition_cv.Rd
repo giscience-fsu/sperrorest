@@ -23,19 +23,19 @@ to obtain (the 'first') 100 repetitions, and \code{repetition = c(101:200)}
 to obtain a different set of 100 repetitions.}
 
 \item{seed1}{\code{seed1+i} is the random seed that will be used by
-\code{\link[=set.seed]{set.seed()}} in repetition \code{i} (\code{i} in \code{repetition})
+\link{set.seed} in repetition \code{i} (\code{i} in \code{repetition})
 to initialize the random number generator before sampling from the data set.}
 
 \item{return.factor}{if \code{FALSE} (default), return a
-\code{\link[=represampling]{represampling()}} object; if \code{TRUE} (used internally by
+\link{represampling} object; if \code{TRUE} (used internally by
 other \code{sperrorest} functions), return a \code{list} containing factor
 vectors (see Value)}
 }
 \value{
 If \code{return.factor = FALSE} (the default), a
-\code{\link[=represampling]{represampling()}} object. Specifically, this is a (named) list of
+\link{represampling} object. Specifically, this is a (named) list of
 \code{length(repetition)} \code{resampling} objects.
-Each of these \code{\link[=resampling]{resampling()}} objects is a list of length
+Each of these \link{resampling} objects is a list of length
 \code{nfold} corresponding to the folds.
 Each fold is represented by a list of containing the components \code{train}
 and \code{test}, specifying the indices of training and test samples
@@ -47,7 +47,7 @@ Each component of this list is a vector of length \code{nrow(data)} of type
 The factor levels are \code{factor(1:nfold)}.
 }
 \description{
-\code{partition_cv} creates a \code{\link[=represampling]{represampling()}} object for
+\code{partition_cv} creates a \link{represampling} object for
 \code{length(repetition)}-repeated \code{nfold}-fold cross-validation.
 }
 \details{
@@ -66,5 +66,5 @@ idx <- resamp[['1']][[2]]$test
 ecuador[idx , ]
 }
 \seealso{
-\code{\link[=sperrorest]{sperrorest()}}, \code{\link[=represampling]{represampling()}}
+\link{sperrorest}, \link{represampling}
 }

@@ -18,7 +18,7 @@ contain the x and y coordinates of sample locations}
 cross-validation partitioning}
 
 \item{return.factor}{if \code{FALSE} (default), return a
-\code{\link[=represampling]{represampling()}} object; if \code{TRUE} (used internally by
+\link{represampling} object; if \code{TRUE} (used internally by
 other \code{sperrorest} functions), return a \code{list} containing factor
 vectors (see Value)}
 
@@ -29,7 +29,7 @@ to obtain (the 'first') 100 repetitions, and \code{repetition = c(101:200)}
 to obtain a different set of 100 repetitions.}
 
 \item{seed1}{\code{seed1+i} is the random seed that will be used by
-\code{\link[=set.seed]{set.seed()}} in repetition \code{i} (\code{i} in \code{repetition})
+\link{set.seed} in repetition \code{i} (\code{i} in \code{repetition})
 to initialize the random number generator before sampling from the data set.}
 
 \item{strat}{character: column in \code{data} containing a factor variable 
@@ -42,7 +42,8 @@ A \code{\link{represampling}} object, see also
 stratified with respect to the variable \code{data[,strat]}; 
 i.e., cross-validation partitioning is done within each set 
 \code{data[data[,strat]==i,]} (\code{i} in \code{levels(data[,strat])}), and 
-the \code{i}th folds of all levels are combined into one cross-validation fold.
+the \code{i}th folds of all levels are combined into one cross-validation 
+fold.
 }
 \description{
 \code{partition_cv_strat} creates a set of sample indices corresponding 
@@ -50,7 +51,8 @@ to cross-validation test and training sets.
 }
 \examples{
 data(ecuador)
-parti <- partition_cv_strat(ecuador, strat = 'slides', nfold = 5, repetition = 1)
+parti <- partition_cv_strat(ecuador, strat = 'slides', nfold = 5, 
+repetition = 1)
 idx <- parti[['1']][[1]]$train
 mean(ecuador$slides[idx] == 'TRUE') / mean(ecuador$slides == 'TRUE')
 # always == 1

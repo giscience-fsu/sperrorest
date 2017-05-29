@@ -47,5 +47,5 @@ dataset_distance(df, df) # == 0
 
 }
 \seealso{
-\code{\link[=add.distance]{add.distance()}}
+\link{add.distance}
 }

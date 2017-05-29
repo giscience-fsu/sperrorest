@@ -23,7 +23,7 @@ to obtain (the 'first') 100 repetitions, and \code{repetition = c(101:200)}
 to obtain a different set of 100 repetitions.}
 
 \item{seed1}{\code{seed1+i} is the random seed that will be used by
-\code{\link[=set.seed]{set.seed()}} in repetition \code{i} (\code{i} in \code{repetition})
+\link{set.seed} in repetition \code{i} (\code{i} in \code{repetition})
 to initialize the random number generator before sampling from the data set.}
 
 \item{oob}{logical (default \code{FALSE}): if \code{TRUE}, use the out-of-bag
@@ -31,9 +31,9 @@ sample as the test sample; if \code{FALSE}, draw a second bootstrap sample of
 size \code{nboot} independently to obtain a test sample.}
 }
 \value{
-A \code{\link[=represampling]{represampling()}} object. This is a (named) list
+A \link{represampling} object. This is a (named) list
 containing \code{length(repetition)}.
-\code{\link[=resampling]{resampling()}} objects. Each of these contains only one list with
+\link{resampling} objects. Each of these contains only one list with
 indices of \code{train}ing and \code{test} samples.
 Indices are row indices for \code{data}.
 }

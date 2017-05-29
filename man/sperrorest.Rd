@@ -184,7 +184,7 @@ par.nsp.res <- sperrorest(data = ecuador, formula = fo,
                           model_args = list(control = ctrl),
                           pred_fun = mypred.rpart,
                           progress = TRUE,
-                          smp_fun = partition.cv, 
+                          smp_fun = partition_cv, 
                           smp_args = list(repetition = 1:5, nfold = 10), 
                           error_rep = TRUE, error_fold = TRUE)
 summary(par.nsp.res$error_rep)

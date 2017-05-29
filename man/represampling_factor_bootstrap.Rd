@@ -36,7 +36,7 @@ of levels of the factor variable, corresponding to an \emph{n} out of
 \emph{n} bootstrap at the grouping level defined by \code{fac}.}
 
 \item{seed1}{\code{seed1+i} is the random seed that will be used by
-\code{\link[=set.seed]{set.seed()}} in repetition \code{i} (\code{i} in \code{repetition})
+\link{set.seed} in repetition \code{i} (\code{i} in \code{repetition})
 to initialize the random number generator before sampling from the data set.}
 
 \item{oob}{if \code{TRUE}, the test sample will be the out-of-bag sample;
@@ -66,12 +66,14 @@ parti <- represampling_factor_bootstrap(ecuador,
 # using the factor bootstrap for a non-overlapping block bootstrap
 # (see also represampling_tile_bootstrap):
 fac <- partition_tiles(ecuador, return.factor = TRUE, repetition = c(1:3), 
-                       dsplit = 500, min.n = 200, rotation = 'random', offset = 'random')
-parti <- represampling_factor_bootstrap(ecuador, fac, oob = TRUE, repetition = c(1:3))
+                       dsplit = 500, min.n = 200, rotation = 'random', 
+                       offset = 'random')
+parti <- represampling_factor_bootstrap(ecuador, fac, oob = TRUE, 
+repetition = c(1:3))
 # plot(parti, ecuador)
 
 }
 \seealso{
-\code{\link[= represampling_disc_bootstrap]{ represampling_disc_bootstrap()}},
-\code{\link[=represampling_tile_bootstrap]{represampling_tile_bootstrap()}}
+\link{ represampling_disc_bootstrap},
+\link{represampling_tile_bootstrap}
 }
