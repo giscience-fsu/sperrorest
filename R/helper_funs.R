@@ -234,7 +234,7 @@ runreps <- function(current_sample = NULL, data = NULL, formula = NULL,
   # output data structures
   current_res <- NULL
   current_impo <- current_sample
-  current_pooled_err <- NULL
+  current_pooled_error <- NULL
 
   if (error_fold) {
     current_res <- lapply(current_sample, unclass)
@@ -312,17 +312,17 @@ runreps <- function(current_sample = NULL, data = NULL, formula = NULL,
           pooled_only$pooled_pred_test], levels = lev)
       }
     }
-    pooled_err_train <- NULL
+    pooled_error_train <- NULL
     if (err_train) {
-      pooled_err_train <- err_fun(pooled_only$pooled_obs_train,
+      pooled_error_train <- err_fun(pooled_only$pooled_obs_train,
                                   pooled_only$pooled_pred_train)
     }
 
-    list(train = pooled_err_train,
+    list(train = pooled_error_train,
          test = err_fun(pooled_only$pooled_obs_test,
                         pooled_only$pooled_pred_test)) %>%
       unlist() %>%
-      t() -> current_pooled_err
+      t() -> current_pooled_error
 
     if (do_gc >= 2) {
       gc()
@@ -340,7 +340,7 @@ runreps <- function(current_sample = NULL, data = NULL, formula = NULL,
   }
 
   return(list(error = runfolds_merged$current_res,
-              pooled_err = current_pooled_err, importance = impo_only))
+              pooled_error = current_pooled_error, importance = impo_only))
 }
 
 
@@ -349,20 +349,20 @@ runreps <- function(current_sample = NULL, data = NULL, formula = NULL,
 #' @keywords internal
 #' @export
 transfer_parallel_output <- function(my_res = NULL, res = NULL, impo = NULL,
-                                     pooled_err = NULL) {
+                                     pooled_error = NULL) {
 
   for (i in seq_along(my_res)) {
     if (i == 1) {
-      pooled_err <- my_res[[i]]$pooled_err
+      pooled_error <- my_res[[i]]$pooled_error
       impo[[i]] <- my_res[[i]]$importance
       res[[i]] <- my_res[[i]]$error
     } else {
-      pooled_err <- rbind(pooled_err, my_res[[i]]$pooled_err)
+      pooled_error <- rbind(pooled_error, my_res[[i]]$pooled_error)
       impo[[i]] <- my_res[[i]]$importance
       res[[i]] <- my_res[[i]]$error
     }
   }
 
-  return(list(pooled_err = pooled_err, impo = impo,
+  return(list(pooled_error = pooled_error, impo = impo,
               res = res))
 }

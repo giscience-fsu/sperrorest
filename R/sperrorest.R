@@ -707,7 +707,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
                         }
 
                         result <- list(error = runfolds_merged$current_res,
-                                       pooled_erroror = currentpooled_error,
+                                       pooled_error = currentpooled_error,
                                        importance = impo_only)
                         return(list(result))
                       }
@@ -726,7 +726,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
 
   # assign names to sublists - otherwise `transfer_parallel_output` doesn't work
   for (i in 1:length(my_res)) {
-    names(my_res[[i]]) <- c("error", "pooled_erroror", "importance")
+    names(my_res[[i]]) <- c("error", "pooled_error", "importance")
   }
 
   # transfer results of lapply() to respective data objects
