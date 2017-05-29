@@ -30,12 +30,11 @@
 #' @export
 resample_strat_uniform <- function(data, param = list(strat = "class",
                                                       nstrat = Inf,
-                                                      replace = FALSE))
-{
+                                                      replace = FALSE)) {
   # Old version:
   if (!is.null(param$response)) {
-    warning(paste0("'param$response' argument in 'resample_strat_uniform' ", # nocov
-                   "renamed to 'strat';\n modify your code accordingly")) # nocov
+    warning(paste0("'param$response' argument in 'resample_strat_uniform' ", # nocov # nolint
+                   "renamed to 'strat';\n modify your code accordingly")) # nocov # nolint
     if (is.null(param$strat)) # nocov
       param$strat <- param$response # nocov
   }
@@ -51,7 +50,7 @@ resample_strat_uniform <- function(data, param = list(strat = "class",
     param$replace <- FALSE
   }
 
-  stopifnot((length(param$strat) == 1) | (length(param$strat) == nrow(data)))
+  stopifnot((length(param$strat) == 1) | (length(param$strat) == nrow(data))) # nolint
   if (length(param$strat == 1)) {
     strat <- data[, param$strat]
   } else {
@@ -164,7 +163,7 @@ resample_factor <- function(data, param = list(fac = "class", n = Inf,
   if (is.null(param$replace)) {
     param$replace <- FALSE
   }
-  stopifnot( (length(param$fac) == 1) || (length(param$fac) == nrow(data)))
+  stopifnot((length(param$fac) == 1) || (length(param$fac) == nrow(data))) # nolint
   if (length(param$fac == 1)) {
     fac <- data[, param$fac]
   } else {

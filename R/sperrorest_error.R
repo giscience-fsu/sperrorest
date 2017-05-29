@@ -5,6 +5,7 @@
 #' of numerical and categorical response variables.
 #'
 #' @name err_default
+#' @importFrom ROCR prediction performance
 #'
 #' @param obs factor, logical, or numeric vector with observations
 #' @param pred factor, logical, or numeric vector with predictions. Must be of
@@ -72,19 +73,19 @@ err_default <- function(obs, pred) {
       if (nlevels(obs) == 2) {
         npos <- sum(obs == levels(obs)[2])
         nneg <- sum(obs == levels(obs)[1])
-        ntruepos <- sum((obs == levels(obs)[2]) & (pred == levels(obs)[2]))
-        ntrueneg <- sum((obs == levels(obs)[1]) & (pred == levels(obs)[1]))
-        err$sensitivity <- ntruepos/npos
-        err$specificity <- ntrueneg/nneg
+        ntruepos <- sum((obs == levels(obs)[2]) & (pred == levels(obs)[2])) # nolint
+        ntrueneg <- sum((obs == levels(obs)[1]) & (pred == levels(obs)[1])) # nolint
+        err$sensitivity <- ntruepos / npos
+        err$specificity <- ntrueneg / nneg
         npospred <- sum(pred == levels(obs)[2])
         nnegpred <- sum(pred == levels(obs)[1])
         err$ppv <- ntruepos / npospred
         err$npv <- ntrueneg / nnegpred
         n <- length(obs)
-        pexp <- (npos/n) * (npospred/n) + (nneg/n) * (nnegpred/n)
+        pexp <- (npos / n) * (npospred / n) + (nneg / n) * (nnegpred / n)
         if (pexp == 1) {
           err$kappa <- NA
-        } else err$kappa <- (err$accuracy - pexp)/(1 - pexp)
+        } else err$kappa <- (err$accuracy - pexp) / (1 - pexp)
       }
     } else {
       # 'soft' classification: Calculate area under the ROC curve:
@@ -93,9 +94,9 @@ err_default <- function(obs, pred) {
       err <- list(auroc = auroc)
 
       pos <- levels(obs)[2]
-      neg <- levels(obs)[1]
+      # neg <- levels(obs)[1] # not in use
 
-      err$error <- mean((obs == pos) != (pred >= 0.5))
+      err$error <- mean((obs == pos) != (pred >= 0.5)) # nolint
       err$accuracy <- 1 - err$error
 
       # internal functions for calculating false positive rate (1-specificity)
@@ -135,8 +136,7 @@ err_default <- function(obs, pred) {
       err$tpr95 <- tpr(obs == pos, pred, npos, thr)
     }
     err$events <- sum(obs == levels(obs)[2])
-  } else
-  {
+  } else {
     # Regression problem:
     err <- list(bias = mean(obs - pred), stddev = sd(obs - pred),
                 mse = mean((obs - pred)^2), mad = mad(obs - pred),

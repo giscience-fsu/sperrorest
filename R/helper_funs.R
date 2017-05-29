@@ -275,8 +275,8 @@ runreps <- function(current_sample = NULL, data = NULL, formula = NULL,
              err_fun = err_fun)) -> runfolds_list
 
   # merge sublists of each fold into one list
-  # http://stackoverflow.com/questions/32557131/adding-a-vector-to-each-sublist-within-a-list-r
-  # http://stackoverflow.com/questions/43963683/r-flexible-passing-of-sublists-to-following-function
+  # http://stackoverflow.com/questions/32557131/adding-a-vector-to-each-sublist-within-a-list-r # nolint
+  # http://stackoverflow.com/questions/43963683/r-flexible-passing-of-sublists-to-following-function # nolint
   runfolds_merged <- do.call(Map, c(f = list, runfolds_list))
 
   if (importance == TRUE) {
@@ -284,7 +284,7 @@ runreps <- function(current_sample = NULL, data = NULL, formula = NULL,
     impo_only <- runfolds_merged[6][[1]]
     ### get mean from all impo results of all folds
     ### (multiple dataframes stored in a list)
-    ### http://stackoverflow.com/questions/18371187/element-wise-mean-for-a-list-of-dataframes-with-na
+    ### http://stackoverflow.com/questions/18371187/element-wise-mean-for-a-list-of-dataframes-with-na # nolint
     ### NICHT MITTELN, ENFACH ALLE IMPO (= FÜR JEDEN FOLD) ZURÜCKGEBEN
     # current_impo <- Reduce("+", impo_only) / length(impo_only)
   }
@@ -329,7 +329,7 @@ runreps <- function(current_sample = NULL, data = NULL, formula = NULL,
     }
   }  # end for each fold
 
-  if ((do_gc >= 1) & (do_gc < 2)) {
+  if ( (do_gc >= 1) & (do_gc < 2)) {
     gc()
   }
 
