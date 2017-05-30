@@ -593,7 +593,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
     }
     # special settings for Windows
     if (out_progress == "" & Sys.info()["sysname"] == "Windows") {
-      out_progress <- paste0(getwd(), "/sperrorest.progress.txt")
+      out_progress <- paste0(getwd(), "/sperrorest_progress.txt")
     }
 
     registerDoFuture()
@@ -611,6 +611,10 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
       message(sprintf(paste0("Using 'foreach' parallel mode with %s cores and",
                              " '%s' option."),
                       availableCores(), par_args$par_option))
+      if (.Platform$OS.type == "Windows") {
+        message(paste0("Please see 'sperrorest_progress' in your current",
+                       " working directory for progress output on Windows."))
+      }
     }
     if (!is.null(par_args$par_units) && !par_args$par_mode == "sequential" &&
         par_args$par_mode == "foreach") {
@@ -621,6 +625,10 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
       message(sprintf(paste0("Using 'foreach' parallel mode with %s cores and",
                              " '%s' option."),
                       par_args$par_units, par_args$par_option))
+      if (.Platform$OS.type == "Windows") {
+        message(paste0("Please see 'sperrorest_progress' in your current",
+                       " working directory for progress output on Windows."))
+      }
     }
     if (par_args$par_mode == "sequential") {
       registerDoFuture()
@@ -808,4 +816,4 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
   class(res) <- "sperrorest"
 
   return(res)
-  }
+}
