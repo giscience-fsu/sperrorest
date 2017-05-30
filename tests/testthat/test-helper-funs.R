@@ -1,6 +1,6 @@
 context("parsperrorest.R")
 
-pacman::p_load(sperrorest, testthat, rpart, MASS, e1071)
+pacman::p_load(sperrorest, testthat, rpart, MASS, e1071, tibble)
 
 # runfolds Sun May 21 22:58:39 2017 ------------------------------
 
@@ -15,7 +15,7 @@ testthat::test_that("runfolds works on glm example", {
   current_sample <- partition_cv(ecuador, nfold = 4)[[1]]
   current_res <- current_sample
 
-  runfolds_single <- runfolds(j = 1, data = ecuador, current_sample = current_sample,
+  runfolds_single1 <- runfolds(j = 1, data = ecuador, current_sample = current_sample,
                               formula = slides ~ dem + slope + hcurv + vcurv + log.carea + cslope,
                               model_args = list(family = "binomial"), do_try = FALSE, model_fun = glm,
                               error_fold = TRUE, error_rep = TRUE, imp_permutations = 2,
@@ -26,6 +26,34 @@ testthat::test_that("runfolds works on glm example", {
                               pooled_obs_test = c(), err_fun = err_default)
   expect_equal(length(runfolds_single), 6)
 })
+
+
+testthat::test_that("runfolds works on svm example", {
+  readRDS("/Users/pjs/Servers/GIServer/home/shares/data/LIFE/mod/survey_data/data-clean.rda") %>%
+    as_tibble() -> df
+  fo <- diplo01 ~ temp + p_sum + r_sum + elevation + slope + hail + age + ph + lithology + soil + year
+
+  j <- 1 # running the first repetition of 'current_sample', normally we are
+  # calling an apply call to seq_along nFolds of repetition
+  # see also 'runreps()'
+  current_sample <- partition_kmeans(df, nfold = 4)[[1]]
+  current_res <- current_sample
+
+  runfolds_single <- runfolds(j = 1, data = df, current_sample = current_sample,
+                              formula = fo,
+                              model_args = list(cost = 10000, gamma = 0.0001,
+                                                kernel = "sigmoid",
+                                                probability = TRUE), do_try = FALSE,
+                              par_mode = "foreach",
+                              model_fun = svm,  pred_args = list(probability = TRUE),
+                              error_fold = TRUE, error_rep = TRUE,
+                              err_train = TRUE, importance = FALSE, current_res = current_res,
+                              response = "diplo01", par_cl = 2,
+                              coords = c("x", "y"), progress = 1, pooled_obs_train = c(),
+                              pooled_obs_test = c(), err_fun = err_default)
+  expect_equal(length(runfolds_single), 6)
+})
+
 
 testthat::test_that("runfolds works on svm example", {
 
@@ -200,9 +228,9 @@ testthat::test_that("runreps works on rpart example", {
 testthat::test_that("runreps works on svm example", {
 
   data <- ecuador
-  imp.one.rep <- readRDS("inst/test-objects/imp.one.rep.rda")
-  current_sample <- readRDS("inst/test-objects/resamp.rda")
-  current_res <- readRDS("inst/test-objects/current_res.rda")
+  data <- ecuador
+  current_sample <- partition_kmeans(ecuador, nfold = 4)
+  current_res <- current_sample
 
   runreps_res <- lapply(current_sample, function(X) runreps(current_sample = X, data = ecuador,
                                                             formula = slides ~ dem + slope + hcurv + vcurv + log.carea + cslope,
@@ -210,9 +238,9 @@ testthat::test_that("runreps works on svm example", {
                                                                               kernel = "sigmoid",
                                                                               probability = TRUE),
                                                             pred_args = list(probability = TRUE),
+                                                            par_mode = "foreach", do_gc = 1,
                                                             do_try = FALSE, model_fun = svm,
                                                             error_fold = TRUE, error_rep = TRUE,
-                                                            model_args = list(control = ctrl),
                                                             err_train = TRUE, importance = FALSE, current_res = current_res,
                                                             response = "slides", par_cl = 2,
                                                             coords = c("x", "y"), progress = 1, pooled_obs_train = c(),
