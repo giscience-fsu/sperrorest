@@ -235,13 +235,13 @@ print.tilename <- function(x, ...) {
 #' @examples
 #' data(ecuador) # Muenchow et al. (2012), see ?ecuador
 #' # Rectangular partitioning without removal of small tiles:
-#' parti = partition_tiles(ecuador, nsplit = c(10,10), reassign = FALSE)
+#' parti <- partition_tiles(ecuador, nsplit = c(10,10), reassign = FALSE)
 #' summary(parti)
 #' length(parti[[1]])
 #' # Same in factor format for the application of get_small_tiles:
-#' parti.fac <- partition_tiles(ecuador, nsplit = c(10, 10), reassign = FALSE,
+#' parti_fac <- partition_tiles(ecuador, nsplit = c(10, 10), reassign = FALSE,
 #'                              return_factor = TRUE)
-#' get_small_tiles(parti.fac[[1]], min_n = 20) # tiles with less than 20 samples
+#' get_small_tiles(parti_fac[[1]], min_n = 20) # tiles with less than 20 samples
 #' parti2 <- partition_tiles(ecuador, nsplit = c(10, 10), reassign = TRUE,
 #'                           min_n = 20, min_frac = 0)
 #' length(parti2[[1]]) # < length(parti[[1]])

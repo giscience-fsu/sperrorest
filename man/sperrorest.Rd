@@ -49,18 +49,18 @@ fitted model object and the \code{newdata} argument,
 which are provided by \code{sperrorest})}
 
 \item{smp_fun}{A function for sampling training and test sets from
-\code{data}. E.g., \link{partition_kmeans} for
+\code{data}. E.g. \link{partition_kmeans} for
 spatial cross-validation using spatial \emph{k}-means clustering.}
 
-\item{smp_args}{(optional) Arguments to be passed to \code{smp_fun}}
+\item{smp_args}{(optional) Arguments to be passed to \code{smp_fun}.}
 
 \item{train_fun}{(optional) A function for resampling or subsampling the
 training sample in order to achieve, e.g., uniform sample sizes on all
 training sets, or maintaining a certain ratio of positives and negatives
 in training sets.
-E.g., \link{resample_uniform} or \link{resample_strat_uniform}}
+E.g. \link{resample_uniform} or \link{resample_strat_uniform}.}
 
-\item{train_param}{(optional) Arguments to be passed to \code{resample.fun}}
+\item{train_param}{(optional) Arguments to be passed to \code{resample_fun}}
 
 \item{test_fun}{(optional) Like \code{train_fun} but for the test set.}
 
@@ -68,12 +68,10 @@ E.g., \link{resample_uniform} or \link{resample_strat_uniform}}
 
 \item{err_fun}{A function that calculates selected error measures from the
 known responses in \code{data} and the model predictions delivered
-by \code{pred_fun}. E.g., \link{err_default} (the default).
-See example and details below.}
+by \code{pred_fun}. E.g. \link{err_default} (the default).}
 
-\item{error_fold}{logical (default: \code{TRUE}) if \code{importance} is
-\code{TRUE}, otherwise \code{FALSE}): calculate error measures on each fold
-within a resampling repetition.}
+\item{error_fold}{logical (default: \code{TRUE}) calculate error measures on
+each fold within a resampling repetition.}
 
 \item{error_rep}{logical (default: \code{TRUE}): calculate error measures
 based on the pooled predictions of all folds within a resampling repetition.}
@@ -81,52 +79,54 @@ based on the pooled predictions of all folds within a resampling repetition.}
 \item{err_train}{logical (default: \code{TRUE}): calculate error measures on
 the training set (in addition to the test set estimation).}
 
-\item{imp_variables}{(optional; used if \code{importance = TRUE})
+\item{imp_variables}{(optional; used if \code{importance = TRUE}).
 Variables for which permutation-based variable importance assessment
-is performed. If \code{importance = TRUE} and \code{imp_variables} is
+is performed. If \code{importance = TRUE} and \code{imp_variables} ==
 \code{NULL}, all variables in \code{formula} will be used.}
 
-\item{imp_permutations}{(optional; used if \code{importance = TRUE})
+\item{imp_permutations}{(optional; used if \code{importance = TRUE}).
 Number of permutations used for variable importance assessment.}
 
-\item{importance}{logical: perform permutation-based variable
-importance assessment?}
+\item{importance}{logical (default: \code{FALSE}): perform permutation-based
+variable importance assessment?}
 
 \item{distance}{logical (default: \code{FALSE}): if \code{TRUE}, calculate
 mean nearest-neighbour distances from test samples to training samples using
 \link{add.distance.represampling}}
 
 \item{par_args}{list of parallelization parameters:
-\code{par_mode} (the parallelization mode),
-\code{par_units} (the number of parallel processing units),
-\code{par_option} (optional settings for \code{par_mode = "future"}),}
+\itemize{
+\item{\code{par_mode}:} {the parallelization mode. See details.}
+\item{\code{par_units}:} {the number of parallel processing units.}
+\item{\code{par_option}:} {optional \link{future} settings for \code{par_mode = "future"} or
+\code{par_mode = "foreach"}.}
+}}
 
 \item{do_gc}{numeric (default: 1): defines frequency of memory garbage
-collection by calling \link{gc}; if \code{<1}, no garbage collection;
-if \code{>=1}, run a \link{gc} after each repetition;
-if \code{>=2}, after each fold}
+collection by calling \link{gc}; if \code{< 1}, no garbage collection;
+if \code{>= 1}, run a \link{gc} after each repetition;
+if \code{>= 2}, after each fold}
 
 \item{do_try}{logical (default: \code{FALSE}): if \code{TRUE} (untested!!),
 use \link{try} to robustify calls to \code{model_fun} and
 \code{err_fun}; use with caution!}
 
 \item{progress}{numeric (default: \code{1}): Whether to show progress
-information. For \code{par_mode = 1}, information about elapsed time, estimated
-time remaining and a percentage indicator (0\% - 100\%) are shown.
-\code{progress = 2} only applies to \code{par_mode = 2} and shows repetition
-information only (instead of repetition and fold).
+information (if possible). Default shows repetition and fold progress on
+\code{par_mode = "foreach"} or \code{par_mode = "sequential"}.
 Set to \code{FALSE} for no progress information.}
 
-\item{out_progress}{only used if \code{par_mode = 2}: Optionally write progress
+\item{out_progress}{only used if \code{par_mode = foreach}: Write progress
 output to a file instead of console output.
 The default (\code{''}) results in console output for Unix-systems and
 file output ('sperrorest.progress.txt') in the current working directory
-for Windows-systems.}
+for Windows systems. No console output is possible on Windows systems.}
 
 \item{benchmark}{(optional) logical (default: \code{FALSE}): if \code{TRUE},
 perform benchmarking and return \code{sperrorestbenchmark} object}
 
-\item{...}{Further options passed to \link{makeCluster}}
+\item{...}{Further options passed to \link{makeCluster} for
+\code{par_mode = "foreach"}.}
 }
 \value{
 A list (object of class \code{sperrorest}) with (up to) six components:
@@ -153,14 +153,14 @@ assessment of spatial variable importance.
 \details{
 By default \code{sperrorest} runs in parallel on all cores using
 \code{foreach} with the \link{future} backend. If this is not desired, specify
-\code{par_units} in \code{par_args}.
+\code{par_units} in \code{par_args} or set \code{par_mode = "sequential"}.
 
-Other parallelization modes include \code{apply} (\link{pbmclapply} on Unix, \link{parApply}
-on Windows) and \code{future} (\link{future_lapply}). For the latter \code{par_options}
-(default to \code{multiprocess}) can be specified. See \link{plan} for further details.
-
-Setting \code{par_mode = "sequential"} executes \code{sperrorest} like a normal
-for-loop.
+Available parallelization modes include \code{par_mode = "apply"}
+(calls \link{pbmclapply} on Unix, \link{parApply} on Windows) and
+\code{future} (\link{future_lapply}).
+For the latter and \code{par_mode = "foreach"}, \code{par_option}
+(default to \code{multiprocess} and
+\code{cluster}, respectively) can be specified. See \link{plan} for further details.
 }
 \note{
 Custom predict functions passed to \code{pred_fun}, which consist of

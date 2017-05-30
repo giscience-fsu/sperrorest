@@ -50,18 +50,18 @@
 #' which are provided by `sperrorest`)
 #'
 #' @param smp_fun A function for sampling training and test sets from
-#' `data`. E.g., [partition_kmeans] for
+#' `data`. E.g. [partition_kmeans] for
 #' spatial cross-validation using spatial \emph{k}-means clustering.
 #'
-#' @param smp_args (optional) Arguments to be passed to `smp_fun`
+#' @param smp_args (optional) Arguments to be passed to `smp_fun`.
 #'
 #' @param train_fun (optional) A function for resampling or subsampling the
 #' training sample in order to achieve, e.g., uniform sample sizes on all
 #' training sets, or maintaining a certain ratio of positives and negatives
 #' in training sets.
-#' E.g., [resample_uniform] or [resample_strat_uniform]
+#' E.g. [resample_uniform] or [resample_strat_uniform].
 #'
-#' @param train_param (optional) Arguments to be passed to `resample.fun`
+#' @param train_param (optional) Arguments to be passed to `resample_fun`
 #'
 #' @param test_fun (optional) Like `train_fun` but for the test set.
 #'
@@ -69,12 +69,10 @@
 #'
 #' @param err_fun A function that calculates selected error measures from the
 #' known responses in `data` and the model predictions delivered
-#' by `pred_fun`. E.g., [err_default] (the default).
-#' See example and details below.
+#' by `pred_fun`. E.g. [err_default] (the default).
 #'
-#' @param error_fold logical (default: `TRUE`) if `importance` is
-#' `TRUE`, otherwise `FALSE`): calculate error measures on each fold
-#' within a resampling repetition.
+#' @param error_fold logical (default: `TRUE`) calculate error measures on
+#' each fold within a resampling repetition.
 #'
 #' @param error_rep logical (default: `TRUE`): calculate error measures
 #' based on the pooled predictions of all folds within a resampling repetition.
@@ -82,52 +80,54 @@
 #' @param err_train logical (default: `TRUE`): calculate error measures on
 #' the training set (in addition to the test set estimation).
 #'
-#' @param imp_variables (optional; used if `importance = TRUE`)
+#' @param imp_variables (optional; used if `importance = TRUE`).
 #' Variables for which permutation-based variable importance assessment
-#' is performed. If `importance = TRUE` and `imp_variables` is
+#' is performed. If `importance = TRUE` and `imp_variables` ==
 #' `NULL`, all variables in `formula` will be used.
 #'
-#' @param imp_permutations (optional; used if `importance = TRUE`)
+#' @param imp_permutations (optional; used if `importance = TRUE`).
 #' Number of permutations used for variable importance assessment.
 #'
-#' @param importance logical: perform permutation-based variable
-#' importance assessment?
+#' @param importance logical (default: `FALSE`): perform permutation-based
+#' variable importance assessment?
 #'
 #' @param distance logical (default: `FALSE`): if `TRUE`, calculate
 #' mean nearest-neighbour distances from test samples to training samples using
 #' [add.distance.represampling]
 #'
 #' @param do_gc numeric (default: 1): defines frequency of memory garbage
-#' collection by calling [gc]; if `<1`, no garbage collection;
-#' if `>=1`, run a [gc] after each repetition;
-#' if `>=2`, after each fold
+#' collection by calling [gc]; if `< 1`, no garbage collection;
+#' if `>= 1`, run a [gc] after each repetition;
+#' if `>= 2`, after each fold
 #'
 #' @param do_try logical (default: `FALSE`): if `TRUE` (untested!!),
 #' use [try] to robustify calls to `model_fun` and
 #' `err_fun`; use with caution!
 #'
 #' @param progress numeric (default: `1`): Whether to show progress
-#' information. For `par_mode = 1`, information about elapsed time, estimated
-#' time remaining and a percentage indicator (0\% - 100\%) are shown.
-#' `progress = 2` only applies to `par_mode = 2` and shows repetition
-#' information only (instead of repetition and fold).
+#' information (if possible). Default shows repetition and fold progress on
+#' `par_mode = "foreach"` or `par_mode = "sequential"`.
 #' Set to `FALSE` for no progress information.
 #'
-#' @param out_progress only used if `par_mode = 2`: Optionally write progress
+#' @param out_progress only used if `par_mode = foreach`: Write progress
 #' output to a file instead of console output.
 #' The default (`''`) results in console output for Unix-systems and
 #' file output ('sperrorest.progress.txt') in the current working directory
-#' for Windows-systems.
+#' for Windows systems. No console output is possible on Windows systems.
 #'
 #' @param par_args list of parallelization parameters:
-#' `par_mode` (the parallelization mode),
-#' `par_units` (the number of parallel processing units),
-#' `par_option` (optional settings for `par_mode = "future"`),
+#' \itemize{
+#' \item{`par_mode`:} {the parallelization mode. See details.}
+#' \item{`par_units`:} {the number of parallel processing units.}
+#' \item{`par_option`:} {optional [future] settings for `par_mode = "future"` or
+#' `par_mode = "foreach"`.}
+#' }
 #'
 #' @param benchmark (optional) logical (default: `FALSE`): if `TRUE`,
 #' perform benchmarking and return `sperrorestbenchmark` object
 #'
-#' @param ... Further options passed to [makeCluster]
+#' @param ... Further options passed to [makeCluster] for
+#' `par_mode = "foreach"`.
 #'
 #' @return A list (object of class `sperrorest`) with (up to) six components:
 #' \item{error_rep}{a `sperrorestreperror` object containing
@@ -146,14 +146,14 @@
 #'
 #' @details By default `sperrorest` runs in parallel on all cores using
 #' `foreach` with the [future] backend. If this is not desired, specify
-#' `par_units` in `par_args`.
+#' `par_units` in `par_args` or set `par_mode = "sequential"`.
 #'
-#' Other parallelization modes include `apply` ([pbmclapply] on Unix, [parApply]
-#' on Windows) and `future` ([future_lapply]). For the latter `par_options`
-#' (default to `multiprocess`) can be specified. See [plan] for further details.
-#'
-#' Setting `par_mode = "sequential"` executes `sperrorest` like a normal
-#' for-loop.
+#' Available parallelization modes include `par_mode = "apply"`
+#' (calls [pbmclapply] on Unix, [parApply] on Windows) and
+#' `future` ([future_lapply]).
+#' For the latter and `par_mode = "foreach"`, `par_option`
+#' (default to `multiprocess` and
+#' `cluster`, respectively) can be specified. See [plan] for further details.
 #'
 #' @note Custom predict functions passed to `pred_fun`, which consist of
 #' multiple custom defined child functions, must be defined in one function.
