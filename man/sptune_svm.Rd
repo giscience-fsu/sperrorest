@@ -44,9 +44,9 @@ as error measure.
 data(ecuador) # Muenchow et al. (2012), see ?ecuador
 fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
 
-sptune_svm(fo, ecuador, accelerate = 16, nfold = 5, 
-partition.fun = "partition.kmeans", kernel = "radial", 
-type = "C-classification") 
+sptune_svm(fo, ecuador, accelerate = 16, nfold = 5,
+partition.fun = "partition.kmeans", kernel = "radial",
+type = "C-classification")
 
 }
 \author{

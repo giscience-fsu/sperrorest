@@ -47,7 +47,8 @@ test_that("output type (= list) for different logical combinations of
                               model_fun = lda,
                               pred_fun = lda_predfun,
                               smp_fun = partition_cv,
-                              smp_args = list(repetition = 1:6, nfold = 4),
+                              smp_args = list(repetition = 1:20, nfold = 4),
+                              #par_args = list(par_mode = "sequential"),
                               error_rep = TRUE, error_fold = TRUE,
                               benchmark = TRUE, progress = 2)
 

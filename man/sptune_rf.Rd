@@ -43,8 +43,8 @@ as error measure.
 data(ecuador) # Muenchow et al. (2012), see ?ecuador
 fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
 
-sptune_rf(fo, ecuador, accelerate = 16, nfold = 5, 
-partition.fun = "partition.kmeans", rf_fun = "randomForest") 
+sptune_rf(fo, ecuador, accelerate = 16, nfold = 5,
+partition.fun = "partition.kmeans", rf_fun = "randomForest")
 
 }
 \author{
