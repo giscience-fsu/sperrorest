@@ -9,17 +9,17 @@
 }
 \arguments{
 \item{object}{\code{sperroresterror} resp. \code{sperrorestcombinederror}
-error object calculated by \code{\link[=sperrorest]{sperrorest()}}}
+error object calculated by \link{sperrorest}}
 
 \item{level}{Level at which errors are summarized:
 0: overall; 1: repetition; 2: fold}
 
 \item{pooled}{If \code{TRUE} (default), mean and standard deviation etc are
 calculated between fold-level error estimates. If \code{FALSE},
-apply first a \code{\link[=weighted.mean]{weighted.mean()}} among folds before calculating
+apply first a \link{weighted.mean} among folds before calculating
 mean, standard deviation etc among repetitions. See also Details.}
 
-\item{na.rm}{Remove \code{NA} values? See \code{\link[=mean]{mean()}} etc.}
+\item{na.rm}{Remove \code{NA} values? See \link{mean} etc.}
 
 \item{...}{additional arguments (currently ignored)}
 }
@@ -49,9 +49,9 @@ This will essentially not affect the mean value but of course the
 standard deviation of the error. \code{error.rep = FALSE} is not recommended,
 it is mainly for testing purposes; when the test sets are small
 (as in leave-one-out cross-validation, in the extreme case),
-consider running \code{\link[=sperrorest]{sperrorest()}} with \code{error.rep = TRUE} and
+consider running \link{sperrorest} with \code{error.rep = TRUE} and
 examine only the \code{error.rep} component of its result.
 }
 \seealso{
-\code{\link[sperrorest:parsperrorest]{sperrorest::parsperrorest()}}
+\link{sperrorest}
 }

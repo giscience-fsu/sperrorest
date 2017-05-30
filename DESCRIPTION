@@ -1,7 +1,7 @@
 Package: sperrorest
 Type: Package
 Title: Perform Spatial Error Estimation and Variable Importance in Parallel
-Version: 1.0.0.9000
+Version: 2.0.0.9000
 Date: 2017-03-08
 Authors@R: c(
       person("Alexander", "Brenning", , "alexander.brenning@uni-jena.de",
@@ -13,8 +13,7 @@ Authors@R: c(
       )
 BugReports: https://github.com/pat-s/sperrorest/issues
 Depends: 
-    R (>= 2.10),
-    future
+    R (>= 2.10)
 Suggests:
     ipred,
     nnet,
@@ -25,9 +24,10 @@ Suggests:
 Imports:
     pbapply,
     pbmcapply,
+    foreach, 
+    magrittr,
     future,
     doFuture,
-    doParallel,
     ROCR,
     parallel,
     graphics, 
@@ -45,6 +45,7 @@ LazyData: true
 LazyLoad: yes
 ByteCompile: true
 Collate:
+    'helper_funs.R'
     'sperrorest-package.R'
     'resample.R'
     'sperrorest.R'
@@ -52,7 +53,6 @@ Collate:
     'sperrorest_resampling.R'
     'sperrorest_error.R'
     'sperrorest_data.R'
-    'helper_funs.R'
     'summary_functions.R'
     'tuning_int_cv.R'
     'helper_funs_int_cv.R'

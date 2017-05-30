@@ -3,9 +3,10 @@
 \name{as.represampling}
 \alias{as.represampling}
 \alias{represampling}
+\alias{as.represampling_list}
 \alias{as.represampling.list}
 \alias{print.represampling}
-\alias{is.represampling}
+\alias{is_represampling}
 \title{Resampling objects with repetition, i.e. sets of partitionings or boostrap
 samples}
 \usage{
@@ -15,7 +16,7 @@ as.represampling(object, ...)
 
 \method{print}{represampling}(x, ...)
 
-is.represampling(object)
+is_represampling(object)
 }
 \arguments{
 \item{object}{object of class \code{represampling}, or a list to be coerced
@@ -31,20 +32,20 @@ to this class.}
 }
 \description{
 Functions for handling \code{represampling} objects, i.e. \code{list}s of
-\code{\link[=resampling]{resampling()}} objects.
+\link{resampling} objects.
 }
 \details{
 \code{represampling} objects are (names) lists of
-\code{\link[=resampling]{resampling()}} objects. Such objects are typically created by
-\code{\link[=partition.cv]{partition.cv()}}, \code{\link[=partition.kmeans]{partition.kmeans()}},
-\code{\link[=represampling.disc.bootstrap]{represampling.disc.bootstrap()}} and related functions.
+\link{resampling} objects. Such objects are typically created by
+\link{partition_cv}, \link{partition_kmeans},
+\link{represampling_disc_bootstrap} and related functions.
 
 In \code{r}-repeated \code{k}-fold cross-validation, for example, the
 corresponding \code{represampling} object has length \code{r}, and each of
-its \code{r} \code{\link[=resampling]{resampling()}} objects has length \code{k}.
+its \code{r} \link{resampling} objects has length \code{k}.
 
-\code{as.resampling.list} coerces \code{object} to class \code{represampling}
-while coercing its elements to \code{\link[=resampling]{resampling()}} objects.
+\code{as.resampling_list} coerces \code{object} to class \code{represampling}
+while coercing its elements to \link{resampling} objects.
 Some validity checks are performed.
 }
 \examples{
@@ -59,7 +60,7 @@ str(parti)
 summary(parti)
 }
 \seealso{
-\code{\link[=resampling]{resampling()}}, \code{\link[=partition.cv]{partition.cv()}},
-\code{\link[=partition.kmeans]{partition.kmeans()}},
-\code{\link[=represampling.disc.bootstrap]{represampling.disc.bootstrap()}}, etc.
+\link{resampling}, \link{partition_cv},
+\link{partition_kmeans},
+\link{represampling_disc_bootstrap}, etc.
 }

@@ -3,6 +3,7 @@
 \name{add.distance}
 \alias{add.distance}
 \alias{add.distance.resampling}
+\alias{add.distance_represampling}
 \alias{add.distance.represampling}
 \title{Add distance information to resampling objects}
 \usage{
@@ -13,20 +14,20 @@ add.distance(object, ...)
 \method{add.distance}{represampling}(object, ...)
 }
 \arguments{
-\item{object}{\code{\link[=resampling]{resampling()}} or \code{\link[=represampling]{represampling()}} object.}
+\item{object}{\link{resampling} or \link{represampling} object.}
 
-\item{...}{Additional arguments to \code{\link[=dataset.distance]{dataset.distance()}} and
-\code{\link[=add.distance.resampling]{add.distance.resampling()}}, respectively.}
+\item{...}{Additional arguments to \link{dataset_distance} and
+\link{add.distance.resampling}, respectively.}
 
 \item{data}{\code{data.frame} containing at least the columns specified
 by \code{coords}}
 
-\item{coords}{(ignored by \code{partition.cv})}
+\item{coords}{(ignored by \code{partition_cv})}
 }
 \value{
-A \code{\link[=resampling]{resampling()}} or \code{\link[=represampling]{represampling()}} object
+A \link{resampling} or \link{represampling} object
 containing an additional.
-\code{$distance} component in each \code{\link[=resampling]{resampling()}} object.
+\code{$distance} component in each \link{resampling} object.
 The \code{distance} component is a single numeric value indicating, for
 each \code{train} / \code{test} pair, the (by default, mean)
 nearest-neighbour distance between the two sets.
@@ -39,22 +40,22 @@ Nearest-neighbour distances are calculated for each sample in the
 test set. These \code{nrow(???$test)} nearest-neighbour distances are then
 averaged. Aggregation methods other than \code{mean} can be chosen using
 the \code{fun} argument, which will be passed on to
-\code{\link[=dataset.distance]{dataset.distance()}}.
+\link{dataset_distance}.
 }
 \examples{
 data(ecuador) # Muenchow et al. (2012), see ?ecuador
-nsp.parti <- partition.cv(ecuador)
-sp.parti <- partition.kmeans(ecuador)
+nsp.parti <- partition_cv(ecuador)
+sp.parti <- partition_kmeans(ecuador)
 nsp.parti <- add.distance(nsp.parti, ecuador)
 sp.parti <- add.distance(sp.parti, ecuador)
 # non-spatial partioning: very small test-training distance:
 nsp.parti[[1]][[1]]$distance
-# spatial partitioning: more substantial distance, depending on number of 
+# spatial partitioning: more substantial distance, depending on number of
 # folds etc.
 sp.parti[[1]][[1]]$distance
 
 }
 \seealso{
-\code{\link[=dataset.distance]{dataset.distance()}} \code{\link[=represampling]{represampling()}}
-\code{\link[=resampling]{resampling()}}
+\link{dataset_distance} \link{represampling}
+\link{resampling}
 }

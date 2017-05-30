@@ -11,7 +11,7 @@
 \method{plot}{resampling}(x, ...)
 }
 \arguments{
-\item{x}{a \code{\link[=represampling]{represampling()}} resp. \code{\link[=resampling]{resampling()}} object.}
+\item{x}{a \link{represampling} resp. \link{resampling} object.}
 
 \item{data}{a \code{data.frame} of samples containing at least the x and y
 coordinates of samples as specified by \code{coords}.}
@@ -19,14 +19,14 @@ coordinates of samples as specified by \code{coords}.}
 \item{coords}{vector of length 2 defining the variables in \code{data} that
 contain the x and y coordinates of sample locations.}
 
-\item{pch}{point symbold (to be passed to \code{\link[=points]{points()}}).}
+\item{pch}{point symbold (to be passed to \link{points}).}
 
 \item{wiggle.sd}{'wiggle' the point locations in x and y direction to avoid
 overplotting of samples drawn multiple times by bootstrap methods;
 this is a standard deviation (in the units of the x/y coordinates) of a
 normal distribution and defaults to 0 (no wiggling).}
 
-\item{...}{additional arguments to \code{\link[=plot]{plot()}}.}
+\item{...}{additional arguments to \link{plot}.}
 }
 \description{
 \code{plot.represampling} displays the partitions or samples corresponding
@@ -42,10 +42,10 @@ the number of maps that can be displayed at once, i.e., the number of rows
 \examples{
 data(ecuador)
 # non-spatial cross-validation:
-resamp <- partition.cv(ecuador, nfold = 5, repetition = 1:2)
+resamp <- partition_cv(ecuador, nfold = 5, repetition = 1:2)
 # plot(resamp, ecuador)
 # spatial cross-validation using k-means clustering:
-resamp <- partition.kmeans(ecuador, nfold = 5, repetition = 1:2)
+resamp <- partition_kmeans(ecuador, nfold = 5, repetition = 1:2)
 # plot(resamp, ecuador)
 
 }

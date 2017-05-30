@@ -4,8 +4,8 @@
 \alias{transfer_parallel_output}
 \title{transfer_parallel_output}
 \usage{
-transfer_parallel_output(myRes = NULL, res = NULL, impo = NULL,
-  pooled.err = NULL)
+transfer_parallel_output(my_res = NULL, res = NULL, impo = NULL,
+  pooled_error = NULL)
 }
 \description{
 transfers output of parallel calls to runreps

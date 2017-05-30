@@ -3,10 +3,12 @@
 \name{as.resampling}
 \alias{as.resampling}
 \alias{resampling}
+\alias{as.resampling_default}
 \alias{as.resampling.default}
 \alias{as.resampling.factor}
+\alias{as.resampling_list}
 \alias{as.resampling.list}
-\alias{validate.resampling}
+\alias{validate_resampling}
 \alias{is.resampling}
 \alias{print.resampling}
 \title{Resampling objects such as partitionings or bootstrap samples}
@@ -19,7 +21,7 @@ as.resampling(object, ...)
 
 \method{as.resampling}{list}(object, ...)
 
-validate.resampling(object)
+validate_resampling(object)
 
 is.resampling(x, ...)
 
@@ -53,7 +55,7 @@ The \code{resampling} object does, however, not contain the data itself, but
 only indices between \code{1} and \code{n} identifying the seleciton
 (see Examples).
 
-Another example is bootstrap resampling. \code{\link[=represampling.bootstrap]{represampling.bootstrap()}}
+Another example is bootstrap resampling. \link{represampling_bootstrap}
 with argument \code{oob = TRUE} generates \code{\link{rep}}\code{resampling} objects
 with indices of a bootstrap sample in the \code{train} component and indices
 of the out-of-bag sample in the test component (see Examples below).
@@ -63,7 +65,7 @@ of the out-of-bag sample in the test component (see Examples below).
 (= test samples) and outside this level (= training samples). Empty levels of
 \code{object} are dropped without warning.
 
-\code{as.resampling.list} checks if the list in \code{object} has a valid
+\code{as.resampling_list} checks if the list in \code{object} has a valid
 \code{resampling} object structure (with components \code{train} and
 \code{test} etc.) and assigns the class attribute \code{'resampling'} if
 successful.
@@ -79,23 +81,23 @@ summary(smp)
 summary(parti)
 
 # k-fold (non-spatial) cross-validation partitioning:
-parti <- partition.cv(ecuador)
+parti <- partition_cv(ecuador)
 parti <- parti[[1]] # the first (and only) resampling object in parti
 # data corresponding to the test sample of the first fold:
-str( ecuador[ parti[[1]]$test , ] )
+str( ecuador[ parti[[1]]$test , ])
 # the corresponding training sample - larger:
-str( ecuador[ parti[[1]]$train , ] )
+str( ecuador[ parti[[1]]$train , ])
 
 # Bootstrap training sets, out-of-bag test sets:
-parti <- represampling.bootstrap(ecuador, oob = TRUE)
+parti <- represampling_bootstrap(ecuador, oob = TRUE)
 parti <- parti[[1]] # the first (and only) resampling object in parti
 # out-of-bag test sample: approx. one-third of nrow(ecuador):
-str( ecuador[ parti[[1]]$test , ] )
+str( ecuador[ parti[[1]]$test , ])
 # bootstrap training sample: same size as nrow(ecuador):
-str( ecuador[ parti[[1]]$train , ] )
+str( ecuador[ parti[[1]]$train , ])
 
 }
 \seealso{
-\code{\link[=represampling]{represampling()}}, \code{\link[=partition.cv]{partition.cv()}},
-\code{\link[=partition.kmeans]{partition.kmeans()}}, \code{\link[=represampling.bootstrap]{represampling.bootstrap()}}, etc.
+\link{represampling}, \link{partition_cv},
+\link{partition_kmeans}, \link{represampling_bootstrap}, etc.
 }
