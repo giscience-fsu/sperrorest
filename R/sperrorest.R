@@ -12,7 +12,6 @@
 #' @import magrittr
 #' @import pbmcapply
 #' @import parallel
-#' @import foreach
 #' @import future
 #' @import doFuture
 #' @import rpart
