@@ -28,6 +28,11 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
     }
   }
 
+  # account for tibbles as input
+  if (any(class(data) == "tbl")) {
+    data <- as.data.frame(data)
+  }
+
   # Create training sample:
   nd <- data[current_sample[[j]]$train, ]
   if (!is.null(train_fun))
@@ -82,9 +87,6 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
         }
         current_res[[j]]$train <- err_try  #res[[i]][[j]]$train = err_try
       } else {
-        if (any(class(nd) == "tbl")) {
-          nd <- as.data.frame(nd)
-        }
         current_res[[j]]$train <- err_fun(nd[, response], pred_train)
         #res[[i]][[j]]$train = err_fun(nd[,response], pred_train)
       }
@@ -126,9 +128,6 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
       }
       current_res[[j]]$test <- err_try  #res[[i]][[j]]$test = err_try
     } else {
-      if (any(class(nd) == "tbl")) {
-        nd <- as.data.frame(nd)
-      }
       current_res[[j]]$test <- err_fun(nd[, response], pred_test)
       #res[[i]][[j]]$test  = err_fun(nd[,response], pred_test)
     }

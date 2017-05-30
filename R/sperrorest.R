@@ -323,6 +323,11 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
     }
   }
 
+  # account for tibbles as input
+  if (any(class(data) == "tbl")) {
+    data <- as.data.frame(data)
+  }
+
   # Name of response variable:
   response <- as.character(attr(terms(formula), "variables"))[2]
 
