@@ -186,21 +186,26 @@
 #'
 #' @examples
 #' \dontrun{
+#'
+#' ##------------------------------------------------------------
+#' ## Classification tree example using non-spatial partitioning
+#' ## setup and default parallel mode ("foreach")
+#' ##------------------------------------------------------------
+#'
 #' data(ecuador) # Muenchow et al. (2012), see ?ecuador
 #' fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
 #'
-#' # Example of a classification tree fitted to this data:
 #' library(rpart)
-#' mypred.rpart <- function(object, newdata) predict(object, newdata)[, 2]
+#' mypred_part <- function(object, newdata) predict(object, newdata)[, 2]
 #' ctrl <- rpart.control(cp = 0.005) # show the effects of overfitting
 #' fit <- rpart(fo, data = ecuador, control = ctrl)
 #'
-#' # Non-spatial 5-repeated 10-fold cross-validation:
-#' mypred.rpart <- function(object, newdata) predict(object, newdata)[,2]
+#' ### Non-spatial 5-repeated 10-fold cross-validation:
+#' mypred_part <- function(object, newdata) predict(object, newdata)[, 2]
 #' par_nsp_res <- sperrorest(data = ecuador, formula = fo,
 #'                           model_fun = rpart,
 #'                           model_args = list(control = ctrl),
-#'                           pred_fun = mypred.rpart,
+#'                           pred_fun = mypred_part,
 #'                           progress = TRUE,
 #'                           smp_fun = partition_cv,
 #'                           smp_args = list(repetition = 1:5, nfold = 10),
@@ -210,15 +215,14 @@
 #' summary(par_nsp_res$represampling)
 #' # plot(par_nsp_res$represampling, ecuador)
 #'
-#' # Spatial 5-repeated 10-fold spatial cross-validation:
+#' ### Spatial 5-repeated 10-fold spatial cross-validation:
 #' par_sp_res <- sperrorest(data = ecuador, formula = fo,
 #'                          model_fun = rpart,
 #'                          model_args = list(control = ctrl),
-#'                          pred_fun = mypred.rpart,
+#'                          pred_fun = mypred_part,
 #'                          progress = TRUE,
 #'                          smp_fun = partition_kmeans,
 #'                          smp_args = list(repetition = 1:5, nfold = 10),
-#'                          par_args = list(par_units = 2, par_mode = "future"),
 #'                          error_rep = TRUE, error_fold = TRUE)
 #' summary(par_sp_res$error_rep)
 #' summary(par_sp_res$error_fold)
@@ -237,12 +241,32 @@
 #' boxplot(smry, col = c('red','red','red','green'),
 #'     main = 'Training vs. test, nonspatial vs. spatial',
 #'     ylab = 'Area under the ROC curve')
+#'
+#' ##------------------------------------------------------------
+#' ## Logistic regression example (glm) using partition_kmeans
+#' ## and computation of permutation based variable importance
+#' ##------------------------------------------------------------
+#'
+#' data(ecuador)
+#' fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
+#'
+#' out <- sperrorest(data = ecuador, formula = fo,
+#'                      model_fun = glm,
+#'                      model_args = list(family = "binomial"),
+#'                      pred_fun = predict,
+#'                      pred_args = list(type = "response"),
+#'                      smp_fun = partition_cv,
+#'                      smp_args = list(repetition = 1:2, nfold = 4),
+#'                      par_args = list(par_mode = "future"),
+#'                      importance = TRUE, imp_permutations = 10)
+#' summary(out$error_rep)
+#' summary(out$importance)
 #' }
 #' @export
 sperrorest <- function(formula, data, coords = c("x", "y"),
                        model_fun, model_args = list(),
                        pred_fun = NULL, pred_args = list(),
-                       smp_fun = partition_loo, smp_args = list(),
+                       smp_fun = partition_cv, smp_args = list(),
                        train_fun = NULL, train_param = NULL, test_fun = NULL,
                        test_param = NULL, err_fun = err_default,
                        error_fold = TRUE, error_rep = TRUE, err_train = TRUE,
