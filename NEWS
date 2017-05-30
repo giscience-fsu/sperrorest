@@ -1,25 +1,25 @@
-sperrorest 2.0.0.
+sperrorest 2.0.0
 --------------------------------------------------------------------------------
 
 Major:
   * integration of `parsperrorest()` into `sperrorest()`.
   * by default, `sperrorest()` now runs in parallel using all available cores.
   * `runfolds()` and `runreps()` are now doing the heavy lifting in the background. All modes are now running on the same code base. Before, all parallel modes were running on different code implementations.
-  * function and argument name changes to 'snake_case'
+  * function and argument name changes to 'snake_case'.
 
 Features:
   * new (parallel) modes:
-    * `apply`: calls `pbmclapply()` on Unix and `pbapply()` on Windows
-    * `future`: calls `future_lapply()` with various `future` options (`multiprocess`, `multicore`, etc.).
-    * `foreach`: `foreach()` with `future` 'cluster' execution with various `future` options (`multiprocess`, `multicore`, etc.).
-    * `sequential`: sequential execution using `future` backend
+      * `apply`: calls `pbmclapply()` on Unix and `pbapply()` on Windows.
+      * `future`: calls `future_lapply()` with various `future` options (`multiprocess`, `multicore`, etc
+      * `foreach`: `foreach()` with `future` 'cluster' execution with various `future` options (`multiprocess`, `multicore`, etc.).
+      * `sequential`: sequential execution using `future` backend
 
 Misc:
   * Limit workers to number of repetitions if number of cores > number of repetitions. This ensures that no unnecessary workers are started and increases robustness of parallel execuction.
   * documentation improvements
 
 Bugfixes:
-  * partial matching of arguments
+  * partial matching of arguments.
 
 sperrorest 1.0.0 (08-Mar-2017)
 --------------------------------------------------------------------------------

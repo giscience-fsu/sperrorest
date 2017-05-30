@@ -1,4 +1,4 @@
-# sperrorest 2.0.0.
+# sperrorest 2.0.0
 
 Major:
   * integration of `parsperrorest()` into `sperrorest()`. 
