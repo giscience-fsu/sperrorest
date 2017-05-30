@@ -103,7 +103,7 @@ thresholds is therefore recommended for non-zero (including random) offsets.
 }
 \examples{
 data(ecuador)
-parti <- partition_tiles(ecuador, nsplit = c(4,3), reassign = FALSE)
+parti <- partition_tiles(ecuador, nsplit = c(4, 3), reassign = FALSE)
 # plot(parti,ecuador)
 summary(parti) # tile A4 has only 55 samples
 # same partitioning, but now merge tiles with less than 100 samples to

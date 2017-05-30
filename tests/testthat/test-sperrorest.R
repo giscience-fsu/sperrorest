@@ -443,13 +443,11 @@ test_that("deprecated args", {
                           err.unpooled = NULL))
 })
 
-# partition.factor.cv mit custom pred_fun Sun Feb 19 09:36:26 2017
+# partition_factor_cv mit custom pred_fun Sun Feb 19 09:36:26 2017
 
-test_that("partition.factor.cv works (LDA)", {
+test_that("partition_factor_cv works (LDA)", {
 
   skip_on_cran()
-
-  skip("par_mode = 'apply' does not work on LDA example") # only skip on macOS??
 
   lda_predfun <- function(object, newdata, fac = NULL) {
     library(nnet)
@@ -479,7 +477,7 @@ test_that("partition.factor.cv works (LDA)", {
                                model_fun = lda,
                                pred_fun = lda_predfun,
                                pred_args = list(fac = "field"),
-                               smp_fun = partition.factor.cv,
+                               smp_fun = partition_factor_cv,
                                smp_args = list(fac = "field", repetition = 1:2,
                                                nfold = 2),
                                par_args = list(par_units = 2,
