@@ -625,7 +625,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
                         environment(runfolds) <- environment()
 
                         if (progress == 2) {
-                          cat(date(), "Repetition", names(resamp[[i]])[i], "\n")
+                          cat(date(), "Repetition", i, "\n")
                         }
 
                         try(map(seq_along(resamp[[i]]), function(rep)
