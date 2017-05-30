@@ -47,7 +47,7 @@ test_that("output type (= list) for different logical combinations of
                               model_fun = lda,
                               pred_fun = lda_predfun,
                               smp_fun = partition_cv,
-                              smp_args = list(repetition = 1:2, nfold = 4),
+                              smp_args = list(repetition = 1:6, nfold = 4),
                               error_rep = TRUE, error_fold = TRUE,
                               benchmark = TRUE, progress = 2)
 
@@ -106,10 +106,37 @@ test_that("output length of list is correct for error_rep = TRUE and
                                       pred_fun = mypred.rpart,
                                       progress = FALSE,
                                       smp_fun = partition_cv,
-                                      smp_args = list(repetition = 1:2,
+                                      smp_args = list(repetition = 1:6,
                                                       nfold = 2),
                                       par_args = list(par_mode = "foreach",
                                                       par_units = 2),
+                                      error_rep = TRUE, error_fold = TRUE)
+
+            expect_equal(length(par.nsp.res$error_fold[[1]]), 2)
+          })
+
+test_that("output length of list is correct for error_rep = TRUE and
+          error_fold  = TRUE for par_mode = 'foreach' on svm example", {
+
+            data(ecuador)
+            fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
+
+            svm_predfun <- function(object, newdata) {
+              pred <- predict(object, newdata = newdata, probability = TRUE)
+              pred <- attr(pred, "probabilities")[, 2]
+            }
+
+            par.nsp.res <- sperrorest(data = ecuador, formula = fo,
+                                      model_fun = svm,
+                                      model_args = list(cost = 10000, gamma = 0.0001,
+                                                        kernel = "sigmoid",
+                                                        probability = TRUE),
+                                      pred_fun = svm_predfun,
+                                      progress = TRUE,
+                                      smp_fun = partition_cv,
+                                      smp_args = list(repetition = 1:2,
+                                                      nfold = 2),
+                                      par_args = list(par_mode = "foreach"),
                                       error_rep = TRUE, error_fold = TRUE)
 
             expect_equal(length(par.nsp.res$error_fold[[1]]), 2)
