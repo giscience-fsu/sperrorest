@@ -380,12 +380,12 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
   }
 
   # prevent unnecessary starts of too many workers
-  if (is.null(par_args$par_units) && length(resamp) < availableWorkers()) {
+  if (is.null(par_args$par_units) && length(resamp) < availableCores()) {
     par_args$par_units <- length(resamp)
     message(sprintf(paste0("Setting number of cores equal to repetition count",
                            " (= %s) to avoid starting unnecessary workers."),
                     length(resamp)))
-  } else if (is.null(par_args$par_units) && length(resamp) < par_args$par_units) {
+  } else if (!is.null(par_args$par_units) && length(resamp) < par_args$par_units) {
     par_args$par_units <- length(resamp)
     message(sprintf(paste0("Setting number of cores equal to repetition count",
                            " (= %s) to avoid starting unnecessary workers."),
@@ -601,7 +601,6 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
                       par_args$par_units, par_args$par.option))
     }
     if (par_args$par_mode == "sequential") {
-      registerDoFuture()
       plan(sequential)
       message(sprintf("Using 'foreach' sequential mode."))
     }
@@ -631,7 +630,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
                         environment(runfolds) <- environment()
 
                         if (progress == 2) {
-                          cat(date(), "Repetition", names(resamp[[i]])[i], "\n")
+                          cat(date(), "Repetition", i, "\n")
                         }
 
                         try(map(seq_along(resamp[[i]]), function(rep)
