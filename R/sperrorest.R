@@ -374,6 +374,19 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
     rm(tmp)
   }
 
+  # prevent unnecessary starts of too many workers
+  if (is.null(par_args$par_units) && length(resamp) < availableWorkers()) {
+    par_args$par_units <- length(resamp)
+    message(sprintf(paste0("Setting number of cores equal to repetition count",
+                           " (= %s) to avoid starting unnecessary workers."),
+                    length(resamp)))
+  } else if (is.null(par_args$par_units) && length(resamp) < par_args$par_units) {
+    par_args$par_units <- length(resamp)
+    message(sprintf(paste0("Setting number of cores equal to repetition count",
+                           " (= %s) to avoid starting unnecessary workers."),
+                    length(resamp)))
+  }
+
 
   ### par_mode = "apply" (pbapply) -------
 
