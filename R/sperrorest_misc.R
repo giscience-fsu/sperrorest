@@ -240,7 +240,7 @@ print.tilename <- function(x, ...) {
 #' length(parti[[1]])
 #' # Same in factor format for the application of get_small_tiles:
 #' parti.fac <- partition_tiles(ecuador, nsplit = c(10, 10), reassign = FALSE,
-#'                              return.factor = TRUE)
+#'                              return_factor = TRUE)
 #' get_small_tiles(parti.fac[[1]], min_n = 20) # tiles with less than 20 samples
 #' parti2 <- partition_tiles(ecuador, nsplit = c(10, 10), reassign = TRUE,
 #'                           min_n = 20, min_frac = 0)

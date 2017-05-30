@@ -42,7 +42,7 @@ test_that("partition_factor_cv() output is of correct length", {
 
 test_that("partition_tiles() output is of correct length", {
   data(ecuador)
-  parti <- partition_tiles(ecuador, nsplit = c(4,2), reassign = FALSE)
+  parti <- partition_tiles(ecuador, nsplit = c(4, 2), reassign = FALSE)
   expect_equal(length(parti[[1]]), 8)
 })
 

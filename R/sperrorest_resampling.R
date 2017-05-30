@@ -750,7 +750,7 @@ partition_disc <- function(data, coords = c("x", "y"), radius, buffer = NULL,
                            ndisc = nrow(data), seed1 = NULL,
                            return_train = TRUE, prob = NULL, replace = FALSE,
                            repetition = 1) {
-  # posbuf <- buffer
+  posbuf <- buffer
   if (is.null(buffer)) {
     # pospuf <- 0
   } else {
