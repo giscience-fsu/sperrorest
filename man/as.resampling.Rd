@@ -8,7 +8,7 @@
 \alias{as.resampling.factor}
 \alias{as.resampling_list}
 \alias{as.resampling.list}
-\alias{validate_resampling}
+\alias{validate.resampling}
 \alias{is.resampling}
 \alias{print.resampling}
 \title{Resampling objects such as partitionings or bootstrap samples}
@@ -21,7 +21,7 @@ as.resampling(object, ...)
 
 \method{as.resampling}{list}(object, ...)
 
-validate_resampling(object)
+validate.resampling(object)
 
 is.resampling(x, ...)
 

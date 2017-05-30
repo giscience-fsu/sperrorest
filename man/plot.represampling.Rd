@@ -6,7 +6,7 @@
 \title{Plot spatial resampling objects}
 \usage{
 \method{plot}{represampling}(x, data, coords = c("x", "y"), pch = "+",
-  wiggle.sd = 0, ...)
+  wiggle_sd = 0, ...)
 
 \method{plot}{resampling}(x, ...)
 }
@@ -21,7 +21,7 @@ contain the x and y coordinates of sample locations.}
 
 \item{pch}{point symbold (to be passed to \link{points}).}
 
-\item{wiggle.sd}{'wiggle' the point locations in x and y direction to avoid
+\item{wiggle_sd}{'wiggle' the point locations in x and y direction to avoid
 overplotting of samples drawn multiple times by bootstrap methods;
 this is a standard deviation (in the units of the x/y coordinates) of a
 normal distribution and defaults to 0 (no wiggling).}

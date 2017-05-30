@@ -6,12 +6,12 @@
 #' function, by default the mean.
 #'
 #' @param d1 a `data.frame` with (at least) columns with names given by
-#' `x.name` and `y.name`; these contain the x and y coordinates,
+#' `x_name` and `y_name`; these contain the x and y coordinates,
 #' respectively.
 #' @param d2 see `d1`  - second set of points
-#' @param x.name name of column in `d1` and `d2` containing the x
+#' @param x_name name of column in `d1` and `d2` containing the x
 #' coordinates of points.
-#' @param y.name same for y coordinates
+#' @param y_name same for y coordinates
 #' @param fun function to be applied to the vector of nearest-neighbor
 #' distances of `d1` from `d2`.
 #' @param method type of distance metric to be used; only `'euclidean'`
@@ -37,7 +37,7 @@
 #'
 #' @seealso [add.distance]
 #'
-dataset_distance <- function(d1, d2, x.name = "x", y.name = "y", fun = mean,
+dataset_distance <- function(d1, d2, x_name = "x", y_name = "y", fun = mean,
                              method = "euclidean", ...) {
   method <- tolower(method)
   if (method != "euclidean") {
@@ -51,8 +51,8 @@ dataset_distance <- function(d1, d2, x.name = "x", y.name = "y", fun = mean,
   }
   di <- rep(NA, nrow(d1))
   for (i in 1:nrow(d1)) {
-    di[i] <- min(sqrt((d2[, x.name] - d1[i, x.name])^2 +
-                        (d2[, y.name] - d1[i, y.name])^2))
+    di[i] <- min(sqrt((d2[, x_name] - d1[i, x_name]) ^ 2 + # nolint
+                        (d2[, y_name] - d1[i, y_name]) ^ 2)) # nolint
   }
   if (!is.null(fun)) {
     di <- fun(di, ...)
@@ -100,29 +100,29 @@ dataset_distance <- function(d1, d2, x.name = "x", y.name = "y", fun = mean,
 #' sp.parti[[1]][[1]]$distance
 #'
 #' @export
-add.distance <- function(object, ...) UseMethod("add.distance")
+add.distance <- function(object, ...) UseMethod("add.distance") # nolint
 
 
 #' @rdname add.distance
 #' @name add.distance.resampling
 #' @method add.distance resampling
 #' @export
-add.distance.resampling <- function(object, data, coords = c("x", "y"), ...) {
+add.distance.resampling <- function(object, data, coords = c("x", "y"), ...) { # nolint
   for (j in 1:length(object)) {
-    test.dist <- dataset_distance(data[object[[j]]$test, coords],
+    test_dist <- dataset_distance(data[object[[j]]$test, coords],
                                   data[object[[j]]$train, coords],
-                                  x.name = coords[1], y.name = coords[2], ...)
-    object[[j]]$distance <- test.dist
+                                  x_name = coords[1], y_name = coords[2], ...)
+    object[[j]]$distance <- test_dist
   }
   return(object)
 }
 
 #' @rdname add.distance
-#' @name add.distance_represampling
+#' @name add.distance.represampling
 #' @method add.distance represampling
 #' @export
-add.distance.represampling <- function(object, ...) {
-  object <- lapply(object, add.distance.resampling, ...)
+add.distance.represampling <- function(object, ...) { # nolint
+  object <- lapply(object, add.distance.resampling, ...) # nolint
   class(object) <- "represampling"
   return(object)
 }
@@ -173,7 +173,6 @@ as.tilename.numeric <- function(x, ...) {
 #' @method as.character tilename
 #' @export
 as.character.tilename <- function(x, ...) {
-  y <- as.numeric.tilename(x)  # just testing
   class(x) <- "character"
   return(x)
 }
@@ -182,7 +181,7 @@ as.character.tilename <- function(x, ...) {
 #' @name as.numeric.tilename
 #' @method as.numeric tilename
 #' @export
-as.numeric.tilename <- function(x, ...) {
+as.numeric.tilename <- function(x, ...) { # nolint
   x <- strsplit(x, ":")[[1]]
   if (length(x) != 2) {
     stop("tilename objects must have the form 'X3:Y5' etc.")
@@ -199,7 +198,6 @@ as.numeric.tilename <- function(x, ...) {
 #' @export
 as.tilename.character <- function(x, ...) {
   stopifnot(length(x) == 1)
-  y <- as.numeric.tilename(x)  # just testing
   class(x) <- "tilename"
   return(x)
 }
@@ -258,13 +256,13 @@ get_small_tiles <- function(tile, min_n = NULL, min_frac = 0, ignore = c()) {
   small_tile <- rep(FALSE, n_tiles)
   if (is.null(min_n) & is.null(min_frac)) {
     stop("either 'min_n' or 'min_frac' must be specified in
-       'get_small_tiles'")
+         'get_small_tiles'")
   }
   if (!is.null(min_n)) {
     small_tile <- small_tile | (n_tile < min_n)
   }
   if (!is.null(min_frac)) {
-    small_tile <- small_tile | (n_tile * n_tiles/length(tile) < min_frac)
+    small_tile <- small_tile | (n_tile * n_tiles / length(tile) < min_frac)
   }
   if (any(small_tile)) {
     small_tile <- levels(tile)[small_tile]
@@ -272,7 +270,7 @@ get_small_tiles <- function(tile, min_n = NULL, min_frac = 0, ignore = c()) {
   else {
     small_tile <- character()
   }
-  if ((length(small_tile) > 0) & (length(ignore) > 0)) {
+  if ((length(small_tile) > 0) & (length(ignore) > 0)) { # nolint
     small_tile <- small_tile[!(small_tile %in% as.character(ignore))]
   }
   # Order 'small' tiles, smallest one first:
@@ -281,7 +279,7 @@ get_small_tiles <- function(tile, min_n = NULL, min_frac = 0, ignore = c()) {
   }
   small_tile <- factor(small_tile, levels = levels(tile))
   return(small_tile)
-}
+  }
 
 #' Determine the names of neighbouring tiles in a rectangular pattern
 #'
@@ -310,7 +308,7 @@ tile_neighbors <- function(nm, tileset, iterate = 0, diagonal = FALSE) {
     }
   }
   nm <- as.character(nm)
-  wh <- as.numeric.tilename(as.tilename(nm))
+  wh <- as.numeric.tilename(as.tilename(nm)) # nolint
 
   # Initial neighbors list:
   nbr <- c()
@@ -324,7 +322,7 @@ tile_neighbors <- function(nm, tileset, iterate = 0, diagonal = FALSE) {
           next
         }
         if (wh[2] + j >= 0) {
-          nbr <- c(nbr, as.character(as.tilename(wh + c(i, j))))
+          nbr <- c(nbr, as.character(as.tilename(wh + c(i, j)))) # nolint
         }
       }
     }
@@ -445,7 +443,7 @@ as.resampling <- function(object, ...) {
 #' @method as.resampling default
 #' @export
 as.resampling.default <- function(object, ...) {
-  as.resampling.factor(factor(object))
+  as.resampling.factor(factor(object)) # nolint
 }
 
 #' @rdname as.resampling
@@ -469,15 +467,15 @@ as.resampling.factor <- function(object, ...) {
 #' @method as.resampling list
 #' @export
 as.resampling.list <- function(object, ...) {
-  stopifnot(validate_resampling(object))
+  stopifnot(validate.resampling(object))
   class(object) <- "resampling"
   return(object)
 }
 
 #' @rdname as.resampling
-#' @name validate_resampling
+#' @name validate.resampling
 #' @export
-validate_resampling <- function(object) {
+validate.resampling <- function(object) { # nolint
   if (!is.list(object)) {
     return(FALSE)
   }
@@ -574,14 +572,14 @@ as.represampling <- function(object, ...) {
 #' @method as.represampling list
 #' @export
 as.represampling.list <- function(object, ...) {
-  valid <- sapply(object, validate_resampling)
+  valid <- sapply(object, validate.resampling)
   if (any(!valid)) {
     msg <- paste("cannot coerce to 'represampling' object: invalid list
-          elements number\n   ",
+                 elements number\n   ",
                  paste(which(!valid), collapse = " "))
     stop(msg)
   }
-  object <- lapply(object, as.resampling)
+  object <- lapply(object, as.resampling) # nolint
   class(object) <- "represampling"
   return(object)
 }

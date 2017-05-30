@@ -99,7 +99,7 @@ mean nearest-neighbour distances from test samples to training samples using
 \item{par_args}{list of parallelization parameters:
 \code{par_mode} (the parallelization mode),
 \code{par_units} (the number of parallel processing units),
-\code{par.option} (optional settings for \code{par_mode = "future"}),}
+\code{par_option} (optional settings for \code{par_mode = "future"}),}
 
 \item{do_gc}{numeric (default: 1): defines frequency of memory garbage
 collection by calling \link{gc}; if \code{<1}, no garbage collection;
@@ -156,7 +156,7 @@ By default \code{sperrorest} runs in parallel on all cores using
 \code{par_units} in \code{par_args}.
 
 Other parallelization modes include \code{apply} (\link{pbmclapply} on Unix, \link{parApply}
-on Windows) and \code{future} (\link{future_lapply}). For the latter \code{par.options}
+on Windows) and \code{future} (\link{future_lapply}). For the latter \code{par_options}
 (default to \code{multiprocess}) can be specified. See \link{plan} for further details.
 
 Setting \code{par_mode = "sequential"} executes \code{sperrorest} like a normal
@@ -179,7 +179,7 @@ fit <- rpart(fo, data = ecuador, control = ctrl)
 
 # Non-spatial 5-repeated 10-fold cross-validation:
 mypred.rpart <- function(object, newdata) predict(object, newdata)[,2]
-par.nsp.res <- sperrorest(data = ecuador, formula = fo,
+par_nsp_res <- sperrorest(data = ecuador, formula = fo,
                           model_fun = rpart,
                           model_args = list(control = ctrl),
                           pred_fun = mypred.rpart,
@@ -187,13 +187,13 @@ par.nsp.res <- sperrorest(data = ecuador, formula = fo,
                           smp_fun = partition_cv,
                           smp_args = list(repetition = 1:5, nfold = 10),
                           error_rep = TRUE, error_fold = TRUE)
-summary(par.nsp.res$error_rep)
-summary(par.nsp.res$error_fold)
-summary(par.nsp.res$represampling)
-# plot(par.nsp.res$represampling, ecuador)
+summary(par_nsp_res$error_rep)
+summary(par_nsp_res$error_fold)
+summary(par_nsp_res$represampling)
+# plot(par_nsp_res$represampling, ecuador)
 
 # Spatial 5-repeated 10-fold spatial cross-validation:
-par.sp.res <- sperrorest(data = ecuador, formula = fo,
+par_sp_res <- sperrorest(data = ecuador, formula = fo,
                          model_fun = rpart,
                          model_args = list(control = ctrl),
                          pred_fun = mypred.rpart,
@@ -202,16 +202,20 @@ par.sp.res <- sperrorest(data = ecuador, formula = fo,
                          smp_args = list(repetition = 1:5, nfold = 10),
                          par_args = list(par_units = 2, par_mode = "future"),
                          error_rep = TRUE, error_fold = TRUE)
-summary(par.sp.res$error_rep)
-summary(par.sp.res$error_fold)
-summary(par.sp.res$represampling)
-# plot(par.sp.res$represampling, ecuador)
+summary(par_sp_res$error_rep)
+summary(par_sp_res$error_fold)
+summary(par_sp_res$represampling)
+# plot(par_sp_res$represampling, ecuador)
 
 smry <- data.frame(
-    nonspat.training = unlist(summary(par.nsp.res$error_rep, level = 1)$train.auroc),
-    nonspat.test     = unlist(summary(par.nsp.res$error_rep, level = 1)$test.auroc),
-    spatial.training = unlist(summary(par.sp.res$error_rep, level = 1)$train.auroc),
-    spatial.test     = unlist(summary(par.sp.res$error_rep, level = 1)$test.auroc))
+    nonspat_training = unlist(summary(par_nsp_res$error_rep,
+                                      level = 1)$train.auroc),
+    nonspat_test     = unlist(summary(par_nsp_res$error_rep,
+                                      level = 1)$test.auroc),
+    spatial_training = unlist(summary(par_sp_res$error_rep,
+                                      level = 1)$train.auroc),
+    spatial_test     = unlist(summary(par_sp_res$error_rep,
+                                     level = 1)$test.auroc))
 boxplot(smry, col = c('red','red','red','green'),
     main = 'Training vs. test, nonspatial vs. spatial',
     ylab = 'Area under the ROC curve')

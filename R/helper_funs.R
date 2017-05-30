@@ -335,7 +335,7 @@ runreps <- function(current_sample = NULL, data = NULL, formula = NULL,
     }
   }  # end for each fold
 
-  if ( (do_gc >= 1) & (do_gc < 2)) {
+  if ((do_gc >= 1) & (do_gc < 2)) {
     gc()
   }
 

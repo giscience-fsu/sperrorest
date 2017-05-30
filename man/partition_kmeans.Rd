@@ -5,8 +5,8 @@
 \title{Partition samples spatially using k-means clustering of the coordinates}
 \usage{
 partition_kmeans(data, coords = c("x", "y"), nfold = 10, repetition = 1,
-  seed1 = NULL, return.factor = FALSE, balancing.steps = 1,
-  order.clusters = TRUE, ...)
+  seed1 = NULL, return_factor = FALSE, balancing_steps = 1,
+  order_clusters = TRUE, ...)
 }
 \arguments{
 \item{data}{\code{data.frame} containing at least the columns specified
@@ -28,20 +28,20 @@ to obtain a different set of 100 repetitions.}
 \link{set.seed} in repetition \code{i} (\code{i} in \code{repetition})
 to initialize the random number generator before sampling from the data set.}
 
-\item{return.factor}{if \code{FALSE} (default), return a
+\item{return_factor}{if \code{FALSE} (default), return a
 \link{represampling} object; if \code{TRUE} (used internally by
 other \code{sperrorest} functions), return a \code{list} containing factor
 vectors (see Value)}
 
-\item{balancing.steps}{if \code{> 1}, perform \code{nfold}-means clustering
-\code{balancing.steps} times, and pick the clustering that minimizes the Gini
+\item{balancing_steps}{if \code{> 1}, perform \code{nfold}-means clustering
+\code{balancing_steps} times, and pick the clustering that minimizes the Gini
 index of the sample size distribution among the partitions. The idea is that
 'degenerate' partitions will be avoided, but this also has the side effect of
 reducing variation among partitioning repetitions. More meaningful
 constraints (e.g., minimum number of positive and negative samples within
 each partition should be added in the future.}
 
-\item{order.clusters}{if \code{TRUE}, clusters are ordered by increasing x
+\item{order_clusters}{if \code{TRUE}, clusters are ordered by increasing x
 coordinate of center point.}
 
 \item{...}{additional arguments to \link{kmeans}.}

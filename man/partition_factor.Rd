@@ -5,7 +5,7 @@
 \title{Partition the data for a (non-spatial) leave-one-factor-out cross-validation
 based on a given, fixed partitioning}
 \usage{
-partition_factor(data, coords = c("x", "y"), fac, return.factor = FALSE,
+partition_factor(data, coords = c("x", "y"), fac, return_factor = FALSE,
   repetition = 1)
 }
 \arguments{
@@ -19,7 +19,7 @@ contain the x and y coordinates of sample locations.}
 of type factor and length \code{nrow(data)} that contains the partitions
 to be used for defining training and test samples.}
 
-\item{return.factor}{if \code{FALSE} (default), return a
+\item{return_factor}{if \code{FALSE} (default), return a
 \link{represampling} object; if \code{TRUE} (used internally by
 other \code{sperrorest} functions), return a \code{list} containing factor
 vectors (see Value)}

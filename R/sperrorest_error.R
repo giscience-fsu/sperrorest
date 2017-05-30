@@ -1,13 +1,14 @@
-
-#' Default error function
+#' @title Default error function
 #'
-#' Calculate a variety of accuracy measures from observations and predictions
+#' @description Calculate a variety of accuracy measures from observations and predictions
 #' of numerical and categorical response variables.
 #'
 #' @name err_default
+#'
 #' @importFrom ROCR prediction performance
 #'
 #' @param obs factor, logical, or numeric vector with observations
+#'
 #' @param pred factor, logical, or numeric vector with predictions. Must be of
 #' same type as `obs` with the exception that `pred` may be numeric
 #' if `obs` is `factor` or `logical` ('soft' classification).
@@ -45,14 +46,16 @@
 err_default <- function(obs, pred) {
   # The following wrapper functions are used in order to avoid warning messages:
   mmin <- function(x, ...) {
-    if (length(x) == 0)
+    if (length(x) == 0) {
       x <- Inf
-    min(x, ...)
+    }
+    return(min(x, ...))
   }
   mmax <- function(x, ...) {
-    if (length(x) == 0)
+    if (length(x) == 0) {
       x <- -Inf
-    max(x, ...)
+    }
+    return(max(x, ...))
   }
 
   # Convert logical to factor if necessary:
@@ -112,34 +115,35 @@ err_default <- function(obs, pred) {
       err$specificity <- 1 - fpr(obs == pos, pred, nneg, 0.5)
 
       thrs <- unique(pred)
+
       if (length(thrs) > 500)
         thrs <- seq(min(pred) + 1e-04, max(pred) + 1e-04, length = 500)
 
       thr <- mmax(thrs[sapply(thrs, function(x) tpr(obs == pos, pred, npos,
-        x) >= 0.7)])
+                                                    x) >= 0.7)])
       err$fpr70 <- fpr(obs == pos, pred, nneg, thr)
       thr <- mmax(thrs[sapply(thrs, function(x) tpr(obs == pos, pred, npos,
-        x) >= 0.8)])
+                                                    x) >= 0.8)])
       err$fpr80 <- fpr(obs == pos, pred, nneg, thr)
       thr <- mmax(thrs[sapply(thrs, function(x) tpr(obs == pos, pred, npos,
-        x) >= 0.9)])
+                                                    x) >= 0.9)])
       err$fpr90 <- fpr(obs == pos, pred, nneg, thr)
 
       thr <- mmin(thrs[sapply(thrs, function(x) fpr(obs == pos, pred, nneg,
-        x) <= 0.2)])
+                                                    x) <= 0.2)])
       err$tpr80 <- tpr(obs == pos, pred, npos, thr)
       thr <- mmin(thrs[sapply(thrs, function(x) fpr(obs == pos, pred, nneg,
-        x) <= 0.1)])
+                                                    x) <= 0.1)])
       err$tpr90 <- tpr(obs == pos, pred, npos, thr)
       thr <- mmin(thrs[sapply(thrs, function(x) fpr(obs == pos, pred, nneg,
-        x) <= 0.05)])
+                                                    x) <= 0.05)])
       err$tpr95 <- tpr(obs == pos, pred, npos, thr)
     }
     err$events <- sum(obs == levels(obs)[2])
   } else {
     # Regression problem:
     err <- list(bias = mean(obs - pred), stddev = sd(obs - pred),
-                mse = mean((obs - pred)^2), mad = mad(obs - pred),
+                mse = mean((obs - pred) ^ 2), mad = mad(obs - pred),
                 median = median(obs - pred), iqr = IQR(obs - pred))
   }
   # Number of observations available:

@@ -4,20 +4,20 @@
 \alias{dataset_distance}
 \title{Calculate mean nearest-neighbour distance between point datasets}
 \usage{
-dataset_distance(d1, d2, x.name = "x", y.name = "y", fun = mean,
+dataset_distance(d1, d2, x_name = "x", y_name = "y", fun = mean,
   method = "euclidean", ...)
 }
 \arguments{
 \item{d1}{a \code{data.frame} with (at least) columns with names given by
-\code{x.name} and \code{y.name}; these contain the x and y coordinates,
+\code{x_name} and \code{y_name}; these contain the x and y coordinates,
 respectively.}
 
 \item{d2}{see \code{d1}  - second set of points}
 
-\item{x.name}{name of column in \code{d1} and \code{d2} containing the x
+\item{x_name}{name of column in \code{d1} and \code{d2} containing the x
 coordinates of points.}
 
-\item{y.name}{same for y coordinates}
+\item{y_name}{same for y coordinates}
 
 \item{fun}{function to be applied to the vector of nearest-neighbor
 distances of \code{d1} from \code{d2}.}
