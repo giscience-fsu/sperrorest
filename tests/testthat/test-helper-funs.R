@@ -15,7 +15,7 @@ testthat::test_that("runfolds works on glm example", {
   current_sample <- partition_cv(ecuador, nfold = 4)[[1]]
   current_res <- current_sample
 
-  runfolds_single1 <- runfolds(j = 1, data = ecuador, current_sample = current_sample,
+  runfolds_single <- runfolds(j = 1, data = ecuador, current_sample = current_sample,
                               formula = slides ~ dem + slope + hcurv + vcurv + log.carea + cslope,
                               model_args = list(family = "binomial"), do_try = FALSE, model_fun = glm,
                               error_fold = TRUE, error_rep = TRUE, imp_permutations = 2,
@@ -39,13 +39,20 @@ testthat::test_that("runfolds works on svm example", {
   current_sample <- partition_kmeans(df, nfold = 4)[[1]]
   current_res <- current_sample
 
+  # svm predict function due to predict.svm bevhaviour returning probs in a sublist
+  # https://stackoverflow.com/questions/24197809/functionality-of-probability-true-in-svm-function-of-e1071-package-in-r
+  svm_predfun <- function(object, newdata) {
+    pred <- predict(object, newdata = newdata, probability = TRUE)
+    pred <- attr(pred, "probabilities")[, 2]
+  }
+
   runfolds_single <- runfolds(j = 1, data = df, current_sample = current_sample,
-                              formula = fo,
+                              formula = fo, pred_fun = svm_predfun,
                               model_args = list(cost = 10000, gamma = 0.0001,
                                                 kernel = "sigmoid",
                                                 probability = TRUE), do_try = FALSE,
                               par_mode = "foreach",
-                              model_fun = svm,  pred_args = list(probability = TRUE),
+                              model_fun = svm,
                               error_fold = TRUE, error_rep = TRUE,
                               err_train = TRUE, importance = FALSE, current_res = current_res,
                               response = "diplo01", par_cl = 2,
@@ -228,16 +235,20 @@ testthat::test_that("runreps works on rpart example", {
 testthat::test_that("runreps works on svm example", {
 
   data <- ecuador
-  data <- ecuador
   current_sample <- partition_kmeans(ecuador, nfold = 4)
   current_res <- current_sample
+
+  svm_predfun <- function(object, newdata) {
+    pred <- predict(object, newdata = newdata, probability = TRUE)
+    pred <- attr(pred, "probabilities")[, 2]
+  }
 
   runreps_res <- lapply(current_sample, function(X) runreps(current_sample = X, data = ecuador,
                                                             formula = slides ~ dem + slope + hcurv + vcurv + log.carea + cslope,
                                                             model_args = list(cost = 10000, gamma = 0.0001,
                                                                               kernel = "sigmoid",
                                                                               probability = TRUE),
-                                                            pred_args = list(probability = TRUE),
+                                                            pred_fun = svm_predfun,
                                                             par_mode = "foreach", do_gc = 1,
                                                             do_try = FALSE, model_fun = svm,
                                                             error_fold = TRUE, error_rep = TRUE,
