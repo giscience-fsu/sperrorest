@@ -28,13 +28,6 @@ If \code{param$replace=FALSE}, a subsample of
 \code{min(param$n,nlevel(data[,fac]))} groups will be drawn from \code{data}.
 If \code{param$replace=TRUE}, the number of groups to be drawn is \code{param$n}.
 }
-\examples{
-data(ecuador) # Muenchow et al. (2012), see ?ecuador
-d <- resample_uniform(ecuador, param = list(strat = 'slides', n = 200))
-nrow(d) # == 200
-sum(d$slides == 'TRUE')
-
-}
 \seealso{
 \code{\link[=resample_strat_uniform]{resample_strat_uniform()}}, \code{\link[=sample]{sample()}}
 }
