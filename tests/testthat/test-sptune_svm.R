@@ -16,7 +16,7 @@ test_that("sp_tune_svm works with kernlab package", {
                partition_fun = "partition_kmeans", kernel = x,
                type = "C-svc"))
 
-  out <- sptune_svm(fo, ecuador, accelerate = 1, nfold = 5, svm_fun = "ksvm",
+  out <- sptune_svm(fo, ecuador, accelerate = 2, nfold = 5, svm_fun = "ksvm",
              partition_fun = "partition_kmeans", kernel = "laplacedot",
              type = "C-svc")
 

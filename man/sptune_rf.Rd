@@ -5,7 +5,7 @@
 \title{svm_tuning}
 \usage{
 sptune_rf(formula = NULL, data = NULL, accelerate = 1, nfold = NULL,
-  partition_fun = NULL, rf_fun = "svm", ...)
+  partition_fun = NULL, rf_fun = "rfsrc", ...)
 }
 \arguments{
 \item{formula}{formula}

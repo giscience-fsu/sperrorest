@@ -192,11 +192,11 @@ sptune_svm <- function(formula = NULL, data = NULL, accelerate = 1,
 #' @export
 sptune_rf <- function(formula = NULL, data = NULL, accelerate = 1,
                        nfold = NULL, partition_fun = NULL,
-                       rf_fun = "svm", ...) {
+                       rf_fun = "rfsrc", ...) {
 
   if (is.null(partition_fun)) {
-    message("Partitioning method: 'partition.kmeans'.")
-    partition_fun <- "partition.kmeans"
+    message("Partitioning method: 'partition_kmeans'.")
+    partition_fun <- "partition_kmeans"
   } else {
     message(sprintf("Partitioning method: '%s'.", partition_fun))
   }
@@ -215,7 +215,7 @@ sptune_rf <- function(formula = NULL, data = NULL, accelerate = 1,
   test <- data[parti[[1]][[1]]$test, ]
 
   # Perform a complete grid search over the following range of values:
-  ntree <- seq(5, 2500, by = 0.5 * accelerate)
+  ntree <- c(10, 30, 50, seq(100, 2500, by = 100 * accelerate))
   default_mtry <- floor(sqrt(ncol(data)))
   n_variables <- length(attr(terms(formula), "term.labels"))
   mtrys <- unique(c(default_mtry, seq(1, n_variables, by = 1)))
@@ -263,6 +263,7 @@ sptune_rf <- function(formula = NULL, data = NULL, accelerate = 1,
   fit$my_ntrees <- ntrees
   fit$my_mtry <- gamma
   fit$my_mtrys <- mtrys
+  fit$my_auroc <- auroc
 
   return(fit)
 }
