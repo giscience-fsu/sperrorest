@@ -49,10 +49,10 @@ plot_hyper_svm <- function(object = NULL) {
 
 plot_hyper_rf <- function(object = NULL) {
   if (any(class(object) == "randomForest")) {
-    df <- tibble(ntrees = object$my_ntrees, mtry = object$my_mtrys,
-                 auroc = round(object$my_auroc, 3))
+    df <- tibble(ntrees = object$all_ntrees, mtry = object$all_mtrys,
+                 auroc = round(object$all_auroc, 3))
 
-    if (length(unique(df$ntrees)) > 12) {
+    if (length(unique(df$mtry)) > 12) {
       stop(paste0("Too many 'ntrees' levels (> 12) supplied for discrete",
                      " color scale."))
     }
@@ -67,8 +67,14 @@ plot_hyper_rf <- function(object = NULL) {
       labs(x = "ntrees", y = "auroc",
            title = "'randomForest' hyperparameter tuning results",
            subtitle = sprintf(paste0("Number of combinations: %s.",
-                                     " Package: 'randomForest'"),
-                              length(object$my_ntrees))) +
+                                     " Package: 'randomForest'",
+                                     " Best AUROC: %s.",
+                                     " Optimal 'ntrees': %s",
+                                     " Optimal 'mtry: %s"),
+                              length(object$my_ntrees),
+                              object$best_auroc,
+                              object$optimal_ntree,
+                              object$optimal_mtry)) +
       theme_ipsum() +
       guides(color = guide_legend(title = "number of trees"))
   }

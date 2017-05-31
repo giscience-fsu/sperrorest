@@ -228,12 +228,37 @@ sptune_rf <- function(formula = NULL, data = NULL, accelerate = 1,
 
   # Calculate AUROC for all combinations of cost and gamma values:
 
-  for (i in 1:length(ntrees)) {
-    auroc[i] <- rf_cv_err(ntree = ntrees[i], mtry = mtrys[i], train = train,
-                           test = test, response = response, formula = formula,
-                           rf_fun = rf_fun,
-                           ...)
-  }
+  registerDoFuture()
+  cl <- makeCluster(availableCores())
+  plan(cluster, workers = cl)
+
+  message(sprintf(paste0("Using 'foreach' parallel mode with %s cores on",
+                         " '%s' combinations."),
+                  availableCores(), length(ntrees)))
+  message(sprintf(paste0("Unique 'ntrees': %s.",
+                         "Unique 'mtry': %s."),
+                  length(unique(mtrys)), length(unique(ntrees))))
+
+  auroc <- foreach(i = 1:length(ntrees), .packages = (.packages()),
+                   .errorhandling = "remove", .verbose = FALSE) %dopar% {
+
+                     out <- rf_cv_err(ntree = ntrees[i], mtry = mtrys[i],
+                                      train = train, test = test,
+                                      response = response, formula = formula,
+                                      rf_fun = rf_fun,
+                                      ...)
+                     return(out)
+                   }
+  stopCluster(cl)
+
+  auroc <- as.numeric(auroc)
+
+  # for (i in 1:length(ntrees)) {
+  #   auroc[i] <- rf_cv_err(ntree = ntrees[i], mtry = mtrys[i], train = train,
+  #                          test = test, response = response, formula = formula,
+  #                          rf_fun = rf_fun,
+  #                          ...)
+  # }
 
   # Identify best AUROC, or if all are NA, use defaults and issue a warning:
   if (all(is.na(auroc))) {
@@ -251,7 +276,7 @@ sptune_rf <- function(formula = NULL, data = NULL, accelerate = 1,
       mtry,";    best auroc: ",
       max(auroc, na.rm = T), "\n", sep = "")
 
-  # Generate the actual fit object using optimized cost and gamma parameters:
+  # Generate the actual fit object using optimized hyperparameters:
 
   if (is.factor(train[[response]])) {
     args <- list(formula = formula, data = train, ntree = ntree, mtry = mtry)
@@ -259,11 +284,12 @@ sptune_rf <- function(formula = NULL, data = NULL, accelerate = 1,
   }
 
   # Keep track of optimal cost and gamma values:
-  fit$my_ntree <- ntree
-  fit$my_ntrees <- ntrees
-  fit$my_mtry <- gamma
-  fit$my_mtrys <- mtrys
-  fit$my_auroc <- auroc
+  fit$optimal_ntree <- ntree
+  fit$all_ntrees <- ntrees
+  fit$optimal_mtry <- mtry
+  fit$all_mtrys <- mtrys
+  fit$best_auroc <- max(auroc, na.rm = T)
+  fit$all_auroc <- auroc
 
   return(fit)
 }
