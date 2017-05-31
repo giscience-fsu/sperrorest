@@ -12,7 +12,7 @@ sudo: false
 cache: packages
 warnings_are_errors: false
 # r_check_args: --as-cran
-latex: false
+latex: true
 
 matrix:
   include:
@@ -20,52 +20,28 @@ matrix:
       r: oldrel
       r_github_packages:
         - hadley/testthat
-      script:
-        - |
-          R CMD build .
-          travis_wait 20 R CMD check --no-build-vignettes --no-manual sperrorest*tar.gz
     - os: linux
       r: release
       r_github_packages:
         - hadley/testthat
-      script:
-        - |
-          R CMD build .
-          travis_wait 20 R CMD check --no-build-vignettes --no-manual sperrorest*tar.gz
     - os: linux
       r: devel
       r_github_packages:
         - hadley/testthat
-      script:
-        - |
-          R CMD build .
-          travis_wait 20 R CMD check --no-build-vignettes --no-manual sperrorest*tar.gz
     - os: osx
       r: oldrel
       r_github_packages:
         - hadley/testthat
-      script:
-        - |
-          R CMD build .
-          travis_wait 20 R CMD check --no-build-vignettes --no-manual sperrorest*tar.gz
     - os: osx
       r: release
       r_github_packages:
         - hadley/testthat
-      script:
-        - |
-          R CMD build .
-          travis_wait 20 R CMD check --no-build-vignettes --no-manual sperrorest*tar.gz
     - os: linux
       r: release
       r_check_args: --no-build-vignettes --no-codoc --no-examples --no-manual --ignore-vignettes
       r_github_packages:
         - jimhester/covr
         - hadley/testthat
-      script:
-        - |
-          R CMD build .
-          travis_wait 20 R CMD check --no-build-vignettes --no-manual sperrorest*tar.gz
       after_success:
         - Rscript -e 'covr::codecov(quiet=FALSE)'
       env: NB='w/ covr' ## Just a label
@@ -77,6 +53,11 @@ matrix:
       after_success:
         - Rscript -e 'library(lintr); lint_package(linters = with_defaults(commented_code_linter = NULL, closed_curly_linter = closed_curly_linter(allow_single_line = TRUE), open_curly_linter = open_curly_linter(allow_single_line = TRUE)))'
       env: NB='w/ lintr' ## Just a label
+
+script:
+  - |
+    R CMD build .
+    travis_wait 20 R CMD check --no-build-vignettes --no-manual sperrorest*tar.gz
 
 notifications:
   slack: giscience-fsu:fIBUkXTIX9Jz70o1gIwiATYE#sperrorest
