@@ -53,7 +53,12 @@ matrix:
       after_success:
         - Rscript -e 'library(lintr); lint_package(linters = with_defaults(commented_code_linter = NULL, closed_curly_linter = closed_curly_linter(allow_single_line = TRUE), open_curly_linter = open_curly_linter(allow_single_line = TRUE)))'
       env: NB='w/ lintr' ## Just a label
-  
+
+script:
+  - |
+    R CMD build --no-build-vignettes.
+    travis_wait 20 R CMD check sperrorest*tar.gz
+
 notifications:
   slack: giscience-fsu:fIBUkXTIX9Jz70o1gIwiATYE#sperrorest
   on_success: change # default: always
