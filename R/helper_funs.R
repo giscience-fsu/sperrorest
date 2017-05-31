@@ -149,7 +149,7 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
       current_impo[[j]] <- c()
       if (!progress == FALSE) {
         # cat(date(), "-- skipping variable importance\n")
-      } # nocov start
+      } # nocov end
     } else {
       if (!progress == FALSE) {
         # cat(date(), "-- Variable importance\n")
