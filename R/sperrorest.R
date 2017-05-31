@@ -273,7 +273,8 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
                        imp_variables = NULL,
                        imp_permutations = 1000,
                        importance = !is.null(imp_variables), distance = FALSE,
-                       par_args = list(par_mode = "foreach", par_units = NULL),
+                       par_args = list(par_mode = "foreach", par_units = NULL,
+                                       par_option = NULL),
                        do_gc = 1, do_try = FALSE, progress = 1,
                        out_progress = "", benchmark = FALSE, ...) {
   # if benchmark = TRUE, start clock
