@@ -237,7 +237,8 @@ sptune_rf <- function(formula = NULL, data = NULL, accelerate = 1,
                   availableCores(), length(ntrees)))
   message(sprintf(paste0("Unique 'ntrees': %s.",
                          " Unique 'mtry': %s."),
-                  length(unique(mtrys)), length(unique(ntrees))))
+                  length(unique(ntrees)),
+                  length(unique(mtrys))))
 
   auroc <- foreach(i = 1:length(ntrees), .packages = (.packages()),
                    .errorhandling = "remove", .verbose = FALSE) %dopar% {
