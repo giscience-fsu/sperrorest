@@ -56,8 +56,8 @@ matrix:
 
 script:
   - |
-    R CMD build --no-build-vignettes.
-    travis_wait 20 R CMD check sperrorest*tar.gz
+    R CMD build .
+    travis_wait 20 R CMD check --no-build-vignettes --no-manual sperrorest*tar.gz
 
 notifications:
   slack: giscience-fsu:fIBUkXTIX9Jz70o1gIwiATYE#sperrorest
