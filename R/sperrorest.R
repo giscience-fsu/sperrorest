@@ -589,7 +589,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
     if (progress == FALSE) {
       out_progress <- "/dev/null"
       if (Sys.info()["sysname"] == "Windows") {
-        out_progress <- "nul:"
+        out_progress <- "nul:" # nocov
       }
     }
     # special settings for Windows

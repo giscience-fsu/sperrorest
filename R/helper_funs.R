@@ -40,7 +40,7 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
     fit <- try(do.call(model_fun, args = margs))
 
     # Error handling:
-    if (class(fit) == "try-error") {
+    if (class(fit) == "try-error") { # nocov start
       fit <- NULL
       if (error_fold) {
         if (err_train) {
@@ -56,7 +56,7 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
       if (do_gc >= 2) {
         gc()
       }
-      next  # skip this fold
+      next  # skip this fold # nocov end
     }
 
   } else {
@@ -78,12 +78,12 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
       if (do_try) {
         err_try <- try(err_fun(nd[, response], pred_train))
         if (class(err_try) == "try-error") {
-          err_try <- NULL
+          err_try <- NULL # nocov
         }
         current_res[[j]]$train <- err_try  #res[[i]][[j]]$train = err_try
       } else {
         if (any(class(nd) == "tbl")) {
-          nd <- as.data.frame(nd)
+          nd <- as.data.frame(nd) # nocov
         }
         current_res[[j]]$train <- err_fun(nd[, response], pred_train)
         #res[[i]][[j]]$train = err_fun(nd[,response], pred_train)
@@ -94,15 +94,17 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
       pooled_pred_train <- c(pooled_pred_train, pred_train)
     }
   } else {
-    if (error_fold == TRUE) {
+    # does this ever happen? when error_train = FALSE further errors
+    # are introduced
+    if (error_fold == TRUE) { # nocov start
       current_res[[j]]$train <- NULL  #res[[i]][[j]]$train = NULL
-    }
+    } # nocov end
   }
 
   # Create test sample:
   nd <- data[current_sample[[j]]$test, ]
   if (!is.null(test_fun)) {
-    nd <- test_fun(data = nd, param = test_param)
+    nd <- test_fun(data = nd, param = test_param) # nocov
   }
   # Create a 'backup' copy for variable importance assessment:
   if (importance) {
@@ -122,12 +124,12 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
     if (do_try) {
       err_try <- try(err_fun(nd[, response], pred_test))
       if (class(err_try) == "try-error") {
-        err_try <- NULL
+        err_try <- NULL # nocov
       }
       current_res[[j]]$test <- err_try  #res[[i]][[j]]$test = err_try
     } else {
       if (any(class(nd) == "tbl")) {
-        nd <- as.data.frame(nd)
+        nd <- as.data.frame(nd) # nocov
       }
       current_res[[j]]$test <- err_fun(nd[, response], pred_test)
       #res[[i]][[j]]$test  = err_fun(nd[,response], pred_test)
@@ -142,11 +144,12 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
 
   ### Permutation-based variable importance assessment:
   if (importance & error_fold) {
-    if (is.null(current_res[[j]]$test)) {
+    # does this ever happen??
+    if (is.null(current_res[[j]]$test)) { # nocov start
       current_impo[[j]] <- c()
       if (!progress == FALSE) {
         # cat(date(), "-- skipping variable importance\n")
-      }
+      } # nocov start
     } else {
       if (!progress == FALSE) {
         # cat(date(), "-- Variable importance\n")
@@ -185,7 +188,7 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
           if (do_try) {
             permut_err <- try(err_fun(nd[, response], pred_test))
             if (class(permut_err) == "try-error") {
-              imp_temp[[vnm]][[cnt]] <- c()  # ???
+              imp_temp[[vnm]][[cnt]] <- c()  # ??? # nocov
             } else {
               imp_temp[[vnm]][[cnt]] <- as.list(unlist(current_res[[j]]$test) -
                                                   unlist(permut_err))
@@ -261,7 +264,7 @@ runreps <- function(current_sample = NULL, data = NULL, formula = NULL,
 
   if (par_mode == "foreach" | par_mode == "sequential" &&
       progress == TRUE | progress == 2) {
-    cat(date(), "Repetition", names(current_sample)[i], "\n")
+    cat(date(), "Repetition", i, "\n") # nocov
   }
 
   map(seq_along(current_sample), function(rep)
@@ -336,7 +339,7 @@ runreps <- function(current_sample = NULL, data = NULL, formula = NULL,
   }  # end for each fold
 
   if ((do_gc >= 1) & (do_gc < 2)) {
-    gc()
+    gc() # nocov
   }
 
   # set current_impo to NULL to prevent false importance output (resamp object)
