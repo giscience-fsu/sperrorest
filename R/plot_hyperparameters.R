@@ -49,33 +49,38 @@ plot_hyper_svm <- function(object = NULL) {
 
 plot_hyper_rf <- function(object = NULL) {
   if (any(class(object) == "randomForest")) {
-    df <- tibble(ntrees = object$all_ntrees, mtry = object$all_mtrys,
-                 auroc = round(object$all_auroc, 3))
-
-    if (length(unique(df$mtry)) > 12) {
-      stop(paste0("Too many 'ntrees' levels (> 12) supplied for discrete",
-                     " color scale."))
-    }
-
-    df %>%
-      mutate(mtry = as.factor(mtry)) %>%
-      ggplot(aes(x = ntrees, y = auroc, color = mtry, group = mtry)) +
-      geom_point() +
-      geom_line() +
-      scale_color_viridis(discrete = TRUE) +
-      # geom_text(aes(label = auroc), hjust = -0.1, vjust = 0) +
-      labs(x = "ntrees", y = "auroc",
-           title = "'randomForest' hyperparameter tuning results",
-           subtitle = sprintf(paste0("Number of combinations: %s.",
-                                     " Package: 'randomForest'",
-                                     " Best AUROC: %s.",
-                                     " Optimal 'ntrees': %s",
-                                     " Optimal 'mtry: %s"),
-                              length(object$my_ntrees),
-                              object$best_auroc,
-                              object$optimal_ntree,
-                              object$optimal_mtry)) +
-      theme_ipsum() +
-      guides(color = guide_legend(title = "number of trees"))
+    lib <- "randomForest"
+  } else if (any(class(object) == "rfsrc")) {
+    lib <- "randomForestSRC"
+  } else {
+    stop("Passed 'rf_fun' is not supported.")
   }
+  df <- tibble(ntrees = object$all_ntrees, mtry = object$all_mtrys,
+               auroc = round(object$all_auroc, 3))
+
+  if (length(unique(df$mtry)) > 12) {
+    stop(paste0("Too many 'ntrees' levels (> 12) supplied for discrete",
+                " color scale."))
+  }
+
+  df %>%
+    mutate(mtry = as.factor(mtry)) %>%
+    ggplot(aes(x = ntrees, y = auroc, color = mtry, group = mtry)) +
+    geom_point() +
+    geom_line() +
+    scale_color_viridis(discrete = TRUE) +
+    labs(x = "ntrees", y = "auroc",
+         title = "Random Forest hyperparameter tuning results",
+         subtitle = sprintf(paste0("Number of combinations: %s.",
+                                   " Package: '%s'.",
+                                   " Best AUROC: %s.",
+                                   " Optimal 'ntrees': %s.",
+                                   " Optimal 'mtry: %s."),
+                            length(object$all_ntrees),
+                            lib,
+                            round(object$best_auroc, 3),
+                            object$optimal_ntree,
+                            object$optimal_mtry)) +
+    theme_ipsum() +
+    guides(color = guide_legend(title = "mtry"))
 }

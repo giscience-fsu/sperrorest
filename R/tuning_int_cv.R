@@ -233,10 +233,10 @@ sptune_rf <- function(formula = NULL, data = NULL, accelerate = 1,
   plan(cluster, workers = cl)
 
   message(sprintf(paste0("Using 'foreach' parallel mode with %s cores on",
-                         " '%s' combinations."),
+                         " %s combinations."),
                   availableCores(), length(ntrees)))
   message(sprintf(paste0("Unique 'ntrees': %s.",
-                         "Unique 'mtry': %s."),
+                         " Unique 'mtry': %s."),
                   length(unique(mtrys)), length(unique(ntrees))))
 
   auroc <- foreach(i = 1:length(ntrees), .packages = (.packages()),
@@ -252,13 +252,6 @@ sptune_rf <- function(formula = NULL, data = NULL, accelerate = 1,
   stopCluster(cl)
 
   auroc <- as.numeric(auroc)
-
-  # for (i in 1:length(ntrees)) {
-  #   auroc[i] <- rf_cv_err(ntree = ntrees[i], mtry = mtrys[i], train = train,
-  #                          test = test, response = response, formula = formula,
-  #                          rf_fun = rf_fun,
-  #                          ...)
-  # }
 
   # Identify best AUROC, or if all are NA, use defaults and issue a warning:
   if (all(is.na(auroc))) {

@@ -24,13 +24,26 @@ rf_cv_err(ntree = NULL, mtry = NULL, train = NULL, test = NULL,
 Calculates AUROC for different gamma and cost values
 }
 \examples{
-parti <- partition.kmeans(ecuador, nfold = 5, order.clusters = FALSE)
+parti <- partition_kmeans(ecuador, nfold = 5, order.clusters = FALSE)
 train <- ecuador[parti[[1]][[1]]$train, ]
 test <- ecuador[parti[[1]][[1]]$test, ]
 response <- "slides"
+
+###########################################
+#### randomForest
+###########################################
+
 fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
 out <- rf_cv_err(mtry = 3, ntree = 1000, train = train, test = test,
-formula = fo, response = "slides", rf_function = "randomForest")
+formula = fo, response = "slides", rf_fun = "randomForest")
+
+###########################################
+#### rfsrc
+###########################################
+
+fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
+out <- rf_cv_err(mtry = 3, ntree = 1000, train = train, test = test,
+formula = fo, response = "slides", rf_fun = "rfsrc")
 
 }
 \keyword{internal}
