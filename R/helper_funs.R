@@ -156,10 +156,10 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
       # Parallelize this: ???
       for (cnt in 1:imp_permutations) {
         # Some output on screen:
-        if (!progress == FALSE & (cnt > 1)) {
+        if (progress == 1 | progress == TRUE & (cnt > 1)) {
           if (log10(cnt) == floor(log10(cnt))) {
             #cat(date(), "   ", cnt, "\n")
-            cat(date(), "Repetition", names(current_sample)[i], "- Fold", j,
+            cat(date(), "Repetition", i, "- Fold", j,
                 "- permutation-count:", cnt, "\n")
           }
         }
