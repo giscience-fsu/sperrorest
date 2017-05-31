@@ -156,42 +156,6 @@ summary.sperrorestimportance <- function(object, level = 0, na.rm = TRUE,
   return(arr)
 }
 
-#' Summarize benchmark information obtained by `sperrorest`
-#'
-#' `summary.sperrorestbenchmarks` shows information on runtime performance,
-#' used cores and system information
-#' @name summary.sperrorestbenchmarks
-#' @method summary sperrorestbenchmarks
-#' @inheritParams summary.sperroresterror
-#'
-#' @param object `sperrorestbenchmarks` object returned class by
-#' [sperrorest]
-#' @return List of length seven
-#'
-#' @export
-summary.sperrorestbenchmarks <- function(object, ...) {
-  class(object) <- NULL
-  object <- unlist(object)
-  object <- as.matrix(object)
-  colnames(object) <- "benchmarks"
-  return(object)
-}
-
-#' Summarize package version information obtained by `sperrorest`
-#'
-#' `summary.sperrorestpackageversion` returns the package version of sperrorest
-#' @name summary.sperrorestpackageversion
-#' @method summary sperrorestpackageversion
-#' @inheritParams summary.sperroresterror
-#'
-#' @param object `sperrorestpackageversion` object calculated by
-#' [sperrorest]
-#' @return character vector of length one
-#'
-#' @export
-summary.sperrorestpackageversion <- function(object, ...) {
-  paste(object[[1]], collapse = ".")
-}
 
 #' Summary and print methods for sperrorest results
 #'
