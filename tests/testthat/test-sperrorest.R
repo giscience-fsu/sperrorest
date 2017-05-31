@@ -131,7 +131,7 @@ test_that("sperrorest() variable importance with error_rep = T and
                                  pred_fun = predict,
                                  pred_args = list(type = "response"),
                                  smp_fun = partition_cv,
-                                 smp_args = list(repetition = 1:2, nfold = 4),
+                                 smp_args = list(repetition = 1:1, nfold = 4),
                                  par_args = list(par_mode = "foreach", par_units = 2),
                                  benchmark = TRUE,
                                  importance = TRUE, imp_permutations = 10)
@@ -250,6 +250,7 @@ test_that("output type (= list) for different logical combinations of
                               smp_fun = partition_cv,
                               smp_args = list(repetition = 1:4, nfold = 2),
                               par_args = list(par_mode = "future",
+                                              par_option = "cluster",
                                               par_units = 2),
                               error_rep = TRUE, error_fold = TRUE,
                               benchmark = TRUE, progress = FALSE)

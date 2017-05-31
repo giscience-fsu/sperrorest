@@ -304,15 +304,15 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
     stopifnot(is.numeric(imp_permutations))
 
     if (!is.null(imp_variables)) {
-      stopifnot(is.character(imp_variables))
+      stopifnot(is.character(imp_variables)) # nocov
     }
   }
   stopifnot(is.character(coords))
   stopifnot(length(coords) == 2)
 
   if (importance & !error_fold) {
-    stop("variable importance assessment currently only supported
-         at the unpooled level")
+    stop(paste0("variable importance assessment currently only supported", # nocov
+         " at the unpooled level")) # nocov
   }
 
   # Check if user is trying to bypass the normal mechanism for
@@ -346,9 +346,9 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
                   "'error_fold'"))
     }
     # > v1.1
-    if (class(par_args$par_mode) == "numeric") {
+    if (class(par_args$par_mode) == "numeric") { # nocov start
       stop("par_mode has to be specified using an explicit parallel mode name")
-    }
+    } # nocov end
   }
 
   # Name of response variable:
@@ -422,13 +422,13 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
       par_args$par_mode == "apply-mclapply") {
 
     if (par_args$par_units > availableCores()) {
-      par_args$par_units <- availableCores() # nolint
+      par_args$par_units <- availableCores() # nolint # nocov
     }
 
 
     # parallelization here (par_mode = 1 & par_mode = 2) For each repetition:
     if (.Platform$OS.type == "windows") {
-      par_cl <- makeCluster(par_args$par_units, type = "PSOCK")
+      par_cl <- makeCluster(par_args$par_units, type = "PSOCK") # nocov start
       clusterSetRNGStream(par_cl, 1234567)  #set up RNG stream to obtain
       # reproducible results
       force(pred_fun)  #force evaluation of pred_fun, so it is serialized and
@@ -441,7 +441,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
       #   })
       #   NULL
       # })
-    } else {
+    } else { # nocov end
       RNGkind("L'Ecuyer-CMRG")
       set.seed(1234567)
       # mc.reset.stream() #set up RNG stream to obtain reproducible results
@@ -468,7 +468,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
     if (par_args$par_mode == "apply" | par_args$par_mode == "apply-mclapply") {
       if (.Platform$OS.type == "Windows") {
 
-        message(sprintf("Using 'parApply' parallel mode with %s cores.",
+        message(sprintf("Using 'parApply' parallel mode with %s cores.", # nocov start
                         par_args$par_units))
         my_res <- try(pblapply(cl = par_cl, resamp, function(x)
           runreps(current_sample = x, data = data, par_mode = par_args$par_mode,
@@ -513,7 +513,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
             stop(paste0("No output was received from sperrorest.\n",
                         "If you are on macOS either run R in 'Vanilla' mode or",
                         " use another parallel mode."))
-          }
+          } # nocov end
         } else {
           message(sprintf("Using 'pbmclapply' parallel mode with %s cores.",
                           par_args$par_units))
@@ -536,9 +536,9 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
                     pooled_obs_test = pooled_obs_test, err_fun = err_fun)))
           # check if run was sufficient
           if (length(my_res) > 1 && my_res == "NULL") {
-            stop(paste0("No output was received from sperrorest.\n",
+            stop(paste0("No output was received from sperrorest.\n", # nocov start
                         "If you are on macOS either run R in 'Vanilla' mode or",
-                        " use another parallel mode."))
+                        " use another parallel mode.")) # nocov end
           }
         }
       }
@@ -593,7 +593,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
     }
     # special settings for Windows
     if (out_progress == "" & Sys.info()["sysname"] == "Windows") {
-      out_progress <- paste0(getwd(), "/sperrorest_progress.txt")
+      out_progress <- paste0(getwd(), "/sperrorest_progress.txt") # nocov
     }
 
     registerDoFuture()
@@ -602,21 +602,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
 
     # check for sequential/parallel execution and (if parallel) get number of
     # cores
-    if (is.null(par_args$par_units) && !par_args$par_mode == "sequential" &&
-        par_args$par_mode == "foreach") {
-
-      cl <- makeCluster(availableCores(), outfile = out_progress, ...)
-      plan(cluster, workers = cl)
-      # plan(multisession)
-      message(sprintf(paste0("Using 'foreach' parallel mode with %s cores and",
-                             " '%s' option."),
-                      availableCores(), par_args$par_option))
-      if (.Platform$OS.type == "Windows") {
-        message(paste0("Please see 'sperrorest_progress' in your current",
-                       " working directory for progress output on Windows."))
-      }
-    }
-    if (!is.null(par_args$par_units) && !par_args$par_mode == "sequential" &&
+    if (!par_args$par_mode == "sequential" &&
         par_args$par_mode == "foreach") {
 
       cl <- makeCluster(par_args$par_units, outfile = out_progress, ...)
@@ -626,8 +612,8 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
                              " '%s' option."),
                       par_args$par_units, par_args$par_option))
       if (.Platform$OS.type == "Windows") {
-        message(paste0("Please see 'sperrorest_progress' in your current",
-                       " working directory for progress output on Windows."))
+        message(paste0("Please see 'sperrorest_progress' in your current", # nocov
+                       " working directory for progress output on Windows.")) # nocov
       }
     }
     if (par_args$par_mode == "sequential") {
