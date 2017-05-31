@@ -47,23 +47,23 @@ err_default <- function(obs, pred) {
   # The following wrapper functions are used in order to avoid warning messages:
   mmin <- function(x, ...) {
     if (length(x) == 0) {
-      x <- Inf
+      x <- Inf # nocov
     }
     return(min(x, ...))
   }
   mmax <- function(x, ...) {
     if (length(x) == 0) {
-      x <- -Inf
+      x <- -Inf # nocov
     }
     return(max(x, ...))
   }
 
   # Convert logical to factor if necessary:
   if (is.logical(obs)) {
-    obs <- factor(obs, levels = c("FALSE", "TRUE"))
+    obs <- factor(obs, levels = c("FALSE", "TRUE")) # nocov
   }
   if (is.logical(pred)) {
-    pred <- factor(pred, levels = c("FALSE", "TRUE"))
+    pred <- factor(pred, levels = c("FALSE", "TRUE")) # nocov
   }
 
   # Classification problem:
@@ -73,6 +73,7 @@ err_default <- function(obs, pred) {
       pred <- as.character(pred)
       pred <- factor(pred, levels = levels(obs))
       err <- list(error = mean(obs != pred), accuracy = mean(obs == pred))
+      # binary classification without probabilities
       if (nlevels(obs) == 2) {
         npos <- sum(obs == levels(obs)[2])
         nneg <- sum(obs == levels(obs)[1])

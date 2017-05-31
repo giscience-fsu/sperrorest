@@ -190,7 +190,7 @@ summary.sperrorest <- function(object, ...) {
 #' @method print sperrorestimportance
 #' @export
 print.sperrorestimportance <- function(x, ...) {
-  print(unclass(summary(x, level = Inf, ...)))
+  print(unclass(summary(x, level = Inf, ...))) # nocov
 }
 
 #' @rdname summary.sperrorest
@@ -198,7 +198,7 @@ print.sperrorestimportance <- function(x, ...) {
 #' @method print sperroresterror
 #' @export
 print.sperroresterror <- function(x, ...) {
-  print(unclass(summary(x, level = Inf, ...)))
+  print(unclass(summary(x, level = Inf, ...))) # nocov
 }
 
 #' @rdname summary.sperrorest
@@ -206,8 +206,8 @@ print.sperroresterror <- function(x, ...) {
 #' @method print sperrorestreperror
 #' @export
 print.sperrorestreperror <- function(x, ...) {
-  print(unclass(summary(x, level = Inf,
-  ...)))
+  print(unclass(summary(x, level = Inf, # nocov
+  ...))) # nocov
 }
 
 #' @rdname summary.sperrorest
@@ -215,7 +215,7 @@ print.sperrorestreperror <- function(x, ...) {
 #' @method print sperrorest
 #' @export
 print.sperrorest <- function(x, ...) {
-  print(unclass(summary(x, level = Inf, ...)))
+  print(unclass(summary(x, level = Inf, ...))) # nocov
 }
 
 #' @rdname summary.sperrorest
@@ -223,7 +223,7 @@ print.sperrorest <- function(x, ...) {
 #' @method print sperrorestbenchmarks
 #' @export
 print.sperrorestbenchmarks <- function(x, ...) {
-  print(summary(x), ...)
+  print(summary(x), ...) # nocov
 }
 
 #' @rdname summary.sperrorest
@@ -231,7 +231,7 @@ print.sperrorestbenchmarks <- function(x, ...) {
 #' @method print sperrorestpackageversion
 #' @export
 print.sperrorestpackageversion <- function(x, ...) {
-  print(summary(x))
+  print(summary(x)) # nocov
 }
 
 

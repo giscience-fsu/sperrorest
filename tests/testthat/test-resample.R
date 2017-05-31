@@ -23,8 +23,3 @@ test_that("resample_uniform() produces correct output", {
 
 # resample_factor() Tue Feb 14 22:11:14 2017 ------------------------------
 
-test_that("resample_uniform() produces correct output", {
-  data(ecuador) # Muenchow et al. (2012), see ?ecuador
-  d <- resample_uniform(ecuador, param = list(strat = 'slides', n = 200))
-  expect_equal(nrow(d), 200) # == 400
-})

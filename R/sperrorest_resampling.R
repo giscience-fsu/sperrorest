@@ -59,7 +59,7 @@ partition_cv <- function(data, coords = c("x", "y"), nfold = 10, repetition = 1,
 
   for (cnt in repetition) {
     if (!is.null(seed1)) {
-      set.seed(seed1 + cnt)
+      set.seed(seed1 + cnt) # nocov
     }
     resampler <- sample(rep(sample(nfold), length = nrow(data)),
                         size = nrow(data))
@@ -133,7 +133,7 @@ partition_cv_strat <- function(data, coords = c("x", "y"), nfold = 10,
 
   for (cnt in repetition) {
     if (!is.null(seed1)) {
-      set.seed(seed1 + cnt)
+      set.seed(seed1 + cnt) # nocov
     }
     fac <- rep(NA, nrow(data))
     for (lev in levels(strat)) {
@@ -245,8 +245,8 @@ partition_factor_cv <- function(data, coords = c("x", "y"), fac, nfold = 10,
   }
   fac <- factor(fac)
   if (nfold > nlevels(fac)) {
-    warning("'nfold' should be <= nlevels(fac); using nfold=nlevels(fac)\n")
-    nfold <- nlevels(fac)
+    warning("'nfold' should be <= nlevels(fac); using nfold=nlevels(fac)\n") # nocov
+    nfold <- nlevels(fac) # nocov
   }
   resampling <- list()
   for (cnt in repetition) {
@@ -388,14 +388,14 @@ partition_tiles <- function(data, coords = c("x", "y"), dsplit = NULL,
 
   if (rotation == "none") {
     phi <- rep(0, length(repetition))
-  } else if (rotation == "random") {
+  } else if (rotation == "random") { # nocov start
     phi <- runif(-45, 45, n = length(repetition))
   } else if (rotation == "user") {
     if (length(user_rotation) == 1) {
       user_rotation <- rep(user_rotation, length(repetition))
     }
     stopifnot(length(user_rotation) == length(repetition))
-    phi <- user_rotation
+    phi <- user_rotation # nocov end
   }
   names(phi) <- as.character(repetition)
 
@@ -409,7 +409,7 @@ partition_tiles <- function(data, coords = c("x", "y"), dsplit = NULL,
   if (offset == "none") {
     x_shift <- y_shift <- rep(0, length(repetition))
   } else if (offset == "random") {
-    x_shift <- runif(0, 1, n = length(repetition))
+    x_shift <- runif(0, 1, n = length(repetition)) # nocov start
     y_shift <- runif(0, 1, n = length(repetition))
   } else if (offset == "user") {
     if (is.vector(user_offset) && length(user_offset) == 2) {
@@ -430,37 +430,37 @@ partition_tiles <- function(data, coords = c("x", "y"), dsplit = NULL,
     stopifnot(min(user_offset[[1]] >= 0 & max(user_offset[[1]]) <= 1))
     stopifnot(min(user_offset[[2]] >= 0 & max(user_offset[[2]]) <= 1))
     x_shift <- user_offset[[1]]
-    y_shift <- user_offset[[2]]
+    y_shift <- user_offset[[2]] # nocov end
   }
   names(x_shift) <- as.character(repetition)
   names(y_shift) <- as.character(repetition)
 
   if (!is.null(nsplit)) {
     if (length(nsplit) == 1) {
-      nsplit <- c(nsplit, nsplit)
+      nsplit <- c(nsplit, nsplit) # nocov
     }
   }
   if (!is.null(dsplit)) {
-    if (length(dsplit) == 1) {
+    if (length(dsplit) == 1) { # nocov start
       dsplit <- c(dsplit, dsplit)
-    }
+    } # nocov end
   }
 
   resampling <- list()
   for (cnt in repetition) {
 
     if (!is.null(seed1)) {
-      set.seed(seed1 + cnt)
+      set.seed(seed1 + cnt) # nocov
     }
 
     # Prepare the arguments and data:
 
     if (rotation != "none") {
-      r <- phi[as.character(cnt)] * 180/pi
+      r <- phi[as.character(cnt)] * 180/pi # nocov start
       r <- matrix(c(cos(r), -sin(r), sin(r), cos(r)), ncol = 2)
       xy <- r %*% t(data[, coords])
       x <- xy[1, ]
-      y <- xy[2, ]
+      y <- xy[2, ] # nocov end
     } else {
       x <- data[, coords[1]]
       y <- data[, coords[2]]
@@ -474,19 +474,19 @@ partition_tiles <- function(data, coords = c("x", "y"), dsplit = NULL,
       my_nsplit <- nsplit
     } else {
       # if !is.null(dsplit)
-      x_delta <- dsplit[1]
-      y_delta <- dsplit[2]
+      x_delta <- dsplit[1] # nocov
+      y_delta <- dsplit[2] # nocov
     }
     # Apply offsets:
     if (offset != "none") {
       # Widen the range and increase nsplit to allow for 'lurking' tiles:
-      x_range[2] <- x_range[2] + x_delta
+      x_range[2] <- x_range[2] + x_delta # nocov start
       y_range[2] <- y_range[2] + y_delta
       x_range <- x_range - x_delta * (x_shift[as.character(cnt)])
       y_range <- y_range - y_delta * (y_shift[as.character(cnt)])
       if (is.null(dsplit)) {
         my_nsplit <- my_nsplit + 1
-      }
+      } # nocov end
     }
 
     # Calculate x and y splits:
@@ -494,9 +494,9 @@ partition_tiles <- function(data, coords = c("x", "y"), dsplit = NULL,
       x.split <- seq(x_range[1], x_range[2], length = my_nsplit[1] + 1)
       y.split <- seq(y_range[1], y_range[2], length = my_nsplit[2] + 1)
     } else {
-      x.split <- seq(x_range[1], x_range[2] + x_delta, by = x_delta)
+      x.split <- seq(x_range[1], x_range[2] + x_delta, by = x_delta) # nocov start
       y.split <- seq(y_range[1], y_range[2] + y_delta, by = y_delta)
-      my_nsplit <- c(length(x.split) - 1, length(y.split) - 1)
+      my_nsplit <- c(length(x.split) - 1, length(y.split) - 1) # nocov end
     }
 
     # Group data into tiles, i.e. assign tile labels to samples:
@@ -527,7 +527,7 @@ partition_tiles <- function(data, coords = c("x", "y"), dsplit = NULL,
     s_tiles <- get_small_tiles(tile, min_n = min_n, min_frac = min_frac)
     if (length(s_tiles) > 0) {
       # any small tiles?
-      if (reassign) {
+      if (reassign) { # nocov start
         # Merge small tiles with neighbors:
         ignore <- c()
         # Repeat until no small tiles are left:
@@ -552,7 +552,7 @@ partition_tiles <- function(data, coords = c("x", "y"), dsplit = NULL,
         # Just eliminate small tiles:
         tile[tile %in% s_tiles] <- NA
         tile <- factor(as.character(tile))
-      }
+      } # nocov end
     }
 
     if (!return_factor) {
@@ -632,17 +632,13 @@ partition_kmeans <- function(data, coords = c("x", "y"), nfold = 10,
                              repetition = 1, seed1 = NULL,
                              return_factor = FALSE, balancing_steps = 1,
                              order_clusters = TRUE, ...) {
-  if (any(names(list(...)) == "kfold")) {
-    warning("argument 'kfold' has been renamed to 'nfold' in
-            'partition_kmeans'")
-    nfold <- list(...)$kfold
-  }
+
   balancing_steps <- max(1, balancing_steps)
 
   resampling <- list()
   for (cnt in repetition) {
     if (!is.null(seed1)) {
-      set.seed(seed1 + cnt)
+      set.seed(seed1 + cnt) # nocov
     }
     kms <- list()
     for (i in 1:balancing_steps) {
@@ -758,7 +754,7 @@ partition_disc <- function(data, coords = c("x", "y"), radius, buffer = NULL,
   }
 
   if (replace == FALSE & ndisc > nrow(data)) {
-    stop("partition_disc: ndisc must be >nrow(data) if replace=FALSE")
+    stop("partition_disc: ndisc must be > nrow(data) if replace=FALSE") # nocov
   }
 
   resample <- list()
@@ -766,10 +762,10 @@ partition_disc <- function(data, coords = c("x", "y"), radius, buffer = NULL,
   # Loop for repetitions:
   for (cnt in repetition) {
     if (!is.null(seed1)) {
-      set.seed(seed1 + cnt)
+      set.seed(seed1 + cnt) # nocov
     }
     if (ndisc == nrow(data)) {
-      index <- c(1:nrow(data))
+      index <- c(1:nrow(data)) # nocov
     } else {
       index <- sample.int(nrow(data), size = ndisc, replace = replace,
                           prob = prob)
@@ -793,15 +789,15 @@ partition_disc <- function(data, coords = c("x", "y"), radius, buffer = NULL,
         test_sel <- i
         if (return_train) {
           if (is.null(buffer)) {
-            train_sel <- c(1:nrow(data))[-i]
+            train_sel <- c(1:nrow(data))[-i] # nocov
           } else {
             train_sel <- which(di > posbuf)
           }
         }
       }
       if (return_train & (length(train_sel) == 0)) {
-        warning("empty training set in 'partition_disc': 'buffer'
-                and/or 'radius' too large?")
+        warning(paste0("empty training set in 'partition_disc': 'buffer'", # nocov
+                " and/or 'radius' too large?")) # nocov
       }
       res[[as.character(i)]] <- list(train = train_sel, test = test_sel)
       }
@@ -858,7 +854,7 @@ represampling_bootstrap <- function(data, coords = c("x", "y"),
 
   for (cnt in repetition) {
     if (!is.null(seed1)) {
-      set.seed(seed1 + cnt)
+      set.seed(seed1 + cnt) # nocov
     }
     # Bootstrap training sample, drawn with replacement:
     train <- sample(nrow(data), nboot, replace = TRUE)
@@ -936,7 +932,7 @@ represampling_factor_bootstrap <- function(data, fac, repetition = 1,
                                            nboot = -1,
                                            seed1 = NULL, oob = FALSE) {
   if (oob && length(nboot) > 1) {
-    warning("nboot[2] ignored because 'oob=TRUE'")
+    warning("nboot[2] ignored because 'oob = TRUE'") # nocov
   }
   if (is.list(fac)) {
     stopifnot(length(fac) == length(repetition))
@@ -947,7 +943,7 @@ represampling_factor_bootstrap <- function(data, fac, repetition = 1,
     }
   } else {
     if (length(fac) == 1 && is.character(fac)) {
-      fac <- data[, fac]
+      fac <- data[, fac] # nocov
     } else {
       stopifnot(length(fac) == nrow(data))
     }
@@ -961,7 +957,7 @@ represampling_factor_bootstrap <- function(data, fac, repetition = 1,
 
   for (cnt in repetition) {
     if (!is.null(seed1)) {
-      set.seed(seed1 + cnt)
+      set.seed(seed1 + cnt) # nocov
     }
     # what factor variable to resample?:
     if (is.list(fac)) {
@@ -1104,13 +1100,13 @@ represampling_disc_bootstrap <- function(data, coords = c("x", "y"), nboot,
                                          repetition = 1,
                                          seed1 = NULL, oob = FALSE, ...) {
   if (oob && length(nboot) > 1) {
-    warning("nboot[2] ignored because oob = TRUE")
+    warning("nboot[2] ignored because oob = TRUE") # nocov
   }
   if (length(nboot) == 1) {
     nboot <- c(nboot, nboot)
   }
 
-  if (oob) {
+  if (oob) { # nocov start
     resample <- list()
     for (cnt in repetition) {
       if (!is.null(seed1)) {
@@ -1132,12 +1128,12 @@ represampling_disc_bootstrap <- function(data, coords = c("x", "y"), nboot,
       train <- unname(unlist(train))
       resample[[as.character(cnt)]] <- list(`1` = list(train = train,
                                                        test = test))
-      }
+      } # nocov end
   } else {
     resample <- list()
     for (cnt in repetition) {
       if (!is.null(seed1)) {
-        set.seed(seed1 + cnt)
+        set.seed(seed1 + cnt) # nocov
       }
       train <- partition_disc(data = data, coords = coords,
                               repetition = c(1:nboot[1]),
@@ -1199,7 +1195,7 @@ represampling_disc_bootstrap <- function(data, coords = c("x", "y"), nboot,
 #' @export
 plot.represampling <- function(x, data, coords = c("x", "y"), pch = "+",
                                wiggle_sd = 0, ...) {
-  if (missing(data)) {
+  if (missing(data)) { # nocov start
     stop("'data' argument missing")
   }
   stopifnot(wiggle_sd >= 0)
@@ -1244,5 +1240,5 @@ plot.represampling <- function(x, data, coords = c("x", "y"), pch = "+",
 #' @method plot resampling
 plot.resampling <- function(x, ...) {
   x <- as.represampling(list(`1` = x)) # nolint
-  plot.represampling(x) # nolint
+  plot.represampling(x) # nolint # nocovend
 }
