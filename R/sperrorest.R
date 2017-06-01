@@ -652,7 +652,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
       {
         if (do.try)
         {
-          err.try <- try(err.fun(nd[, response], pred.test), silent = silent)
+          err.try <- try(err.fun(nd[[response]], pred.test), silent = silent)
           if (class(err.try) == "try-error")
           {
           err.try <- NULL # nocov (previous: '???')
@@ -660,12 +660,12 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
           res[[i]][[j]]$test <- err.try
         } else
         {
-          res[[i]][[j]]$test <- err.fun(nd[, response], pred.test)
+          res[[i]][[j]]$test <- err.fun(nd[[response]], pred.test)
         }
       }
       if (error.rep)
       {
-        pooled.obs.test <- c(pooled.obs.test, nd[, response])
+        pooled.obs.test <- c(pooled.obs.test, nd[[response]])
         pooled.pred.test <- c(pooled.pred.test, pred.test)
         is.factor.prediction <- is.factor(pred.test)
         
@@ -726,7 +726,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
             # Calculate variable importance:
             if (do.try)
             {
-            permut.err <- try(err.fun(nd[, response], pred.test), silent = silent)
+            permut.err <- try(err.fun(nd[[response]], pred.test), silent = silent)
             if (class(permut.err) == "try-error")
             {
               imp.temp[[vnm]][[cnt]] <- c() # nocov (previous: '???')
@@ -739,7 +739,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
             }
             } else
             {
-            permut.err <- err.fun(nd[, response], pred.test)
+            permut.err <- err.fun(nd[[response]], pred.test)
             imp.temp[[vnm]][[cnt]] <- as.list(unlist(res[[i]][[j]]$test) - 
               unlist(permut.err))
             # (apply '-' to corresponding list elements; only works if all list elements are
