@@ -607,7 +607,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
         {
           if (do.try)
           {
-          err.try <- try(err.fun(nd[response]], pred.train), silent = silent)
+          err.try <- try(err.fun(nd[[response]], pred.train), silent = silent)
           if (class(err.try) == "try-error") 
             err.try <- NULL  # ???
           res[[i]][[j]]$train <- err.try
