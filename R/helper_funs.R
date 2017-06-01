@@ -111,6 +111,7 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
     nd_bak <- nd
   }
 
+
   # account for possible missing factor levels in test data
   nd <- remove_missing_levels(fit, nd)
 
@@ -408,6 +409,10 @@ remove_missing_levels <- function(fit, test_data) {
 
   factors <- (gsub("[-^0-9]|as.factor|\\(|\\)", "",
                    names(unlist(fit$xlevels))))
+  # do nothing if no factors are present
+  if (length(factors) == 0) {
+    return(test_data)
+  }
   factor_levels <- unname(unlist(fit$xlevels))
   model_factors <- as.data.frame(cbind(factors, factor_levels))
 
