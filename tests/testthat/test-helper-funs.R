@@ -4,7 +4,35 @@ pacman::p_load(sperrorest, testthat, rpart, MASS)
 
 # runfolds Sun May 21 22:58:39 2017 ------------------------------
 
-skip("internal use")
+test_that("runfolds works on missing factor levels in
+          test data example", {
+
+            skip("internal use")
+
+            readRDS("/Users/pjs/Servers/GIServer/home/shares/data/LIFE/mod/survey_data/data-clean.rda") %>%
+              as_tibble() -> df
+            fo <- diplo01 ~ temp + p_sum + r_sum + elevation + slope + hail +
+              age + ph + lithology + soil
+
+            current_sample <- partition_kmeans(df, nfold = 4)[[1]]
+            current_res <- current_sample
+
+            runfolds(j = 1, data = df, current_sample = current_sample,
+                     formula = fo, par_mode = "sequential",
+                     model_args = list(family = "binomial"), do_try = FALSE,
+                     model_fun = glm,
+                     error_fold = TRUE, error_rep = TRUE,
+                     err_train = TRUE, importance = FALSE,
+                     current_res = current_res,
+                     pred_args = list(type = "response"),
+                     response = "diplo01", par_cl = 2,
+                     coords = c("x", "y"), progress = 1,
+                     pooled_obs_train = c(),
+                     pooled_obs_test = c(),
+                     err_fun = err_default) -> runfolds_single
+            expect_equal(length(runfolds_single), 6)
+          })
+
 
 testthat::test_that("runfolds works on glm example", {
 
@@ -21,7 +49,7 @@ testthat::test_that("runfolds works on glm example", {
                               error_fold = TRUE, error_rep = TRUE, imp_permutations = 2,
                               imp.variables = c("dem", "slope", "hcurv", "vcurv", "log.carea", "cslope"),
                               err_train = TRUE, importance = TRUE, current_res = current_res,
-                              pred.args = list(type = "response"), response = "slides", par_cl = 2,
+                              pred_args = list(type = "response"), response = "slides", par_cl = 2,
                               coords = c("x", "y"), progress = 1, pooled_obs_train = c(),
                               pooled_obs_test = c(), err_fun = err_default)
   expect_equal(length(runfolds_single), 6)
@@ -58,7 +86,7 @@ testthat::test_that("runfolds works on LDA example", {
   runfolds_single <- runfolds(j = 1, data = maipo, current_sample = current_sample,
                               formula = fo, par_mode = "foreach",
                               do_try = FALSE, model_fun = lda, pred_fun = lda_predfun,
-                              error_fold = TRUE, error_rep = TRUE, pred.args = list(fac = "field"),
+                              error_fold = TRUE, error_rep = TRUE, pred_args = list(fac = "field"),
                               err_train = TRUE, importance = FALSE, current_res = current_sample,
                               response = "croptype", par_cl = 2,
                               coords = c("x", "y"), progress = 1, pooled_obs_train = c(),
@@ -131,7 +159,7 @@ testthat::test_that("runreps works on lda example", {
             do_try = FALSE, model_fun = lda,
             error_fold = TRUE, error_rep = TRUE, do_gc = 1,
             err_train = TRUE, importance = FALSE, current_res = current_res,
-            pred.args = list(fac = "field"), response = "croptype", par_cl = 2,
+            pred_args = list(fac = "field"), response = "croptype", par_cl = 2,
             coords = c("x", "y"), progress = 1, pooled_obs_train = c(),
             pooled_obs_test = c(), err_fun = err_default))
 })
@@ -153,7 +181,7 @@ testthat::test_that("runreps works on glm example", {
             imp.variables = c("dem", "slope", "hcurv", "vcurv",
                               "log.carea", "cslope"),
             err_train = TRUE, importance = TRUE, current_res = current_res,
-            pred.args = list(type = "response"), response = "slides",
+            pred_args = list(type = "response"), response = "slides",
             par_cl = 2,
             coords = c("x", "y"), progress = 1, pooled_obs_train = c(),
             pooled_obs_test = c(), err_fun = err_default))
@@ -182,3 +210,29 @@ testthat::test_that("runreps works on rpart example", {
 
 })
 
+test_that("runfolds works on missing factor levels in
+          test data example", {
+
+            readRDS("/Users/pjs/Servers/GIServer/home/shares/data/LIFE/mod/survey_data/data-clean.rda") %>%
+              as_tibble() -> df
+            fo <- diplo01 ~ temp + p_sum + r_sum + elevation + slope + hail +
+              age + ph + lithology + soil
+
+            current_sample <- partition_kmeans(df, nfold = 5, repetition = 1:5)
+            current_res <- current_sample
+
+            runreps_res <- lapply(current_sample, function(x)
+              runreps(current_sample = x, do_gc = 1,
+                      formula = fo, par_mode = "sequential", data = df,
+                      model_args = list(family = "binomial"), do_try = FALSE,
+                      model_fun = glm,
+                      error_fold = TRUE, error_rep = TRUE,
+                      err_train = TRUE, importance = FALSE,
+                      current_res = current_res,
+                      pred_args = list(type = "response"), response = "diplo01",
+                      par_cl = 2,
+                      coords = c("x", "y"), progress = 1,
+                      pooled_obs_train = c(),
+                      pooled_obs_test = c(), err_fun = err_default))
+            expect_equal(length(runfolds_single), 6)
+          })
