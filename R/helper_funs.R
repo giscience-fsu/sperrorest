@@ -110,6 +110,9 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
   if (importance) {
     nd_bak <- nd
   }
+  # account for possible missing factor levels in test data
+  nd <- remove_missing_levels_in_test_data(fit, nd)
+
   # Apply model to test sample:
   pargs <- c(list(object = fit, newdata = nd), pred_args)
   if (is.null(pred_fun)) {
@@ -320,7 +323,7 @@ runreps <- function(current_sample = NULL, data = NULL, formula = NULL,
     pooled_error_train <- NULL
     if (err_train) {
       pooled_error_train <- err_fun(pooled_only$pooled_obs_train,
-                                  pooled_only$pooled_pred_train)
+                                    pooled_only$pooled_pred_train)
     }
 
     list(train = pooled_error_train,
@@ -370,4 +373,46 @@ transfer_parallel_output <- function(my_res = NULL, res = NULL, impo = NULL,
 
   return(list(pooled_error = pooled_error, impo = impo,
               res = res))
+}
+
+#' @title remove_missing_levels_in_test_data
+#' @description Accounts for missing factor levels present only in train data
+#' but not in test data by setting these to NA
+#'
+#' @param fit fitted model on training data
+#'
+#' @param test_data data to make predictions for
+#'
+#' @keywords internal
+#'
+#' @export
+remove_missing_levels_in_test_data <- function(fit, test_data) {
+
+  # https://stackoverflow.com/a/39495480/4185785
+
+  # Obtain factor predictors in the model and their levels
+
+  factors <- (gsub("[-^0-9]|as.factor|\\(|\\)", "",
+                   names(unlist(fit$xlevels))))
+  factorLevels <- unname(unlist(fit$xlevels))
+  modelFactors <- as.data.frame(cbind(factors, factorLevels))
+
+  # Select column names in test data that are factor predictors in
+  # trained model
+
+  predictors <- names(test_data[names(test_data) %in% factors])
+
+  # For each factor predictor in your data, if the level is not in the model,
+  # set the value to NA --------------
+
+  for (i in 1:length(predictors)) {
+    found <- test_data[, predictors[i]] %in% modelFactors[
+      modelFactors$factors == predictors[i], ]$factorLevels
+    if (any(!found)) {
+      test_data[!found, predictors[i]] <- NA
+      warning(paste0("Removing missing factor levels only present in train",
+                     " data but missing in test data."))
+    }
+  }
+  return(test_data)
 }
