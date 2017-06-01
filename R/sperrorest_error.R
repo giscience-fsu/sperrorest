@@ -142,7 +142,8 @@ err_default <- function(obs, pred) {
     # Regression problem:
     err <- list(bias = mean(obs - pred), stddev = sd(obs - pred),
                 mse = mean((obs - pred)^2), mad = mad(obs - pred),
-                median = median(obs - pred), iqr = IQR(obs - pred))
+                median = median(obs - pred), iqr = IQR(obs - pred,
+                                                       na.rm = TRUE))
   }
   # Number of observations available:
   err$count <- length(obs)
