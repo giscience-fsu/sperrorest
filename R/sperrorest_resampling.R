@@ -1176,15 +1176,15 @@ plot.represampling <- function(x, data, coords = c("x", "y"), pch = "+", wiggle.
       seltrain <- resample[[i]][[j]]$train
       seltest <- resample[[i]][[j]]$test
       main <- paste("Repetition ", names(resample)[i], ", Fold ", j)
-      plot(data[, coords[1]], data[, coords[2]], pch = ".", type = "n", main = main, 
+      plot(data[[coords[1]]], data[[coords[2]]], pch = ".", type = "n", main = main, 
            xlab = "", ylab = "", ...)  # xlab=coords[1], ylab=coords[2])
       wxtrain <- rnorm(length(seltrain), sd = wiggle.sd)
       wytrain <- rnorm(length(seltrain), sd = wiggle.sd)
       wxtest <- rnorm(length(seltest), sd = wiggle.sd)
       wytest <- rnorm(length(seltest), sd = wiggle.sd)
-      points(data[seltrain, coords[1]] + wxtrain, data[seltrain, coords[2]] + 
+      points(data[[seltrain, coords[1]]] + wxtrain, data[[seltrain, coords[2]]] + 
                wytrain, pch = pch)
-      points(data[seltest, coords[1]] + wxtest, data[seltest, coords[2]] + 
+      points(data[[seltest, coords[1]]] + wxtest, data[[seltest, coords[2]]] + 
                wxtest, pch = pch, col = "red")
     }
   }
