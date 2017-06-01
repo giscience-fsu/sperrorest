@@ -111,7 +111,7 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
     nd_bak <- nd
   }
   # account for possible missing factor levels in test data
-  nd <- remove_missing_levels_in_test_data(fit, nd)
+  nd <- remove_missing_levels(fit, nd)
 
   # Apply model to test sample:
   pargs <- c(list(object = fit, newdata = nd), pred_args)
@@ -375,9 +375,9 @@ transfer_parallel_output <- function(my_res = NULL, res = NULL, impo = NULL,
               res = res))
 }
 
-#' @title remove_missing_levels_in_test_data
-#' @description Accounts for missing factor levels present only in train data
-#' but not in test data by setting these to NA
+#' @title remove_missing_levels
+#' @description Accounts for missing factor levels present only in test data
+#' but not in train data by setting values to NA
 #'
 #' @import magrittr
 #'
@@ -385,10 +385,12 @@ transfer_parallel_output <- function(my_res = NULL, res = NULL, impo = NULL,
 #'
 #' @param test_data data to make predictions for
 #'
+#' @return data.frame with matching factor levels to fitted model
+#'
 #' @keywords internal
 #'
 #' @export
-remove_missing_levels_in_test_data <- function(fit, test_data) {
+remove_missing_levels <- function(fit, test_data) {
 
   # https://stackoverflow.com/a/39495480/4185785
 
@@ -413,14 +415,20 @@ remove_missing_levels_in_test_data <- function(fit, test_data) {
 
   for (i in 1:length(predictors)) {
     found <- test_data[, predictors[i]] %in% model_factors[
-      model_factors$factors == predictors[i], ]$factorLevels
+      model_factors$factors == predictors[i], ]$factor_levels
     if (any(!found)) {
+      # track which variable
+      var <- predictors[i]
+      # set to NA
       test_data[!found, predictors[i]] <- NA
       # drop empty factor levels in test data
-      # test_data %>%
-      #   droplevels() -> test_data
-      warning(paste0("Removing missing factor levels only present in test",
-                     " data but missing in train data."))
+      test_data %>%
+        droplevels() -> test_data
+      # issue warning to console
+      message(sprintf(paste0("Setting missing levels in '%s', only present",
+                             " in test data but missing in train data,",
+                             " to 'NA'."),
+                      var))
     }
   }
   return(test_data)
