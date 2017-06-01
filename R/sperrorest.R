@@ -822,7 +822,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
   {
     end.time <- Sys.time()
     my.bench <- list(system.info = Sys.info(), t.start = start.time, t.end = end.time, 
-      cpu.cores = detectCores(), par.mode = NA, par.units = NA, runtime.performance = end.time - 
+      cpu.cores = parallel::detectCores(), par.mode = NA, par.units = NA, runtime.performance = end.time - 
         start.time)
     class(my.bench) <- "sperrorestbenchmarks"
   } else my.bench <- NULL
