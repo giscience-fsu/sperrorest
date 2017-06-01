@@ -379,6 +379,8 @@ transfer_parallel_output <- function(my_res = NULL, res = NULL, impo = NULL,
 #' @description Accounts for missing factor levels present only in train data
 #' but not in test data by setting these to NA
 #'
+#' @import magrittr
+#'
 #' @param fit fitted model on training data
 #'
 #' @param test_data data to make predictions for
@@ -390,12 +392,16 @@ remove_missing_levels_in_test_data <- function(fit, test_data) {
 
   # https://stackoverflow.com/a/39495480/4185785
 
+  # drop empty factor levels in test data
+  test_data %>%
+    droplevels() -> test_data
+
   # Obtain factor predictors in the model and their levels
 
   factors <- (gsub("[-^0-9]|as.factor|\\(|\\)", "",
                    names(unlist(fit$xlevels))))
-  factorLevels <- unname(unlist(fit$xlevels))
-  modelFactors <- as.data.frame(cbind(factors, factorLevels))
+  factor_levels <- unname(unlist(fit$xlevels))
+  model_factors <- as.data.frame(cbind(factors, factor_levels))
 
   # Select column names in test data that are factor predictors in
   # trained model
@@ -403,15 +409,18 @@ remove_missing_levels_in_test_data <- function(fit, test_data) {
   predictors <- names(test_data[names(test_data) %in% factors])
 
   # For each factor predictor in your data, if the level is not in the model,
-  # set the value to NA --------------
+  # set the value to NA
 
   for (i in 1:length(predictors)) {
-    found <- test_data[, predictors[i]] %in% modelFactors[
-      modelFactors$factors == predictors[i], ]$factorLevels
+    found <- test_data[, predictors[i]] %in% model_factors[
+      model_factors$factors == predictors[i], ]$factorLevels
     if (any(!found)) {
       test_data[!found, predictors[i]] <- NA
-      warning(paste0("Removing missing factor levels only present in train",
-                     " data but missing in test data."))
+      # drop empty factor levels in test data
+      # test_data %>%
+      #   droplevels() -> test_data
+      warning(paste0("Removing missing factor levels only present in test",
+                     " data but missing in train data."))
     }
   }
   return(test_data)
