@@ -143,6 +143,24 @@ test_that("output length of list is correct for error_rep = TRUE and
             expect_equal(length(par.nsp.res$error_fold[[1]]), 2)
           })
 
+test_that("output length of list is correct for error_rep = TRUE and
+          error_fold  = TRUE for par_mode = 'foreach' on svm example", {
+
+            data(ecuador)
+            fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
+
+            rf_spcv <- sperrorest(formula = fo, data = df,
+                                  model_fun = randomForest,
+                                  model_args = list(ntree = 1900,
+                                                    mtry = 9),
+                                  pred_args = list(type = "prob"),
+                                  par_args = list(par_mode = "foreach"),
+                                  smp_fun = partition_kmeans, progress = 2,
+                                  smp_args = list(repetition = 1:4, nfold = 5))
+
+            expect_equal(length(par.nsp.res$error_fold[[1]]), 2)
+          })
+
 # variable importance Wed Feb  8 21:59:03 2017
 
 test_that("sperrorest() variable importance with error_rep = T and

@@ -1,6 +1,7 @@
 context("parsperrorest.R")
 
-pacman::p_load(sperrorest, testthat, rpart, MASS, e1071, tibble)
+pacman::p_load(sperrorest, testthat, rpart, MASS, e1071, tibble,
+               randomForest)
 
 # runfolds Sun May 21 22:58:39 2017 ------------------------------
 
@@ -53,6 +54,32 @@ testthat::test_that("runfolds works on svm example", {
                                                 probability = TRUE), do_try = FALSE,
                               par_mode = "foreach",
                               model_fun = svm,
+                              error_fold = TRUE, error_rep = TRUE,
+                              err_train = TRUE, importance = FALSE, current_res = current_res,
+                              response = "diplo01", par_cl = 2,
+                              coords = c("x", "y"), progress = 1, pooled_obs_train = c(),
+                              pooled_obs_test = c(), err_fun = err_default)
+  expect_equal(length(runfolds_single), 6)
+})
+
+testthat::test_that("runfolds works on rf example", {
+  readRDS("/Users/pjs/Servers/GIServer/home/shares/data/LIFE/mod/survey_data/data-clean.rda") %>%
+    as_tibble() -> df
+  fo <- diplo01 ~ temp + p_sum + r_sum + elevation + slope + hail + age + ph + lithology + soil + year
+
+  j <- 1 # running the first repetition of 'current_sample', normally we are
+  # calling an apply call to seq_along nFolds of repetition
+  # see also 'runreps()'
+  current_sample <- partition_kmeans(df, nfold = 4)[[1]]
+  current_res <- current_sample
+
+  runfolds_single <- runfolds(j = 1, data = df, current_sample = current_sample,
+                              formula = fo,
+                              model_args = list(ntree = 900,
+                                                mtry = 3),
+                              pred_args = list(type = "prob"),
+                              par_mode = "foreach", do_try = FALSE,
+                              model_fun = randomForest,
                               error_fold = TRUE, error_rep = TRUE,
                               err_train = TRUE, importance = FALSE, current_res = current_res,
                               response = "diplo01", par_cl = 2,
@@ -185,13 +212,13 @@ testthat::test_that("runreps works on lda example", {
   fo <- as.formula(paste("croptype ~", paste(predictors, collapse = "+")))
 
   runreps_res <- lapply(current_sample, function(X) runreps(current_sample = X, data = maipo,
-                                                           formula = fo, par_mode = "apply", pred_fun = lda.predfun,
-                                                           do_try = FALSE, model_fun = lda,
-                                                           error_fold = TRUE, error_rep = TRUE, do_gc = 1,
-                                                           err_train = TRUE, importance = FALSE, current_res = current_res,
-                                                           pred_args = list(fac = "field"), response = "croptype", par_cl = 2,
-                                                           coords = c("x", "y"), progress = 1, pooled_obs_train = c(),
-                                                           pooled_obs_test = c(), err_fun = err_default))
+                                                            formula = fo, par_mode = "apply", pred_fun = lda.predfun,
+                                                            do_try = FALSE, model_fun = lda,
+                                                            error_fold = TRUE, error_rep = TRUE, do_gc = 1,
+                                                            err_train = TRUE, importance = FALSE, current_res = current_res,
+                                                            pred_args = list(fac = "field"), response = "croptype", par_cl = 2,
+                                                            coords = c("x", "y"), progress = 1, pooled_obs_train = c(),
+                                                            pooled_obs_test = c(), err_fun = err_default))
 })
 
 testthat::test_that("runreps works on glm example", {
@@ -202,14 +229,14 @@ testthat::test_that("runreps works on glm example", {
   current_res <- readRDS("inst/test-objects/current_res.rda")
 
   runreps_res <- lapply(current_sample, function(X) runreps(current_sample = X, data = ecuador,
-                                                           formula = slides ~ dem + slope + hcurv + vcurv + log.carea + cslope,
-                                                           model_args = list(family = "binomial"), do_try = FALSE, model_fun = glm,
-                                                           error_fold = TRUE, error_rep = TRUE, imp_permutations = 2, do_gc = 1,
-                                                           imp_variables = c("dem", "slope", "hcurv", "vcurv", "log.carea", "cslope"),
-                                                           err_train = TRUE, importance = TRUE, current_res = current_res,
-                                                           pred_args = list(type = "response"), response = "slides", par_cl = 2,
-                                                           coords = c("x", "y"), progress = 1, pooled_obs_train = c(),
-                                                           pooled_obs_test = c(), err_fun = err_default))
+                                                            formula = slides ~ dem + slope + hcurv + vcurv + log.carea + cslope,
+                                                            model_args = list(family = "binomial"), do_try = FALSE, model_fun = glm,
+                                                            error_fold = TRUE, error_rep = TRUE, imp_permutations = 2, do_gc = 1,
+                                                            imp_variables = c("dem", "slope", "hcurv", "vcurv", "log.carea", "cslope"),
+                                                            err_train = TRUE, importance = TRUE, current_res = current_res,
+                                                            pred_args = list(type = "response"), response = "slides", par_cl = 2,
+                                                            coords = c("x", "y"), progress = 1, pooled_obs_train = c(),
+                                                            pooled_obs_test = c(), err_fun = err_default))
 })
 
 testthat::test_that("runreps works on rpart example", {
@@ -220,15 +247,15 @@ testthat::test_that("runreps works on rpart example", {
   current_res <- readRDS("inst/test-objects/current_res.rda")
 
   runreps_res <- lapply(current_sample, function(X) runreps(current_sample = X, data = ecuador,
-                                                           formula = slides ~ dem + slope + hcurv + vcurv + log.carea + cslope,
-                                                           do_try = FALSE, model_fun = rpart,
-                                                           error_fold = TRUE, error_rep = TRUE, imp_permutations = 2, pred_fun = mypred.rpart,
-                                                           model_args = list(control = ctrl),
-                                                           imp_variables = c("dem", "slope", "hcurv", "vcurv", "log.carea", "cslope"),
-                                                           err_train = TRUE, importance = TRUE, current_res = current_res,
-                                                           response = "slides", par_cl = 2,
-                                                           coords = c("x", "y"), progress = 1, pooled_obs_train = c(),
-                                                           pooled_obs_test = c(), err_fun = err_default))
+                                                            formula = slides ~ dem + slope + hcurv + vcurv + log.carea + cslope,
+                                                            do_try = FALSE, model_fun = rpart,
+                                                            error_fold = TRUE, error_rep = TRUE, imp_permutations = 2, pred_fun = mypred.rpart,
+                                                            model_args = list(control = ctrl),
+                                                            imp_variables = c("dem", "slope", "hcurv", "vcurv", "log.carea", "cslope"),
+                                                            err_train = TRUE, importance = TRUE, current_res = current_res,
+                                                            response = "slides", par_cl = 2,
+                                                            coords = c("x", "y"), progress = 1, pooled_obs_train = c(),
+                                                            pooled_obs_test = c(), err_fun = err_default))
 
 })
 
@@ -256,5 +283,27 @@ testthat::test_that("runreps works on svm example", {
                                                             response = "slides", par_cl = 2,
                                                             coords = c("x", "y"), progress = 1, pooled_obs_train = c(),
                                                             pooled_obs_test = c(), err_fun = err_default))
+
+})
+
+testthat::test_that("runreps works on rf example", {
+
+  data <- ecuador
+  current_sample <- partition_kmeans(ecuador, nfold = 4)
+  current_res <- current_sample
+
+  runreps_res <- lapply(current_sample, function(x)
+    runreps(current_sample = x, data = ecuador,
+            formula = slides ~ dem + slope + hcurv + vcurv + log.carea + cslope,
+            model_args = list(ntree = 900,
+                              mtry = 3),
+            pred_args = list(type = "prob"),
+            par_mode = "foreach", do_gc = 1,
+            do_try = FALSE, model_fun = randomForest,
+            error_fold = TRUE, error_rep = TRUE,
+            err_train = TRUE, importance = FALSE, current_res = current_res,
+            response = "slides", par_cl = 2,
+            coords = c("x", "y"), progress = 1, pooled_obs_train = c(),
+            pooled_obs_test = c(), err_fun = err_default))
 
 })
