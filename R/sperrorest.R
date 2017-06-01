@@ -607,18 +607,18 @@ sperrorest <- function(formula, data, coords = c("x", "y"), model.fun, model.arg
         {
           if (do.try)
           {
-          err.try <- try(err.fun(nd[, response], pred.train), silent = silent)
+          err.try <- try(err.fun(nd[response]], pred.train), silent = silent)
           if (class(err.try) == "try-error") 
             err.try <- NULL  # ???
           res[[i]][[j]]$train <- err.try
           } else
           {
-          res[[i]][[j]]$train <- err.fun(nd[, response], pred.train)
+          res[[i]][[j]]$train <- err.fun(nd[[response]], pred.train)
           }
         }
         if (error.rep)
         {
-          pooled.obs.train <- c(pooled.obs.train, nd[, response])
+          pooled.obs.train <- c(pooled.obs.train, nd[[response]])
           pooled.pred.train <- c(pooled.pred.train, pred.train)
         }
       } else # does this ever happen? 'err.train=F' always errors
