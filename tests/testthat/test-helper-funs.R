@@ -342,7 +342,7 @@ test_that("runfolds works on missing factor levels in
             current_res <- current_sample
 
             runreps_res <- lapply(current_sample, function(x)
-              runreps(current_sample = x,
+              runreps(current_sample = x, do_gc = 1,
               formula = fo, par_mode = "sequential", data = df,
               model_args = list(family = "binomial"), do_try = FALSE, model_fun = glm,
               error_fold = TRUE, error_rep = TRUE,
