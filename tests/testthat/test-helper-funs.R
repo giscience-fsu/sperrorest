@@ -7,6 +7,30 @@ pacman::p_load(sperrorest, testthat, rpart, MASS, e1071, tibble,
 
 skip("internal use")
 
+test_that("runfolds works on missing factor levels in
+          test data example", {
+
+            readRDS("/Users/pjs/Servers/GIServer/home/shares/data/LIFE/mod/survey_data/data-clean.rda") %>%
+              as_tibble() -> df
+            fo <- diplo01 ~ temp + p_sum + r_sum + elevation + slope + hail + age + ph + lithology + soil
+
+            j <- 1 # running the first repetition of 'current_sample', normally we are
+            # calling an apply call to seq_along nFolds of repetition
+            # see also 'runreps()'
+            current_sample <- partition_kmeans(df, nfold = 4)[[1]]
+            current_res <- current_sample
+
+            runfolds_single <- runfolds(j = 1, data = df, current_sample = current_sample,
+                                        formula = fo, par_mode = "sequential",
+                                        model_args = list(family = "binomial"), do_try = FALSE, model_fun = glm,
+                                        error_fold = TRUE, error_rep = TRUE,
+                                        err_train = TRUE, importance = FALSE, current_res = current_res,
+                                        pred_args = list(type = "response"), response = "diplo01", par_cl = 2,
+                                        coords = c("x", "y"), progress = 1, pooled_obs_train = c(),
+                                        pooled_obs_test = c(), err_fun = err_default)
+            expect_equal(length(runfolds_single), 6)
+          })
+
 testthat::test_that("runfolds works on glm example", {
 
   j <- 1 # running the first repetition of 'current_sample', normally we are
@@ -305,5 +329,26 @@ testthat::test_that("runreps works on rf example", {
             response = "slides", par_cl = 2,
             coords = c("x", "y"), progress = 1, pooled_obs_train = c(),
             pooled_obs_test = c(), err_fun = err_default))
-
 })
+
+test_that("runfolds works on missing factor levels in
+          test data example", {
+
+            readRDS("/Users/pjs/Servers/GIServer/home/shares/data/LIFE/mod/survey_data/data-clean.rda") %>%
+              as_tibble() -> df
+            fo <- diplo01 ~ temp + p_sum + r_sum + elevation + slope + hail + age + ph + lithology + soil
+
+            current_sample <- partition_kmeans(df, nfold = 5, repetition = 1:5)
+            current_res <- current_sample
+
+            runreps_res <- lapply(current_sample, function(x)
+              runreps(current_sample = x,
+              formula = fo, par_mode = "sequential", data = df,
+              model_args = list(family = "binomial"), do_try = FALSE, model_fun = glm,
+              error_fold = TRUE, error_rep = TRUE,
+              err_train = TRUE, importance = FALSE, current_res = current_res,
+              pred_args = list(type = "response"), response = "diplo01", par_cl = 2,
+              coords = c("x", "y"), progress = 1, pooled_obs_train = c(),
+              pooled_obs_test = c(), err_fun = err_default))
+            expect_equal(length(runfolds_single), 6)
+          })
