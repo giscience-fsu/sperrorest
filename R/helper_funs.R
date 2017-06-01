@@ -396,12 +396,17 @@ remove_missing_levels <- function(fit, test_data) {
 
   # drop empty factor levels in test data
   test_data %>%
-    droplevels() -> test_data
+    droplevels() %>%
+    as.data.frame()-> test_data
 
   # Obtain factor predictors in the model and their levels
 
   factors <- (gsub("[-^0-9]|as.factor|\\(|\\)", "",
                    names(unlist(fit$xlevels))))
+  # do nothing if no factors are present
+  if (length(factors) == 0) {
+    return(test_data)
+  }
   factor_levels <- unname(unlist(fit$xlevels))
   model_factors <- as.data.frame(cbind(factors, factor_levels))
 
@@ -433,3 +438,4 @@ remove_missing_levels <- function(fit, test_data) {
   }
   return(test_data)
 }
+
