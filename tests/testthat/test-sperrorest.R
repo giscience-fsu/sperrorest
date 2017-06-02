@@ -737,3 +737,24 @@ test_that("sperrorest() when pred_fun = NULL", {
   # check for importance object
   expect_equal(class(nspres$importance[[1]][[1]]), "data.frame")
 })
+
+test_that("sperrorest() when missing factor levels in train data", {
+
+  readRDS("/Users/pjs/Servers/GIServer/home/shares/data/LIFE/mod/survey_data/data-clean.rda") %>%
+    as_tibble() -> df
+  fo <- diplo01 ~ temp + p_sum + r_sum + elevation + slope + hail + age +
+    ph + lithology + soil
+
+  nspres <- sperrorest(data = df, formula = fo,
+                       model_fun = glm, model_args = list(family = "binomial"),
+                       pred_args = list(type = "response"),
+                       smp_fun = partition_kmeans,
+                       smp_args = list(repetition = 1:2, nfold = 4),
+                       par_args = list(par_mode = "sequential"))
+  summary.rep <- summary(nspres$error_rep)
+  summary.fold <- summary(nspres$error_fold)
+  summary.resampling <- summary(nspres$represampling)
+  summary.impo <- summary(nspres$importance)
+  # check for train.auroc for binary response
+  expect_equal(names(nspres$error_rep)[[1]], "train.auroc")
+})
