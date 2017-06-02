@@ -301,6 +301,10 @@ runreps <- function(current_sample = NULL, data = NULL, formula = NULL,
   pooled_only <- sapply(unique(names(pooled_only)), function(x)
     unname(unlist(pooled_only[names(pooled_only) == x])), simplify = FALSE)
 
+  if (any(class(data) == "tbl")) {
+    data <- as.data.frame(data)
+  }
+
   # Calculate error measures on pooled results
   if (error_rep) {
     if (is.factor(data[, response])) {
