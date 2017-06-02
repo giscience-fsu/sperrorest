@@ -379,21 +379,22 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
   }
 
   # prevent unnecessary starts of too many workers
-  if (is.null(par_args$par_units) && length(resamp) < availableCores()) {
+  if (is.null(par_args$par_units) && length(resamp) < availableCores() &&
+      !par_args$par_mode == "sequential") {
     par_args$par_units <- length(resamp)
     message(sprintf(paste0("Setting number of cores equal to repetition count",
                            " (= %s) to avoid starting unnecessary workers."),
                     length(resamp)))
-  } else if (!is.null(par_args$par_units) && length(resamp) < par_args$par_units) {
+  } else if (!is.null(par_args$par_units) &&
+             length(resamp) < par_args$par_units &&
+             !par_args$par_mode == "sequential") {
     par_args$par_units <- length(resamp)
     message(sprintf(paste0("Setting number of cores equal to repetition count",
                            " (= %s) to avoid starting unnecessary workers."),
                     length(resamp)))
   }
 
-
   ### par_mode = "apply" (pbapply) -------
-
 
   if (par_args$par_mode == "apply" | par_args$par_mode == "future" |
       par_args$par_mode == "apply-mclapply") {
@@ -401,7 +402,6 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
     if (par_args$par_units > availableCores()) {
       par_args$par_units <- availableCores()
     }
-
 
     # parallelization here (par_mode = 1 & par_mode = 2) For each repetition:
     if (.Platform$OS.type == "windows") {
