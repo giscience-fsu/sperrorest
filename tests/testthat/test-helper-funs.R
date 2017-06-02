@@ -17,7 +17,7 @@ test_that("runfolds works on missing factor levels in
             j <- 1 # running the first repetition of 'current_sample', normally we are
             # calling an apply call to seq_along nFolds of repetition
             # see also 'runreps()'
-            current_sample <- partition_kmeans(df, nfold = 4)[[1]]
+            current_sample <- partition_kmeans(df, nfold = 5)[[1]]
             current_res <- current_sample
 
             runfolds_single <- runfolds(j = 1, data = df, current_sample = current_sample,
