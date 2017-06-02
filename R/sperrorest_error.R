@@ -66,6 +66,13 @@ err_default <- function(obs, pred) {
     pred <- factor(pred, levels = c("FALSE", "TRUE")) # nocov
   }
 
+  # remove NAs in both obs and pred
+  if (any(is.na(pred))) {
+    index_na <- which(pred %in% NA)
+    obs <- obs[-index_na]
+    pred <- pred[-index_na]
+  }
+
   # Classification problem:
   if (is.factor(obs)) {
     if (is.factor(pred)) {
