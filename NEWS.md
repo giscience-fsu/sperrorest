@@ -14,11 +14,12 @@ Features:
     * `sequential`: sequential execution using `future` backend.
     
 Misc: 
-  * Limit workers to number of repetitions if number of cores > number of repetitions. This ensures that no unnecessary workers are started and increases robustness of parallel execuction.
+  * limit workers to number of repetitions if number of cores > number of repetitions. This ensures that no unnecessary workers are started and increases robustness of parallel execuction.
   * documentation improvements 
 
 Bugfixes:
   * partial matching of arguments
+  * account for factor levels only present in test data but missing in training data. Previously, `sperrorest` errored during the predict step when this case occured. Now, this is accounted for and an informative message is given. 
 
 # sperrorest 1.0.0 (08-Mar-2017)
 
