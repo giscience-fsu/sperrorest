@@ -81,7 +81,7 @@ err_default <- function(obs, pred) {
       pred <- factor(pred, levels = levels(obs))
       err <- list(error = mean(obs != pred), accuracy = mean(obs == pred))
       # binary classification without probabilities
-      if (nlevels(obs) == 2) {
+      if (nlevels(obs) == 2) { # nocov start
         npos <- sum(obs == levels(obs)[2])
         nneg <- sum(obs == levels(obs)[1])
         ntruepos <- sum((obs == levels(obs)[2]) & (pred == levels(obs)[2])) # nolint
@@ -96,7 +96,7 @@ err_default <- function(obs, pred) {
         pexp <- (npos / n) * (npospred / n) + (nneg / n) * (nnegpred / n)
         if (pexp == 1) {
           err$kappa <- NA
-        } else err$kappa <- (err$accuracy - pexp) / (1 - pexp)
+        } else err$kappa <- (err$accuracy - pexp) / (1 - pexp) # nocov
       }
     } else {
       # 'soft' classification: Calculate area under the ROC curve:
