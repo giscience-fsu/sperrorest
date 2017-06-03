@@ -20,21 +20,20 @@ test_that("sperrorest() produces correct output for binary response", {
                        smp_args = list(repetition = 1:2, nfold = 2),
                        benchmark = TRUE,
                        importance = TRUE, imp_permutations = 2)
-  summary.rep <- summary(nspres$error_rep)
-  summary.fold <- summary(nspres$error_fold)
-  summary.resampling <- summary(nspres$represampling)
+  summary_rep <- summary(nspres$error_rep)
+  summary_fold <- summary(nspres$error_fold)
+  summary_resampling <- summary(nspres$represampling)
 
   expect_equal(length(nspres$error_rep[[1]]), 2) # reps
   expect_equal(length(nspres$error_fold[[1]]), 2) # folds
-  expect_equal(length(summary.rep), 4) # binary response
-  expect_equal(length(summary.fold), 4) # binary response
-  expect_equal(length(summary.resampling), 2) # resampling summary
+  expect_equal(length(summary_rep), 4) # binary response
+  expect_equal(length(summary_fold), 4) # binary response
+  expect_equal(length(summary_resampling), 2) # resampling summary
   expect_equal(length(nspres$importance[[1]]), 2) # import folds
   expect_equal(length(nspres$importance), 2) # import reps
   # check for auroc existence
   expect_equal(names(nspres$error_rep)[[1]], "train.auroc")
 })
-
 
 # sperorrest() continuous response Wed Feb  8 22:19:57 2017 --------------------
 
@@ -52,15 +51,15 @@ test_that("sperrorest() produces correct output for binary response", {
                        smp_args = list(repetition = 1:2, nfold = 2),
                        benchmark = TRUE,
                        importance = TRUE, imp_permutations = 2)
-  summary.rep <- summary(nspres$error_rep)
-  summary.fold <- summary(nspres$error_fold)
-  summary.resampling <- summary(nspres$represampling)
+  summary_rep <- summary(nspres$error_rep)
+  summary_fold <- summary(nspres$error_fold)
+  summary_resampling <- summary(nspres$represampling)
 
   expect_equal(length(nspres$error_rep[[1]]), 2) # reps
   expect_equal(length(nspres$error_fold[[1]]), 2) # folds
-  expect_equal(length(summary.rep), 4) # binary response
-  expect_equal(length(summary.fold), 4) # binary response
-  expect_equal(length(summary.resampling), 2) # resampling summary
+  expect_equal(length(summary_rep), 4) # binary response
+  expect_equal(length(summary_fold), 4) # binary response
+  expect_equal(length(summary_resampling), 2) # resampling summary
   expect_equal(length(nspres$importance[[1]]), 2) # import folds
   expect_equal(length(nspres$importance), 2) # import reps
   # check for bias existence
@@ -85,7 +84,6 @@ test_that("sperrorest() produces correct output for binary response", {
   expect_equal(length(nspres$error_rep[[1]]), 2) # reps
 })
 
-
 # summary.sperroresterror() Thu Feb  9 22:10:15 2017 ---------------------------
 
 test_that("summary.sperroresterror() produces correct output for binary
@@ -102,13 +100,13 @@ test_that("summary.sperroresterror() produces correct output for binary
                                  smp_fun = partition_cv,
                                  smp_args = list(repetition = 1:2, nfold = 2))
 
-            summary.rep1 <- summary(nspres$error_rep, pooled = FALSE)
-            summary.fold1 <- summary(nspres$error_fold, pooled = FALSE)
-            summary.rep <- summary(nspres$error_rep, pooled = TRUE)
-            summary.fold <- summary(nspres$error_fold, pooled = TRUE)
+            summary_rep1 <- summary(nspres$error_rep, pooled = FALSE)
+            summary_fold1 <- summary(nspres$error_fold, pooled = FALSE)
+            summary_rep <- summary(nspres$error_rep, pooled = TRUE)
+            summary_fold <- summary(nspres$error_fold, pooled = TRUE)
 
-            expect_equal(length(summary.rep), 4) # binary response
-            expect_equal(length(summary.fold), 4) # binary response
+            expect_equal(length(summary_rep), 4) # binary response
+            expect_equal(length(summary_fold), 4) # binary response
           })
 
 # summary.sperrorestimportance() Thu Feb  9 22:17:15 2017 ----------------------
@@ -129,9 +127,9 @@ test_that("summary.sperroresterror() with pooled = FALSE produces correct
                                  importance = TRUE, imp_permutations = 2,
                                  do_try = TRUE)
 
-            summary.imp <- summary(nspres$importance)
+            summary_imp <- summary(nspres$importance)
 
-            expect_equal(length(summary.imp), 28)
+            expect_equal(length(summary_imp), 28)
           })
 
 # sperrorest warnings Thu Feb  9 22:34:08 2017 ------------------------------
@@ -217,7 +215,6 @@ test_that("sperrorest() produces correct output for binary response for
             expect_equal(length(nspres$importance), 2) # import reps
           })
 
-
 # summary.sperrorest() Sun Feb 12 11:56:13 2017 ------------------------------
 
 test_that("summary.sperrorest() works correctly", {
@@ -236,9 +233,9 @@ test_that("summary.sperrorest() works correctly", {
                     error_fold = T,
                     benchmark = T)
 
-  smry.out <- summary(out)
+  smry_out <- summary(out)
 
-  expect_equal(length(smry.out), 6)
+  expect_equal(length(smry_out), 6)
 })
 
 # sperrorest() error_rep = F & do_try = T Sun Feb 12 23:05:30 2017 -------------
@@ -257,12 +254,10 @@ test_that("sperrorest() error_rep = F & do_try = T", {
                     smp_args = list(repetition = 1:2, nfold = 2),
                     error_rep = F, do_try = T)
 
-  smry.out <- summary(out)
+  smry_out <- summary(out)
 
-  expect_equal(length(smry.out), 6)
+  expect_equal(length(smry_out), 6)
 })
-
-
 
 test_that("is_factor_prediction object for classification models", {
 
@@ -270,13 +265,13 @@ test_that("is_factor_prediction object for classification models", {
 
   testthat::skip_on_cran()
 
-  lda.predfun <- function(object, newdata, fac = NULL) {
+  lda_predfun <- function(object, newdata, fac = NULL) {
     library(nnet)
     majority <- function(x) {
       levels(x)[which.is.max(table(x))]
     }
 
-    majority.filter <- function(x, fac) {
+    majority_filter <- function(x, fac) {
       for (lev in levels(fac)) {
         x[ fac == lev ] <- majority(x[ fac == lev ])
       }
@@ -284,7 +279,7 @@ test_that("is_factor_prediction object for classification models", {
     }
 
     pred <- predict(object, newdata = newdata)$class
-    if (!is.null(fac)) pred <- majority.filter(pred, newdata[, fac])
+    if (!is.null(fac)) pred <- majority_filter(pred, newdata[, fac])
     return(pred)
   }
 
@@ -299,16 +294,16 @@ test_that("is_factor_prediction object for classification models", {
 
   data(maipo)
 
-  # err.rep = TRUE, err.fold = TRUE
+  # error_rep = TRUE, error_fold = TRUE
   out <- sperrorest(fo, data = maipo, coords = c("utmx","utmy"),
                     model_fun = lda,
-                    pred_fun = lda.predfun,
+                    pred_fun = lda_predfun,
                     smp_fun = partition_cv,
                     smp_args = list(repetition = 1:2, nfold = 2),
                     error_rep = TRUE, error_fold = TRUE,
                     benchmark = FALSE, progress = FALSE)
 
-  smry.out <- summary(out)
+  smry_out <- summary(out)
 
-  expect_equal(length(smry.out), 6)
+  expect_equal(length(smry_out), 6)
 })

@@ -9,7 +9,8 @@ test_that("runfolds works on missing factor levels in
 
             skip("internal use")
 
-            readRDS("/Users/pjs/Servers/GIServer/home/shares/data/LIFE/mod/survey_data/data-clean.rda") %>%
+            readRDS(paste0("/Users/pjs/Servers/GIServer/home/shares/data/LIFE",
+                           "/mod/survey_data/data-clean.rda")) %>%
               as_tibble() -> df
             fo <- diplo01 ~ temp + p_sum + r_sum + elevation + slope + hail +
               age + ph + lithology + soil
@@ -32,7 +33,6 @@ test_that("runfolds works on missing factor levels in
                      err_fun = err_default) -> runfolds_single
             expect_equal(length(runfolds_single), 6)
           })
-
 
 testthat::test_that("runfolds works on glm example", {
 
@@ -101,7 +101,6 @@ testthat::test_that("runfolds works on LDA example", {
                               pooled_obs_test = c(), err_fun = err_default)
   expect_equal(length(runfolds_single), 6)
 })
-
 
 testthat::test_that("runfolds works on rpart example", {
 
@@ -196,7 +195,7 @@ testthat::test_that("runreps works on glm example", {
             model_fun = glm,
             error_fold = TRUE, error_rep = TRUE, imp_permutations = 2,
             do_gc = 1,
-            imp.variables = c("dem", "slope", "hcurv", "vcurv",
+            imp_variables = c("dem", "slope", "hcurv", "vcurv",
                               "log.carea", "cslope"),
             err_train = TRUE, importance = TRUE, current_res = current_res,
             pred_args = list(type = "response"), response = "slides",
@@ -221,7 +220,7 @@ testthat::test_that("runreps works on rpart example", {
             error_fold = TRUE, error_rep = TRUE, imp_permutations = 2,
             pred_fun = mypred_rpart,
             model_args = list(control = ctrl),
-            imp.variables = c("dem", "slope", "hcurv", "vcurv",
+            imp_variables = c("dem", "slope", "hcurv", "vcurv",
                               "log.carea", "cslope"),
             err_train = TRUE, importance = TRUE, current_res = current_res,
             response = "slides", par_cl = 2,
@@ -235,7 +234,8 @@ test_that("runfolds works on missing factor levels in
 
             skip("internal use")
 
-            readRDS("/Users/pjs/Servers/GIServer/home/shares/data/LIFE/mod/survey_data/data-clean.rda") %>%
+            readRDS(paste0("/Users/pjs/Servers/GIServer/home/shares/data/LIFE",
+                           "/mod/survey_data/data-clean.rda")) %>%
               as_tibble() -> df
             fo <- diplo01 ~ temp + p_sum + r_sum + elevation + slope + hail +
               age + ph + lithology + soil

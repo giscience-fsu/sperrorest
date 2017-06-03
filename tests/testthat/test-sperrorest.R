@@ -86,34 +86,33 @@ test_that("output type (= list) for different logical combinations of
             expect_equal(typeof(out$error_fold), "list")
           })
 
-
 test_that("output length of list is correct for error_rep = TRUE and
           error_fold  = TRUE for par_mode = 'foreach' on rpart example", {
 
             data(ecuador)
             fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
 
-            mypred.rpart <- function(object, newdata) predict(object,
+            mypred_rpart <- function(object, newdata) predict(object,
                                                               newdata)[, 2]
             ctrl <- rpart.control(cp = 0.005) # show the effects of overfitting
             fit <- rpart(fo, data = ecuador, control = ctrl)
 
             # Non-spatial 5-repeated 10-fold cross-validation:
-            mypred.rpart <- function(object, newdata) predict(object,
+            mypred_rpart <- function(object, newdata) predict(object,
                                                               newdata)[,2]
-            par.nsp.res <- sperrorest(data = ecuador, formula = fo,
-                                      model_fun = rpart,
-                                      model_args = list(control = ctrl),
-                                      pred_fun = mypred.rpart,
-                                      progress = FALSE,
-                                      smp_fun = partition_cv,
-                                      smp_args = list(repetition = 1:2,
-                                                      nfold = 2),
-                                      par_args = list(par_mode = "foreach",
-                                                      par_units = 2),
-                                      error_rep = TRUE, error_fold = TRUE)
+            out <- sperrorest(data = ecuador, formula = fo,
+                              model_fun = rpart,
+                              model_args = list(control = ctrl),
+                              pred_fun = mypred_rpart,
+                              progress = FALSE,
+                              smp_fun = partition_cv,
+                              smp_args = list(repetition = 1:2,
+                                              nfold = 2),
+                              par_args = list(par_mode = "foreach",
+                                              par_units = 2),
+                              error_rep = TRUE, error_fold = TRUE)
 
-            expect_equal(length(par.nsp.res$error_fold[[1]]), 2)
+            expect_equal(length(out$error_fold[[1]]), 2)
           })
 
 # variable importance Wed Feb  8 21:59:03 2017
@@ -126,36 +125,41 @@ test_that("sperrorest() variable importance with error_rep = T and
             data(ecuador) # Muenchow et al. (2012), see ?ecuador
             fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
 
-            nspres <- sperrorest(data = ecuador, formula = fo,
-                                 model_fun = glm,
-                                 model_args = list(family = "binomial"),
-                                 pred_fun = predict,
-                                 pred_args = list(type = "response"),
-                                 smp_fun = partition_cv,
-                                 smp_args = list(repetition = 1:1, nfold = 4),
-                                 par_args = list(par_mode = "foreach", par_units = 2),
-                                 benchmark = TRUE,
-                                 importance = TRUE, imp_permutations = 10)
-            expect_equal(class(nspres$importance[[1]][[1]]), "data.frame")
+            out <- sperrorest(data = ecuador, formula = fo,
+                              model_fun = glm,
+                              model_args = list(family = "binomial"),
+                              pred_fun = predict,
+                              pred_args = list(type = "response"),
+                              smp_fun = partition_cv,
+                              smp_args = list(repetition = 1:1, nfold = 4),
+                              par_args = list(par_mode = "foreach",
+                                              par_units = 2),
+                              benchmark = TRUE,
+                              importance = TRUE, imp_permutations = 10)
+            expect_equal(class(out$importance[[1]][[1]]), "data.frame")
           })
 
-test_that("sperrorest() variable importance with error_rep = F and error_fold = T", {
+test_that("sperrorest() variable importance with error_rep = F and
+          error_fold = T", {
 
-  skip_on_cran()
+            skip_on_cran()
 
-  data(ecuador) # Muenchow et al. (2012), see ?ecuador
-  fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
+            data(ecuador) # Muenchow et al. (2012), see ?ecuador
+            fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
 
-  nspres <- sperrorest(data = ecuador, formula = fo,
-                       model_fun = glm, model_args = list(family = "binomial"),
-                       pred_fun = predict, pred_args = list(type = "response"),
-                       smp_fun = partition_cv,
-                       smp_args = list(repetition = 1:2, nfold = 4),
-                       par_args = list(par_mode = "foreach", par_units = 2),
-                       benchmark = TRUE, error_rep = FALSE,
-                       importance = TRUE, imp_permutations = 10)
-  expect_equal(class(nspres$importance[[1]][[1]]), "data.frame")
-})
+            out <- sperrorest(data = ecuador, formula = fo,
+                              model_fun = glm,
+                              model_args = list(family = "binomial"),
+                              pred_fun = predict,
+                              pred_args = list(type = "response"),
+                              smp_fun = partition_cv,
+                              smp_args = list(repetition = 1:2, nfold = 4),
+                              par_args = list(par_mode = "foreach",
+                                              par_units = 2),
+                              benchmark = TRUE, error_rep = FALSE,
+                              importance = TRUE, imp_permutations = 10)
+            expect_equal(class(out$importance[[1]][[1]]), "data.frame")
+          })
 
 # binary response Wed Feb  8 22:43:12 2017
 
@@ -166,19 +170,19 @@ test_that("sperrorest() produces correct output for binary response", {
   data(ecuador) # Muenchow et al. (2012), see ?ecuador
   fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
 
-  nspres <- sperrorest(data = ecuador, formula = fo,
-                       model_fun = glm, model_args = list(family = "binomial"),
-                       pred_fun = predict, pred_args = list(type = "response"),
-                       smp_fun = partition_cv,
-                       smp_args = list(repetition = 1:2, nfold = 2),
-                       par_args = list(par_mode = "foreach", par_units = 2),
-                       benchmark = TRUE,
-                       importance = FALSE, imp_permutations = 2)
-  summary.rep <- summary(nspres$error_rep)
-  summary.fold <- summary(nspres$error_fold)
-  summary.resampling <- summary(nspres$represampling)
+  out <- sperrorest(data = ecuador, formula = fo,
+                    model_fun = glm, model_args = list(family = "binomial"),
+                    pred_fun = predict, pred_args = list(type = "response"),
+                    smp_fun = partition_cv,
+                    smp_args = list(repetition = 1:2, nfold = 2),
+                    par_args = list(par_mode = "foreach", par_units = 2),
+                    benchmark = TRUE,
+                    importance = FALSE, imp_permutations = 2)
+  summary_rep <- summary(out$error_rep)
+  summary_fold <- summary(out$error_fold)
+  summary_resampling <- summary(out$represampling)
   # check for train.auroc for binary response
-  expect_equal(names(nspres$error_rep)[[1]], "train.auroc")
+  expect_equal(names(out$error_rep)[[1]], "train.auroc")
 })
 
 test_that("sperrorest() when pred_fun = NULL", {
@@ -188,22 +192,22 @@ test_that("sperrorest() when pred_fun = NULL", {
   data(ecuador) # Muenchow et al. (2012), see ?ecuador
   fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
 
-  nspres <- sperrorest(data = ecuador, formula = fo,
-                       model_fun = glm, model_args = list(family = "binomial"),
-                       pred_args = list(type = "response"),
-                       smp_fun = partition_cv,
-                       smp_args = list(repetition = 1:2, nfold = 4),
-                       par_args = list(par_mode = "foreach", par_units = 2),
-                       benchmark = TRUE,
-                       importance = TRUE, imp_permutations = 10)
-  summary.rep <- summary(nspres$error_rep)
-  summary.fold <- summary(nspres$error_fold)
-  summary.resampling <- summary(nspres$represampling)
-  summary.impo <- summary(nspres$importance)
+  out <- sperrorest(data = ecuador, formula = fo,
+                    model_fun = glm, model_args = list(family = "binomial"),
+                    pred_args = list(type = "response"),
+                    smp_fun = partition_cv,
+                    smp_args = list(repetition = 1:2, nfold = 4),
+                    par_args = list(par_mode = "foreach", par_units = 2),
+                    benchmark = TRUE,
+                    importance = TRUE, imp_permutations = 10)
+  summary_rep <- summary(out$error_rep)
+  summary_fold <- summary(out$error_fold)
+  summary_resampling <- summary(out$represampling)
+  summary_impo <- summary(out$importance)
   # check for train.auroc for binary response
-  expect_equal(names(nspres$error_rep)[[1]], "train.auroc")
+  expect_equal(names(out$error_rep)[[1]], "train.auroc")
   # check for importance object
-  expect_equal(class(nspres$importance[[1]][[1]]), "data.frame")
+  expect_equal(class(out$importance[[1]][[1]]), "data.frame")
 })
 
 # par_mode = "future" Mon Feb  6 23:25:08 2017 ------------------------------
@@ -258,7 +262,8 @@ test_that("output type (= list) for different logical combinations of
 
             expect_equal(typeof(out$error_rep), "list")
             expect_equal(typeof(out$error_fold), "list")
-            expect_equal(names(out$error_rep)[[1]], "train.error") # check for train.error existence
+            # check for train.error existence
+            expect_equal(names(out$error_rep)[[1]], "train.error")
 
             # err.rep = TRUE, err.fold = FALSE
             out <- sperrorest(fo, data = maipo, coords = c("utmx","utmy"),
@@ -266,7 +271,8 @@ test_that("output type (= list) for different logical combinations of
                               pred_fun = lda_predfun,
                               smp_fun = partition_cv,
                               smp_args = list(repetition = 1:2, nfold = 2),
-                              par_args = list(par_mode = "future", par_units = 2),
+                              par_args = list(par_mode = "future",
+                                              par_units = 2),
                               error_rep = TRUE, error_fold = FALSE,
                               benchmark = TRUE, progress = FALSE)
 
@@ -334,12 +340,13 @@ test_that("do.try argument", {
 
   expect_equal(typeof(out$error_rep), "list")
   expect_equal(typeof(out$error_fold), "list")
-  expect_equal(names(out$error_rep)[[1]], "train.error") # check for train.error existence
+  # check for train.error existence
+  expect_equal(names(out$error_rep)[[1]], "train.error")
 
 })
 
-test_that("output length of list is correct for error_rep = TRUE and error_fold  = TRUE
-          for par_mode = 'future' on rpart example", {
+test_that("output length of list is correct for error_rep = TRUE and
+          error_fold  = TRUE or par_mode = 'future' on rpart example", {
 
             skip_on_cran()
 
@@ -347,25 +354,27 @@ test_that("output length of list is correct for error_rep = TRUE and error_fold 
             fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
 
             # Example of a classification tree fitted to this data:
-            mypred.rpart <- function(object, newdata) predict(object, newdata)[, 2]
+            mypred_rpart <- function(object, newdata) {
+              predict(object, newdata)[, 2]
+            }
             ctrl <- rpart.control(cp = 0.005) # show the effects of overfitting
             fit <- rpart(fo, data = ecuador, control = ctrl)
 
-            # Non-spatial 5-repeated 10-fold cross-validation:
-            mypred.rpart <- function(object, newdata) predict(object, newdata)[,2]
-            par.nsp.res <- sperrorest(data = ecuador, formula = fo,
-                                      model_fun = rpart, model_args = list(control = ctrl),
-                                      pred_fun = mypred.rpart,
-                                      progress = FALSE,
-                                      smp_fun = partition_cv,
-                                      smp_args = list(repetition = 1:2, nfold = 2),
-                                      par_args = list(par_mode = "future", par_units = 2),
-                                      error_rep = TRUE, error_fold = TRUE)
+            out <- sperrorest(data = ecuador, formula = fo,
+                              model_fun = rpart,
+                              model_args = list(control = ctrl),
+                              pred_fun = mypred_rpart,
+                              progress = FALSE,
+                              smp_fun = partition_cv,
+                              smp_args = list(repetition = 1:2, nfold = 2),
+                              par_args = list(par_mode = "future",
+                                              par_units = 2),
+                              error_rep = TRUE, error_fold = TRUE)
 
-            expect_equal(length(par.nsp.res$error_fold[[1]]), 2)
+            expect_equal(length(out$error_fold[[1]]), 2)
           })
 
-# par_mode = "apply" variable importance Tue Feb 21 22:15:41 2017 ------------------------------
+# par_mode = "apply" variable importance Tue Feb 21 22:15:41 2017 --------------
 
 test_that("par_mode = 'apply' works with var.imp", {
 
@@ -374,20 +383,22 @@ test_that("par_mode = 'apply' works with var.imp", {
   data(ecuador) # Muenchow et al. (2012), see ?ecuador
   fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
 
-  nspres <- sperrorest(data = ecuador, formula = fo,
-                       model_fun = glm, model_args = list(family = "binomial"),
-                       pred_args = list(type = "response"),
-                       smp_fun = partition_cv,
-                       smp_args = list(repetition = 1:2, nfold = 4),
-                       par_args = list(par_mode = "apply", par_units = 2),
-                       benchmark = TRUE,
-                       importance = TRUE, imp_permutations = 2)
-  summary.rep <- summary(nspres$error_rep)
-  summary.fold <- summary(nspres$error_fold)
-  summary.resampling <- summary(nspres$represampling)
-  summary.impo <- summary(nspres$importance)
-  expect_equal(names(nspres$error_rep)[[1]], "train.auroc") # check for train.auroc for binary response
-  expect_equal(class(nspres$importance[[1]][[1]]), "data.frame") # check for importance object
+  out <- sperrorest(data = ecuador, formula = fo,
+                    model_fun = glm, model_args = list(family = "binomial"),
+                    pred_args = list(type = "response"),
+                    smp_fun = partition_cv,
+                    smp_args = list(repetition = 1:2, nfold = 4),
+                    par_args = list(par_mode = "apply", par_units = 2),
+                    benchmark = TRUE,
+                    importance = TRUE, imp_permutations = 2)
+  summary_rep <- summary(out$error_rep)
+  summary_fold <- summary(out$error_fold)
+  summary_resampling <- summary(out$represampling)
+  summary_impo <- summary(out$importance)
+  # check for train.auroc for binary response
+  expect_equal(names(out$error_rep)[[1]], "train.auroc")
+  # check for importance object
+  expect_type(out$importance[[1]][[1]], "data.frame")
 })
 
 # sperrorest warnings Thu Feb  9 22:34:08 2017
@@ -577,26 +588,26 @@ test_that("output length of list is correct for error_rep = TRUE and
             data(ecuador)
             fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
 
-            mypred.rpart <- function(object, newdata) predict(object,
+            mypred_rpart <- function(object, newdata) predict(object,
                                                               newdata)[, 2]
             ctrl <- rpart.control(cp = 0.005) # show the effects of overfitting
             fit <- rpart(fo, data = ecuador, control = ctrl)
 
             # Non-spatial 5-repeated 10-fold cross-validation:
-            mypred.rpart <- function(object, newdata) predict(object,
+            mypred_rpart <- function(object, newdata) predict(object,
                                                               newdata)[,2]
-            par.nsp.res <- sperrorest(data = ecuador, formula = fo,
-                                      model_fun = rpart,
-                                      model_args = list(control = ctrl),
-                                      pred_fun = mypred.rpart,
-                                      progress = FALSE,
-                                      smp_fun = partition_cv,
-                                      smp_args = list(repetition = 1:2,
-                                                      nfold = 2),
-                                      par_args = list(par_mode = "sequential"),
-                                      error_rep = TRUE, error_fold = TRUE)
+            out <- sperrorest(data = ecuador, formula = fo,
+                              model_fun = rpart,
+                              model_args = list(control = ctrl),
+                              pred_fun = mypred_rpart,
+                              progress = FALSE,
+                              smp_fun = partition_cv,
+                              smp_args = list(repetition = 1:2,
+                                              nfold = 2),
+                              par_args = list(par_mode = "sequential"),
+                              error_rep = TRUE, error_fold = TRUE)
 
-            expect_equal(length(par.nsp.res$error_fold[[1]]), 2)
+            expect_equal(length(out$error_fold[[1]]), 2)
           })
 
 # variable importance Wed Feb  8 21:59:03 2017
@@ -609,17 +620,17 @@ test_that("sperrorest() variable importance with error_rep = T and
             data(ecuador) # Muenchow et al. (2012), see ?ecuador
             fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
 
-            nspres <- sperrorest(data = ecuador, formula = fo,
-                                 model_fun = glm,
-                                 model_args = list(family = "binomial"),
-                                 pred_fun = predict,
-                                 pred_args = list(type = "response"),
-                                 smp_fun = partition_cv,
-                                 smp_args = list(repetition = 1:2, nfold = 4),
-                                 par_args = list(par_mode = "sequential"),
-                                 benchmark = TRUE,
-                                 importance = TRUE, imp_permutations = 10)
-            expect_equal(class(nspres$importance[[1]][[1]]), "data.frame")
+            out <- sperrorest(data = ecuador, formula = fo,
+                              model_fun = glm,
+                              model_args = list(family = "binomial"),
+                              pred_fun = predict,
+                              pred_args = list(type = "response"),
+                              smp_fun = partition_cv,
+                              smp_args = list(repetition = 1:2, nfold = 4),
+                              par_args = list(par_mode = "sequential"),
+                              benchmark = TRUE,
+                              importance = TRUE, imp_permutations = 10)
+            expect_equal(class(out$importance[[1]][[1]]), "data.frame")
           })
 
 test_that("sperrorest() variable importance with error_rep = F and
@@ -630,17 +641,17 @@ test_that("sperrorest() variable importance with error_rep = F and
             data(ecuador) # Muenchow et al. (2012), see ?ecuador
             fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
 
-            nspres <- sperrorest(data = ecuador, formula = fo,
-                                 model_fun = glm,
-                                 model_args = list(family = "binomial"),
-                                 pred_fun = predict,
-                                 pred_args = list(type = "response"),
-                                 smp_fun = partition_cv,
-                                 smp_args = list(repetition = 1:2, nfold = 4),
-                                 par_args = list(par_mode = "sequential"),
-                                 benchmark = TRUE, error_rep = FALSE,
-                                 importance = TRUE, imp_permutations = 10)
-            expect_equal(class(nspres$importance[[1]][[1]]), "data.frame")
+            out <- sperrorest(data = ecuador, formula = fo,
+                              model_fun = glm,
+                              model_args = list(family = "binomial"),
+                              pred_fun = predict,
+                              pred_args = list(type = "response"),
+                              smp_fun = partition_cv,
+                              smp_args = list(repetition = 1:2, nfold = 4),
+                              par_args = list(par_mode = "sequential"),
+                              benchmark = TRUE, error_rep = FALSE,
+                              importance = TRUE, imp_permutations = 10)
+            expect_equal(class(out$importance[[1]][[1]]), "data.frame")
           })
 
 # binary response Wed Feb  8 22:43:12 2017
@@ -652,19 +663,19 @@ test_that("sperrorest() produces correct output for binary response", {
   data(ecuador) # Muenchow et al. (2012), see ?ecuador
   fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
 
-  nspres <- sperrorest(data = ecuador, formula = fo,
-                       model_fun = glm, model_args = list(family = "binomial"),
-                       pred_fun = predict, pred_args = list(type = "response"),
-                       smp_fun = partition_cv,
-                       smp_args = list(repetition = 1:2, nfold = 2),
-                       par_args = list(par_mode = "sequential"),
-                       benchmark = TRUE,
-                       importance = FALSE, imp_permutations = 2)
-  summary.rep <- summary(nspres$error_rep)
-  summary.fold <- summary(nspres$error_fold)
-  summary.resampling <- summary(nspres$represampling)
+  out <- sperrorest(data = ecuador, formula = fo,
+                    model_fun = glm, model_args = list(family = "binomial"),
+                    pred_fun = predict, pred_args = list(type = "response"),
+                    smp_fun = partition_cv,
+                    smp_args = list(repetition = 1:2, nfold = 2),
+                    par_args = list(par_mode = "sequential"),
+                    benchmark = TRUE,
+                    importance = FALSE, imp_permutations = 2)
+  summary_rep <- summary(out$error_rep)
+  summary_fold <- summary(out$error_fold)
+  summary_resampling <- summary(out$represampling)
   # check for train.auroc for binary response
-  expect_equal(names(nspres$error_rep)[[1]], "train.auroc")
+  expect_equal(names(out$error_rep)[[1]], "train.auroc")
 })
 
 test_that("sperrorest() when pred_fun = NULL", {
@@ -674,41 +685,42 @@ test_that("sperrorest() when pred_fun = NULL", {
   data(ecuador) # Muenchow et al. (2012), see ?ecuador
   fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
 
-  nspres <- sperrorest(data = ecuador, formula = fo,
-                       model_fun = glm, model_args = list(family = "binomial"),
-                       pred_args = list(type = "response"),
-                       smp_fun = partition_cv,
-                       smp_args = list(repetition = 1:2, nfold = 4),
-                       par_args = list(par_mode = "sequential"),
-                       benchmark = TRUE,
-                       importance = TRUE, imp_permutations = 10)
-  summary.rep <- summary(nspres$error_rep)
-  summary.fold <- summary(nspres$error_fold)
-  summary.resampling <- summary(nspres$represampling)
-  summary.impo <- summary(nspres$importance)
+  out <- sperrorest(data = ecuador, formula = fo,
+                    model_fun = glm, model_args = list(family = "binomial"),
+                    pred_args = list(type = "response"),
+                    smp_fun = partition_cv,
+                    smp_args = list(repetition = 1:2, nfold = 4),
+                    par_args = list(par_mode = "sequential"),
+                    benchmark = TRUE,
+                    importance = TRUE, imp_permutations = 10)
+  summary_rep <- summary(out$error_rep)
+  summary_fold <- summary(out$error_fold)
+  summary_resampling <- summary(out$represampling)
+  summary_impo <- summary(out$importance)
   # check for train.auroc for binary response
-  expect_equal(names(nspres$error_rep)[[1]], "train.auroc")
+  expect_equal(names(out$error_rep)[[1]], "train.auroc")
   # check for importance object
-  expect_equal(class(nspres$importance[[1]][[1]]), "data.frame")
+  expect_equal(class(out$importance[[1]][[1]]), "data.frame")
 })
 
 test_that("sperrorest() when missing factor levels in train data", {
 
-  readRDS("/Users/pjs/Servers/GIServer/home/shares/data/LIFE/mod/survey_data/data-clean.rda") %>%
+  readRDS(paste0("/Users/pjs/Servers/GIServer/home/shares/data/LIFE/mod/",
+                 "survey_data/data-clean.rda")) %>%
     as_tibble() -> df
   fo <- diplo01 ~ temp + p_sum + r_sum + elevation + slope + hail + age
   ph + lithology + soil
 
-  nspres <- sperrorest(data = df, formula = fo,
-                       model_fun = glm, model_args = list(family = "binomial"),
-                       pred_args = list(type = "response"),
-                       smp_fun = partition_kmeans,
-                       smp_args = list(repetition = 1:2, nfold = 4),
-                       par_args = list(par_mode = "sequential"))
-  summary.rep <- summary(nspres$error_rep)
-  summary.fold <- summary(nspres$error_fold)
-  summary.resampling <- summary(nspres$represampling)
-  summary.impo <- summary(nspres$importance)
+  out <- sperrorest(data = df, formula = fo,
+                    model_fun = glm, model_args = list(family = "binomial"),
+                    pred_args = list(type = "response"),
+                    smp_fun = partition_kmeans,
+                    smp_args = list(repetition = 1:2, nfold = 4),
+                    par_args = list(par_mode = "sequential"))
+  summary_rep <- summary(out$error_rep)
+  summary_fold <- summary(out$error_fold)
+  summary_resampling <- summary(out$represampling)
+  summary_impo <- summary(out$importance)
   # check for train.auroc for binary response
-  expect_equal(names(nspres$error_rep)[[1]], "train.auroc")
+  expect_equal(names(out$error_rep)[[1]], "train.auroc")
 })
