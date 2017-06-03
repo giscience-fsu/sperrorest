@@ -705,6 +705,8 @@ test_that("sperrorest() when pred_fun = NULL", {
 
 test_that("sperrorest() when missing factor levels in train data", {
 
+  skip("internal use only")
+
   readRDS(paste0("/Users/pjs/Servers/GIServer/home/shares/data/LIFE/mod/",
                  "survey_data/data-clean.rda")) %>%
     as_tibble() -> df
