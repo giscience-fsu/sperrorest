@@ -46,8 +46,8 @@ dataset_distance <- function(d1, d2, x_name = "x", y_name = "y", fun = mean,
       method <- "euclidean"
     }
     else {
-      warning("only Euclidean distance is currently implemented\n")
-    }
+      warning("only Euclidean distance is currently implemented\n") # nocov
+    } # nocov
   }
   di <- rep(NA, nrow(d1))
   for (i in 1:nrow(d1)) {
