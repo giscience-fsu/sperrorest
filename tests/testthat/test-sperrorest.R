@@ -398,7 +398,7 @@ test_that("par_mode = 'apply' works with var.imp", {
   # check for train.auroc for binary response
   expect_equal(names(out$error_rep)[[1]], "train.auroc")
   # check for importance object
-  expect_type(out$importance[[1]][[1]], "data.frame")
+  expect_type(out$importance[[1]][[1]], "list")
 })
 
 # sperrorest warnings Thu Feb  9 22:34:08 2017
