@@ -1,6 +1,6 @@
-context("parsperrorest.R")
+context("processing.R")
 
-pacman::p_load(sperrorest, testthat, rpart, MASS)
+pacman::p_load(sperrorest, rpart, MASS)
 
 # runfolds Sun May 21 22:58:39 2017 ------------------------------
 
