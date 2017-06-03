@@ -343,7 +343,7 @@ runreps <- function(current_sample = NULL, data = NULL, formula = NULL,
       t() -> current_pooled_error
 
     if (do_gc >= 2) {
-      gc()
+      gc() # nocov
     }
   }  # end for each fold
 
