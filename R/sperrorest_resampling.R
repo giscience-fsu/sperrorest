@@ -1240,5 +1240,5 @@ plot.represampling <- function(x, data, coords = c("x", "y"), pch = "+",
 #' @method plot resampling
 plot.resampling <- function(x, ...) {
   x <- as.represampling(list(`1` = x)) # nolint
-  plot.represampling(x) # nolint # nocovend
+  plot.represampling(x) # nolint # nocov end
 }

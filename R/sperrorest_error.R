@@ -96,7 +96,7 @@ err_default <- function(obs, pred) {
         pexp <- (npos / n) * (npospred / n) + (nneg / n) * (nnegpred / n)
         if (pexp == 1) {
           err$kappa <- NA
-        } else err$kappa <- (err$accuracy - pexp) / (1 - pexp) # nocov
+        } else err$kappa <- (err$accuracy - pexp) / (1 - pexp) # nocov end
       }
     } else {
       # 'soft' classification: Calculate area under the ROC curve:
