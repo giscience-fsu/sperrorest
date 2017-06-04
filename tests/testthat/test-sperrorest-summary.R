@@ -16,6 +16,8 @@ test_that("sperrorest() produces correct output for binary response", {
   nspres <- sperrorest(data = ecuador, formula = fo,
                        model_fun = glm, model_args = list(family = "binomial"),
                        pred_fun = predict, pred_args = list(type = "response"),
+                       par_args = list(par_mode = "foreach",
+                                       par_units = 2),
                        smp_fun = partition_cv,
                        smp_args = list(repetition = 1:2, nfold = 2))
   summary_rep <- summary(nspres$error_rep)
@@ -27,8 +29,6 @@ test_that("sperrorest() produces correct output for binary response", {
   expect_equal(length(summary_rep), 4) # binary response
   expect_equal(length(summary_fold), 4) # binary response
   expect_equal(length(summary_resampling), 2) # resampling summary
-  expect_equal(length(nspres$importance[[1]]), 2) # import folds
-  expect_equal(length(nspres$importance), 2) # import reps
   # check for auroc existence
   expect_equal(names(nspres$error_rep)[[1]], "train.auroc")
 })
@@ -47,6 +47,8 @@ test_that("sperrorest() produces correct output for binary response", {
                        pred_fun = predict,
                        smp_fun = partition_cv,
                        smp_args = list(repetition = 1:2, nfold = 2),
+                       par_args = list(par_mode = "foreach",
+                                       par_units = 2),
                        benchmark = TRUE,
                        importance = TRUE, imp_permutations = 2)
   summary_rep <- summary(nspres$error_rep)
@@ -77,6 +79,8 @@ test_that("sperrorest() produces correct output for binary response", {
                        model_fun = glm,
                        smp_fun = partition_cv,
                        smp_args = list(repetition = 1:2, nfold = 2),
+                       par_args = list(par_mode = "foreach",
+                                       par_units = 2),
                        importance = TRUE, imp_permutations = 2)
 
   expect_equal(length(nspres$error_rep[[1]]), 2) # reps
@@ -96,6 +100,8 @@ test_that("summary.sperroresterror() produces correct output for binary
                                  model_fun = glm,
                                  pred_fun = predict,
                                  smp_fun = partition_cv,
+                                 par_args = list(par_mode = "foreach",
+                                                 par_units = 2),
                                  smp_args = list(repetition = 1:2, nfold = 2))
 
             summary_rep1 <- summary(nspres$error_rep, pooled = FALSE)
@@ -121,6 +127,8 @@ test_that("summary.sperroresterror() with pooled = FALSE produces correct
                                  model_fun = glm,
                                  pred_fun = predict,
                                  smp_fun = partition_cv,
+                                 par_args = list(par_mode = "foreach",
+                                                 par_units = 2),
                                  smp_args = list(repetition = 1:2, nfold = 2),
                                  importance = TRUE, imp_permutations = 2,
                                  do_try = TRUE)
@@ -143,6 +151,8 @@ test_that("importance = T and error_fold = F", {
                             model_fun = glm,
                             pred_fun = predict,
                             smp_fun = partition_cv,
+                            par_args = list(par_mode = "foreach",
+                                            par_units = 2),
                             smp_args = list(repetition = 1:2, nfold = 2),
                             importance = TRUE, error_fold = FALSE))
 })
@@ -201,6 +211,8 @@ test_that("sperrorest() produces correct output for binary response for
                                  model_args = list(family = "binomial"),
                                  pred_fun = predict,
                                  pred_args = list(type = "response"),
+                                 par_args = list(par_mode = "foreach",
+                                                 par_units = 2),
                                  smp_fun = partition_cv,
                                  smp_args = list(repetition = 1:2, nfold = 2),
                                  benchmark = F,
@@ -225,6 +237,8 @@ test_that("summary.sperrorest() works correctly", {
   out <- sperrorest(data = ecuador, formula = fo,
                     model_fun = glm,
                     pred_fun = predict,
+                    par_args = list(par_mode = "foreach",
+                                    par_units = 2),
                     smp_fun = partition_cv,
                     smp_args = list(repetition = 1:2, nfold = 2),
                     importance = T, imp_permutations = 2,
@@ -248,6 +262,8 @@ test_that("sperrorest() error_rep = F & do_try = T", {
   out <- sperrorest(data = ecuador, formula = fo,
                     model_fun = glm,
                     pred_fun = predict,
+                    par_args = list(par_mode = "foreach",
+                                    par_units = 2),
                     smp_fun = partition_cv,
                     smp_args = list(repetition = 1:2, nfold = 2),
                     error_rep = F, do_try = T)
@@ -296,6 +312,8 @@ test_that("is_factor_prediction object for classification models", {
   out <- sperrorest(fo, data = maipo, coords = c("utmx","utmy"),
                     model_fun = lda,
                     pred_fun = lda_predfun,
+                    par_args = list(par_mode = "foreach",
+                                    par_units = 2),
                     smp_fun = partition_cv,
                     smp_args = list(repetition = 1:2, nfold = 2),
                     error_rep = TRUE, error_fold = TRUE,
