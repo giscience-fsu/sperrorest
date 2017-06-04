@@ -419,6 +419,11 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
                     length(resamp)))
   }
 
+  # account for unspecified number of cores
+  if (is.null(par_args$par_units)) {
+    par_args$par_units <- availableCores()
+  }
+
   ### par_mode = "apply" (pbapply) -------
 
   if (par_args$par_mode == "apply" | par_args$par_mode == "future" |
