@@ -8,7 +8,7 @@ pacman::p_load(sperrorest, rpart, testthat, MASS)
 
 test_that("sperrorest() produces correct output for binary response", {
 
-  skip_on_os("mac") # don't know why summary tests failing on mac atm
+  #skip_on_os("mac") # don't know why summary tests failing on mac atm
 
   data(ecuador) # Muenchow et al. (2012), see ?ecuador
   fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
@@ -17,9 +17,7 @@ test_that("sperrorest() produces correct output for binary response", {
                        model_fun = glm, model_args = list(family = "binomial"),
                        pred_fun = predict, pred_args = list(type = "response"),
                        smp_fun = partition_cv,
-                       smp_args = list(repetition = 1:2, nfold = 2),
-                       benchmark = TRUE,
-                       importance = TRUE, imp_permutations = 2)
+                       smp_args = list(repetition = 1:2, nfold = 2))
   summary_rep <- summary(nspres$error_rep)
   summary_fold <- summary(nspres$error_fold)
   summary_resampling <- summary(nspres$represampling)
@@ -39,7 +37,7 @@ test_that("sperrorest() produces correct output for binary response", {
 
 test_that("sperrorest() produces correct output for binary response", {
 
-  skip_on_os("mac") # don't know why summary tests failing on mac atm
+  #skip_on_os("mac") # don't know why summary tests failing on mac atm
 
   data(ecuador) # Muenchow et al. (2012), see ?ecuador
   fo <- slope ~ hcurv + vcurv + log.carea + cslope
@@ -70,7 +68,7 @@ test_that("sperrorest() produces correct output for binary response", {
 
 test_that("sperrorest() produces correct output for binary response", {
 
-  skip_on_os("mac") # don't know why summary tests failing on mac atm
+  #skip_on_os("mac") # don't know why summary tests failing on mac atm
 
   data(ecuador) # Muenchow et al. (2012), see ?ecuador
   fo <- slope ~ hcurv + vcurv + log.carea + cslope
@@ -89,7 +87,7 @@ test_that("sperrorest() produces correct output for binary response", {
 test_that("summary.sperroresterror() produces correct output for binary
           response", {
 
-            skip_on_os("mac") # don't know why summary tests failing on mac atm
+            #skip_on_os("mac") # don't know why summary tests failing on mac atm
 
             data(ecuador) # Muenchow et al. (2012), see ?ecuador
             fo <- slope ~ hcurv + vcurv + log.carea + cslope
@@ -114,7 +112,7 @@ test_that("summary.sperroresterror() produces correct output for binary
 test_that("summary.sperroresterror() with pooled = FALSE produces correct
           output for binary response", {
 
-            skip_on_os("mac") # don't know why summary tests failing on mac atm
+            #skip_on_os("mac") # don't know why summary tests failing on mac atm
 
             data(ecuador) # Muenchow et al. (2012), see ?ecuador
             fo <- slope ~ hcurv + vcurv + log.carea + cslope
@@ -136,7 +134,7 @@ test_that("summary.sperroresterror() with pooled = FALSE produces correct
 
 test_that("importance = T and error_fold = F", {
 
-  skip_on_os("mac") # don't know why summary tests failing on mac atm
+  #skip_on_os("mac") # don't know why summary tests failing on mac atm
 
   data(ecuador) # Muenchow et al. (2012), see ?ecuador
   fo <- slope ~ hcurv + vcurv + log.carea + cslope
@@ -153,7 +151,7 @@ test_that("importance = T and error_fold = F", {
 
 test_that("deprecated args", {
 
-  skip_on_os("mac") # don't know why summary tests failing on mac atm
+  #skip_on_os("mac") # don't know why summary tests failing on mac atm
 
   data(ecuador) # Muenchow et al. (2012), see ?ecuador
   fo <- slope ~ hcurv + vcurv + log.carea + cslope
@@ -193,7 +191,7 @@ test_that("deprecated args", {
 test_that("sperrorest() produces correct output for binary response for
           non-default arguments", {
 
-            skip_on_os("mac") # don't know why summary tests failing on mac atm
+            #skip_on_os("mac") # don't know why summary tests failing on mac atm
 
             data(ecuador) # Muenchow et al. (2012), see ?ecuador
             fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
@@ -219,7 +217,7 @@ test_that("sperrorest() produces correct output for binary response for
 
 test_that("summary.sperrorest() works correctly", {
 
-  skip_on_os("mac") # don't know why summary tests failing on mac atm
+  #skip_on_os("mac") # don't know why summary tests failing on mac atm
 
   data(ecuador) # Muenchow et al. (2012), see ?ecuador
   fo <- slope ~ hcurv + vcurv + log.carea + cslope
@@ -242,7 +240,7 @@ test_that("summary.sperrorest() works correctly", {
 
 test_that("sperrorest() error_rep = F & do_try = T", {
 
-  skip_on_os("mac") # don't know why summary tests failing on mac atm
+  #skip_on_os("mac") # don't know why summary tests failing on mac atm
 
   data(ecuador) # Muenchow et al. (2012), see ?ecuador
   fo <- slope ~ hcurv + vcurv + log.carea + cslope
@@ -261,7 +259,7 @@ test_that("sperrorest() error_rep = F & do_try = T", {
 
 test_that("is_factor_prediction object for classification models", {
 
-  skip_on_os("mac") # don't know why summary tests failing on mac atm
+  #skip_on_os("mac") # don't know why summary tests failing on mac atm
 
   testthat::skip_on_cran()
 
