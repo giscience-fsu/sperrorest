@@ -556,7 +556,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
 
     if (par_args$par_mode == "future") {
       if (!is.null(par_args$par_option)) {
-        plan(par_args$par_option, workers = par_args$par_units)
+        plan(par_args$par_option, workers = par_args$par_units) # nocov
       } else {
         par_args$par_option <- "multiprocess"
         plan(par_args$par_option, workers = par_args$par_units)

@@ -67,10 +67,10 @@ err_default <- function(obs, pred) {
   }
 
   # remove NAs in both obs and pred
-  if (any(is.na(pred))) {
+  if (any(is.na(pred))) { # nocov start
     index_na <- which(pred %in% NA)
     obs <- obs[-index_na]
-    pred <- pred[-index_na]
+    pred <- pred[-index_na] # nocov end
   }
 
   # Classification problem:

@@ -54,7 +54,7 @@ remove_missing_levels <- function(fit, test_data) {
   if (length(factors) == 0) {
     return(test_data)
   }
-  factor_levels <- unname(unlist(fit$xlevels))
+  factor_levels <- unname(unlist(fit$xlevels)) # nocov start
   model_factors <- as.data.frame(cbind(factors, factor_levels))
 
   # Select column names in test data that are factor predictors in
@@ -83,5 +83,5 @@ remove_missing_levels <- function(fit, test_data) {
                       var))
     }
   }
-  return(test_data)
+  return(test_data) # nocov end
 }

@@ -251,7 +251,7 @@ partition_factor_cv <- function(data, coords = c("x", "y"), fac, nfold = 10,
   resampling <- list()
   for (cnt in repetition) {
     if (!is.null(seed1)) {
-      set.seed(seed1 + cnt)
+      set.seed(seed1 + cnt) # nocov
     }
     fac_resampler <- sample(rep(sample(nfold), length = nlevels(fac)),
                             size = nlevels(fac))
@@ -860,7 +860,7 @@ represampling_bootstrap <- function(data, coords = c("x", "y"),
     train <- sample(nrow(data), nboot, replace = TRUE)
     if (oob) {
       # test set = out of bag sample:
-      test <- c(1:nrow(data))[!(c(1:nrow(data)) %in% train)]
+      test <- c(1:nrow(data))[!(c(1:nrow(data)) %in% train)] # nocov
     } else {
       # test set = independently drawn bootstrap sample
       test <- sample(nrow(data), nboot, replace = TRUE)
@@ -937,7 +937,7 @@ represampling_factor_bootstrap <- function(data, fac, repetition = 1,
   if (is.list(fac)) {
     stopifnot(length(fac) == length(repetition))
     if (is.null(names(fac))) {
-      names(fac) <- as.character(repetition)
+      names(fac) <- as.character(repetition) # nocov
     } else {
       stopifnot(all(as.character(repetition) %in% names(fac)))
     }

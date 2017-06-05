@@ -41,13 +41,13 @@ dataset_distance <- function(d1, d2, x_name = "x", y_name = "y", fun = mean,
                              method = "euclidean", ...) {
   method <- tolower(method)
   if (method != "euclidean") {
-    if (method == "euclidian") {
+    if (method == "euclidian") { # nocov start
       warning("correct spelling is 'Euclidean', not 'Euclidian'")
       method <- "euclidean"
     }
     else {
-      warning("only Euclidean distance is currently implemented\n") # nocov
-    } # nocov
+      warning("only Euclidean distance is currently implemented\n")
+    } # nocov end
   }
   di <- rep(NA, nrow(d1))
   for (i in 1:nrow(d1)) {
@@ -256,7 +256,7 @@ get_small_tiles <- function(tile, min_n = NULL, min_frac = 0, ignore = c()) {
   small_tile <- rep(FALSE, n_tiles)
   if (is.null(min_n) & is.null(min_frac)) {
     stop(paste0("either 'min_n' or 'min_frac' must be specified in", # nocov
-         " 'get_small_tiles'")) # no cov
+         " 'get_small_tiles'")) # nocov
   }
   if (!is.null(min_n)) {
     small_tile <- small_tile | (n_tile < min_n)
@@ -275,7 +275,7 @@ get_small_tiles <- function(tile, min_n = NULL, min_frac = 0, ignore = c()) {
   }
   # Order 'small' tiles, smallest one first:
   if (length(small_tile) > 0) {
-    small_tile <- small_tile[order(n_tile[small_tile], decreasing = FALSE)]
+    small_tile <- small_tile[order(n_tile[small_tile], decreasing = FALSE)] # nocov # nolint
   }
   small_tile <- factor(small_tile, levels = levels(tile))
   return(small_tile)
@@ -600,7 +600,7 @@ print.represampling <- function(x, ...) { # nocov start
 #' @rdname as.represampling
 #' @name is_represampling
 #' @export
-is_represampling <- function(object) inherits(object, "represampling")
+is_represampling <- function(object) inherits(object, "represampling") # nocov
 
 
 #' Summary statistics for a resampling objects
