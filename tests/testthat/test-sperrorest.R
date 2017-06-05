@@ -709,14 +709,16 @@ test_that("sperrorest() when missing factor levels in train data", {
 
   readRDS(paste0("/Users/pjs/Servers/GIServer/home/shares/data/LIFE/mod/",
                  "survey_data/data-clean.rda")) %>%
-    as_tibble() -> df
-  fo <- diplo01 ~ temp + p_sum + r_sum + elevation + slope + hail + age
+    as_tibble() %>%
+    as.data.frame() -> df
+  fo <- diplo01 ~ temp + p_sum + r_sum + elevation + slope + hail + age +
   ph + lithology + soil
 
   out <- sperrorest(data = df, formula = fo,
                     model_fun = glm, model_args = list(family = "binomial"),
                     pred_args = list(type = "response"),
                     smp_fun = partition_kmeans,
+                    importance = TRUE, imp_permutations = 2,
                     smp_args = list(repetition = 1:2, nfold = 4),
                     par_args = list(par_mode = "sequential"))
   summary_rep <- summary(out$error_rep)

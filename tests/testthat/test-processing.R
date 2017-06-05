@@ -11,7 +11,8 @@ test_that("runfolds works on missing factor levels in
 
             readRDS(paste0("/Users/pjs/Servers/GIServer/home/shares/data/LIFE",
                            "/mod/survey_data/data-clean.rda")) %>%
-              as_tibble() -> df
+              as_tibble() %>%
+              as.data.frame() -> df
             fo <- diplo01 ~ temp + p_sum + r_sum + elevation + slope + hail +
               age + ph + lithology + soil
 
@@ -23,7 +24,9 @@ test_that("runfolds works on missing factor levels in
                      model_args = list(family = "binomial"), do_try = FALSE,
                      model_fun = glm,
                      error_fold = TRUE, error_rep = TRUE,
-                     err_train = TRUE, importance = FALSE,
+                     err_train = TRUE, importance = TRUE,
+                     imp_permutations = 2,
+                     imp_variables = c("lithology"),
                      current_res = current_res,
                      pred_args = list(type = "response"),
                      response = "diplo01", par_cl = 2,
@@ -236,7 +239,8 @@ test_that("runfolds works on missing factor levels in
 
             readRDS(paste0("/Users/pjs/Servers/GIServer/home/shares/data/LIFE",
                            "/mod/survey_data/data-clean.rda")) %>%
-              as_tibble() -> df
+              as_tibble() %>%
+              as.data.frame() -> df
             fo <- diplo01 ~ temp + p_sum + r_sum + elevation + slope + hail +
               age + ph + lithology + soil
 
@@ -249,7 +253,9 @@ test_that("runfolds works on missing factor levels in
                       model_args = list(family = "binomial"), do_try = FALSE,
                       model_fun = glm,
                       error_fold = TRUE, error_rep = TRUE,
-                      err_train = TRUE, importance = FALSE,
+                      err_train = TRUE, importance = TRUE,
+                      imp_variables = c("elevation", "lithology"),
+                      imp_permutations = 2,
                       current_res = current_res,
                       pred_args = list(type = "response"), response = "diplo01",
                       par_cl = 2,
