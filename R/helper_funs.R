@@ -144,6 +144,14 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
 
   ### Permutation-based variable importance assessment:
   if (importance & error_fold) {
+
+    # account for possible missing factor levels in test data
+    nd <- remove_missing_levels(fit, nd)
+
+    # remove NAs in data.frame if levels are missing
+    nd %>%
+      na.omit() -> nd
+
     if (is.null(current_res[[j]]$test)) {
       current_impo[[j]] <- c()
       if (!progress == FALSE) {
@@ -170,8 +178,6 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
 
         # For each variable:
         for (vnm in imp_variables) {
-          # Get undisturbed backup copy of test sample:
-          nd <- nd_bak
           # Permute variable vnm:
           nd[, vnm] <- nd[, vnm][permut]
           # Apply model to perturbed test sample:
