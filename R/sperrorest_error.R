@@ -99,6 +99,13 @@ err_default <- function(obs, pred) {
         } else err$kappa <- (err$accuracy - pexp) / (1 - pexp) # nocov end
       }
     } else {
+
+      # make sure 'pred' is a vector (sometimes 'atomic'); probably if error
+      # measures are too small (?)
+      if (!is.vector(pred)) {
+        pred <- as.numeric(pred)
+      }
+
       # 'soft' classification: Calculate area under the ROC curve:
       predobj <- prediction(pred, obs)
       auroc <- performance(predobj, measure = "auc")@y.values[[1]]
