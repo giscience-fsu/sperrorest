@@ -97,6 +97,11 @@ err_default <- function(obs, pred) {
       }
     } else {
       # 'soft' classification: Calculate area under the ROC curve:
+
+      # make sure 'pred' is a vector (sometimes 'atomic')
+      if (!is.vector(pred)) {
+        pred <- as.numeric(pred)
+      }
       predobj <- prediction(pred, obs)
       auroc <- performance(predobj, measure = "auc")@y.values[[1]]
       err <- list(auroc = auroc)
