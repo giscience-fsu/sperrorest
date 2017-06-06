@@ -111,9 +111,14 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
     nd_bak <- nd
   }
 
-
   # account for possible missing factor levels in test data
-  nd <- remove_missing_levels(fit, nd)
+  if (any(class(fit) == "lm" | class(fit) == "glmmPQL")) {
+    nd <- remove_missing_levels(fit, nd)
+  }
+
+  # remove NAs in data.frame if levels are missing
+  nd %>%
+    na.omit() -> nd
 
   # Apply model to test sample:
   pargs <- c(list(object = fit, newdata = nd), pred_args)
@@ -151,7 +156,9 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
   if (importance & error_fold) {
 
     # account for possible missing factor levels in test data
-    nd <- remove_missing_levels(fit, nd)
+    if (any(class(fit) == "lm" | class(fit) == "glmmPQL")) {
+      nd <- remove_missing_levels(fit, nd)
+    }
 
     # remove NAs in data.frame if levels are missing
     nd %>%
