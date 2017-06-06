@@ -113,7 +113,7 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
   # account for possible missing factor levels in test data
   # for some reason svm needs all levels and fails if levels are dropped
   # -> excluding svm fit object
-  if (!class(fit)[2] == "svm") {
+  if (!class(fit)[2] == "svm" | !class(fit)[2] == "randomForest") {
     nd <- remove_missing_levels(fit, nd)
   }
 
@@ -150,9 +150,11 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
   if (importance & error_fold) {
 
     # account for possible missing factor levels in test data
-    # for some reason svm needs all levels and fails if levels are dropped
-    # -> excluding svm fit object
-    if (!class(fit)[2] == "svm") {
+    # for some reason svm needs all levels and fails if levels are dropped.
+    # it seem that ML models need all levels while SL models need only
+    # existing levels :/ -> so we need to account here for every single model..
+
+    if (!class(fit)[2] == "svm" | !class(fit)[2] == "randomForest") {
       nd <- remove_missing_levels(fit, nd)
     }
 
