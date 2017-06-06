@@ -31,6 +31,48 @@ test_that("runfolds works on missing factor levels in
             expect_equal(length(runfolds_single), 6)
           })
 
+test_that("runfolds works on missing factor levels in
+          test data example with glmmPQL", {
+
+            readRDS("/Users/pjs/Servers/GIServer/home/shares/data/LIFE/mod/survey_data/data-clean.rda") %>%
+              as_tibble() -> df
+            fo <- diplo01 ~ temp + p_sum + r_sum + elevation + slope + hail + age + ph + lithology + soil
+
+            glmmPQL_modelfun <- function(formula, data, random = NULL, family = NULL) {
+              fit <- glmmPQL(fixed = formula, data = data, random = random, family = family)
+              return(fit)
+            }
+
+            glmmPQL_predfun <- function(object, newdata, type = NULL, level = NULL) {
+              predict(object = object, newdata = newdata, type = type, level = level)
+            }
+
+            j <- 1 # running the first repetition of 'current_sample', normally we are
+            # calling an apply call to seq_along nFolds of repetition
+            # see also 'runreps()'
+            current_sample <- partition_kmeans(df, nfold = 5)[[1]]
+            current_res <- current_sample
+
+            runfolds_single <- runfolds(j = 1, data = df, current_sample = current_sample,
+                                        model_fun = glmmPQL_modelfun,
+                                        pred_fun = glmmPQL_predfun,
+                                        formula = fo, par_mode = "sequential",
+                                        model_args = list(random = ~1 | year,
+                                                          family = "binomial"),
+                                        pred_args = list(type = "response",
+                                                         level = 0),
+                                        do_try = FALSE,
+                                        importance = TRUE,
+                                        imp_permutations = 2,
+                                        imp_variables = c("elevation", "lithology"),
+                                        error_fold = TRUE, error_rep = TRUE,
+                                        err_train = TRUE, current_res = current_res,
+                                        response = "diplo01", par_cl = 2,
+                                        coords = c("x", "y"), progress = 1, pooled_obs_train = c(),
+                                        pooled_obs_test = c(), err_fun = err_default)
+            expect_equal(length(runfolds_single), 6)
+          })
+
 testthat::test_that("runfolds works on glm example", {
 
   j <- 1 # running the first repetition of 'current_sample', normally we are
@@ -79,7 +121,9 @@ testthat::test_that("runfolds works on svm example", {
                               par_mode = "foreach",
                               model_fun = svm,
                               error_fold = TRUE, error_rep = TRUE,
-                              err_train = TRUE, importance = FALSE, current_res = current_res,
+                              err_train = TRUE, importance = TRUE,
+                              imp_variables = c("elevation", "lithology"),
+                              imp_permutations = 2, current_res = current_res,
                               response = "diplo01", par_cl = 2,
                               coords = c("x", "y"), progress = 1, pooled_obs_train = c(),
                               pooled_obs_test = c(), err_fun = err_default)
@@ -97,15 +141,23 @@ testthat::test_that("runfolds works on rf example", {
   current_sample <- partition_kmeans(df, nfold = 4)[[1]]
   current_res <- current_sample
 
+  rf_predfun <- function(object, newdata, type = NULL) {
+    pred <- predict(object, newdata = newdata, type = type)
+    pred <- pred[, 2]
+  }
+
   runfolds_single <- runfolds(j = 1, data = df, current_sample = current_sample,
                               formula = fo,
                               model_args = list(ntree = 900,
                                                 mtry = 3),
+                              pred_fun = rf_predfun,
                               pred_args = list(type = "prob"),
-                              par_mode = "foreach", do_try = FALSE,
+                              par_mode = "sequential", do_try = FALSE,
                               model_fun = randomForest,
                               error_fold = TRUE, error_rep = TRUE,
-                              err_train = TRUE, importance = FALSE, current_res = current_res,
+                              err_train = TRUE, importance = TRUE,
+                              imp_permutations = 2, imp_variables = c("elevation", "lithology"),
+                              current_res = current_res,
                               response = "diplo01", par_cl = 2,
                               coords = c("x", "y"), progress = 1, pooled_obs_train = c(),
                               pooled_obs_test = c(), err_fun = err_default)
@@ -350,5 +402,48 @@ test_that("runfolds works on missing factor levels in
               pred_args = list(type = "response"), response = "diplo01", par_cl = 2,
               coords = c("x", "y"), progress = 1, pooled_obs_train = c(),
               pooled_obs_test = c(), err_fun = err_default))
+            expect_equal(length(runfolds_single), 6)
+          })
+
+test_that("runreps works on missing factor levels in
+          test data example with glmmPQL", {
+
+            readRDS("/Users/pjs/Servers/GIServer/home/shares/data/LIFE/mod/survey_data/data-clean.rda") %>%
+              as_tibble() -> df
+            fo <- diplo01 ~ temp + p_sum + r_sum + elevation + slope + hail + age + ph + lithology + soil
+
+            current_sample <- partition_kmeans(df, nfold = 5, repetition = 1:5)
+            current_res <- current_sample
+
+            glmmPQL_modelfun <- function(formula, data, random = NULL, family = NULL) {
+              fit <- glmmPQL(fixed = formula, data = data, random = random, family = family)
+              return(fit)
+            }
+
+            glmmPQL_predfun <- function(object, newdata, type = NULL, level = NULL) {
+              predict(object = object, newdata = newdata, type = type, level = level)
+            }
+
+            current_sample <- partition_kmeans(df, nfold = 5, repetition = 1:5)
+            current_res <- current_sample
+
+            runreps_res <- lapply(current_sample, function(x)
+              runreps(current_sample = x, data = df,
+                      model_fun = glmmPQL_modelfun,
+                      pred_fun = glmmPQL_predfun,
+                      formula = fo, par_mode = "sequential",
+                      model_args = list(random = ~1 | year,
+                                        family = "binomial"),
+                      pred_args = list(type = "response",
+                                       level = 0),
+                      do_try = FALSE, do_gc = 1,
+                      importance = TRUE,
+                      imp_permutations = 2,
+                      imp_variables = c("elevation", "lithology"),
+                      error_fold = TRUE, error_rep = TRUE,
+                      err_train = TRUE, current_res = current_res,
+                      response = "diplo01", par_cl = 2,
+                      coords = c("x", "y"), progress = 1, pooled_obs_train = c(),
+                      pooled_obs_test = c(), err_fun = err_default))
             expect_equal(length(runfolds_single), 6)
           })
