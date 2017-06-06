@@ -113,9 +113,13 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
   # account for possible missing factor levels in test data
   # for some reason svm needs all levels and fails if levels are dropped
   # -> excluding svm fit object
-  if (any(class(fit) == "lm")) {
+  if (any(class(fit) == "lm" | class(fit) == "glmmPQL")) {
     nd <- remove_missing_levels(fit, nd)
   }
+
+  # remove NAs in data.frame if levels are missing
+  nd %>%
+    na.omit() -> nd
 
   # Apply model to test sample:
   pargs <- c(list(object = fit, newdata = nd), pred_args)
@@ -154,7 +158,7 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
     # it seem that ML models need all levels while SL models need only
     # existing levels :/ -> so we need to account here for every single model..
 
-    if (any(class(fit) == "lm")) {
+    if (any(class(fit) == "lm" | class(fit) == "glmmPQL")) {
       nd <- remove_missing_levels(fit, nd)
     }
 
@@ -400,6 +404,8 @@ transfer_parallel_output <- function(my_res = NULL, res = NULL, impo = NULL,
 #' but not in train data by setting values to NA
 #'
 #' @import magrittr
+#' @importFrom gdata unmatrix
+#' @importFrom stringr str_split
 #'
 #' @param fit fitted model on training data
 #'
@@ -417,23 +423,37 @@ remove_missing_levels <- function(fit, test_data) {
   # drop empty factor levels in test data
   test_data %>%
     droplevels() %>%
-    as.data.frame()-> test_data
+    as.data.frame() -> test_data
 
-  # Obtain factor predictors in the model and their levels
+  # 'fit' object structure of 'lm' and 'glmmPQL' is different so we need to
+  # account for it
+  if (any(class(fit) == "glmmPQL")) {
+    # Obtain factor predictors in the model and their levels
+    factors <- (gsub("[-^0-9]|as.factor|\\(|\\)", "",
+                     names(unlist(fit$contrasts))))
+    # do nothing if no factors are present
+    if (length(factors) == 0) {
+      return(test_data)
+    }
 
-  factors <- (gsub("[-^0-9]|as.factor|\\(|\\)", "",
-                   names(unlist(fit$xlevels))))
-  # do nothing if no factors are present
-  if (length(factors) == 0) {
-    return(test_data)
+    map(fit$contrasts, function(x) names(unmatrix(x))) %>%
+      unlist() -> factor_levels
+    factor_levels %>% str_split(":", simplify = TRUE) %>%
+      extract(, 1) -> factor_levels
+
+    model_factors <- as.data.frame(cbind(factors, factor_levels))
+  } else {
+    # Obtain factor predictors in the model and their levels
+    factors <- (gsub("[-^0-9]|as.factor|\\(|\\)", "",
+                     names(unlist(fit$xlevels))))
+    # do nothing if no factors are present
+    if (length(factors) == 0) {
+      return(test_data)
+    }
+
+    factor_levels <- unname(unlist(fit$xlevels))
+    model_factors <- as.data.frame(cbind(factors, factor_levels))
   }
-
-  for (var in fit$contrasts) {
-    test <- names(gdata::unmatrix(fit$contrasts$var))
-  }
-
-  factor_levels <- unname(unlist(fit$xlevels))
-  model_factors <- as.data.frame(cbind(factors, factor_levels))
 
   # Select column names in test data that are factor predictors in
   # trained model
