@@ -21,6 +21,9 @@ for actual analysis.}
 \item{partition_fun}{method for partitioning the data
 (e.g. \link{partition.kmeans})}
 
+\item{error_measure}{which error measure to use for optimization.
+Default to 'RMSE' for numeric responses and 'AUROC' for classification cases.}
+
 \item{...}{additional options passed to \link{SVM}}
 
 \item{svm_fun}{which R svm package to use. See details.}
@@ -36,12 +39,32 @@ Tuning of SVM (cost & gamma) using spatial cross-validation
 This function tunes a support vectort machine from the \link{e1071},
 \link{gmum.r}, \link{kernlab} packages using (spatial) cross-validation.
 
-Currently this function is hard-coded to a binary response variable and AUROC
-as error measure.
+\code{error_measure} can be specified by the user, selecting one of the returned
+error measures of \link{sptune_rf}. However, note that for
+regression type responses always the minimum value is chosen and for
+classification problems the highest.
 }
 \examples{
+
+##------------------------------------------------------------
+## binary classification
+##------------------------------------------------------------
 data(ecuador) # Muenchow et al. (2012), see ?ecuador
 fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
+
+out <- sptune_rf(fo, ecuador, accelerate = 16, nfold = 5,
+partition_fun = "partition_kmeans", rf_fun = "randomForest")
+
+##------------------------------------------------------------
+## multiclass classification
+##------------------------------------------------------------
+
+##------------------------------------------------------------
+## regression
+##------------------------------------------------------------
+
+#' data(ecuador) # Muenchow et al. (2012), see ?ecuador
+fo <- dem ~ slides + slope + hcurv + vcurv + log.carea + cslope
 
 out <- sptune_rf(fo, ecuador, accelerate = 16, nfold = 5,
 partition_fun = "partition_kmeans", rf_fun = "randomForest")

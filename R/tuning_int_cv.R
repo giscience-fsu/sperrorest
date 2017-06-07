@@ -175,13 +175,18 @@ sptune_svm <- function(formula = NULL, data = NULL, accelerate = 1,
 #'
 #' @param kernel kernel type of svm classifier
 #'
+#' @param error_measure which error measure to use for optimization.
+#' Default to 'RMSE' for numeric responses and 'AUROC' for classification cases.
+#'
 #' @param ... additional options passed to [SVM]
 #'
 #' @details This function tunes a support vectort machine from the [e1071],
 #' [gmum.r], [kernlab] packages using (spatial) cross-validation.
 #'
-#' Currently this function is hard-coded to a binary response variable and AUROC
-#' as error measure.
+#' `error_measure` can be specified by the user, selecting one of the returned
+#' error measures of [sptune_rf]. However, note that for
+#' regression type responses always the minimum value is chosen and for
+#' classification problems the highest.
 #'
 #' @examples
 #'
@@ -296,8 +301,17 @@ sptune_rf <- function(formula = NULL, data = NULL, accelerate = 1,
            length(levels(train[[response]])) > 2) {
   }
   # regression
-  else if (is.factor(train[[response]]) &&
-           length(levels(train[[response]])) > 2) {
+  else if (is.numeric(train[[response]])) {
+    # account for error measure
+    if (is.null(error_measure)) {
+      error_measure <- "rmse"
+    } else {
+      error_measure <- error_measure
+    }
+    # get list index with highest auroc
+    perf_measures %>%
+      map(error_measure) %>%
+      which.min() -> list_index
   }
 
   best_ntree <- ntrees[list_index]
@@ -311,11 +325,9 @@ sptune_rf <- function(formula = NULL, data = NULL, accelerate = 1,
               error_measure))
 
   # Generate the actual fit object using optimized hyperparameters:
-  if (is.factor(train[[response]])) {
-    args <- list(formula = formula, data = train, ntree = best_ntree,
-                 mtry = best_mtry)
-    fit <- do.call(rf_fun, args)
-  }
+  args <- list(formula = formula, data = train, ntree = best_ntree,
+               mtry = best_mtry)
+  fit <- do.call(rf_fun, args)
 
   list_out <- list(fit = fit,
                    tune = list(best_ntree,

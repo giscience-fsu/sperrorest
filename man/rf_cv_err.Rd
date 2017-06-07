@@ -45,5 +45,16 @@ fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
 out <- rf_cv_err(mtry = 3, ntree = 1000, train = train, test = test,
 formula = fo, response = "slides", rf_fun = "rfsrc")
 
+##------------------------------------------------------------
+## regression
+##------------------------------------------------------------
+
+#' data(ecuador) # Muenchow et al. (2012), see ?ecuador
+fo <- dem ~ slides + slope + hcurv + vcurv + log.carea + cslope
+response <- "dem"
+
+out <- rf_cv_err(mtry = 3, ntree = 1000, train = train, test = test,
+formula = fo, response = "dem", rf_fun = "rfsrc")
+
 }
 \keyword{internal}

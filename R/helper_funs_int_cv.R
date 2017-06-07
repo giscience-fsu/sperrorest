@@ -123,6 +123,17 @@ svm_cv_err <- function(cost = NULL, gamma = NULL, train = NULL, test = NULL,
 #' out <- rf_cv_err(mtry = 3, ntree = 1000, train = train, test = test,
 #' formula = fo, response = "slides", rf_fun = "rfsrc")
 #'
+#' ##------------------------------------------------------------
+#' ## regression
+#' ##------------------------------------------------------------
+#'
+#' #' data(ecuador) # Muenchow et al. (2012), see ?ecuador
+#' fo <- dem ~ slides + slope + hcurv + vcurv + log.carea + cslope
+#' response <- "dem"
+#'
+#' out <- rf_cv_err(mtry = 3, ntree = 1000, train = train, test = test,
+#' formula = fo, response = "dem", rf_fun = "rfsrc")
+#'
 #' @export
 rf_cv_err <- function(ntree = NULL, mtry = NULL, train = NULL, test = NULL,
                       response = NULL, formula = NULL, rf_fun = NULL, ...) {
@@ -138,21 +149,28 @@ rf_cv_err <- function(ntree = NULL, mtry = NULL, train = NULL, test = NULL,
   # binary classifcation
   if (is.factor(train[[response]]) && length(levels(train[[response]])) == 2) {
     pred <- predict(fit, newdata = test, type = "prob")
+
+    # calculate error measures
+    if (rf_fun == "randomForest") {
+      perf_measures <- err_default(test[, response], pred[, 2])
+    } else if (rf_fun == "rfsrc") {
+      perf_measures <- err_default(test[, response], pred$predicted[, 2])
+    }
   }
   # multiclass classification
   else if (is.factor(train[[response]]) && length(levels(train[[response]])) > 2) {
 
   }
   # regression
-  else if (is.factor(train[[response]]) && length(levels(train[[response]])) > 2) {
+  else if (is.numeric(train[[response]])) {
+    pred <- predict(fit, newdata = test)
 
-  }
-
-  # calculate error measures
-  if (rf_fun == "randomForest") {
-    perf_measures <- err_default(test[, response], pred[, 2])
-  } else if (rf_fun == "rfsrc") {
-    perf_measures <- err_default(test[, response], pred$predicted[, 2])
+    # calculate error measures
+    if (rf_fun == "randomForest") {
+      perf_measures <- err_default(test[, response], pred)
+    } else if (rf_fun == "rfsrc") {
+      perf_measures <- err_default(test[, response], pred$predicted)
+    }
   }
 
   return(perf_measures)
