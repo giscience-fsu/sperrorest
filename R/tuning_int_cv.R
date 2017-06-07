@@ -6,6 +6,7 @@
 #' @import doFuture
 #' @import parallel
 #' @import foreach
+#' @import tidyverse
 #'
 #' @param formula formula
 #'
@@ -183,16 +184,34 @@ sptune_svm <- function(formula = NULL, data = NULL, accelerate = 1,
 #' as error measure.
 #'
 #' @examples
+#'
+#' ##------------------------------------------------------------
+#' ## binary classification
+#' ##------------------------------------------------------------
 #' data(ecuador) # Muenchow et al. (2012), see ?ecuador
 #' fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
 #'
-#' sptune_rf(fo, ecuador, accelerate = 16, nfold = 5,
-#' partition.fun = "partition.kmeans", rf_fun = "randomForest")
+#' out <- sptune_rf(fo, ecuador, accelerate = 16, nfold = 5,
+#' partition_fun = "partition_kmeans", rf_fun = "randomForest")
+#'
+#' ##------------------------------------------------------------
+#' ## multiclass classification
+#' ##------------------------------------------------------------
+#'
+#' ##------------------------------------------------------------
+#' ## regression
+#' ##------------------------------------------------------------
+#'
+#' #' data(ecuador) # Muenchow et al. (2012), see ?ecuador
+#' fo <- dem ~ slides + slope + hcurv + vcurv + log.carea + cslope
+#'
+#' out <- sptune_rf(fo, ecuador, accelerate = 16, nfold = 5,
+#' partition_fun = "partition_kmeans", rf_fun = "randomForest")
 #'
 #' @export
 sptune_rf <- function(formula = NULL, data = NULL, accelerate = 1,
-                       nfold = NULL, partition_fun = NULL,
-                       rf_fun = "rfsrc", ...) {
+                      nfold = NULL, partition_fun = NULL,
+                      rf_fun = "rfsrc", error_measure = NULL, ...) {
 
   if (is.null(partition_fun)) {
     message("Partitioning method: 'partition_kmeans'.")
@@ -215,19 +234,18 @@ sptune_rf <- function(formula = NULL, data = NULL, accelerate = 1,
   test <- data[parti[[1]][[1]]$test, ]
 
   # Perform a complete grid search over the following range of values:
-  ntree <- c(10, 30, 50, seq(100, 2500, by = 100 * accelerate))
+  best_ntree <- c(10, 30, 50, seq(100, 2500, by = 100 * accelerate))
   default_mtry <- floor(sqrt(ncol(data)))
   n_variables <- length(attr(terms(formula), "term.labels"))
   mtrys <- unique(c(default_mtry, seq(1, n_variables, by = 1)))
 
   # Set up variables for loop:
-  n_tree <- length(ntree)
-  ntrees <- rep(ntree, length(mtrys))
+  n_tree <- length(best_ntree)
+  ntrees <- rep(best_ntree, length(mtrys))
   mtrys <- rep(mtrys, each = n_tree)
-  auroc <- rep(NA, length(ntree))
+  auroc <- rep(NA, length(best_ntree))
 
   # Calculate AUROC for all combinations of cost and gamma values:
-
   registerDoFuture()
   cl <- makeCluster(availableCores())
   plan(cluster, workers = cl)
@@ -240,51 +258,75 @@ sptune_rf <- function(formula = NULL, data = NULL, accelerate = 1,
                   length(unique(ntrees)),
                   length(unique(mtrys))))
 
-  auroc <- foreach(i = 1:length(ntrees), .packages = (.packages()),
-                   .errorhandling = "remove", .verbose = FALSE) %dopar% {
+  foreach(i = 1:length(ntrees), .packages = (.packages()),
+          .errorhandling = "remove", .verbose = FALSE) %dopar% {
 
-                     out <- rf_cv_err(ntree = ntrees[i], mtry = mtrys[i],
-                                      train = train, test = test,
-                                      response = response, formula = formula,
-                                      rf_fun = rf_fun,
-                                      ...)
-                     return(out)
-                   }
+            out <- rf_cv_err(ntree = ntrees[i], mtry = mtrys[i],
+                             train = train, test = test,
+                             response = response, formula = formula,
+                             rf_fun = rf_fun, ...)
+            return(out)
+          } -> perf_measures
   stopCluster(cl)
 
-  auroc <- as.numeric(auroc)
+  # append 'mtrys' and 'ntrees' vectors to respective lists
+  perf_measures %>%
+    map2(.y = mtrys,
+         .f = ~ plyr::mutate(.x, mtry = .y)) %>%
+    map2(.y = ntrees,
+         .f = ~ plyr::mutate(.x, ntree = .y)) -> perf_measures
 
-  # Identify best AUROC, or if all are NA, use defaults and issue a warning:
-  if (all(is.na(auroc))) {
-    ntree <- 1
-    mtry <- default_mtry
-    warning("all AUROCs are NA in internal cross-validation")
-  } else {
-    wh <- which(auroc == max(auroc, na.rm = TRUE))[1]
-    ntree <- ntrees[wh]
-    mtry <- mtrys[wh]
+  # binary classifcation
+  if (is.factor(train[[response]]) &&
+      length(levels(train[[response]])) == 2) {
+
+    # account for error measure
+    if (is.null(error_measure)) {
+      error_measure <- "auroc"
+    } else {
+      error_measure <- error_measure
+    }
+    # get list index with highest auroc
+    perf_measures %>%
+      map(error_measure) %>%
+      which.max() -> list_index
+  }
+  # multiclass classification
+  else if (is.factor(train[[response]]) &&
+           length(levels(train[[response]])) > 2) {
+  }
+  # regression
+  else if (is.factor(train[[response]]) &&
+           length(levels(train[[response]])) > 2) {
   }
 
-  # Output on screen:
-  cat("Optimal ntree: ", ntree, ";    optimal mtry: ",
-      mtry,";    best auroc: ",
-      max(auroc, na.rm = T), "\n", sep = "")
+  best_ntree <- ntrees[list_index]
+  best_mtry <- mtrys[list_index]
+
+  # output on screen:
+  cat(sprintf(paste0("Optimal ntree: ", best_ntree, ";    optimal mtry: ",
+                     best_mtry,";    best %s: ",
+                     perf_measures[[list_index]][[error_measure]],
+                     "\n", sep = ""),
+              error_measure))
 
   # Generate the actual fit object using optimized hyperparameters:
-
   if (is.factor(train[[response]])) {
-    args <- list(formula = formula, data = train, ntree = ntree, mtry = mtry)
+    args <- list(formula = formula, data = train, ntree = best_ntree,
+                 mtry = best_mtry)
     fit <- do.call(rf_fun, args)
   }
 
-  # Keep track of optimal cost and gamma values:
-  fit$optimal_ntree <- ntree
-  fit$all_ntrees <- ntrees
-  fit$optimal_mtry <- mtry
-  fit$all_mtrys <- mtrys
-  fit$best_auroc <- max(auroc, na.rm = T)
-  fit$all_auroc <- auroc
-
-  return(fit)
+  list_out <- list(fit = fit,
+                   tune = list(best_ntree,
+                               ntrees,
+                               best_mtry,
+                               mtrys,
+                               perf_measures[[list_index]],
+                               perf_measures))
+  set_names(list_out[[2]], c("optimal_ntree", "all_ntrees", "optimal_mtry",
+                             "all_mtrys", "performances_best_run",
+                             "performances_all_runs"))
+  return(list_out)
 }
 

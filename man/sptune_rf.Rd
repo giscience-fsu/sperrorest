@@ -5,7 +5,7 @@
 \title{svm_tuning}
 \usage{
 sptune_rf(formula = NULL, data = NULL, accelerate = 1, nfold = NULL,
-  partition_fun = NULL, rf_fun = "rfsrc", ...)
+  partition_fun = NULL, rf_fun = "rfsrc", error_measure = NULL, ...)
 }
 \arguments{
 \item{formula}{formula}
@@ -43,8 +43,8 @@ as error measure.
 data(ecuador) # Muenchow et al. (2012), see ?ecuador
 fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
 
-sptune_rf(fo, ecuador, accelerate = 16, nfold = 5,
-partition.fun = "partition.kmeans", rf_fun = "randomForest")
+out <- sptune_rf(fo, ecuador, accelerate = 16, nfold = 5,
+partition_fun = "partition_kmeans", rf_fun = "randomForest")
 
 }
 \author{

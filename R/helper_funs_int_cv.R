@@ -126,32 +126,34 @@ svm_cv_err <- function(cost = NULL, gamma = NULL, train = NULL, test = NULL,
 #' @export
 rf_cv_err <- function(ntree = NULL, mtry = NULL, train = NULL, test = NULL,
                       response = NULL, formula = NULL, rf_fun = NULL, ...) {
-  err <- c()
 
-  # check type of response variable
-  if (is.factor(train[[response]])) {
-
-    if (rf_fun == "rfsrc") {
-      args <- list(formula = formula, data = train, ntree = ntree, mtry = mtry)
-
-    }
-    if (rf_fun == "randomForest") {
-      args <- list(formula = formula, data = train, ntree = ntree, mtry = mtry)
-    }
-    fit <- do.call(rf_fun, args)
-
-    pred <- predict(fit, newdata = test, type = "prob")
-
-    if (rf_fun == "randomForest") {
-      predobj <- prediction(pred[, 2], test[, response])
-    } else if (rf_fun == "rfsrc") {
-      predobj <- prediction(pred$predicted[, 2], test[, response])
-    }
-
-    auroc <- performance(predobj, measure = "auc")@y.values[[1]]
-
-    err <- c(err, auroc)
-
-    return(mean(err))
+  if (rf_fun == "rfsrc") {
+    args <- list(formula = formula, data = train, ntree = ntree, mtry = mtry)
+  } else if (rf_fun == "randomForest") {
+    args <- list(formula = formula, data = train, ntree = ntree, mtry = mtry)
   }
+  # fit model
+  fit <- do.call(rf_fun, args)
+
+  # binary classifcation
+  if (is.factor(train[[response]]) && length(levels(train[[response]])) == 2) {
+    pred <- predict(fit, newdata = test, type = "prob")
+  }
+  # multiclass classification
+  else if (is.factor(train[[response]]) && length(levels(train[[response]])) > 2) {
+
+  }
+  # regression
+  else if (is.factor(train[[response]]) && length(levels(train[[response]])) > 2) {
+
+  }
+
+  # calculate error measures
+  if (rf_fun == "randomForest") {
+    perf_measures <- err_default(test[, response], pred[, 2])
+  } else if (rf_fun == "rfsrc") {
+    perf_measures <- err_default(test[, response], pred$predicted[, 2])
+  }
+
+  return(perf_measures)
 }
