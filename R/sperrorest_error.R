@@ -99,7 +99,7 @@ err_default <- function(obs, pred) {
       # 'soft' classification: Calculate area under the ROC curve:
 
       # make sure 'pred' is a vector (sometimes 'atomic')
-      if (!is.vector(pred)) {
+      if (!is.vector(pred) && !is.matrix(pred)) {
         pred <- as.numeric(pred)
       }
       predobj <- prediction(pred, obs)
