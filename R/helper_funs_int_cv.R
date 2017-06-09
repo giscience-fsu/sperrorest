@@ -4,7 +4,7 @@
 #' @importFrom ROCR prediction performance
 #' @import e1071
 #' @importFrom gmum.r SVM
-#' @importFrom kernlab ksvm predict
+#' @importFrom kernlab ksvm
 #'
 #' @param formula model formula
 #'
@@ -59,7 +59,7 @@ svm_cv_err <- function(cost = NULL, gamma = NULL, train = NULL, test = NULL,
     fit <- do.call(svm_fun, args)
 
     if (svm_fun == "ksvm") {
-      pred <- kernlab::predict(fit, newdata = test, type = "probabilities")
+      pred <- predict(fit, newdata = test, type = "probabilities")
     } else {
       pred <- predict(fit, newdata = test, probability = TRUE)
     }
@@ -102,22 +102,15 @@ svm_cv_err <- function(cost = NULL, gamma = NULL, train = NULL, test = NULL,
 #' @keywords internal
 #'
 #' @examples
+#'
+#' ##------------------------------------------------------------
+#' ## binary classification
+#' ##------------------------------------------------------------
+#'
 #' parti <- partition_kmeans(ecuador, nfold = 5, order.clusters = FALSE)
 #' train <- ecuador[parti[[1]][[1]]$train, ]
 #' test <- ecuador[parti[[1]][[1]]$test, ]
 #' response <- "slides"
-#'
-#' ###########################################
-#' #### randomForest
-#' ###########################################
-#'
-#' fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
-#' out <- rf_cv_err(mtry = 3, ntree = 1000, train = train, test = test,
-#' formula = fo, response = "slides", rf_fun = "randomForest")
-#'
-#' ###########################################
-#' #### rfsrc
-#' ###########################################
 #'
 #' fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
 #' out <- rf_cv_err(mtry = 3, ntree = 1000, train = train, test = test,
@@ -133,6 +126,27 @@ svm_cv_err <- function(cost = NULL, gamma = NULL, train = NULL, test = NULL,
 #'
 #' out <- rf_cv_err(mtry = 3, ntree = 1000, train = train, test = test,
 #' formula = fo, response = "dem", rf_fun = "rfsrc")
+#'
+#' ##------------------------------------------------------------
+#' ## multiclass classification
+#' ##------------------------------------------------------------
+#' parti <- partition_kmeans(maipo, nfold = 5, order.clusters = FALSE,
+#'                           coords = c("utmx", "utmy"))
+#' train <- maipo[parti[[1]][[1]]$train, ]
+#' test <- maipo[parti[[1]][[1]]$test, ]
+#'
+#' fo <- croptype ~ b12 + b13 + b14 + b15 + b16 + b17 + b22 + b23 +
+#'   b24 +
+#'   b25 + b26 + b27 + b32 + b33 + b34 + b35 + b36 + b37 + b42 +
+#'   b43 + b44 + b45 + b46 + b47 + b52 + b53 + b54 + b55 + b56 +
+#'   b57 + b62 + b63 + b64 + b65 + b66 + b67 + b72 + b73 + b74 +
+#'   b75 + b76 + b77 + b82 + b83 + b84 + b85 + b86 + b87 + ndvi01 +
+#'   ndvi02 + ndvi03 + ndvi04 + ndvi05 + ndvi06 + ndvi07 + ndvi08 +
+#'   ndwi01 + ndwi02 + ndwi03 + ndwi04 + ndwi05 + ndwi06 + ndwi07 +
+#'   ndwi08
+#' data(maipo)
+#' out <- rf_cv_err(mtry = 3, ntree = 1000, train = train, test = test,
+#' formula = fo, response = "croptype", rf_fun = "randomForest")
 #'
 #' @export
 rf_cv_err <- function(ntree = NULL, mtry = NULL, train = NULL, test = NULL,
@@ -159,7 +173,14 @@ rf_cv_err <- function(ntree = NULL, mtry = NULL, train = NULL, test = NULL,
   }
   # multiclass classification
   else if (is.factor(train[[response]]) && length(levels(train[[response]])) > 2) {
+    pred <- predict(fit, newdata = test)
 
+    # calculate error measures
+    if (rf_fun == "randomForest") {
+      perf_measures <- err_default(test[, response], pred)
+    } else if (rf_fun == "rfsrc") {
+      perf_measures <- err_default(test[, response], pred$class)
+    }
   }
   # regression
   else if (is.numeric(train[[response]])) {

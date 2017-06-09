@@ -668,7 +668,6 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
                           impo_only <- runfolds_merged[6][[1]]
                           ### get mean from all impo results of all folds (multiple dataframes stored in a list)
                           ### http://stackoverflow.com/questions/18371187/element-wise-mean-for-a-list-of-dataframes-with-na
-                          ### NICHT MITTELN, ENFACH ALLE IMPO (= FÜR JEDEN FOLD) ZURÜCKGEBEN
                           # currentImpo <- Reduce("+", impo_only) / length(impo_only)
                         }
 

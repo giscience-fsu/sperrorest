@@ -313,7 +313,6 @@ runreps <- function(current_sample = NULL, data = NULL, formula = NULL,
     ### get mean from all impo results of all folds
     ### (multiple dataframes stored in a list)
     ### http://stackoverflow.com/questions/18371187/element-wise-mean-for-a-list-of-dataframes-with-na # nolint
-    ### NICHT MITTELN, ENFACH ALLE IMPO (= FÜR JEDEN FOLD) ZURÜCKGEBEN
     # current_impo <- Reduce("+", impo_only) / length(impo_only)
   }
 
