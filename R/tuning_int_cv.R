@@ -6,7 +6,6 @@
 #' @import doFuture
 #' @import parallel
 #' @import foreach
-#' @import tidyverse
 #'
 #' @param formula formula
 #'
@@ -147,46 +146,59 @@ sptune_svm <- function(formula = NULL, data = NULL, accelerate = 1,
   return(fit)
 }
 
-#' @title svm_tuning
-#' @description Tuning of SVM (cost & gamma) using spatial cross-validation
+#' @title sptune_rf
+#' @description Tuning of Random Forest (mtry & ntrees) using spatial cross-validation
 #' @author Alexander Brenning, Patrick Schratz
 #'
 #' @import future
 #' @import doFuture
 #' @import parallel
 #' @import foreach
+#' @importFrom plyr mutate
+#' @importFrom purrr map2 map
 #'
 #' @param formula formula
 #'
 #' @param data data frame
 #'
-#' @param accelerate option to speed up tuning using less cost and gamma values.
-#' Use `accelerate = 2` or `accelerate = 4` for test runs, but `accelerate = 1`
-#' for actual analysis.
+#' @param accelerate option to speed up tuning using less 'ntree' options.
+#' Default to `accelerate = 1`. Increase the value to reduce 'ntree' options.
 #'
 #' @param nfold number of folds for cross-validation
 #'
 #' @param partition_fun method for partitioning the data
-#' (e.g. [partition.kmeans])
+#' (e.g. [partition_kmeans])
 #'
-#' @param svm_fun which R svm package to use. See details.
-#'
-#' @param type classification type of svm classifier
-#'
-#' @param kernel kernel type of svm classifier
+#' @param rf_fun which R Random Forest package to use. See details.
 #'
 #' @param error_measure which error measure to use for optimization.
-#' Default to 'RMSE' for numeric responses and 'AUROC' for classification cases.
+#' Default to 'RMSE' for numeric responses, 'AUROC' for binary classification
+#' and 'error' for multiclass classiciation.
 #'
-#' @param ... additional options passed to [SVM]
+#' @param mtrys optional user-defined vector of 'mtry' hyperparameter to
+#' tune over. See details.
 #'
-#' @details This function tunes a support vectort machine from the [e1071],
-#' [gmum.r], [kernlab] packages using (spatial) cross-validation.
+#' @param ntrees optional user-defined vector of 'ntrees' hyperparameter to
+#' tune over. See details.
+#'
+#' @param ... additional options passed to `partition_fun`.
+#'
+#' @details This function tunes a Random Forest model either from [randomForest],
+#' or [randomForestSRC] package using (spatial) cross-validation.
 #'
 #' `error_measure` can be specified by the user, selecting one of the returned
 #' error measures of [sptune_rf]. However, note that for
 #' regression type responses always the minimum value is chosen and for
 #' classification problems the highest.
+#'
+#' The default behaviour of [sptune_rf] tunes over all possible 'mtry' values
+#' (which are of `length(predictors)`) and a selection of 'ntrees' ranging
+#' between 10 and 2500. Use `accelerate` to reduce the number of 'ntrees'.
+#' Specify a custom vector if you want to modify the number of `mtry` used
+#' for testing. This is usually useful if the formula contains more than 20
+#' predictors.
+#'
+#' `sptune_rf` is parallelized and runs on all possible cores.
 #'
 #' @examples
 #'
@@ -198,16 +210,21 @@ sptune_svm <- function(formula = NULL, data = NULL, accelerate = 1,
 #'
 #' out <- sptune_rf(fo, ecuador, accelerate = 16, nfold = 5,
 #' partition_fun = "partition_kmeans", rf_fun = "randomForest")
-#'
 #' ##------------------------------------------------------------
 #' ## multiclass classification
 #' ##------------------------------------------------------------
-#'
+#' fo <- croptype ~ b82 + b83 + b84 + b85 + b86 + b87 + ndvi01 +
+#'       ndvi02 + ndvi03 + ndvi04
+#' data(maipo)
+#' out <- sptune_rf(fo, maipo, accelerate = 32, nfold = 5,
+#'                  coords = c("utmx", "utmy"),
+#'                  partition_fun = "partition_kmeans",
+#'                  rf_fun = "randomForest")
 #' ##------------------------------------------------------------
 #' ## regression
 #' ##------------------------------------------------------------
 #'
-#' #' data(ecuador) # Muenchow et al. (2012), see ?ecuador
+#' data(ecuador) # Muenchow et al. (2012), see ?ecuador
 #' fo <- dem ~ slides + slope + hcurv + vcurv + log.carea + cslope
 #'
 #' out <- sptune_rf(fo, ecuador, accelerate = 16, nfold = 5,
@@ -216,7 +233,8 @@ sptune_svm <- function(formula = NULL, data = NULL, accelerate = 1,
 #' @export
 sptune_rf <- function(formula = NULL, data = NULL, accelerate = 1,
                       nfold = NULL, partition_fun = NULL,
-                      rf_fun = "rfsrc", error_measure = NULL, ...) {
+                      rf_fun = "rfsrc", error_measure = NULL,
+                      mtrys_all = NULL, ntrees = NULL, ...) {
 
   if (is.null(partition_fun)) {
     message("Partitioning method: 'partition_kmeans'.")
@@ -233,53 +251,58 @@ sptune_rf <- function(formula = NULL, data = NULL, accelerate = 1,
   response <- as.character(formula)[2]
 
   # partition the data
-  partition_args <- list(data = data, nfold = nfold, order.cluster = FALSE)
+  partition_args <- list(data = data, nfold = nfold, order.cluster = FALSE,
+                         ...)
   parti <- do.call(partition_fun, args = partition_args)
   train <- data[parti[[1]][[1]]$train, ]
   test <- data[parti[[1]][[1]]$test, ]
 
-  # Perform a complete grid search over the following range of values:
-  best_ntree <- c(10, 30, 50, seq(100, 2500, by = 100 * accelerate))
-  default_mtry <- floor(sqrt(ncol(data)))
-  n_variables <- length(attr(terms(formula), "term.labels"))
-  mtrys <- unique(c(default_mtry, seq(1, n_variables, by = 1)))
+  if (is.null(mtrys) && is.null(ntrees)) {
+    # Perform a complete grid search over the following range of values:
+    ntrees_all <- c(10, 30, 50, seq(100, 2500, by = 100 * accelerate))
+    default_mtry <- floor(sqrt(ncol(data)))
+    n_variables <- length(attr(terms(formula), "term.labels"))
+    mtrys_all <- unique(c(default_mtry, seq(1, n_variables, by = 1)))
+  } else {
+    ntrees_all <- ntrees
+    mtrys_all <- mtrys
+  }
 
   # Set up variables for loop:
-  n_tree <- length(best_ntree)
-  ntrees <- rep(best_ntree, length(mtrys))
-  mtrys <- rep(mtrys, each = n_tree)
-  auroc <- rep(NA, length(best_ntree))
+  n_tree <- length(ntrees_all)
+  ntrees_all <- rep(ntrees_all, length(mtrys_all))
+  mtrys_all <- rep(mtrys_all, each = n_tree)
 
-  # Calculate AUROC for all combinations of cost and gamma values:
+  # Calculate perf. measures for all combinations of 'mtry' and 'ntrees'
   registerDoFuture()
   cl <- makeCluster(availableCores())
   plan(cluster, workers = cl)
 
   message(sprintf(paste0("Using 'foreach' parallel mode with %s cores on",
                          " %s combinations."),
-                  availableCores(), length(ntrees)))
+                  availableCores(), length(ntrees_all)))
   message(sprintf(paste0("Unique 'ntrees': %s.",
                          " Unique 'mtry': %s."),
-                  length(unique(ntrees)),
-                  length(unique(mtrys))))
+                  length(unique(ntrees_all)),
+                  length(unique(mtrys_all))))
 
-  foreach(i = 1:length(ntrees), .packages = (.packages()),
+  foreach(i = 1:length(ntrees_all), .packages = (.packages()),
           .errorhandling = "remove", .verbose = FALSE) %dopar% {
 
-            out <- rf_cv_err(ntree = ntrees[i], mtry = mtrys[i],
+            out <- rf_cv_err(ntree = ntrees_all[i], mtry = mtrys_all[i],
                              train = train, test = test,
                              response = response, formula = formula,
-                             rf_fun = rf_fun, ...)
+                             rf_fun = rf_fun)
             return(out)
           } -> perf_measures
   stopCluster(cl)
 
   # append 'mtrys' and 'ntrees' vectors to respective lists
   perf_measures %>%
-    map2(.y = mtrys,
-         .f = ~ plyr::mutate(.x, mtry = .y)) %>%
-    map2(.y = ntrees,
-         .f = ~ plyr::mutate(.x, ntree = .y)) -> perf_measures
+    map2(.y = mtrys_all,
+         .f = ~ mutate(.x, mtry = .y)) %>%
+    map2(.y = ntrees_all,
+         .f = ~ mutate(.x, ntree = .y)) -> perf_measures
 
   # binary classifcation
   if (is.factor(train[[response]]) &&
@@ -299,6 +322,15 @@ sptune_rf <- function(formula = NULL, data = NULL, accelerate = 1,
   # multiclass classification
   else if (is.factor(train[[response]]) &&
            length(levels(train[[response]])) > 2) {
+    if (is.null(error_measure)) {
+      error_measure <- "error"
+    } else {
+      error_measure <- error_measure
+    }
+    # get list index with highest auroc
+    perf_measures %>%
+      map(error_measure) %>%
+      which.min() -> list_index
   }
   # regression
   else if (is.numeric(train[[response]])) {
@@ -314,8 +346,8 @@ sptune_rf <- function(formula = NULL, data = NULL, accelerate = 1,
       which.min() -> list_index
   }
 
-  best_ntree <- ntrees[list_index]
-  best_mtry <- mtrys[list_index]
+  best_ntree <- ntrees_all[list_index]
+  best_mtry <- mtrys_all[list_index]
 
   # output on screen:
   cat(sprintf(paste0("Optimal ntree: ", best_ntree, ";    optimal mtry: ",
@@ -331,9 +363,9 @@ sptune_rf <- function(formula = NULL, data = NULL, accelerate = 1,
 
   list_out <- list(fit = fit,
                    tune = list(best_ntree,
-                               ntrees,
+                               ntrees_all,
                                best_mtry,
-                               mtrys,
+                               mtrys_all,
                                perf_measures[[list_index]],
                                perf_measures))
   set_names(list_out[[2]], c("optimal_ntree", "all_ntrees", "optimal_mtry",

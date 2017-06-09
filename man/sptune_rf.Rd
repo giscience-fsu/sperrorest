@@ -2,47 +2,59 @@
 % Please edit documentation in R/tuning_int_cv.R
 \name{sptune_rf}
 \alias{sptune_rf}
-\title{svm_tuning}
+\title{sptune_rf}
 \usage{
 sptune_rf(formula = NULL, data = NULL, accelerate = 1, nfold = NULL,
-  partition_fun = NULL, rf_fun = "rfsrc", error_measure = NULL, ...)
+  partition_fun = NULL, rf_fun = "rfsrc", error_measure = NULL,
+  mtrys_all = NULL, ntrees = NULL, ...)
 }
 \arguments{
 \item{formula}{formula}
 
 \item{data}{data frame}
 
-\item{accelerate}{option to speed up tuning using less cost and gamma values.
-Use \code{accelerate = 2} or \code{accelerate = 4} for test runs, but \code{accelerate = 1}
-for actual analysis.}
+\item{accelerate}{option to speed up tuning using less 'ntree' options.
+Default to \code{accelerate = 1}. Increase the value to reduce 'ntree' options.}
 
 \item{nfold}{number of folds for cross-validation}
 
 \item{partition_fun}{method for partitioning the data
-(e.g. \link{partition.kmeans})}
+(e.g. \link{partition_kmeans})}
+
+\item{rf_fun}{which R Random Forest package to use. See details.}
 
 \item{error_measure}{which error measure to use for optimization.
-Default to 'RMSE' for numeric responses and 'AUROC' for classification cases.}
+Default to 'RMSE' for numeric responses, 'AUROC' for binary classification
+and 'error' for multiclass classiciation.}
 
-\item{...}{additional options passed to \link{SVM}}
+\item{ntrees}{optional user-defined vector of 'ntrees' hyperparameter to
+tune over. See details.}
 
-\item{svm_fun}{which R svm package to use. See details.}
+\item{...}{additional options passed to \code{partition_fun}.}
 
-\item{type}{classification type of svm classifier}
-
-\item{kernel}{kernel type of svm classifier}
+\item{mtrys}{optional user-defined vector of 'mtry' hyperparameter to
+tune over. See details.}
 }
 \description{
-Tuning of SVM (cost & gamma) using spatial cross-validation
+Tuning of Random Forest (mtry & ntrees) using spatial cross-validation
 }
 \details{
-This function tunes a support vectort machine from the \link{e1071},
-\link{gmum.r}, \link{kernlab} packages using (spatial) cross-validation.
+This function tunes a Random Forest model either from \link{randomForest},
+or \link{randomForestSRC} package using (spatial) cross-validation.
 
 \code{error_measure} can be specified by the user, selecting one of the returned
 error measures of \link{sptune_rf}. However, note that for
 regression type responses always the minimum value is chosen and for
 classification problems the highest.
+
+The default behaviour of \link{sptune_rf} tunes over all possible 'mtry' values
+(which are of \code{length(predictors)}) and a selection of 'ntrees' ranging
+between 10 and 2500. Use \code{accelerate} to reduce the number of 'ntrees'.
+Specify a custom vector if you want to modify the number of \code{mtry} used
+for testing. This is usually useful if the formula contains more than 20
+predictors.
+
+\code{sptune_rf} is parallelized and runs on all possible cores.
 }
 \examples{
 
@@ -54,16 +66,21 @@ fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
 
 out <- sptune_rf(fo, ecuador, accelerate = 16, nfold = 5,
 partition_fun = "partition_kmeans", rf_fun = "randomForest")
-
 ##------------------------------------------------------------
 ## multiclass classification
 ##------------------------------------------------------------
-
+fo <- croptype ~ b82 + b83 + b84 + b85 + b86 + b87 + ndvi01 +
+      ndvi02 + ndvi03 + ndvi04
+data(maipo)
+out <- sptune_rf(fo, maipo, accelerate = 32, nfold = 5,
+                 coords = c("utmx", "utmy"),
+                 partition_fun = "partition_kmeans",
+                 rf_fun = "randomForest")
 ##------------------------------------------------------------
 ## regression
 ##------------------------------------------------------------
 
-#' data(ecuador) # Muenchow et al. (2012), see ?ecuador
+data(ecuador) # Muenchow et al. (2012), see ?ecuador
 fo <- dem ~ slides + slope + hcurv + vcurv + log.carea + cslope
 
 out <- sptune_rf(fo, ecuador, accelerate = 16, nfold = 5,
