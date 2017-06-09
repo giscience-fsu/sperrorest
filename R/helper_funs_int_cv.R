@@ -25,7 +25,7 @@
 #' @keywords internal
 #'
 #' @examples
-#' parti <- partition.kmeans(ecuador, nfold = 5, order.clusters = FALSE)
+#' parti <- partition_kmeans(ecuador, nfold = 5, order.clusters = FALSE)
 #' train <- ecuador[parti[[1]][[1]]$train, ]
 #' test <- ecuador[parti[[1]][[1]]$test, ]
 #' response <- "slides"
