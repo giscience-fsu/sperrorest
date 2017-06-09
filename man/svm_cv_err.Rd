@@ -32,11 +32,64 @@ Calculates AUROC for different gamma and cost values
 parti <- partition_kmeans(ecuador, nfold = 5, order.clusters = FALSE)
 train <- ecuador[parti[[1]][[1]]$train, ]
 test <- ecuador[parti[[1]][[1]]$test, ]
+
+##------------------------------------------------------------
+## binary classification
+##------------------------------------------------------------
 response <- "slides"
+
 fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
+
 out <- svm_cv_err(cost = 0.01, gamma = 0.166, train = train, test = test,
-formula = fo, kernel = "radial", type = "C-classification", response = "slides",
-svm_function = "svm")
+                  formula = fo, kernel = "radial", type = "C-classification",
+                  response = "slides", svm_fun = "svm")
+
+out <- svm_cv_err(cost = 0.01, gamma = 0.166, train = train, test = test,
+                  formula = fo, kernel = "rbfdot", type = "C-svc",
+                  response = "slides", svm_fun = "ksvm")
+
+##------------------------------------------------------------
+## multiclass classification
+##------------------------------------------------------------
+parti <- partition_kmeans(maipo, nfold = 5, order.clusters = FALSE,
+                          coords = c("utmx", "utmy"))
+train <- maipo[parti[[1]][[1]]$train, ]
+test <- maipo[parti[[1]][[1]]$test, ]
+
+fo <- croptype ~ b12 + b13 + b14 + b15 + b16 + b17 + b22 + b23 +
+  b24 +
+  b25 + b26 + b27 + b32 + b33 + b34 + b35 + b36 + b37 + b42 +
+  b43 + b44 + b45 + b46 + b47 + b52 + b53 + b54 + b55 + b56 +
+  b57 + b62 + b63 + b64 + b65 + b66 + b67 + b72 + b73 + b74 +
+  b75 + b76 + b77 + b82 + b83 + b84 + b85 + b86 + b87 + ndvi01 +
+  ndvi02 + ndvi03 + ndvi04 + ndvi05 + ndvi06 + ndvi07 + ndvi08 +
+  ndwi01 + ndwi02 + ndwi03 + ndwi04 + ndwi05 + ndwi06 + ndwi07 +
+  ndwi08
+data(maipo)
+# 'svm'
+out <- svm_cv_err(cost = 0.01, gamma = 0.166, train = train, test = test,
+                  formula = fo, response = "croptype", kernel = "radial",
+                  svm_fun = "svm", type = "C-classification")
+# 'ksvm'
+out <- svm_cv_err(cost = 0.01, gamma = 0.166, train = train, test = test,
+                  formula = fo, response = "croptype", kernel = "rbfdot",
+                  svm_fun = "ksvm", type = "C-svc")
+
+##------------------------------------------------------------
+## regression
+##------------------------------------------------------------
+
+data(ecuador) # Muenchow et al. (2012), see ?ecuador
+fo <- dem ~ slides + slope + hcurv + vcurv + log.carea + cslope
+response <- "dem"
+# 'svm'
+out <- svm_cv_err(cost = 0.01, gamma = 0.166, train = train, test = test,
+                  formula = fo, response = "dem", kernel = "radial",
+                  svm_fun = "svm", type = "eps-regression")
+# 'ksvm'
+out <- svm_cv_err(cost = 0.01, gamma = 0.166, train = train, test = test,
+                  formula = fo, response = "dem", kernel = "rbfdot",
+                  svm_fun = "ksvm", type = "eps-svr")
 
 }
 \keyword{internal}

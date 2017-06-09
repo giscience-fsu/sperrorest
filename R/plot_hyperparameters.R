@@ -9,14 +9,53 @@
 #'
 #' @export
 
-plot_hyper_svm <- function(object = NULL) {
+plot_hyper_svm <- function(object = NULL, error_measure = NULL, mtry = NULL,
+                           color_palette = NULL) {
+  if (any(class(object$fit) == "svm")) {
+    lib <- "e1071"
+    # check kernel
+    if (object$fit == 0) {
+      kernel <- "linear"
+    } else if (object$fit == 1) {
+      kernel <- "polynomial"
+    } else if (object$fit == 2) {
+      kernel <- "radial"
+    } else if (object$fit == 3) {
+      kernel <- "sigmoid"
+    }
+  } else if (any(class(object$fit) == "ksvm")) {
+    lib <- "kernlab"
+    kernel <- "sigmoid"
+  } else {
+    stop("Passed 'svm_fun' is not supported.")
+  }
+
+  error_measure <- check_response_type(object$fit$predicted, error_measure)
+
   if (class(object) == "ksvm") {
     df <- tibble(cost = object@param$C_all, gamma = object@param$gamma_all,
                  auroc = round(object@param$auroc_all, 3))
 
-    if (length(unique(df$gamma)) > 12) {
-      stop(paste0("Too many 'gamma' levels (> 12) supplied for discrete",
-                  " color scale."))
+    if (length(unique(df$gamma)) > 10) {
+      message(paste0("Plotting of more than 10 'mtry' options is not supported.",
+                     " Please specify your own vector of which 'mtry' values to",
+                     " plot in argument 'mtry'.\n",
+                     " Taking the first 10 values I can find."))
+
+      # sort df
+      df %>%
+        arrange(mtry) -> df
+      # get value of 12th index
+      index <- unique(df$mtry)[10]
+
+      # filter df
+      df %>%
+        filter(mtry <= index) -> df
+    }
+
+    # check for color palette
+    if (is.null(color_palette)) {
+      color_palette <- "viridis"
     }
 
     df %>%
@@ -27,10 +66,21 @@ plot_hyper_svm <- function(object = NULL) {
       scale_color_ipsum() +
       # geom_text(aes(label = auroc), hjust = -0.1, vjust = 0) +
       labs(x = "cost", y = "auroc",
-           title = "'kernlab::ksvm' hyperparameter tuning results",
-           subtitle = sprintf(paste0("Number of combinations: %s. Kernel: '%s'."),
+           title = "Support Vector Machine hyperparameter tuning results",
+           subtitle = sprintf(paste0("Total combinations: %s.",
+                                     " Package: '%s'.",
+                                     " Kernel: '%s'.",
+                                     " Best '%s': %s.",
+                                     " Optimal 'cost': %s.",
+                                     " Optimal 'gamma: %s."),
                               length(object@param$gamma_all),
-                              class(out@kernelf))) +
+                              lib,
+                              kernel,
+                              toupper(error_measure),
+                              round(object$tune$performances_best_run[[
+                                error_measure]], 3),
+                              object$tune$optimal_cost,
+                              object$tune$optimal_gamma)) +
       theme_ipsum() +
       guides(color = guide_legend(title = "gamma"))
   }
@@ -80,26 +130,7 @@ plot_hyper_rf <- function(object = NULL, error_measure = NULL, mtry = NULL,
     stop("Passed 'rf_fun' is not supported.")
   }
 
-  # binary classification
-  if (is.factor(object$fit$predicted) &&
-      length(object$fit$predicted) == 2) {
-    if (is.null(error_measure)) {
-      error_measure <- "auroc"
-    }
-  }
-  # regression
-  else if (is.numeric(object$fit$predicted)) {
-    if (is.null(error_measure)) {
-      error_measure <- "rmse"
-    }
-  }
-  # multiclass classification
-  else if (is.factor(object$fit$predicted) &&
-           length(object$fit$predicted) > 2) {
-    if (is.null(error_measure)) {
-      error_measure <- "error"
-    }
-  }
+  error_measure <- check_response_type(object, error_measure)
 
   df <- tibble(ntrees = object$tune$all_ntrees, mtry = object$tune$all_mtrys,
                var_error = round(object$tune$all_error_measures, 3))

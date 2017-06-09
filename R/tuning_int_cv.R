@@ -1,51 +1,92 @@
-#' @title svm_tuning
-#' @description Tuning of SVM (cost & gamma) using spatial cross-validation
-#' @author Alexander Brenning, Patrick Schratz
+#' @title sptune_svm
+#' @description Tuning of a Support Vector Machine (cost & gamma) using spatial
+#' cross-validation
+#' @author Patrick Schratz, Alexander Brenning
 #'
 #' @import future
 #' @import doFuture
 #' @import parallel
 #' @import foreach
+#' @importFrom plyr mutate
+#' @importFrom purrr map2 map
 #'
-#' @param formula formula
+#' @param formula formula.
 #'
-#' @param data data frame
+#' @param data [data.frame].
 #'
-#' @param accelerate option to speed up tuning using less cost and gamma values.
-#' Use `accelerate = 2` or `accelerate = 4` for test runs, but `accelerate = 1`
-#' for actual analysis.
+#' @param accelerate option to speed up tuning using less 'cost' and
+#' 'gamma' options. Default to `accelerate = 1`.
+#' Increase to reduce number of combinations for tuning.
 #'
-#' @param nfold number of folds for cross-validation
+#' @param nfold number of folds for cross-validation.
 #'
 #' @param partition_fun method for partitioning the data
-#' (e.g. [partition.kmeans])
+#' (e.g. [partition_kmeans])
 #'
 #' @param svm_fun which R svm package to use. See details.
 #'
-#' @param type classification type of svm classifier
+#' @param error_measure which error measure to use for optimization.
+#' Default to 'RMSE' for numeric responses, 'AUROC' for binary classification
+#' and 'error' for multiclass classiciation.
 #'
-#' @param kernel kernel type of svm classifier
+#' @param cost optional user-defined vector of 'cost' hyperparameter to
+#' tune over. See details.
 #'
-#' @param ... additional options passed to [SVM]
+#' @param gamma optional user-defined vector of 'gamma' hyperparameter to
+#' tune over. See details.
 #'
-#' @details This function tunes a support vectort machine from the [e1071],
-#' [gmum.r], [kernlab] packages using (spatial) cross-validation.
+#' @param ... additional options passed to `partition_fun`.
 #'
-#' Currently this function is hard-coded to a binary response variable and AUROC
-#' as error measure.
+#' @details This function tunes a Random Forest model either from [e1071],
+#' or [kernlab] package using (spatial) cross-validation.
+#'
+#' `error_measure` can be specified by the user, selecting one of the returned
+#' error measures of [sptune_svm]. However, note that for
+#' regression type responses always the minimum value of the passed error measure
+#' is chosen and for classification cases the highest.
+#'
+#'
+#' FYI: `sptune_svm` is parallelized and runs on all possible cores.
+#'
+#' @seealso [sptune_rf]
 #'
 #' @examples
+#' ##------------------------------------------------------------
+#' ## binary classification
+#' ##------------------------------------------------------------
 #' data(ecuador) # Muenchow et al. (2012), see ?ecuador
 #' fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
 #'
-#' sptune_svm(fo, ecuador, accelerate = 16, nfold = 5,
-#' partition.fun = "partition.kmeans", kernel = "radial",
-#' type = "C-classification")
+#' out <- sptune_svm(fo, ecuador, accelerate = 16, nfold = 5,
+#'                   partition_fun = "partition_kmeans", svm_fun = "svm",
+#'                   kernel = "sigmoid", type = "C-classification")
 #'
+#' ##------------------------------------------------------------
+#' ## multiclass classification
+#' ##------------------------------------------------------------
+#' fo <- croptype ~ b82 + b83 + b84 + b85 + b86 + b87 + ndvi01 +
+#'       ndvi02 + ndvi03 + ndvi04
+#' data(maipo)
+#' out <- sptune_svm(fo, maipo, accelerate = 32, nfold = 5,
+#'                   coords = c("utmx", "utmy"),
+#'                   partition_fun = "partition_kmeans",
+#'                   svm_fun = "ksvm", type = "C-svc", kernel = "rbfdot")
+#'
+#' ##------------------------------------------------------------
+#' ## regression
+#' ##------------------------------------------------------------
+#'
+#' data(ecuador) # Muenchow et al. (2012), see ?ecuador
+#' fo <- dem ~ slides + slope + hcurv + vcurv + log.carea + cslope
+#'
+#' out <- sptune_svm(fo, ecuador, accelerate = 8, nfold = 5,
+#'                   partition_fun = "partition_kmeans", svm_fun = "svm",
+#'                   kernel = "radial", type = "eps-regression")
 #' @export
-sptune_svm <- function(formula = NULL, data = NULL, accelerate = 1,
-                       nfold = NULL, partition_fun = NULL,
-                       kernel = NULL, type = NULL, svm_fun = "svm", ...) {
+sptune_svm <- function(formula = NULL, data = NULL, cost = NULL, gamma = NULL,
+                       accelerate = 1, nfold = NULL, partition_fun = NULL,
+                       kernel = NULL, type = NULL, error_measure = NULL,
+                       svm_fun = "svm", ...) {
 
 
   if (is.null(partition_fun)) {
@@ -67,87 +108,123 @@ sptune_svm <- function(formula = NULL, data = NULL, accelerate = 1,
   response <- as.character(formula)[2]
 
   # partition the data
-  partition_args <- list(data = data, nfold = nfold, order.cluster = FALSE)
+  partition_args <- list(data = data, nfold = nfold, order.cluster = FALSE,
+                         ...)
   parti <- do.call(partition_fun, args = partition_args)
   train <- data[parti[[1]][[1]]$train, ]
   test <- data[parti[[1]][[1]]$test, ]
 
-  # Perform a complete grid search over the following range of values:
-  costs <- 10^seq(-2, 4, by = 0.5 * accelerate)
-  default_gamma <- 1 / length(strsplit(as.character(formula)[3], "+",
-                                       fixed = TRUE)[[1]])
-  gammas <- unique(c(default_gamma, 10^seq(-4, 1, by = 0.5 * accelerate)))
+  if (is.null(cost) && is.null(gamma)) {
+    # Perform a complete grid search over the following range of values:
+    costs_all <- 10 ^ seq(-2, 4, by = 0.5 * accelerate)
+    default_gamma <- 1 / length(strsplit(as.character(formula)[3], "+",
+                                         fixed = TRUE)[[1]])
+    gammas_all <- unique(c(default_gamma,
+                           10 ^ seq(-4, 1, by = 0.5 * accelerate)))
+  } else {
+    costs_all <- cost
+    gammas_all <- gamma
+  }
 
   # Set up variables for loop:
-  n.costs <- length(costs)
-  costs <- rep(costs, length(gammas))
-  gammas <- rep(gammas, each = n.costs)
-  auroc <- rep(NA, length(costs))
+  n_cost <- length(costs_all)
+  costs_all <- rep(costs_all, length(gammas_all))
+  gammas_all <- rep(gammas_all, each = n_cost)
 
-  # Calculate AUROC for all combinations of cost and gamma values:
+  # Calculate perf. measures for all combinations of 'cost' and 'gamma'
 
-  for (i in 1:length(costs)) {
-    auroc[i] <- svm_cv_err(cost = costs[i], gamma = gammas[i], train = train,
-                           test = test, response = response, formula = formula,
-                           kernel = kernel, type = type, svm_fun = svm_fun,
-                           ...)
-  }
+  registerDoFuture()
+  cl <- makeCluster(availableCores())
+  plan(cluster, workers = cl)
 
-  # Identify best AUROC, or if all are NA, use defaults and issue a warning:
-  if (all(is.na(auroc))) {
-    cost <- 1
-    gamma <- default_gamma
-    warning("all AUROCs are NA in internal cross-validation")
+  message(sprintf(paste0("Using 'foreach' parallel mode with %s cores on",
+                         " %s combinations."),
+                  availableCores(), length(costs_all)))
+  message(sprintf(paste0("Unique 'cost': %s.",
+                         " Unique 'gamma': %s."),
+                  length(unique(costs_all)),
+                  length(unique(gammas_all))))
+
+  foreach(i = 1:length(costs_all), .packages = (.packages()),
+          .errorhandling = "remove", .verbose = FALSE) %dopar% {
+
+            out <- svm_cv_err(cost = costs_all[i], gamma = gammas_all[i],
+                              train = train, test = test, type = type,
+                              kernel = kernel,
+                              response = response, formula = formula,
+                              svm_fun = svm_fun)
+            return(out)
+          } -> perf_measures
+  stopCluster(cl)
+
+  # append 'mtrys' and 'ntrees' vectors to respective lists
+  perf_measures %>%
+    map2(.y = costs_all,
+         .f = ~ mutate(.x, cost = .y)) %>%
+    map2(.y = gammas_all,
+         .f = ~ mutate(.x, gamma = .y)) -> perf_measures
+
+  tmp1 <- check_response_type(train[[response]], error_measure,
+                              perf_measures, option = TRUE)
+  error_measure <- tmp1[[1]]
+  list_index <- tmp1[[2]]
+
+  perf_measures %>%
+    map(error_measure) %>%
+    unlist() -> all_error_measures
+
+  best_cost <- costs_all[list_index]
+  best_gamma <- gammas_all[list_index]
+
+  # output on screen:
+  cat(sprintf(paste0("Optimal cost: ", best_cost, ";    optimal gamma: ",
+                     best_gamma,";    best %s: ",
+                     perf_measures[[list_index]][[error_measure]],
+                     "\n", sep = ""),
+              error_measure))
+
+  ### Generate the actual fit object using optimized cost and gamma parameters:
+
+  # account for binary c
+  if (is.factor(train[[response]]) && length(levels(train[[response]])) == 2) {
+    prob_model <- TRUE
+    probability <- TRUE
   } else {
-    wh <- which(auroc == max(auroc, na.rm = TRUE))[1]
-    cost <- costs[wh]
-    gamma <- gammas[wh]
+    prob_model <- FALSE
+    probability <- FALSE
   }
-
-  # Output on screen:
-  cat("Optimal cost: ", cost, ";    optimal gamma: ",
-      gamma,";    best auroc: ",
-      max(auroc, na.rm = T), "\n", sep = "")
-
-  # Generate the actual fit object using optimized cost and gamma parameters:
-
-  if (is.factor(train[[response]])) {
-    if (svm_fun == "ksvm" | svm_fun == "SVM") {
-      if (svm_fun == "ksvm") {
-        args <- list(x = formula, data = train, type = type, kernel = kernel,
-                     prob.model = TRUE, C = cost, gamma = gamma)
-      } else {
-        args <- list(formula = formula, data = train, type = type, kernel = kernel,
-                     probability = TRUE, C = cost, gamma = gamma)
-      }
-    }
-    if (svm_fun == "svm") {
-      args <- list(formula = formula, data = train, type = type, kernel = kernel,
-                   probability = TRUE, cost = cost, gamma = gamma)
-    }
-    fit <- do.call(svm_fun, args)
-  }
-
-  # Keep track of optimal cost and gamma values:
   if (svm_fun == "ksvm") {
-    fit@param$C <- cost
-    fit@param$C_all <- costs
-    fit@param$gamma <- gamma
-    fit@param$gamma_all <- gammas
-    fit@param$auroc_all <- auroc
-  } else {
-    fit$my_cost <- cost
-    fit$my_costs <- costs
-    fit$my_gamma <- gamma
-    fit$my_gammas <- gammas
-    fit$my_auroc <- auroc
+    args <- list(x = formula, data = train, type = type, kernel = kernel,
+                 prob.model = prob_model, C = best_cost, gamma = best_gamma)
+  } else if (svm_fun == "SVM") {
+    args <- list(formula = formula, data = train, type = type,
+                 kernel = kernel, probability = probability,
+                 C = best_cost, gamma = best_gamma)
+  } else if (svm_fun == "svm") {
+    args <- list(formula = formula, data = train, type = type,
+                 kernel = kernel, probability = probability,
+                 cost = best_cost, gamma = best_gamma)
   }
+  fit <- do.call(svm_fun, args)
 
-  return(fit)
+  # create return list
+  list_out <- list(fit = fit,
+                   tune = list(best_cost,
+                               costs_all,
+                               best_gamma,
+                               gammas_all,
+                               all_error_measures,
+                               perf_measures[[list_index]],
+                               perf_measures))
+  set_names(list_out[[2]], c("optimal_cost", "all_costs", "optimal_gamma",
+                             "all_gammas", "all_error_measures",
+                             "performances_best_run", "performances_all_runs"))
+  return(list_out)
 }
 
 #' @title sptune_rf
-#' @description Tuning of Random Forest (mtry & ntrees) using spatial cross-validation
+#' @description Tuning of Random Forest (mtry & ntrees) using spatial
+#' cross-validation
 #' @author Alexander Brenning, Patrick Schratz
 #'
 #' @import future
@@ -211,6 +288,7 @@ sptune_svm <- function(formula = NULL, data = NULL, accelerate = 1,
 #'
 #' out <- sptune_rf(fo, ecuador, accelerate = 16, nfold = 5,
 #' partition_fun = "partition_kmeans", rf_fun = "randomForest")
+#'
 #' ##------------------------------------------------------------
 #' ## multiclass classification
 #' ##------------------------------------------------------------
@@ -221,6 +299,7 @@ sptune_svm <- function(formula = NULL, data = NULL, accelerate = 1,
 #'                  coords = c("utmx", "utmy"),
 #'                  partition_fun = "partition_kmeans",
 #'                  rf_fun = "randomForest")
+#'
 #' ##------------------------------------------------------------
 #' ## regression
 #' ##------------------------------------------------------------
@@ -305,47 +384,10 @@ sptune_rf <- function(formula = NULL, data = NULL, accelerate = 1,
     map2(.y = ntrees_all,
          .f = ~ mutate(.x, ntree = .y)) -> perf_measures
 
-  # binary classifcation
-  if (is.factor(train[[response]]) &&
-      length(levels(train[[response]])) == 2) {
-
-    # account for error measure
-    if (is.null(error_measure)) {
-      error_measure <- "auroc"
-    } else {
-      error_measure <- error_measure
-    }
-    # get list index with highest auroc
-    perf_measures %>%
-      map(error_measure) %>%
-      which.max() -> list_index
-  }
-  # multiclass classification
-  else if (is.factor(train[[response]]) &&
-           length(levels(train[[response]])) > 2) {
-    if (is.null(error_measure)) {
-      error_measure <- "error"
-    } else {
-      error_measure <- error_measure
-    }
-    # get list index with highest auroc
-    perf_measures %>%
-      map(error_measure) %>%
-      which.min() -> list_index
-  }
-  # regression
-  else if (is.numeric(train[[response]])) {
-    # account for error measure
-    if (is.null(error_measure)) {
-      error_measure <- "rmse"
-    } else {
-      error_measure <- error_measure
-    }
-    # get list index with highest auroc
-    perf_measures %>%
-      map(error_measure) %>%
-      which.min() -> list_index
-  }
+  tmp1 <- check_response_type(train[[response]], error_measure,
+                              perf_measures, option = TRUE)
+  error_measure <- tmp1[[1]]
+  list_index <- tmp1[[2]]
 
   perf_measures %>%
     map(error_measure) %>%

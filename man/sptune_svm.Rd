@@ -2,53 +2,91 @@
 % Please edit documentation in R/tuning_int_cv.R
 \name{sptune_svm}
 \alias{sptune_svm}
-\title{svm_tuning}
+\title{sptune_svm}
 \usage{
-sptune_svm(formula = NULL, data = NULL, accelerate = 1, nfold = NULL,
-  partition_fun = NULL, kernel = NULL, type = NULL, svm_fun = "svm",
-  ...)
+sptune_svm(formula = NULL, data = NULL, cost = NULL, gamma = NULL,
+  accelerate = 1, nfold = NULL, partition_fun = NULL, kernel = NULL,
+  type = NULL, error_measure = NULL, svm_fun = "svm", ...)
 }
 \arguments{
-\item{formula}{formula}
+\item{formula}{formula.}
 
-\item{data}{data frame}
+\item{data}{\link{data.frame}.}
 
-\item{accelerate}{option to speed up tuning using less cost and gamma values.
-Use \code{accelerate = 2} or \code{accelerate = 4} for test runs, but \code{accelerate = 1}
-for actual analysis.}
+\item{cost}{optional user-defined vector of 'cost' hyperparameter to
+tune over. See details.}
 
-\item{nfold}{number of folds for cross-validation}
+\item{gamma}{optional user-defined vector of 'gamma' hyperparameter to
+tune over. See details.}
+
+\item{accelerate}{option to speed up tuning using less 'cost' and
+'gamma' options. Default to \code{accelerate = 1}.
+Increase to reduce number of combinations for tuning.}
+
+\item{nfold}{number of folds for cross-validation.}
 
 \item{partition_fun}{method for partitioning the data
-(e.g. \link{partition.kmeans})}
+(e.g. \link{partition_kmeans})}
 
-\item{kernel}{kernel type of svm classifier}
-
-\item{type}{classification type of svm classifier}
+\item{error_measure}{which error measure to use for optimization.
+Default to 'RMSE' for numeric responses, 'AUROC' for binary classification
+and 'error' for multiclass classiciation.}
 
 \item{svm_fun}{which R svm package to use. See details.}
 
-\item{...}{additional options passed to \link{SVM}}
+\item{...}{additional options passed to \code{partition_fun}.}
 }
 \description{
-Tuning of SVM (cost & gamma) using spatial cross-validation
+Tuning of a Support Vector Machine (cost & gamma) using spatial
+cross-validation
 }
 \details{
-This function tunes a support vectort machine from the \link{e1071},
-\link{gmum.r}, \link{kernlab} packages using (spatial) cross-validation.
+This function tunes a Random Forest model either from \link{e1071},
+or \link{kernlab} package using (spatial) cross-validation.
 
-Currently this function is hard-coded to a binary response variable and AUROC
-as error measure.
+\code{error_measure} can be specified by the user, selecting one of the returned
+error measures of \link{sptune_svm}. However, note that for
+regression type responses always the minimum value of the passed error measure
+is chosen and for classification cases the highest.
+
+FYI: \code{sptune_svm} is parallelized and runs on all possible cores.
 }
 \examples{
+##------------------------------------------------------------
+## binary classification
+##------------------------------------------------------------
 data(ecuador) # Muenchow et al. (2012), see ?ecuador
 fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
 
-sptune_svm(fo, ecuador, accelerate = 16, nfold = 5,
-partition.fun = "partition.kmeans", kernel = "radial",
-type = "C-classification")
+out <- sptune_svm(fo, ecuador, accelerate = 16, nfold = 5,
+                  partition_fun = "partition_kmeans", svm_fun = "svm",
+                  kernel = "sigmoid", type = "C-classification")
 
+##------------------------------------------------------------
+## multiclass classification
+##------------------------------------------------------------
+fo <- croptype ~ b82 + b83 + b84 + b85 + b86 + b87 + ndvi01 +
+      ndvi02 + ndvi03 + ndvi04
+data(maipo)
+out <- sptune_svm(fo, maipo, accelerate = 32, nfold = 5,
+                  coords = c("utmx", "utmy"),
+                  partition_fun = "partition_kmeans",
+                  svm_fun = "ksvm", type = "C-svc", kernel = "rbfdot")
+
+##------------------------------------------------------------
+## regression
+##------------------------------------------------------------
+
+data(ecuador) # Muenchow et al. (2012), see ?ecuador
+fo <- dem ~ slides + slope + hcurv + vcurv + log.carea + cslope
+
+out <- sptune_svm(fo, ecuador, accelerate = 8, nfold = 5,
+                  partition_fun = "partition_kmeans", svm_fun = "svm",
+                  kernel = "radial", type = "eps-regression")
+}
+\seealso{
+\link{sptune_rf}
 }
 \author{
-Alexander Brenning, Patrick Schratz
+Patrick Schratz, Alexander Brenning
 }

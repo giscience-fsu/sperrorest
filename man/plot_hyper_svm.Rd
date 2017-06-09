@@ -4,5 +4,6 @@
 \alias{plot_hyper_svm}
 \title{plot_hyper_svm}
 \usage{
-plot_hyper_svm(object = NULL)
+plot_hyper_svm(object = NULL, error_measure = NULL, mtry = NULL,
+  color_palette = NULL)
 }

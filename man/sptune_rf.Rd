@@ -37,7 +37,8 @@ tune over. See details.}
 \item{...}{additional options passed to \code{partition_fun}.}
 }
 \description{
-Tuning of Random Forest (mtry & ntrees) using spatial cross-validation
+Tuning of Random Forest (mtry & ntrees) using spatial
+cross-validation
 }
 \details{
 This function tunes a Random Forest model either from \link{randomForest},
@@ -67,6 +68,7 @@ fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
 
 out <- sptune_rf(fo, ecuador, accelerate = 16, nfold = 5,
 partition_fun = "partition_kmeans", rf_fun = "randomForest")
+
 ##------------------------------------------------------------
 ## multiclass classification
 ##------------------------------------------------------------
@@ -77,6 +79,7 @@ out <- sptune_rf(fo, maipo, accelerate = 32, nfold = 5,
                  coords = c("utmx", "utmy"),
                  partition_fun = "partition_kmeans",
                  rf_fun = "randomForest")
+
 ##------------------------------------------------------------
 ## regression
 ##------------------------------------------------------------
