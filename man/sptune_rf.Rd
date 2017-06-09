@@ -6,17 +6,18 @@
 \usage{
 sptune_rf(formula = NULL, data = NULL, accelerate = 1, nfold = NULL,
   partition_fun = NULL, rf_fun = "rfsrc", error_measure = NULL,
-  mtrys_all = NULL, ntrees = NULL, ...)
+  mtrys = NULL, ntrees = NULL, ...)
 }
 \arguments{
-\item{formula}{formula}
+\item{formula}{formula.}
 
-\item{data}{data frame}
+\item{data}{\link{data.frame}.}
 
 \item{accelerate}{option to speed up tuning using less 'ntree' options.
-Default to \code{accelerate = 1}. Increase the value to reduce 'ntree' options.}
+Default to \code{accelerate = 1}. Increase to reduce number of 'ntrees' for
+tuning.}
 
-\item{nfold}{number of folds for cross-validation}
+\item{nfold}{number of folds for cross-validation.}
 
 \item{partition_fun}{method for partitioning the data
 (e.g. \link{partition_kmeans})}
@@ -27,13 +28,13 @@ Default to \code{accelerate = 1}. Increase the value to reduce 'ntree' options.}
 Default to 'RMSE' for numeric responses, 'AUROC' for binary classification
 and 'error' for multiclass classiciation.}
 
+\item{mtrys}{optional user-defined vector of 'mtry' hyperparameter to
+tune over. See details.}
+
 \item{ntrees}{optional user-defined vector of 'ntrees' hyperparameter to
 tune over. See details.}
 
 \item{...}{additional options passed to \code{partition_fun}.}
-
-\item{mtrys}{optional user-defined vector of 'mtry' hyperparameter to
-tune over. See details.}
 }
 \description{
 Tuning of Random Forest (mtry & ntrees) using spatial cross-validation
@@ -44,17 +45,17 @@ or \link{randomForestSRC} package using (spatial) cross-validation.
 
 \code{error_measure} can be specified by the user, selecting one of the returned
 error measures of \link{sptune_rf}. However, note that for
-regression type responses always the minimum value is chosen and for
-classification problems the highest.
+regression type responses always the minimum value of the passed error measure
+is chosen and for classification cases the highest.
 
 The default behaviour of \link{sptune_rf} tunes over all possible 'mtry' values
 (which are of \code{length(predictors)}) and a selection of 'ntrees' ranging
 between 10 and 2500. Use \code{accelerate} to reduce the number of 'ntrees'.
 Specify a custom vector if you want to modify the number of \code{mtry} used
-for testing. This is usually useful if the formula contains more than 20
+for testing. This is usually useful if the model contains more than 20
 predictors.
 
-\code{sptune_rf} is parallelized and runs on all possible cores.
+FYI: \code{sptune_rf} is parallelized and runs on all possible cores.
 }
 \examples{
 
