@@ -4,5 +4,33 @@
 \alias{plot_hyper_rf}
 \title{plot_hyper_rf}
 \usage{
-plot_hyper_rf(object = NULL)
+plot_hyper_rf(object = NULL, error_measure = NULL, mtry = NULL,
+  color_palette = NULL)
+}
+\arguments{
+\item{object}{a fitted object of \link{randomForest} or \link{rfsrc}.}
+
+\item{error_measure}{the error_measure which the model was tuned on.
+Only needed if the default one from \link{sptune_rf} was changed.}
+
+\item{mtry}{optional user-defined numeric vector of 'mtry' values to plot.}
+
+\item{color_palette}{\code{option} argument from \link{scale_color_viridis}.}
+}
+\description{
+Plots tuning results of Random Forest
+}
+\examples{
+##------------------------------------------------------------
+## regression
+##------------------------------------------------------------
+
+data(ecuador) # Muenchow et al. (2012), see ?ecuador
+fo <- dem ~ slides + slope + hcurv + vcurv + log.carea + cslope
+
+out <- sptune_rf(fo, ecuador, accelerate = 16, nfold = 5,
+partition_fun = "partition_kmeans", rf_fun = "randomForest")
+
+plot_hyper_rf(out)
+
 }
