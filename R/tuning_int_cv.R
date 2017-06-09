@@ -157,14 +157,15 @@ sptune_svm <- function(formula = NULL, data = NULL, accelerate = 1,
 #' @importFrom plyr mutate
 #' @importFrom purrr map2 map
 #'
-#' @param formula formula
+#' @param formula formula.
 #'
-#' @param data data frame
+#' @param data [data.frame].
 #'
 #' @param accelerate option to speed up tuning using less 'ntree' options.
-#' Default to `accelerate = 1`. Increase the value to reduce 'ntree' options.
+#' Default to `accelerate = 1`. Increase to reduce number of 'ntrees' for
+#' tuning.
 #'
-#' @param nfold number of folds for cross-validation
+#' @param nfold number of folds for cross-validation.
 #'
 #' @param partition_fun method for partitioning the data
 #' (e.g. [partition_kmeans])
@@ -188,17 +189,17 @@ sptune_svm <- function(formula = NULL, data = NULL, accelerate = 1,
 #'
 #' `error_measure` can be specified by the user, selecting one of the returned
 #' error measures of [sptune_rf]. However, note that for
-#' regression type responses always the minimum value is chosen and for
-#' classification problems the highest.
+#' regression type responses always the minimum value of the passed error measure
+#' is chosen and for classification cases the highest.
 #'
 #' The default behaviour of [sptune_rf] tunes over all possible 'mtry' values
 #' (which are of `length(predictors)`) and a selection of 'ntrees' ranging
 #' between 10 and 2500. Use `accelerate` to reduce the number of 'ntrees'.
 #' Specify a custom vector if you want to modify the number of `mtry` used
-#' for testing. This is usually useful if the formula contains more than 20
+#' for testing. This is usually useful if the model contains more than 20
 #' predictors.
 #'
-#' `sptune_rf` is parallelized and runs on all possible cores.
+#' FYI: `sptune_rf` is parallelized and runs on all possible cores.
 #'
 #' @examples
 #'
@@ -234,7 +235,7 @@ sptune_svm <- function(formula = NULL, data = NULL, accelerate = 1,
 sptune_rf <- function(formula = NULL, data = NULL, accelerate = 1,
                       nfold = NULL, partition_fun = NULL,
                       rf_fun = "rfsrc", error_measure = NULL,
-                      mtrys_all = NULL, ntrees = NULL, ...) {
+                      mtrys = NULL, ntrees = NULL, ...) {
 
   if (is.null(partition_fun)) {
     message("Partitioning method: 'partition_kmeans'.")
@@ -346,6 +347,10 @@ sptune_rf <- function(formula = NULL, data = NULL, accelerate = 1,
       which.min() -> list_index
   }
 
+  perf_measures %>%
+    map(error_measure) %>%
+    unlist() -> all_error_measures
+
   best_ntree <- ntrees_all[list_index]
   best_mtry <- mtrys_all[list_index]
 
@@ -366,11 +371,12 @@ sptune_rf <- function(formula = NULL, data = NULL, accelerate = 1,
                                ntrees_all,
                                best_mtry,
                                mtrys_all,
+                               all_error_measures,
                                perf_measures[[list_index]],
                                perf_measures))
   set_names(list_out[[2]], c("optimal_ntree", "all_ntrees", "optimal_mtry",
-                             "all_mtrys", "performances_best_run",
-                             "performances_all_runs"))
+                             "all_mtrys", "all_error_measures",
+                             "performances_best_run", "performances_all_runs"))
   return(list_out)
 }
 
