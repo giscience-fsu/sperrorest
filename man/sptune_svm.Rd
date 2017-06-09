@@ -11,7 +11,7 @@ sptune_svm(formula = NULL, data = NULL, cost = NULL, gamma = NULL,
 \arguments{
 \item{formula}{formula.}
 
-\item{data}{\link{data.frame}.}
+\item{data}{dataframe}
 
 \item{cost}{optional user-defined vector of 'cost' hyperparameter to
 tune over. See details.}
@@ -21,18 +21,18 @@ tune over. See details.}
 
 \item{accelerate}{option to speed up tuning using less 'cost' and
 'gamma' options. Default to \code{accelerate = 1}.
-Increase to reduce number of combinations for tuning.}
+Increase to reduce number of tuning combinations.}
 
 \item{nfold}{number of folds for cross-validation.}
 
-\item{partition_fun}{method for partitioning the data
+\item{partition_fun}{character. Data partitioning method
 (e.g. \link{partition_kmeans})}
 
 \item{error_measure}{which error measure to use for optimization.
 Default to 'RMSE' for numeric responses, 'AUROC' for binary classification
 and 'error' for multiclass classiciation.}
 
-\item{svm_fun}{which R svm package to use. See details.}
+\item{svm_fun}{character. Which R svm package to use. See details.}
 
 \item{...}{additional options passed to \code{partition_fun}.}
 }
@@ -41,15 +41,21 @@ Tuning of a Support Vector Machine (cost & gamma) using spatial
 cross-validation
 }
 \details{
-This function tunes a Random Forest model either from \link{e1071},
+This function tunes a Support Vector Machine either from \link{e1071}
 or \link{kernlab} package using (spatial) cross-validation.
+
+Tuning is performed over the following ranges (\href{https://stats.stackexchange.com/questions/43943/which-search-range-for-determining-svm-optimal-c-and-gamma-parameters}{reference}):
+\tabular{rr}{
+cost: \tab 2^{-5}, 2^{-3}, ..., 2^{15}\cr
+gamma: \tab 2^{-15}, 2^{-13}, ..., 2^{3}
+}
 
 \code{error_measure} can be specified by the user, selecting one of the returned
 error measures of \link{sptune_svm}. However, note that for
 regression type responses always the minimum value of the passed error measure
 is chosen and for classification cases the highest.
 
-FYI: \code{sptune_svm} is parallelized and runs on all possible cores.
+\code{sptune_svm} is parallelized and runs on all possible cores.
 }
 \examples{
 ##------------------------------------------------------------
@@ -58,7 +64,7 @@ FYI: \code{sptune_svm} is parallelized and runs on all possible cores.
 data(ecuador) # Muenchow et al. (2012), see ?ecuador
 fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
 
-out <- sptune_svm(fo, ecuador, accelerate = 16, nfold = 5,
+out <- sptune_svm(fo, ecuador, accelerate = 8, nfold = 5,
                   partition_fun = "partition_kmeans", svm_fun = "svm",
                   kernel = "sigmoid", type = "C-classification")
 
@@ -85,7 +91,7 @@ out <- sptune_svm(fo, ecuador, accelerate = 8, nfold = 5,
                   kernel = "radial", type = "eps-regression")
 }
 \seealso{
-\link{sptune_rf}
+\link{plot_hyper_svm}
 }
 \author{
 Patrick Schratz, Alexander Brenning

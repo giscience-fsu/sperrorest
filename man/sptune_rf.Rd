@@ -4,25 +4,25 @@
 \alias{sptune_rf}
 \title{sptune_rf}
 \usage{
-sptune_rf(formula = NULL, data = NULL, accelerate = 1, nfold = NULL,
+sptune_rf(formula = NULL, data = NULL, step_factor = 1, nfold = NULL,
   partition_fun = NULL, rf_fun = "rfsrc", error_measure = NULL,
   mtrys = NULL, ntrees = NULL, ...)
 }
 \arguments{
 \item{formula}{formula.}
 
-\item{data}{\link{data.frame}.}
+\item{data}{dataframe.}
 
-\item{accelerate}{option to speed up tuning using less 'ntree' options.
-Default to \code{accelerate = 1}. Increase to reduce number of 'ntrees' for
+\item{step_factor}{option to speed up tuning using less 'ntrees' options.
+Default to \code{step_factor = 2}. Increase to reduce number of 'ntrees' for
 tuning.}
 
 \item{nfold}{number of folds for cross-validation.}
 
-\item{partition_fun}{method for partitioning the data
+\item{partition_fun}{character. Data partitioning method
 (e.g. \link{partition_kmeans})}
 
-\item{rf_fun}{which R Random Forest package to use. See details.}
+\item{rf_fun}{character. Which R Random Forest package to use. See details.}
 
 \item{error_measure}{which error measure to use for optimization.
 Default to 'RMSE' for numeric responses, 'AUROC' for binary classification
@@ -53,10 +53,10 @@ The default behaviour of \link{sptune_rf} tunes over all possible 'mtry' values
 (which are of \code{length(predictors)}) and a selection of 'ntrees' ranging
 between 10 and 2500. Use \code{accelerate} to reduce the number of 'ntrees'.
 Specify a custom vector if you want to modify the number of \code{mtry} used
-for testing. This is usually useful if the model contains more than 20
-predictors.
+for testing. This is useful if the model contains > 20
+predictors but runtime depends on your cpu power / number of cores.
 
-FYI: \code{sptune_rf} is parallelized and runs on all possible cores.
+\code{sptune_rf} is parallelized and runs on all possible cores.
 }
 \examples{
 
@@ -90,6 +90,9 @@ fo <- dem ~ slides + slope + hcurv + vcurv + log.carea + cslope
 out <- sptune_rf(fo, ecuador, accelerate = 16, nfold = 5,
 partition_fun = "partition_kmeans", rf_fun = "randomForest")
 
+}
+\seealso{
+\link{plot_hyper_rf}
 }
 \author{
 Alexander Brenning, Patrick Schratz

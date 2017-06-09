@@ -12,18 +12,18 @@
 #'
 #' @param formula formula.
 #'
-#' @param data [data.frame].
+#' @param data dataframe
 #'
 #' @param accelerate option to speed up tuning using less 'cost' and
 #' 'gamma' options. Default to `accelerate = 1`.
-#' Increase to reduce number of combinations for tuning.
+#' Increase to reduce number of tuning combinations.
 #'
 #' @param nfold number of folds for cross-validation.
 #'
-#' @param partition_fun method for partitioning the data
+#' @param partition_fun character. Data partitioning method
 #' (e.g. [partition_kmeans])
 #'
-#' @param svm_fun which R svm package to use. See details.
+#' @param svm_fun character. Which R svm package to use. See details.
 #'
 #' @param error_measure which error measure to use for optimization.
 #' Default to 'RMSE' for numeric responses, 'AUROC' for binary classification
@@ -37,17 +37,24 @@
 #'
 #' @param ... additional options passed to `partition_fun`.
 #'
-#' @details This function tunes a Random Forest model either from [e1071],
+#' @details This function tunes a Support Vector Machine either from [e1071]
 #' or [kernlab] package using (spatial) cross-validation.
+#'
+#' @details
+#' Tuning is performed over the following ranges ([reference](https://stats.stackexchange.com/questions/43943/which-search-range-for-determining-svm-optimal-c-and-gamma-parameters)):
+#' \tabular{rr}{
+#' cost: \tab 2^{-5}, 2^{-3}, ..., 2^{15}\cr
+#' gamma: \tab 2^{-15}, 2^{-13}, ..., 2^{3}
+#' }
 #'
 #' `error_measure` can be specified by the user, selecting one of the returned
 #' error measures of [sptune_svm]. However, note that for
 #' regression type responses always the minimum value of the passed error measure
 #' is chosen and for classification cases the highest.
 #'
-#' FYI: `sptune_svm` is parallelized and runs on all possible cores.
+#' `sptune_svm` is parallelized and runs on all possible cores.
 #'
-#' @seealso [sptune_rf]
+#' @seealso [plot_hyper_svm]
 #'
 #' @examples
 #' ##------------------------------------------------------------
@@ -56,7 +63,7 @@
 #' data(ecuador) # Muenchow et al. (2012), see ?ecuador
 #' fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
 #'
-#' out <- sptune_svm(fo, ecuador, accelerate = 16, nfold = 5,
+#' out <- sptune_svm(fo, ecuador, accelerate = 8, nfold = 5,
 #'                   partition_fun = "partition_kmeans", svm_fun = "svm",
 #'                   kernel = "sigmoid", type = "C-classification")
 #'
@@ -114,12 +121,24 @@ sptune_svm <- function(formula = NULL, data = NULL, cost = NULL, gamma = NULL,
   test <- data[parti[[1]][[1]]$test, ]
 
   if (is.null(cost) && is.null(gamma)) {
+    # tuning ranges: https://stats.stackexchange.com/a/69631/101464
     # Perform a complete grid search over the following range of values:
-    costs_all <- 10 ^ seq(-2, 4, by = 0.5 * accelerate)
-    default_gamma <- 1 / length(strsplit(as.character(formula)[3], "+",
-                                         fixed = TRUE)[[1]])
-    gammas_all <- unique(c(default_gamma,
-                           10 ^ seq(-4, 1, by = 0.5 * accelerate)))
+
+    # costs_all <- 10 ^ seq(2 ^ -5, 2 ^ 15, by = 2 ^ 2 * accelerate)
+    costs_all <- c(2 ^ -5, 2 ^ -3, 2 ^ -1, 2 ^ 1, 2 ^ 3, 2 ^ 5, 2 ^ 7, 2 ^ 9,
+                   2 ^ 11, 2 ^ 13, 2 ^ 15)
+    # default_gamma <- 1 / length(strsplit(as.character(formula)[3], "+",
+    #                                      fixed = TRUE)[[1]])
+    # gammas_all <- unique(c(default_gamma,
+    #                        10 ^ seq(-4, 1, by = 0.5 * accelerate)))
+    gammas_all <- c(2 ^ -15, 2 ^ -13, 2 ^ -11, 2 ^ -9, 2 ^ 3, 2 ^ -7, 2 ^ -5,
+                    2 ^ -3, 2 ^ -1, 2 ^ 1, 2 ^ 3)
+
+    # recycle vector if desired
+    if (accelerate > 1) {
+      costs_all <- costs_all[seq(1, length(costs_all), accelerate)]
+      gammas_all <- gammas_all[seq(1, length(gammas_all), accelerate)]
+    }
   } else {
     costs_all <- cost
     gammas_all <- gamma
@@ -235,18 +254,18 @@ sptune_svm <- function(formula = NULL, data = NULL, cost = NULL, gamma = NULL,
 #'
 #' @param formula formula.
 #'
-#' @param data [data.frame].
+#' @param data dataframe.
 #'
-#' @param accelerate option to speed up tuning using less 'ntree' options.
-#' Default to `accelerate = 1`. Increase to reduce number of 'ntrees' for
+#' @param step_factor option to speed up tuning using less 'ntrees' options.
+#' Default to `step_factor = 2`. Increase to reduce number of 'ntrees' for
 #' tuning.
 #'
 #' @param nfold number of folds for cross-validation.
 #'
-#' @param partition_fun method for partitioning the data
+#' @param partition_fun character. Data partitioning method
 #' (e.g. [partition_kmeans])
 #'
-#' @param rf_fun which R Random Forest package to use. See details.
+#' @param rf_fun character. Which R Random Forest package to use. See details.
 #'
 #' @param error_measure which error measure to use for optimization.
 #' Default to 'RMSE' for numeric responses, 'AUROC' for binary classification
@@ -272,10 +291,12 @@ sptune_svm <- function(formula = NULL, data = NULL, cost = NULL, gamma = NULL,
 #' (which are of `length(predictors)`) and a selection of 'ntrees' ranging
 #' between 10 and 2500. Use `accelerate` to reduce the number of 'ntrees'.
 #' Specify a custom vector if you want to modify the number of `mtry` used
-#' for testing. This is usually useful if the model contains more than 20
-#' predictors.
+#' for testing. This is useful if the model contains > 20
+#' predictors but runtime depends on your cpu power / number of cores.
 #'
-#' FYI: `sptune_rf` is parallelized and runs on all possible cores.
+#' `sptune_rf` is parallelized and runs on all possible cores.
+#'
+#' @seealso [plot_hyper_rf]
 #'
 #' @examples
 #'
@@ -310,7 +331,7 @@ sptune_svm <- function(formula = NULL, data = NULL, cost = NULL, gamma = NULL,
 #' partition_fun = "partition_kmeans", rf_fun = "randomForest")
 #'
 #' @export
-sptune_rf <- function(formula = NULL, data = NULL, accelerate = 1,
+sptune_rf <- function(formula = NULL, data = NULL, step_factor = 1,
                       nfold = NULL, partition_fun = NULL,
                       rf_fun = "rfsrc", error_measure = NULL,
                       mtrys = NULL, ntrees = NULL, ...) {
@@ -338,13 +359,23 @@ sptune_rf <- function(formula = NULL, data = NULL, accelerate = 1,
 
   if (is.null(mtrys) && is.null(ntrees)) {
     # Perform a complete grid search over the following range of values:
-    ntrees_all <- c(10, 30, 50, seq(100, 2500, by = 100 * accelerate))
+    ntrees_all <- c(10)
+    while (tail(ntrees_all, n = 1) < 2500) {
+      i <- tail(ntrees_all, n = 1) * step_factor
+      ntrees_all <- c(ntrees_all, i)
+    }
     default_mtry <- floor(sqrt(ncol(data)))
     n_variables <- length(attr(terms(formula), "term.labels"))
     mtrys_all <- unique(c(default_mtry, seq(1, n_variables, by = 1)))
   } else {
     ntrees_all <- ntrees
     mtrys_all <- mtrys
+  }
+
+  ntrees_all <- c(10)
+  while (tail(ntrees_all, n = 1) < 2500) {
+    i <- tail(ntrees_all, n = 1) * step_factor
+    ntrees_all <- c(ntrees_all, i)
   }
 
   # Set up variables for loop:
