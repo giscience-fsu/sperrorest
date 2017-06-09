@@ -68,7 +68,7 @@ out <- sptune_svm(fo, ecuador, accelerate = 16, nfold = 5,
 fo <- croptype ~ b82 + b83 + b84 + b85 + b86 + b87 + ndvi01 +
       ndvi02 + ndvi03 + ndvi04
 data(maipo)
-out <- sptune_svm(fo, maipo, accelerate = 32, nfold = 5,
+out <- sptune_svm(fo, maipo, accelerate = 8, nfold = 5,
                   coords = c("utmx", "utmy"),
                   partition_fun = "partition_kmeans",
                   svm_fun = "ksvm", type = "C-svc", kernel = "rbfdot")

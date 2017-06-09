@@ -14,76 +14,77 @@ plot_hyper_svm <- function(object = NULL, error_measure = NULL, mtry = NULL,
   if (any(class(object$fit) == "svm")) {
     lib <- "e1071"
     # check kernel
-    if (object$fit == 0) {
+    if (object$fit$kernel == 0) {
       kernel <- "linear"
-    } else if (object$fit == 1) {
+    } else if (object$fit$kernel == 1) {
       kernel <- "polynomial"
-    } else if (object$fit == 2) {
+    } else if (object$fit$kernel == 2) {
       kernel <- "radial"
-    } else if (object$fit == 3) {
+    } else if (object$fit$kernel == 3) {
       kernel <- "sigmoid"
     }
   } else if (any(class(object$fit) == "ksvm")) {
     lib <- "kernlab"
-    kernel <- "sigmoid"
+    kernel <- class(object$fit@kernelf)[1]
   } else {
     stop("Passed 'svm_fun' is not supported.")
   }
 
-  error_measure <- check_response_type(object$fit$predicted, error_measure)
-
-  if (class(object) == "ksvm") {
-    df <- tibble(cost = object@param$C_all, gamma = object@param$gamma_all,
-                 auroc = round(object@param$auroc_all, 3))
-
-    if (length(unique(df$gamma)) > 10) {
-      message(paste0("Plotting of more than 10 'mtry' options is not supported.",
-                     " Please specify your own vector of which 'mtry' values to",
-                     " plot in argument 'mtry'.\n",
-                     " Taking the first 10 values I can find."))
-
-      # sort df
-      df %>%
-        arrange(mtry) -> df
-      # get value of 12th index
-      index <- unique(df$mtry)[10]
-
-      # filter df
-      df %>%
-        filter(mtry <= index) -> df
-    }
-
-    # check for color palette
-    if (is.null(color_palette)) {
-      color_palette <- "viridis"
-    }
-
-    df %>%
-      mutate(gamma = as.factor(gamma)) %>%
-      ggplot(aes(x = cost, y = auroc, color = gamma, group = gamma)) +
-      geom_point() +
-      geom_line() +
-      scale_color_ipsum() +
-      # geom_text(aes(label = auroc), hjust = -0.1, vjust = 0) +
-      labs(x = "cost", y = "auroc",
-           title = "Support Vector Machine hyperparameter tuning results",
-           subtitle = sprintf(paste0("Total combinations: %s.",
-                                     " Package: '%s'.",
-                                     " Kernel: '%s'.",
-                                     " Best '%s': %s.",
-                                     " Optimal 'cost': %s.",
-                                     " Optimal 'gamma: %s."),
-                              length(object@param$gamma_all),
-                              lib,
-                              kernel,
-                              toupper(error_measure),
-                              round(object$tune$performances_best_run[[
-                                error_measure]], 3),
-                              object$tune$optimal_cost,
-                              object$tune$optimal_gamma)) +
-      theme_ipsum() +
-      guides(color = guide_legend(title = "gamma"))
+  if (any(class(object$fit) == "svm")) {
+  error_measure <- check_response_type(object$fit$fitted, error_measure)
+  } else {
+    error_measure <- check_response_type(object$fit@fitted, error_measure)
   }
+
+  df <- tibble(cost = object$tune$all_costs, gamma = object$tune$all_gammas,
+               var_error = round(object$tune$all_error_measures, 3))
+
+  if (length(unique(df$gamma)) > 10) {
+    message(paste0("Plotting of more than 10 'mtry' options is not supported.",
+                   " Please specify your own vector of which 'mtry' values to",
+                   " plot in argument 'mtry'.\n",
+                   " Taking the first 10 values I can find."))
+
+    # sort df
+    df %>%
+      arrange(mtry) -> df
+    # get value of 10th index
+    index <- unique(df$mtry)[10]
+
+    # filter df
+    df %>%
+      filter(mtry <= index) -> df
+  }
+
+  # check for color palette
+  if (is.null(color_palette)) {
+    color_palette <- "viridis"
+  }
+
+  df %>%
+    mutate(gamma = as.factor(gamma)) %>%
+    ggplot(aes(x = cost, y = var_error, color = gamma, group = gamma)) +
+    geom_point() +
+    geom_line() +
+    scale_color_viridis(discrete = TRUE, option = color_palette) +
+    labs(x = "cost", y = error_measure,
+         title = "Support Vector Machine hyperparameter tuning results",
+         subtitle = sprintf(paste0("Total combinations: %s.",
+                                   " Package: '%s'.",
+                                   " Kernel: '%s'.",
+                                   " Best '%s': %s.",
+                                   " Optimal 'cost': %s.",
+                                   " Optimal 'gamma': %s."),
+                            length(object$tune$all_costs),
+                            lib,
+                            kernel,
+                            toupper(error_measure),
+                            round(object$tune$performances_best_run[[
+                              error_measure]], 3),
+                            round(object$tune$optimal_cost, 3),
+                            round(object$tune$optimal_gamma), 3)) +
+    theme_ipsum() +
+    guides(color = guide_legend(title = "gamma"))
 }
 
 #' @title plot_hyper_rf
@@ -130,7 +131,7 @@ plot_hyper_rf <- function(object = NULL, error_measure = NULL, mtry = NULL,
     stop("Passed 'rf_fun' is not supported.")
   }
 
-  error_measure <- check_response_type(object, error_measure)
+  error_measure <- check_response_type(object$fit$predicted, error_measure)
 
   df <- tibble(ntrees = object$tune$all_ntrees, mtry = object$tune$all_mtrys,
                var_error = round(object$tune$all_error_measures, 3))
@@ -144,7 +145,7 @@ plot_hyper_rf <- function(object = NULL, error_measure = NULL, mtry = NULL,
     # sort df
     df %>%
       arrange(mtry) -> df
-    # get value of 12th index
+    # get value of 10th index
     index <- unique(df$mtry)[10]
 
     # filter df
@@ -164,7 +165,6 @@ plot_hyper_rf <- function(object = NULL, error_measure = NULL, mtry = NULL,
     geom_point() +
     geom_line() +
     scale_color_viridis(discrete = TRUE, option = color_palette) +
-    #scale_colour_manual(values = colorspace::sequential_hcl(12)) +
     labs(x = "ntrees", y = toupper(error_measure),
          title = "Random Forest hyperparameter tuning results",
          subtitle = sprintf(paste0("Total combinations: %s.",

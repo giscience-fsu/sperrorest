@@ -46,6 +46,22 @@
 #'                   response = "slides", svm_fun = "ksvm")
 #'
 #' ##------------------------------------------------------------
+#' ## regression
+#' ##------------------------------------------------------------
+#'
+#' data(ecuador) # Muenchow et al. (2012), see ?ecuador
+#' fo <- dem ~ slides + slope + hcurv + vcurv + log.carea + cslope
+#' response <- "dem"
+#' # 'svm'
+#' out <- svm_cv_err(cost = 0.01, gamma = 0.166, train = train, test = test,
+#'                   formula = fo, response = "dem", kernel = "radial",
+#'                   svm_fun = "svm", type = "eps-regression")
+#' # 'ksvm'
+#' out <- svm_cv_err(cost = 0.01, gamma = 0.166, train = train, test = test,
+#'                   formula = fo, response = "dem", kernel = "rbfdot",
+#'                   svm_fun = "ksvm", type = "eps-svr")
+#'
+#' ##------------------------------------------------------------
 #' ## multiclass classification
 #' ##------------------------------------------------------------
 #' parti <- partition_kmeans(maipo, nfold = 5, order.clusters = FALSE,
@@ -71,22 +87,6 @@
 #' out <- svm_cv_err(cost = 0.01, gamma = 0.166, train = train, test = test,
 #'                   formula = fo, response = "croptype", kernel = "rbfdot",
 #'                   svm_fun = "ksvm", type = "C-svc")
-#'
-#' ##------------------------------------------------------------
-#' ## regression
-#' ##------------------------------------------------------------
-#'
-#' data(ecuador) # Muenchow et al. (2012), see ?ecuador
-#' fo <- dem ~ slides + slope + hcurv + vcurv + log.carea + cslope
-#' response <- "dem"
-#' # 'svm'
-#' out <- svm_cv_err(cost = 0.01, gamma = 0.166, train = train, test = test,
-#'                   formula = fo, response = "dem", kernel = "radial",
-#'                   svm_fun = "svm", type = "eps-regression")
-#' # 'ksvm'
-#' out <- svm_cv_err(cost = 0.01, gamma = 0.166, train = train, test = test,
-#'                   formula = fo, response = "dem", kernel = "rbfdot",
-#'                   svm_fun = "ksvm", type = "eps-svr")
 #'
 #' @export
 svm_cv_err <- function(cost = NULL, gamma = NULL, train = NULL, test = NULL,

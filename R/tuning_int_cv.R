@@ -45,7 +45,6 @@
 #' regression type responses always the minimum value of the passed error measure
 #' is chosen and for classification cases the highest.
 #'
-#'
 #' FYI: `sptune_svm` is parallelized and runs on all possible cores.
 #'
 #' @seealso [sptune_rf]
@@ -67,7 +66,7 @@
 #' fo <- croptype ~ b82 + b83 + b84 + b85 + b86 + b87 + ndvi01 +
 #'       ndvi02 + ndvi03 + ndvi04
 #' data(maipo)
-#' out <- sptune_svm(fo, maipo, accelerate = 32, nfold = 5,
+#' out <- sptune_svm(fo, maipo, accelerate = 8, nfold = 5,
 #'                   coords = c("utmx", "utmy"),
 #'                   partition_fun = "partition_kmeans",
 #'                   svm_fun = "ksvm", type = "C-svc", kernel = "rbfdot")
