@@ -5,7 +5,7 @@
 #' @import magrittr
 #' @import hrbrthemes
 #' @import viridis
-#' @importFrom dplyr mutate
+#' @importFrom dplyr mutate filter arrange
 #'
 #' @export
 
