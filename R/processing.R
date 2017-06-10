@@ -264,11 +264,6 @@ runreps <- function(current_sample = NULL, data = NULL, formula = NULL,
   if (importance == TRUE) {
     # subset fold result to importance results only
     impo_only <- runfolds_merged[6][[1]]
-    ### get mean from all impo results of all folds
-    ### (multiple dataframes stored in a list)
-    ### http://stackoverflow.com/questions/18371187/element-wise-mean-for-a-list-of-dataframes-with-na # nolint
-    ### NICHT MITTELN, ENFACH ALLE IMPO (= FÜR JEDEN FOLD) ZURÜCKGEBEN
-    # current_impo <- Reduce("+", impo_only) / length(impo_only)
   }
 
   pooled_only <- runfolds_merged[c(1:4)]
