@@ -12,6 +12,7 @@ Features:
     * `future`: calls `future_lapply()` with various `future` options (`multiprocess`, `multicore`, etc.). 
     * `foreach`: `foreach()` with various `future` options (`multiprocess`, `multicore`, etc.). Default option to `cluster`. This is also the overall default mode for `sperrorest()`.
     * `sequential`: sequential execution using `future` backend.
+  * RMSE instead of MSE as error measure
     
 Misc: 
   * limit workers to number of repetitions if number of cores > number of repetitions. This ensures that no unnecessary workers are started and increases robustness of parallel execuction.
