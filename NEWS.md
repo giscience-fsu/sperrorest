@@ -17,6 +17,7 @@ Features:
 Misc: 
   * limit workers to number of repetitions if number of cores > number of repetitions. This ensures that no unnecessary workers are started and increases robustness of parallel execuction.
   * documentation improvements 
+  * `do_try` argument has been removed
 
 Bugfixes:
   * partial matching of arguments
