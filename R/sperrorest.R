@@ -18,6 +18,7 @@
 #' @import rpart
 #' @importFrom utils packageVersion
 #' @importFrom purrr walk map
+#' @importFrom stringr str_replace_all
 #'
 #' @param data a `data.frame` with predictor and response variables.
 #' Training and test samples will be drawn from this data set by `train_fun`
@@ -639,7 +640,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
 
                         current_res <- NULL
                         current_impo <- resamp[[i]]
-                        currentpooled_error <- NULL
+                        current_pooled_error <- NULL
 
 
                         if (error_fold) {
@@ -724,10 +725,15 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
                               pooled_only$pooled_pred_train)
                           }
 
-                          currentpooled_error <- t(unlist(list(
+                          current_pooled_error <- t(unlist(list(
                             train = pooled_error_train,
                             test = err_fun(pooled_only$pooled_obs_test,
                                            pooled_only$pooled_pred_test))))
+                          current_pooled_error %>%
+                            colnames() %>%
+                            str_replace_all("[.]", "_") -> names
+                          colnames(current_pooled_error) <- names
+
                           if (do_gc >= 2) {
                             gc()
                           }
@@ -744,7 +750,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
                         }
 
                         result <- list(error = runfolds_merged$current_res,
-                                       pooled_error = currentpooled_error,
+                                       pooled_error = current_pooled_error,
                                        importance = impo_only)
                         return(list(result))
                       }

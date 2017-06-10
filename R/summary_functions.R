@@ -29,21 +29,21 @@
 #' `data.frame` with mean, and at level 0 also standard deviation,
 #' median and IQR of the error measures.
 #'
-#' @details Let's use an example to explain the `error.rep` argument.
+#' @details Let's use an example to explain the `error_rep` argument.
 #' E.g., assume we are using 100-repeated 10-fold cross-validation.
-#' If `error.rep = TRUE` (default), the mean and standard deviation calculated
+#' If `error_rep = TRUE` (default), the mean and standard deviation calculated
 #' when summarizing at `level = 0`
 #' are calculated across the error estimates obtained for
 #' each of the `100*10 = 1000` folds.
-#' If `error.rep = FALSE`, mean and standard deviation are calculated across
+#' If `error_rep = FALSE`, mean and standard deviation are calculated across
 #' the `100` repetitions, using the weighted average of the fold-level
 #' errors to calculate an error value for the entire sample.
 #' This will essentially not affect the mean value but of course the
-#' standard deviation of the error. `error.rep = FALSE` is not recommended,
+#' standard deviation of the error. `error_rep = FALSE` is not recommended,
 #' it is mainly for testing purposes; when the test sets are small
 #' (as in leave-one-out cross-validation, in the extreme case),
-#' consider running [sperrorest] with `error.rep = TRUE` and
-#' examine only the `error.rep` component of its result.
+#' consider running [sperrorest] with `error_rep = TRUE` and
+#' examine only the `error_rep` component of its result.
 #'
 #' @seealso [sperrorest]
 #'
@@ -190,12 +190,12 @@ summary.sperrorestimportance <- function(object, level = 0, na.rm = TRUE,
 #'
 #' @export
 summary.sperrorest <- function(object, ...) {
-  list(error.rep = summary(object$error.rep, ...),
-       error.fold = summary(object$error.fold, ...),
+  list(error_rep = summary(object$error_rep, ...),
+       error_fold = summary(object$error_fold, ...),
        represampling = summary(object$represampling, ...),
        importance = summary(object$importance, ...),
        benchmark = summary(object$benchmark, ...),
-       packageVersion = summary(object$package.version, ...))
+       packageVersion = summary(object$package_version, ...))
 }
 
 #' @rdname summary.sperrorest

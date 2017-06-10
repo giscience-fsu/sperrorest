@@ -4,6 +4,7 @@
 #'
 #' @keywords internal
 #' @importFrom purrr map
+#' @importFrom stringr str_replace_all
 #' @export
 
 runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
@@ -308,6 +309,11 @@ runreps <- function(current_sample = NULL, data = NULL, formula = NULL,
                         pooled_only$pooled_pred_test)) %>%
       unlist() %>%
       t() -> current_pooled_error
+
+    current_pooled_error %>%
+      colnames() %>%
+      str_replace_all("[.]", "_") -> names
+      colnames(current_pooled_error) <- names
 
     if (do_gc >= 2) {
       gc() # nocov
