@@ -159,7 +159,7 @@ err_default <- function(obs, pred) {
   } else {
     # Regression problem:
     err <- list(bias = mean(obs - pred), stddev = sd(obs - pred),
-                mse = mean((obs - pred) ^ 2), mad = mad(obs - pred),
+                rmse = sqrt(mean((obs - pred)^2)), mad = mad(obs - pred),
                 median = median(obs - pred), iqr = IQR(obs - pred,
                                                        na.rm = TRUE))
   }
