@@ -755,7 +755,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
                         return(list(result))
                       }
     if (par_args$par_mode == "foreach-old" | par_args$par_mode == "foreach")
-      stopCluster(cl)
+      on.exit(stopCluster(cl))
   }
 
   ### format parallel outputs ----
