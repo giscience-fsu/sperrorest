@@ -13,8 +13,7 @@ sperrorest(formula, data, coords = c("x", "y"), model_fun,
   err_train = TRUE, imp_variables = NULL, imp_permutations = 1000,
   importance = !is.null(imp_variables), distance = FALSE,
   par_args = list(par_mode = "foreach", par_units = NULL, par_option = NULL),
-  do_gc = 1, do_try = FALSE, progress = 1, out_progress = "",
-  benchmark = FALSE, ...)
+  do_gc = 1, progress = 1, out_progress = "", benchmark = FALSE, ...)
 }
 \arguments{
 \item{formula}{A formula specifying the variables used by the \code{model}.
@@ -106,10 +105,6 @@ mean nearest-neighbour distances from test samples to training samples using
 collection by calling \link{gc}; if \code{< 1}, no garbage collection;
 if \code{>= 1}, run a \link{gc} after each repetition;
 if \code{>= 2}, after each fold}
-
-\item{do_try}{logical (default: \code{FALSE}): if \code{TRUE} (untested!!),
-use \link{try} to robustify calls to \code{model_fun} and
-\code{err_fun}; use with caution!}
 
 \item{progress}{numeric (default: \code{1}): Whether to show progress
 information (if possible). Default shows repetition and fold progress on

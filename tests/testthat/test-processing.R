@@ -21,7 +21,7 @@ test_that("runfolds works on missing factor levels in
 
             runfolds(j = 1, data = df, current_sample = current_sample,
                      formula = fo, par_mode = "sequential",
-                     model_args = list(family = "binomial"), do_try = FALSE,
+                     model_args = list(family = "binomial"),
                      model_fun = glm,
                      error_fold = TRUE, error_rep = TRUE,
                      err_train = TRUE, importance = TRUE,
@@ -50,7 +50,7 @@ testthat::test_that("runfolds works on glm example", {
   runfolds(j = 1, data = ecuador, current_sample = current_sample,
            formula = fo,
            model_args = list(family = "binomial"),
-           do_try = FALSE, model_fun = glm,
+           model_fun = glm,
            error_fold = TRUE, error_rep = TRUE, imp_permutations = 2,
            imp_variables = c("dem", "slope", "hcurv", "vcurv", "log.carea",
                              "cslope"),
@@ -92,7 +92,7 @@ testthat::test_that("runfolds works on LDA example", {
   runfolds_single <- runfolds(j = 1, data = maipo,
                               current_sample = current_sample,
                               formula = fo, par_mode = "foreach",
-                              do_try = FALSE, model_fun = lda,
+                              model_fun = lda,
                               pred_fun = lda_predfun,
                               error_fold = TRUE, error_rep = TRUE,
                               pred_args = list(fac = "field"),
@@ -121,7 +121,7 @@ testthat::test_that("runfolds works on rpart example", {
                               current_sample = current_sample,
                               formula = slides ~ dem + slope + hcurv +
                                 vcurv + log.carea + cslope,
-                              do_try = FALSE, model_fun = rpart,
+                              model_fun = rpart,
                               error_fold = TRUE, error_rep = TRUE,
                               imp_permutations = 2, pred_fun = mypred_rpart,
                               model_args = list(control = ctrl),
@@ -172,7 +172,7 @@ testthat::test_that("runreps works on lda example", {
   runreps_res <- lapply(current_sample, function(x)
     runreps(current_sample = x, data = maipo,
             formula = fo, par_mode = "apply", pred_fun = lda_predfun,
-            do_try = FALSE, model_fun = lda,
+            model_fun = lda,
             error_fold = TRUE, error_rep = TRUE, do_gc = 1,
             err_train = TRUE, importance = FALSE, current_res = current_res,
             pred_args = list(fac = "field"), response = "croptype", par_cl = 2,
@@ -194,7 +194,7 @@ testthat::test_that("runreps works on glm example", {
   runreps_res <- lapply(current_sample, function(x)
     runreps(current_sample = X, data = ecuador,
             formula = slides ~ dem + slope + hcurv + vcurv + log.carea + cslope,
-            model_args = list(family = "binomial"), do_try = FALSE,
+            model_args = list(family = "binomial"),
             model_fun = glm,
             error_fold = TRUE, error_rep = TRUE, imp_permutations = 2,
             do_gc = 1,
@@ -219,7 +219,7 @@ testthat::test_that("runreps works on rpart example", {
   runreps_res <- lapply(current_sample, function(x)
     runreps(current_sample = X, data = ecuador,
             formula = slides ~ dem + slope + hcurv + vcurv + log.carea + cslope,
-            do_try = FALSE, model_fun = rpart,
+            model_fun = rpart,
             error_fold = TRUE, error_rep = TRUE, imp_permutations = 2,
             pred_fun = mypred_rpart,
             model_args = list(control = ctrl),
@@ -250,7 +250,7 @@ test_that("runfolds works on missing factor levels in
             runreps_res <- lapply(current_sample, function(x)
               runreps(current_sample = x, do_gc = 1,
                       formula = fo, par_mode = "sequential", data = df,
-                      model_args = list(family = "binomial"), do_try = FALSE,
+                      model_args = list(family = "binomial"),
                       model_fun = glm,
                       error_fold = TRUE, error_rep = TRUE,
                       err_train = TRUE, importance = TRUE,

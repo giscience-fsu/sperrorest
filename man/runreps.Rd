@@ -6,7 +6,7 @@
 \usage{
 runreps(current_sample = NULL, data = NULL, formula = NULL,
   model_args = NULL, par_cl = NULL, do_gc = NULL, imp_one_rep = NULL,
-  do_try = NULL, model_fun = NULL, error_fold = NULL, error_rep = NULL,
+  model_fun = NULL, error_fold = NULL, error_rep = NULL,
   pred_fun = NULL, imp_variables = NULL, imp_permutations = NULL,
   err_fun = NULL, train_fun = NULL, err_train = NULL, importance = NULL,
   current_res = NULL, current_impo = NULL, pred_args = NULL,

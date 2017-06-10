@@ -6,7 +6,7 @@
 \usage{
 runfolds(j = NULL, current_sample = NULL, data = NULL, i = NULL,
   formula = NULL, model_args = NULL, par_cl = NULL, par_mode = NULL,
-  do_try = NULL, model_fun = NULL, error_fold = NULL, error_rep = NULL,
+  model_fun = NULL, error_fold = NULL, error_rep = NULL,
   pred_fun = NULL, imp_variables = NULL, imp_permutations = NULL,
   err_fun = NULL, train_fun = NULL, err_train = NULL, importance = NULL,
   current_res = NULL, current_impo = NULL, pred_args = NULL,

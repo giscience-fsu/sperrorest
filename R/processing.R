@@ -9,7 +9,7 @@
 runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
                      formula = NULL, model_args = NULL, par_cl = NULL,
                      par_mode = NULL,
-                     do_try = NULL, model_fun = NULL, error_fold = NULL,
+                     model_fun = NULL, error_fold = NULL,
                      error_rep = NULL, pred_fun = NULL, imp_variables = NULL,
                      imp_permutations = NULL, err_fun = NULL, train_fun = NULL,
                      err_train = NULL, importance = NULL, current_res = NULL,
@@ -36,32 +36,8 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
   # Train model on training sample:
   margs <- c(list(formula = formula, data = nd), model_args)
 
-  if (do_try) {
-    fit <- try(do.call(model_fun, args = margs))
+  fit <- do.call(model_fun, args = margs)
 
-    # Error handling:
-    if (class(fit) == "try-error") { # nocov start
-      fit <- NULL
-      if (error_fold) {
-        if (err_train) {
-          current_res[[j]]$train <- NULL
-          # res[[i]][[j]]$train = NULL
-          current_res[[j]]$test <- NULL
-          # res[[i]][[j]]$test =
-        }
-        if (importance) {
-          current_impo[[j]] <- c()
-        }
-      }
-      if (do_gc >= 2) {
-        gc()
-      }
-      next  # skip this fold # nocov end
-    }
-
-  } else {
-    fit <- do.call(model_fun, args = margs)
-  }
 
   if (err_train == TRUE) {
     # Apply model to training sample:
@@ -75,19 +51,12 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
 
     # Calculate error measures on training sample:
     if (error_fold == TRUE) {
-      if (do_try) {
-        err_try <- try(err_fun(nd[, response], pred_train))
-        if (class(err_try) == "try-error") {
-          err_try <- NULL # nocov
-        }
-        current_res[[j]]$train <- err_try  #res[[i]][[j]]$train = err_try
-      } else {
-        if (any(class(nd) == "tbl")) {
-          nd <- as.data.frame(nd) # nocov
-        }
-        current_res[[j]]$train <- err_fun(nd[, response], pred_train)
-        #res[[i]][[j]]$train = err_fun(nd[,response], pred_train)
+      if (any(class(nd) == "tbl")) {
+        nd <- as.data.frame(nd) # nocov
       }
+      current_res[[j]]$train <- err_fun(nd[, response], pred_train)
+      #res[[i]][[j]]$train = err_fun(nd[,response], pred_train)
+
     }
     if (error_rep == TRUE) {
       pooled_obs_train <- c(pooled_obs_train, nd[, response])
@@ -131,19 +100,12 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
 
   # Calculate error measures on test sample:
   if (error_fold) {
-    if (do_try) {
-      err_try <- try(err_fun(nd[, response], pred_test))
-      if (class(err_try) == "try-error") {
-        err_try <- NULL # nocov
-      }
-      current_res[[j]]$test <- err_try  #res[[i]][[j]]$test = err_try
-    } else {
-      if (any(class(nd) == "tbl")) {
-        nd <- as.data.frame(nd) # nocov
-      }
-      current_res[[j]]$test <- err_fun(nd[, response], pred_test)
-      #res[[i]][[j]]$test  = err_fun(nd[,response], pred_test)
+    if (any(class(nd) == "tbl")) {
+      nd <- as.data.frame(nd) # nocov
     }
+    current_res[[j]]$test <- err_fun(nd[, response], pred_test)
+    #res[[i]][[j]]$test  = err_fun(nd[,response], pred_test)
+
   }
   if (error_rep) {
     pooled_obs_test <- c(pooled_obs_test, nd[, response])
@@ -204,19 +166,10 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
           rm(pargs)
 
           # Calculate variable importance:
-          if (do_try) {
-            permut_err <- try(err_fun(nd[, response], pred_test))
-            if (class(permut_err) == "try-error") {
-              imp_temp[[vnm]][[cnt]] <- c()  # ??? # nocov
-            } else {
-              imp_temp[[vnm]][[cnt]] <- as.list(unlist(current_res[[j]]$test) -
-                                                  unlist(permut_err))
-            }
-          } else {
-            permut_err <- err_fun(nd[, response], pred_test)
-            imp_temp[[vnm]][[cnt]] <- as.list(unlist(current_res[[j]]$test) -
-                                                unlist(permut_err))
-          }
+          permut_err <- err_fun(nd[, response], pred_test)
+          imp_temp[[vnm]][[cnt]] <- as.list(unlist(current_res[[j]]$test) -
+                                              unlist(permut_err))
+
         }
       }
       # average the results obtained in each permutation:
@@ -250,7 +203,7 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
 runreps <- function(current_sample = NULL, data = NULL, formula = NULL,
                     model_args = NULL, par_cl = NULL, do_gc = NULL,
                     imp_one_rep = NULL,
-                    do_try = NULL, model_fun = NULL, error_fold = NULL,
+                    model_fun = NULL, error_fold = NULL,
                     error_rep = NULL, pred_fun = NULL, imp_variables = NULL,
                     imp_permutations = NULL, err_fun = NULL, train_fun = NULL,
                     err_train = NULL, importance = NULL, current_res = NULL,
@@ -289,7 +242,7 @@ runreps <- function(current_sample = NULL, data = NULL, formula = NULL,
   map(seq_along(current_sample), function(rep)
     runfolds(j = rep, data = data, current_sample = current_sample,
              formula = formula, par_mode = par_mode, pred_fun = pred_fun,
-             model_args = model_args, do_try = do_try, model_fun = model_fun,
+             model_args = model_args, model_fun = model_fun,
              error_fold = error_fold, error_rep = error_rep,
              imp_permutations = imp_permutations,
              imp_variables = imp_variables,

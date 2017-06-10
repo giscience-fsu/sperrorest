@@ -100,10 +100,6 @@
 #' if `>= 1`, run a [gc] after each repetition;
 #' if `>= 2`, after each fold
 #'
-#' @param do_try logical (default: `FALSE`): if `TRUE` (untested!!),
-#' use [try] to robustify calls to `model_fun` and
-#' `err_fun`; use with caution!
-#'
 #' @param progress numeric (default: `1`): Whether to show progress
 #' information (if possible). Default shows repetition and fold progress on
 #' `par_mode = "foreach"` or `par_mode = "sequential"`.
@@ -275,7 +271,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
                        importance = !is.null(imp_variables), distance = FALSE,
                        par_args = list(par_mode = "foreach", par_units = NULL,
                                        par_option = NULL),
-                       do_gc = 1, do_try = FALSE, progress = 1,
+                       do_gc = 1, progress = 1,
                        out_progress = "", benchmark = FALSE, ...) {
   # if benchmark = TRUE, start clock
   if (benchmark)
@@ -482,7 +478,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
           runreps(current_sample = x, data = data, par_mode = par_args$par_mode,
                   formula = formula, do_gc = do_gc, imp_one_rep = imp_one_rep,
                   pred_fun = pred_fun,
-                  model_args = model_args, do_try = do_try,
+                  model_args = model_args,
                   model_fun = model_fun,
                   error_fold = error_fold, error_rep = error_rep,
                   imp_permutations = imp_permutations,
@@ -505,7 +501,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
                     par_mode = par_args$par_mode,
                     formula = formula, do_gc = do_gc, imp_one_rep = imp_one_rep,
                     pred_fun = pred_fun,
-                    model_args = model_args, do_try = do_try,
+                    model_args = model_args,
                     model_fun = model_fun,
                     error_fold = error_fold, error_rep = error_rep,
                     imp_permutations = imp_permutations,
@@ -530,7 +526,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
                     par_mode = par_args$par_mode,
                     formula = formula, do_gc = do_gc, imp_one_rep = imp_one_rep,
                     pred_fun = pred_fun,
-                    model_args = model_args, do_try = do_try,
+                    model_args = model_args,
                     model_fun = model_fun,
                     error_fold = error_fold, error_rep = error_rep,
                     imp_permutations = imp_permutations,
@@ -568,7 +564,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
         runreps(current_sample = x, data = data, par_mode = par_args$par_mode,
                 formula = formula, do_gc = do_gc, imp_one_rep = imp_one_rep,
                 pred_fun = pred_fun,
-                model_args = model_args, do_try = do_try, model_fun = model_fun,
+                model_args = model_args, model_fun = model_fun,
                 error_fold = error_fold, error_rep = error_rep,
                 imp_permutations = imp_permutations,
                 imp_variables = imp_variables,
@@ -665,7 +661,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
                                    par_mode = par_args$par_mode, i = i,
                                    imp_one_rep = imp_one_rep,
                                    pred_fun = pred_fun,
-                                   model_args = model_args, do_try = do_try,
+                                   model_args = model_args,
                                    model_fun = model_fun,
                                    error_fold = error_fold,
                                    error_rep = error_rep,
