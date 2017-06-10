@@ -11,6 +11,8 @@ test_that("sp_tune_rf works with randomForest package", {
 
   out <- sptune_rf(fo, ecuador, accelerate = 4, nfold = 5,
                    rf_fun = "randomForest", partition_fun = "partition_kmeans")
+
+  expect_length(out, 2)
 })
 
 # randomForestSRC Mon May 29 16:50:19 2017 ------------------------------
@@ -22,4 +24,6 @@ test_that("sp_tune_rf works with randomForestSRC package", {
 
   out <- sptune_rf(fo, ecuador, accelerate = 5, nfold = 5,
                    rf_fun = "rfsrc", partition_fun = "partition_kmeans")
+
+  expect_length(out, 2)
 })
