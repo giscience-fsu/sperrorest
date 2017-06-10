@@ -72,15 +72,6 @@
 #' known responses in `data` and the model predictions delivered
 #' by `pred_fun`. E.g. [err_default] (the default).
 #'
-#' @param error_fold logical (default: `TRUE`) calculate error measures on
-#' each fold within a resampling repetition.
-#'
-#' @param error_rep logical (default: `TRUE`): calculate error measures
-#' based on the pooled predictions of all folds within a resampling repetition.
-#'
-#' @param err_train logical (default: `TRUE`): calculate error measures on
-#' the training set (in addition to the test set estimation).
-#'
 #' @param imp_variables (optional; used if `importance = TRUE`).
 #' Variables for which permutation-based variable importance assessment
 #' is performed. If `importance = TRUE` and `imp_variables` ==
@@ -205,8 +196,7 @@
 #'                           pred_fun = mypred_part,
 #'                           progress = TRUE,
 #'                           smp_fun = partition_cv,
-#'                           smp_args = list(repetition = 1:5, nfold = 10),
-#'                           error_rep = TRUE, error_fold = TRUE)
+#'                           smp_args = list(repetition = 1:5, nfold = 10))
 #' summary(par_nsp_res$error_rep)
 #' summary(par_nsp_res$error_fold)
 #' summary(par_nsp_res$represampling)
@@ -219,8 +209,7 @@
 #'                          pred_fun = mypred_part,
 #'                          progress = TRUE,
 #'                          smp_fun = partition_kmeans,
-#'                          smp_args = list(repetition = 1:5, nfold = 10),
-#'                          error_rep = TRUE, error_fold = TRUE)
+#'                          smp_args = list(repetition = 1:5, nfold = 10))
 #' summary(par_sp_res$error_rep)
 #' summary(par_sp_res$error_fold)
 #' summary(par_sp_res$represampling)
@@ -228,13 +217,13 @@
 #'
 #' smry <- data.frame(
 #'     nonspat_training = unlist(summary(par_nsp_res$error_rep,
-#'                                       level = 1)$train.auroc),
+#'                                       level = 1)$train_auroc),
 #'     nonspat_test     = unlist(summary(par_nsp_res$error_rep,
-#'                                       level = 1)$test.auroc),
+#'                                       level = 1)$test_auroc),
 #'     spatial_training = unlist(summary(par_sp_res$error_rep,
-#'                                       level = 1)$train.auroc),
+#'                                       level = 1)$train_auroc),
 #'     spatial_test     = unlist(summary(par_sp_res$error_rep,
-#'                                      level = 1)$test.auroc))
+#'                                      level = 1)$test_auroc))
 #' boxplot(smry, col = c('red','red','red','green'),
 #'     main = 'Training vs. test, nonspatial vs. spatial',
 #'     ylab = 'Area under the ROC curve')
@@ -266,7 +255,6 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
                        smp_fun = partition_cv, smp_args = list(),
                        train_fun = NULL, train_param = NULL, test_fun = NULL,
                        test_param = NULL, err_fun = err_default,
-                       error_fold = TRUE, error_rep = TRUE, err_train = TRUE,
                        imp_variables = NULL,
                        imp_permutations = 1000,
                        importance = !is.null(imp_variables), distance = FALSE,
@@ -310,7 +298,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
 
   if (importance & !error_fold) {
     stop(paste0("variable importance assessment currently only supported", # nocov
-         " at the unpooled level")) # nocov
+                " at the unpooled level")) # nocov
   }
 
   # Check if user is trying to bypass the normal mechanism for
@@ -330,22 +318,28 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
   dots_args <- list(...)
   if (length(dots_args) > 0) {
     if (any(names(dots_args) == "predfun")) {
-      stop("sorry: argument names have changed; 'predfun' is now 'pred_fun'")
+      stop("argument names have changed; 'predfun' is now 'pred_fun'")
     }
     if (any(names(dots_args) == "silent")) {
-      stop("sorry: argument names have changed; 'silent' is now 'progress'")
+      stop("argument names have changed; 'silent' is now 'progress'")
     }
     if (any(names(dots_args) == "err.pooled")) {
-      stop(paste0("sorry: argument names have changed; 'err.pooled' is now",
+      stop(paste0("argument names have changed; 'err.pooled' is now",
                   " 'error_rep'"))
     }
     if (any(names(dots_args) == "err.unpooled")) {
-      stop(paste0("sorry: argument names have changed; 'err.unpooled' is now",
+      stop(paste0("argument names have changed; 'err.unpooled' is now",
                   "'error_fold'"))
     }
-    # > v1.1
+    # > v2.0.0
     if (class(par_args$par_mode) == "numeric") { # nocov start
-      stop("par_mode has to be specified using an explicit parallel mode name")
+      stop("'par_mode' has to be specified using an explicit parallel mode name.")
+    }
+    if (any(names(dots_args) == "error.fold") |
+        any(names(dots_args) == "error.rep") |
+        any(names(dots_args) == "error.train")) {
+      stop(paste0("'error.fold', 'error.rep' and 'err.train' are
+                  deprecated and calculated by default now. "))
     } # nocov end
   }
 
@@ -361,12 +355,8 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
     # Parallelize this function???
     resamp <- add.distance(resamp, data, coords = coords, fun = mean)
 
-  if (error_fold) {
-    res <- lapply(resamp, unclass)
-    class(res) <- "sperroresterror"
-  } else {
-    res <- NULL
-  }
+  res <- lapply(resamp, unclass)
+  class(res) <- "sperroresterror"
 
   pooled_error <- NULL
 
@@ -481,11 +471,10 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
                   pred_fun = pred_fun,
                   model_args = model_args,
                   model_fun = model_fun,
-                  error_fold = error_fold, error_rep = error_rep,
                   imp_permutations = imp_permutations,
                   imp_variables = imp_variables,
                   is_factor_prediction = is_factor_prediction,
-                  err_train = err_train, importance = importance,
+                  importance = importance,
                   current_res = current_res,
                   pred_args = pred_args, response = response, par_cl = par_cl,
                   coords = coords, progress = progress,
@@ -504,11 +493,10 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
                     pred_fun = pred_fun,
                     model_args = model_args,
                     model_fun = model_fun,
-                    error_fold = error_fold, error_rep = error_rep,
                     imp_permutations = imp_permutations,
                     imp_variables = imp_variables,
                     is_factor_prediction = is_factor_prediction,
-                    err_train = err_train, importance = importance,
+                    importance = importance,
                     current_res = current_res,
                     pred_args = pred_args, response = response, par_cl = par_cl,
                     coords = coords, progress = progress,
@@ -529,11 +517,10 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
                     pred_fun = pred_fun,
                     model_args = model_args,
                     model_fun = model_fun,
-                    error_fold = error_fold, error_rep = error_rep,
                     imp_permutations = imp_permutations,
                     imp_variables = imp_variables,
                     is_factor_prediction = is_factor_prediction,
-                    err_train = err_train, importance = importance,
+                    importance = importance,
                     current_res = current_res,
                     pred_args = pred_args, response = response, par_cl = par_cl,
                     coords = coords, progress = progress,
@@ -566,11 +553,10 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
                 formula = formula, do_gc = do_gc, imp_one_rep = imp_one_rep,
                 pred_fun = pred_fun,
                 model_args = model_args, model_fun = model_fun,
-                error_fold = error_fold, error_rep = error_rep,
                 imp_permutations = imp_permutations,
                 imp_variables = imp_variables,
                 is_factor_prediction = is_factor_prediction,
-                err_train = err_train, importance = importance,
+                importance = importance,
                 current_res = current_res,
                 pred_args = pred_args, response = response, par_cl = par_cl,
                 coords = coords, progress = progress,
@@ -633,22 +619,16 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
                       .errorhandling = "remove", .combine = "comb",
                       .multicombine = TRUE, .verbose = FALSE) %dopar% {
 
-                        if (err_train) {
-                          pooled_obs_train <- pooled_pred_train <- c()
-                          pooled_obs_test <- pooled_pred_test <- c()
-                        }
+                        pooled_obs_train <- pooled_pred_train <- c()
+                        pooled_obs_test <- pooled_pred_test <- c()
 
                         current_res <- NULL
                         current_impo <- resamp[[i]]
                         current_pooled_error <- NULL
 
+                        current_res <- map(resamp[[i]], unclass)
+                        class(current_res) <- "sperroresterror"
 
-                        if (error_fold) {
-                          current_res <- map(resamp[[i]], unclass)
-                          class(current_res) <- "sperroresterror"
-                        } else {
-                          current_res <- NULL
-                        }
                         environment(runfolds) <- environment()
 
                         if (progress == 2) {
@@ -664,12 +644,9 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
                                    pred_fun = pred_fun,
                                    model_args = model_args,
                                    model_fun = model_fun,
-                                   error_fold = error_fold,
-                                   error_rep = error_rep,
                                    imp_permutations = imp_permutations,
                                    imp_variables = imp_variables,
                                    is_factor_prediction = is_factor_prediction,
-                                   err_train = err_train,
                                    importance = importance,
                                    current_res = current_res,
                                    pred_args = pred_args, response = response,
@@ -700,44 +677,45 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
 
                         # Put the results from the pooled estimation into the
                         # pooled_error data structure:
-                        if (error_rep) {
-                          if (is.factor(data[, response])) {
-                            lev <- levels(data[, response])
+                        if (is.factor(data[, response])) {
+                          lev <- levels(data[, response])
+
+                          # err_train
+                          pooled_only$pooled_obs_train <- factor(lev[
+                            pooled_only$pooled_obs_train], levels = lev)
+
+                          pooled_only$pooled_obs_test <- factor(lev[
+                            pooled_only$pooled_obs_test], levels = lev)
+                          if (is_factor_prediction) {
                             if (err_train) {
-                              pooled_only$pooled_obs_train <- factor(lev[
-                                pooled_only$pooled_obs_train], levels = lev)
+                              pooled_only$pooled_pred_train <- factor(lev[
+                                pooled_only$pooled_pred_train], levels = lev)
                             }
-                            pooled_only$pooled_obs_test <- factor(lev[
-                              pooled_only$pooled_obs_test], levels = lev)
-                            if (is_factor_prediction) {
-                              if (err_train) {
-                                pooled_only$pooled_pred_train <- factor(lev[
-                                  pooled_only$pooled_pred_train], levels = lev)
-                              }
-                              pooled_only$pooled_pred_test <- factor(lev[
-                                pooled_only$pooled_pred_test], levels = lev)
-                            }
-                          }
-                          pooled_error_train <- NULL
-                          if (err_train) {
-                            pooled_error_train <- err_fun(
-                              pooled_only$pooled_obs_train,
-                              pooled_only$pooled_pred_train)
-                          }
-
-                          current_pooled_error <- t(unlist(list(
-                            train = pooled_error_train,
-                            test = err_fun(pooled_only$pooled_obs_test,
-                                           pooled_only$pooled_pred_test))))
-                          current_pooled_error %>%
-                            colnames() %>%
-                            str_replace_all("[.]", "_") -> names
-                          colnames(current_pooled_error) <- names
-
-                          if (do_gc >= 2) {
-                            gc()
+                            pooled_only$pooled_pred_test <- factor(lev[
+                              pooled_only$pooled_pred_test], levels = lev)
                           }
                         }
+                        pooled_error_train <- NULL
+
+                        # err_train
+                        pooled_error_train <- err_fun(
+                          pooled_only$pooled_obs_train,
+                          pooled_only$pooled_pred_train)
+
+
+                        current_pooled_error <- t(unlist(list(
+                          train = pooled_error_train,
+                          test = err_fun(pooled_only$pooled_obs_test,
+                                         pooled_only$pooled_pred_test))))
+                        current_pooled_error %>%
+                          colnames() %>%
+                          str_replace_all("[.]", "_") -> names
+                        colnames(current_pooled_error) <- names
+
+                        if (do_gc >= 2) {
+                          gc()
+                        }
+
 
                         if ((do_gc >= 1) & (do_gc < 2)) { # nolint
                           gc()
@@ -754,14 +732,14 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
                                        importance = impo_only)
                         return(list(result))
                       }
-    if (par_args$par_mode == "foreach-old" | par_args$par_mode == "foreach")
+    if (par_args$par_mode == "foreach") {
       on.exit(stopCluster(cl))
+    }
   }
 
   ### format parallel outputs ----
 
-  if (par_args$par_mode == "foreach" | par_args$par_mode == "sequential" |
-      par_args$par_mode == "foreach-old") {
+  if (par_args$par_mode == "foreach" | par_args$par_mode == "sequential") {
     # split combined lists from foreach output into sublists referring
     # to repetitions
     my_res <- split(my_res[[1]], 1:length(resamp))
@@ -775,20 +753,13 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
   # transfer results of lapply() to respective data objects
   my_res_mod <- transfer_parallel_output(my_res, res, impo, pooled_error)
 
-  # convert matrix(?) to data.frame:
-  if (error_rep) {
-    pooled_error <- as.data.frame(my_res_mod$pooled_error)
-    rownames(pooled_error) <- NULL
-    class(pooled_error) <- "sperrorestreperror"
-  }
+  pooled_error <- as.data.frame(my_res_mod$pooled_error)
+  rownames(pooled_error) <- NULL
+  class(pooled_error) <- "sperrorestreperror"
 
   if (importance) {
     impo <- my_res_mod$impo
     class(impo) <- "sperrorestimportance"
-  }
-
-  if (error_fold == FALSE) {
-    my_res_mod <- NULL
   }
 
   if (benchmark) {

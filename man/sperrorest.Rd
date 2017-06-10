@@ -9,8 +9,7 @@ sperrorest(formula, data, coords = c("x", "y"), model_fun,
   model_args = list(), pred_fun = NULL, pred_args = list(),
   smp_fun = partition_cv, smp_args = list(), train_fun = NULL,
   train_param = NULL, test_fun = NULL, test_param = NULL,
-  err_fun = err_default, error_fold = TRUE, error_rep = TRUE,
-  err_train = TRUE, imp_variables = NULL, imp_permutations = 1000,
+  err_fun = err_default, imp_variables = NULL, imp_permutations = 1000,
   importance = !is.null(imp_variables), distance = FALSE,
   par_args = list(par_mode = "foreach", par_units = NULL, par_option = NULL),
   do_gc = 1, progress = 1, out_progress = "", benchmark = FALSE, ...)
@@ -68,15 +67,6 @@ E.g. \link{resample_uniform} or \link{resample_strat_uniform}.}
 \item{err_fun}{A function that calculates selected error measures from the
 known responses in \code{data} and the model predictions delivered
 by \code{pred_fun}. E.g. \link{err_default} (the default).}
-
-\item{error_fold}{logical (default: \code{TRUE}) calculate error measures on
-each fold within a resampling repetition.}
-
-\item{error_rep}{logical (default: \code{TRUE}): calculate error measures
-based on the pooled predictions of all folds within a resampling repetition.}
-
-\item{err_train}{logical (default: \code{TRUE}): calculate error measures on
-the training set (in addition to the test set estimation).}
 
 \item{imp_variables}{(optional; used if \code{importance = TRUE}).
 Variables for which permutation-based variable importance assessment
@@ -185,8 +175,7 @@ par_nsp_res <- sperrorest(data = ecuador, formula = fo,
                           pred_fun = mypred_part,
                           progress = TRUE,
                           smp_fun = partition_cv,
-                          smp_args = list(repetition = 1:5, nfold = 10),
-                          error_rep = TRUE, error_fold = TRUE)
+                          smp_args = list(repetition = 1:5, nfold = 10))
 summary(par_nsp_res$error_rep)
 summary(par_nsp_res$error_fold)
 summary(par_nsp_res$represampling)
@@ -199,8 +188,7 @@ par_sp_res <- sperrorest(data = ecuador, formula = fo,
                          pred_fun = mypred_part,
                          progress = TRUE,
                          smp_fun = partition_kmeans,
-                         smp_args = list(repetition = 1:5, nfold = 10),
-                         error_rep = TRUE, error_fold = TRUE)
+                         smp_args = list(repetition = 1:5, nfold = 10))
 summary(par_sp_res$error_rep)
 summary(par_sp_res$error_fold)
 summary(par_sp_res$represampling)
@@ -208,13 +196,13 @@ summary(par_sp_res$represampling)
 
 smry <- data.frame(
     nonspat_training = unlist(summary(par_nsp_res$error_rep,
-                                      level = 1)$train.auroc),
+                                      level = 1)$train_auroc),
     nonspat_test     = unlist(summary(par_nsp_res$error_rep,
-                                      level = 1)$test.auroc),
+                                      level = 1)$test_auroc),
     spatial_training = unlist(summary(par_sp_res$error_rep,
-                                      level = 1)$train.auroc),
+                                      level = 1)$train_auroc),
     spatial_test     = unlist(summary(par_sp_res$error_rep,
-                                     level = 1)$test.auroc))
+                                     level = 1)$test_auroc))
 boxplot(smry, col = c('red','red','red','green'),
     main = 'Training vs. test, nonspatial vs. spatial',
     ylab = 'Area under the ROC curve')

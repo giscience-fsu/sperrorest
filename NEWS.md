@@ -14,10 +14,11 @@ Features:
     * `sequential`: sequential execution using `future` backend.
   * RMSE instead of MSE as error measure
     
-Misc: 
-  * limit workers to number of repetitions if number of cores > number of repetitions. This ensures that no unnecessary workers are started and increases robustness of parallel execuction.
-  * documentation improvements 
-  * `do_try` argument has been removed
+Misc:
+  * Limit workers to number of repetitions if number of cores > number of repetitions. This ensures that no unnecessary workers are started and increases robustness of parallel execuction.
+  * documentation improvements.
+  * `do_try` argument has been removed.
+  * `error.fold`, `error.rep` and `err.train` arguments have been removed because they are all calculated by default now.
 
 Bugfixes:
   * partial matching of arguments

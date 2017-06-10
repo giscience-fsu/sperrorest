@@ -130,32 +130,12 @@ test_that("summary.sperroresterror() with pooled = FALSE produces correct
                                  par_args = list(par_mode = "foreach",
                                                  par_units = 2),
                                  smp_args = list(repetition = 1:2, nfold = 2),
-                                 importance = TRUE, imp_permutations = 2,
-                                 do_try = TRUE)
+                                 importance = TRUE, imp_permutations = 2)
 
             summary_imp <- summary(nspres$importance)
 
             expect_equal(length(summary_imp), 28)
           })
-
-# sperrorest warnings Thu Feb  9 22:34:08 2017 ------------------------------
-
-test_that("importance = T and error_fold = F", {
-
-  #skip_on_os("mac") # don't know why summary tests failing on mac atm
-
-  data(ecuador) # Muenchow et al. (2012), see ?ecuador
-  fo <- slope ~ hcurv + vcurv + log.carea + cslope
-
-  expect_warning(sperrorest(data = ecuador, formula = fo,
-                            model_fun = glm,
-                            pred_fun = predict,
-                            smp_fun = partition_cv,
-                            par_args = list(par_mode = "foreach",
-                                            par_units = 2),
-                            smp_args = list(repetition = 1:2, nfold = 2),
-                            importance = TRUE, error_fold = FALSE))
-})
 
 # sperrorest depr. args Thu Feb  9 22:42:48 2017 ------------------------------
 
@@ -217,7 +197,7 @@ test_that("sperrorest() produces correct output for binary response for
                                  smp_args = list(repetition = 1:2, nfold = 2),
                                  benchmark = F,
                                  importance = TRUE, imp_permutations = 2,
-                                 do_try = TRUE, err_train = T, do_gc = 2)
+                                 do_gc = 2)
 
             expect_equal(length(nspres$error_rep[[1]]), 2) # reps
             expect_equal(length(nspres$error_fold[[1]]), 2) # folds
@@ -241,32 +221,7 @@ test_that("summary.sperrorest() works correctly", {
                                     par_units = 2),
                     smp_fun = partition_cv,
                     smp_args = list(repetition = 1:2, nfold = 2),
-                    importance = T, imp_permutations = 2,
-                    error_fold = T,
-                    benchmark = T)
-
-  smry_out <- summary(out)
-
-  expect_equal(length(smry_out), 6)
-})
-
-# sperrorest() error_rep = F & do_try = T Sun Feb 12 23:05:30 2017 -------------
-
-test_that("sperrorest() error_rep = F & do_try = T", {
-
-  #skip_on_os("mac") # don't know why summary tests failing on mac atm
-
-  data(ecuador) # Muenchow et al. (2012), see ?ecuador
-  fo <- slope ~ hcurv + vcurv + log.carea + cslope
-
-  out <- sperrorest(data = ecuador, formula = fo,
-                    model_fun = glm,
-                    pred_fun = predict,
-                    par_args = list(par_mode = "foreach",
-                                    par_units = 2),
-                    smp_fun = partition_cv,
-                    smp_args = list(repetition = 1:2, nfold = 2),
-                    error_rep = F, do_try = T)
+                    importance = T, imp_permutations = 2, benchmark = T)
 
   smry_out <- summary(out)
 
@@ -316,7 +271,6 @@ test_that("is_factor_prediction object for classification models", {
                                     par_units = 2),
                     smp_fun = partition_cv,
                     smp_args = list(repetition = 1:2, nfold = 2),
-                    error_rep = TRUE, error_fold = TRUE,
                     benchmark = FALSE, progress = FALSE)
 
   smry_out <- summary(out)
