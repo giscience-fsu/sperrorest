@@ -52,30 +52,47 @@ This option is taken as default because it works cross-platform and provides pro
 
 # Mode "apply"
 
-This mode is also cross-platform but uses different functions on Unix/non-Unix systems for actual processing. On Unix, it uses the [`pbmcapply`](https://github.com/kvnkuang/pbmcapply) package which combines the [`pbapply`](https://github.com/psolymos/pbapply) package (provides progress bar for 'apply' functions) and the `future` package to speed up processing. On Windows, `pbapply` is used which in the end uses `parApply()` to setup a cluster like parallelization including a progress bar. The `"apply"` option un Unix systems ([`pbmcapply`](https://github.com/kvnkuang/pbmcapply)) should be the fastest option of all modes but also throws errors in some setups.
+This mode is also cross-platform but uses different functions on Unix/non-Unix systems for actual processing. On Unix, it uses the [`pbmcapply`](https://github.com/kvnkuang/pbmcapply) package which combines the [`pbapply`](https://github.com/psolymos/pbapply) package (provides progress bar for 'apply' functions) and the `future` package to speed up processing. On Windows, `pbapply` is used which in the end uses `parApply()` to setup a cluster like parallelization including a progress bar.
 
 # Mode "future" 
 
-This modes entirely uses the `future` package in combination with `future_lapply()` as the working horse. 
+This modes entirely uses the `future` package in combination with `future_lapply()` as the working horse. It can be used with any `future` plan specified via `par_option`. It is the fastest mode but provides no progress output.
 
 # Mode "sequential"
 
-This mode executes `sperrorest()` sequentially. It also runs on the `future` API using `foreach`/`[`doFuture`](https://github.com/HenrikBengtsson/doFuture) which provide the possibility of sequential execution using `plan("sequential")`.
+This mode executes `sperrorest()` sequentially. It also runs on the `future` API using `foreach`/[`doFuture`](https://github.com/HenrikBengtsson/doFuture) which provide the possibility of sequential execution using `plan("sequential")`.
 
 # Performance comparison
 
-The following comparison refers to the following example
+Example setup:
+
+* Machine: 48 cores, Debian 9 (stretch)
+* 100 repetitions, 5 folds
+* 100 variable importance permutations using all variables
+* non-spatial partitioning (`partition_cv`)
+* Model: `glm`
+* Response type: binary
+* Progress: None
+
+Note that the only argument which needs to be changed is `par_mode` here. Subsequently, `par_mode = "foreach"`, `par_mode = "apply"` and `par_mode = "future"` were used. 
+
+All default settings of each mode were used. `par_mode = "foreach"` runs on `plan("cluster")` while `par_mode = "future"` runs on `plan("multiprocess")`. Mode `"apply"` used `pbmcapply` in the end since the test was running on a Unix System.
 
 ```{r, eval = FALSE}
+data(ecuador)
+fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
+
 sperrorest(data = ecuador, formula = fo,
            model_fun = glm, model_args = list(family = "binomial"),
            pred_args = list(type = "response"),
            smp_fun = partition_cv,
            smp_args = list(repetition = 1:100, nfold = 5),
            par_args = list(par_mode = "foreach", par_units = 20),
-           benchmark = TRUE, progress = 2,
+           benchmark = TRUE, progress = FALSE,
            importance = TRUE, imp_permutations = 100)
 ```
 
 
-
+|               | foreach | apply | future |   |
+|---------------|---------|-------|--------|---|
+| runtime (min) | 52.33   | 51.67 | 49.54  |   |
