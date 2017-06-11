@@ -58,7 +58,7 @@ partition_cv <- function(data, coords = c("x", "y"), nfold = 10, repetition = 1,
   resampling <- list()
 
   if (length(repetition) < 2) {
-    repetition <- c(1, repetition)
+    repetition <- seq(1, repetition, by = 1)
   }
 
   for (cnt in repetition) {
@@ -126,7 +126,7 @@ partition_cv_strat <- function(data, coords = c("x", "y"), nfold = 10,
   repres <- list()
 
   if (length(repetition) < 2) {
-    repetition <- c(1, repetition)
+    repetition <- seq(1, repetition, by = 1)
   }
 
   stopifnot((length(strat) == 1) | (length(strat) == nrow(data))) # nolint
@@ -200,7 +200,7 @@ partition_factor <- function(data, coords = c("x", "y"), fac,
                              repetition = 1) {
 
   if (length(repetition) < 2) {
-    repetition <- c(1, repetition)
+    repetition <- seq(1, repetition, by = 1)
   }
 
   if (length(fac) == 1 && is.character(fac)) {
@@ -255,7 +255,7 @@ partition_factor_cv <- function(data, coords = c("x", "y"), fac, nfold = 10,
                                 return_factor = FALSE) {
 
   if (length(repetition) < 2) {
-    repetition <- c(1, repetition)
+    repetition <- seq(1, repetition, by = 1)
   }
 
   if (length(fac) == 1 && is.character(fac)) {
@@ -392,7 +392,7 @@ partition_tiles <- function(data, coords = c("x", "y"), dsplit = NULL,
                             seed1 = NULL) {
 
   if (length(repetition) < 2) {
-    repetition <- c(1, repetition)
+    repetition <- seq(1, repetition, by = 1)
   }
 
   # Some basic argument checks:
@@ -659,7 +659,7 @@ partition_kmeans <- function(data, coords = c("x", "y"), nfold = 10,
                              order_clusters = TRUE, ...) {
 
   if (length(repetition) < 2) {
-    repetition <- c(1, repetition)
+    repetition <- seq(1, repetition, by = 1)
   }
 
   balancing_steps <- max(1, balancing_steps)
@@ -777,7 +777,7 @@ partition_disc <- function(data, coords = c("x", "y"), radius, buffer = NULL,
                            repetition = 1) {
 
   if (length(repetition) < 2) {
-    repetition <- c(1, repetition)
+    repetition <- seq(1, repetition, by = 1)
   }
 
   posbuf <- buffer
@@ -887,7 +887,7 @@ represampling_bootstrap <- function(data, coords = c("x", "y"),
   resample <- list()
 
   if (length(repetition) < 2) {
-    repetition <- c(1, repetition)
+    repetition <- seq(1, repetition, by = 1)
   }
 
   for (cnt in repetition) {
@@ -971,7 +971,7 @@ represampling_factor_bootstrap <- function(data, fac, repetition = 1,
                                            seed1 = NULL, oob = FALSE) {
 
   if (length(repetition) < 2) {
-    repetition <- c(1, repetition)
+    repetition <- seq(1, repetition, by = 1)
   }
 
   if (oob && length(nboot) > 1) {
@@ -1060,7 +1060,7 @@ represampling_tile_bootstrap <- function(data, coords = c("x", "y"),
                                          seed1 = NULL, oob = FALSE, ...) {
 
   if (length(repetition) < 2) {
-    repetition <- c(1, repetition)
+    repetition <- seq(1, repetition, by = 1)
   }
 
   parti <- partition_tiles(data = data, coords = coords,
@@ -1094,7 +1094,7 @@ represampling_kmeans_bootstrap <- function(data, coords = c("x", "y"),
                                            seed1 = NULL, oob = FALSE, ...) {
 
   if (length(repetition) < 2) {
-    repetition <- c(1, repetition)
+    repetition <- seq(1, repetition, by = 1)
   }
 
   parti <- partition_tiles(data = data, coords = coords,
@@ -1154,7 +1154,7 @@ represampling_disc_bootstrap <- function(data, coords = c("x", "y"), nboot,
                                          seed1 = NULL, oob = FALSE, ...) {
 
   if (length(repetition) < 2) {
-    repetition <- c(1, repetition)
+    repetition <- seq(1, repetition, by = 1)
   }
 
   if (oob && length(nboot) > 1) {
