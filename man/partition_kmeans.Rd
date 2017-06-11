@@ -60,7 +60,7 @@ Default parameter settings may change in future releases.
 }
 \examples{
 data(ecuador)
-resamp <- partition_kmeans(ecuador, nfold = 5, repetition = 1:2)
+resamp <- partition_kmeans(ecuador, nfold = 5, repetition = 2)
 # plot(resamp, ecuador)
 
 }

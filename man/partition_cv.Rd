@@ -58,7 +58,7 @@ containing the indices of training and test samples.
 \examples{
 data(ecuador)
 ## non-spatial cross-validation:
-resamp <- partition_cv(ecuador, nfold = 5, repetition = 1:2)
+resamp <- partition_cv(ecuador, nfold = 5, repetition = 5)
 # plot(resamp, ecuador)
 # first repetition, second fold, test set indices:
 idx <- resamp[['1']][[2]]$test
