@@ -48,7 +48,7 @@
 #'
 #' @param pred_args (optional) Arguments to `pred_fun` (in addition to the
 #' fitted model object and the `newdata` argument,
-#' which are provided by `sperrorest`)
+#' which are provided by `sperrorest`).
 #'
 #' @param smp_fun A function for sampling training and test sets from
 #' `data`. E.g. [partition_kmeans] for
@@ -62,11 +62,11 @@
 #' in training sets.
 #' E.g. [resample_uniform] or [resample_strat_uniform].
 #'
-#' @param train_param (optional) Arguments to be passed to `resample_fun`
+#' @param train_param (optional) Arguments to be passed to `resample_fun`.
 #'
 #' @param test_fun (optional) Like `train_fun` but for the test set.
 #'
-#' @param test_param (optional) Arguments to be passed to `test_fun`
+#' @param test_param (optional) Arguments to be passed to `test_fun`.
 #'
 #' @param err_fun A function that calculates selected error measures from the
 #' known responses in `data` and the model predictions delivered
@@ -85,12 +85,12 @@
 #'
 #' @param distance logical (default: `FALSE`): if `TRUE`, calculate
 #' mean nearest-neighbour distances from test samples to training samples using
-#' [add.distance.represampling]
+#' [add.distance.represampling].
 #'
 #' @param do_gc numeric (default: 1): defines frequency of memory garbage
 #' collection by calling [gc]; if `< 1`, no garbage collection;
 #' if `>= 1`, run a [gc] after each repetition;
-#' if `>= 2`, after each fold
+#' if `>= 2`, after each fold.
 #'
 #' @param progress character (default: `all`): Whether to show progress
 #' information (if possible). Default shows repetition, fold and (if enabled)
@@ -114,7 +114,7 @@
 #' }
 #'
 #' @param benchmark (optional) logical (default: `FALSE`): if `TRUE`,
-#' perform benchmarking and return `sperrorestbenchmark` object
+#' perform benchmarking and return `sperrorestbenchmark` object.
 #'
 #' @param ... Further options passed to [makeCluster] for
 #' `par_mode = "foreach"`.
@@ -239,14 +239,14 @@
 #' fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
 #'
 #' out <- sperrorest(data = ecuador, formula = fo,
-#'                      model_fun = glm,
-#'                      model_args = list(family = "binomial"),
-#'                      pred_fun = predict,
-#'                      pred_args = list(type = "response"),
-#'                      smp_fun = partition_cv,
-#'                      smp_args = list(repetition = 1:2, nfold = 4),
-#'                      par_args = list(par_mode = "future"),
-#'                      importance = TRUE, imp_permutations = 10)
+#'                   model_fun = glm,
+#'                   model_args = list(family = "binomial"),
+#'                   pred_fun = predict,
+#'                   pred_args = list(type = "response"),
+#'                   smp_fun = partition_cv,
+#'                   smp_args = list(repetition = 1:2, nfold = 4),
+#'                   par_args = list(par_mode = "future"),
+#'                   importance = TRUE, imp_permutations = 10)
 #' summary(out$error_rep)
 #' summary(out$importance)
 #' }
@@ -283,12 +283,6 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
   stopifnot(is.function(err_fun))
 
   if (importance) {
-    if (!error_fold) {
-      warning(paste0("'importance = TRUE' currently only supported with",
-                     " 'error_fold = TRUE'.\n", "Using 'importance = FALSE'"))
-      importance <- FALSE
-    }
-
     stopifnot(is.numeric(imp_permutations))
 
     if (!is.null(imp_variables)) {
@@ -297,11 +291,6 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
   }
   stopifnot(is.character(coords))
   stopifnot(length(coords) == 2)
-
-  if (importance & !error_fold) {
-    stop(paste0("variable importance assessment currently only supported", # nocov
-                " at the unpooled level")) # nocov
-  }
 
   # Check if user is trying to bypass the normal mechanism for
   # generating training and test data sets and for passing formulas:

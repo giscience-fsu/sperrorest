@@ -45,7 +45,7 @@ on which to predict the outcome.}
 
 \item{pred_args}{(optional) Arguments to \code{pred_fun} (in addition to the
 fitted model object and the \code{newdata} argument,
-which are provided by \code{sperrorest})}
+which are provided by \code{sperrorest}).}
 
 \item{smp_fun}{A function for sampling training and test sets from
 \code{data}. E.g. \link{partition_kmeans} for
@@ -59,11 +59,11 @@ training sets, or maintaining a certain ratio of positives and negatives
 in training sets.
 E.g. \link{resample_uniform} or \link{resample_strat_uniform}.}
 
-\item{train_param}{(optional) Arguments to be passed to \code{resample_fun}}
+\item{train_param}{(optional) Arguments to be passed to \code{resample_fun}.}
 
 \item{test_fun}{(optional) Like \code{train_fun} but for the test set.}
 
-\item{test_param}{(optional) Arguments to be passed to \code{test_fun}}
+\item{test_param}{(optional) Arguments to be passed to \code{test_fun}.}
 
 \item{err_fun}{A function that calculates selected error measures from the
 known responses in \code{data} and the model predictions delivered
@@ -82,7 +82,7 @@ variable importance assessment?}
 
 \item{distance}{logical (default: \code{FALSE}): if \code{TRUE}, calculate
 mean nearest-neighbour distances from test samples to training samples using
-\link{add.distance.represampling}}
+\link{add.distance.represampling}.}
 
 \item{par_args}{list of parallelization parameters:
 \itemize{
@@ -95,7 +95,7 @@ mean nearest-neighbour distances from test samples to training samples using
 \item{do_gc}{numeric (default: 1): defines frequency of memory garbage
 collection by calling \link{gc}; if \code{< 1}, no garbage collection;
 if \code{>= 1}, run a \link{gc} after each repetition;
-if \code{>= 2}, after each fold}
+if \code{>= 2}, after each fold.}
 
 \item{progress}{character (default: \code{all}): Whether to show progress
 information (if possible). Default shows repetition, fold and (if enabled)
@@ -111,7 +111,7 @@ file output ('sperrorest.progress.txt') in the current working directory
 for Windows systems. No console output is possible on Windows systems.}
 
 \item{benchmark}{(optional) logical (default: \code{FALSE}): if \code{TRUE},
-perform benchmarking and return \code{sperrorestbenchmark} object}
+perform benchmarking and return \code{sperrorestbenchmark} object.}
 
 \item{...}{Further options passed to \link{makeCluster} for
 \code{par_mode = "foreach"}.}
@@ -219,14 +219,14 @@ data(ecuador)
 fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
 
 out <- sperrorest(data = ecuador, formula = fo,
-                     model_fun = glm,
-                     model_args = list(family = "binomial"),
-                     pred_fun = predict,
-                     pred_args = list(type = "response"),
-                     smp_fun = partition_cv,
-                     smp_args = list(repetition = 1:2, nfold = 4),
-                     par_args = list(par_mode = "future"),
-                     importance = TRUE, imp_permutations = 10)
+                  model_fun = glm,
+                  model_args = list(family = "binomial"),
+                  pred_fun = predict,
+                  pred_args = list(type = "response"),
+                  smp_fun = partition_cv,
+                  smp_args = list(repetition = 1:2, nfold = 4),
+                  par_args = list(par_mode = "future"),
+                  importance = TRUE, imp_permutations = 10)
 summary(out$error_rep)
 summary(out$importance)
 }
