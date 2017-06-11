@@ -92,10 +92,12 @@
 #' if `>= 1`, run a [gc] after each repetition;
 #' if `>= 2`, after each fold
 #'
-#' @param progress numeric (default: `1`): Whether to show progress
-#' information (if possible). Default shows repetition and fold progress on
-#' `par_mode = "foreach"` or `par_mode = "sequential"`.
-#' Set to `FALSE` for no progress information.
+#' @param progress character (default: `all`): Whether to show progress
+#' information (if possible). Default shows repetition, fold and (if enabled)
+#' variable importance progress for `par_mode = "foreach"` or
+#' `par_mode = "sequential"`.
+#' Set to `"rep"` for repetition information only or `FALSE` for no progress
+#' information.
 #'
 #' @param out_progress only used if `par_mode = foreach`: Write progress
 #' output to a file instead of console output.
@@ -260,7 +262,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
                        importance = !is.null(imp_variables), distance = FALSE,
                        par_args = list(par_mode = "foreach", par_units = NULL,
                                        par_option = NULL),
-                       do_gc = 1, progress = 1,
+                       do_gc = 1, progress = "all",
                        out_progress = "", benchmark = FALSE, ...) {
   # if benchmark = TRUE, start clock
   if (benchmark)
@@ -631,7 +633,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
 
                         environment(runfolds) <- environment()
 
-                        if (progress == 2) {
+                        if (progress == "rep") {
                           cat(date(), "Repetition", i, "\n")
                         }
 

@@ -12,7 +12,8 @@ sperrorest(formula, data, coords = c("x", "y"), model_fun,
   err_fun = err_default, imp_variables = NULL, imp_permutations = 1000,
   importance = !is.null(imp_variables), distance = FALSE,
   par_args = list(par_mode = "foreach", par_units = NULL, par_option = NULL),
-  do_gc = 1, progress = 1, out_progress = "", benchmark = FALSE, ...)
+  do_gc = 1, progress = "all", out_progress = "", benchmark = FALSE,
+  ...)
 }
 \arguments{
 \item{formula}{A formula specifying the variables used by the \code{model}.
@@ -96,10 +97,12 @@ collection by calling \link{gc}; if \code{< 1}, no garbage collection;
 if \code{>= 1}, run a \link{gc} after each repetition;
 if \code{>= 2}, after each fold}
 
-\item{progress}{numeric (default: \code{1}): Whether to show progress
-information (if possible). Default shows repetition and fold progress on
-\code{par_mode = "foreach"} or \code{par_mode = "sequential"}.
-Set to \code{FALSE} for no progress information.}
+\item{progress}{character (default: \code{all}): Whether to show progress
+information (if possible). Default shows repetition, fold and (if enabled)
+variable importance progress for \code{par_mode = "foreach"} or
+\code{par_mode = "sequential"}.
+Set to \code{"rep"} for repetition information only or \code{FALSE} for no progress
+information.}
 
 \item{out_progress}{only used if \code{par_mode = foreach}: Write progress
 output to a file instead of console output.

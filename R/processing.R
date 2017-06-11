@@ -20,7 +20,7 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
                      do_gc = NULL, test_param = NULL, train_param = NULL) {
   if (importance == FALSE) {
     if (par_mode == "foreach" | par_mode == "sequential") {
-      if (progress == "TRUE" | progress == 1) {
+      if (progress == "TRUE" | progress == "all") {
         cat(date(), "Repetition", i, "- Fold", j, "\n")
       }
     }
@@ -126,7 +126,7 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
       # Parallelize this: ???
       for (cnt in 1:imp_permutations) {
         # Some output on screen:
-        if (progress == 1 | progress == TRUE & (cnt > 1)) {
+        if (progress == "all" | progress == TRUE & (cnt > 1)) {
           if (log10(cnt) == floor(log10(cnt))) {
             #cat(date(), "   ", cnt, "\n")
             cat(date(), "Repetition", i, "- Fold", j,
@@ -212,7 +212,7 @@ runreps <- function(current_sample = NULL, data = NULL, formula = NULL,
   environment(runfolds) <- environment()
 
   if (par_mode == "foreach" | par_mode == "sequential" &&
-      progress == TRUE | progress == 2) {
+      progress == TRUE | progress == "rep") {
     cat(date(), "Repetition", i, "\n") # nocov
   }
 
