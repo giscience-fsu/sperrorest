@@ -2,6 +2,8 @@
 #' @description Runs model fitting, error estimation and variable importance
 #' on fold level
 #'
+#' @importFrom stats na.omit
+#'
 #' @keywords internal
 #' @importFrom purrr map
 #' @importFrom stringr str_replace_all
@@ -252,26 +254,20 @@ runreps <- function(current_sample = NULL, data = NULL, formula = NULL,
   # Calculate error measures on pooled results
   if (is.factor(data[, response])) {
     lev <- levels(data[, response])
-    if (err_train) {
       pooled_only$pooled_obs_train <- factor(lev[
         pooled_only$pooled_obs_train], levels = lev)
-    }
     pooled_only$pooled_obs_test <- factor(lev[pooled_only$pooled_obs_test],
                                           levels = lev)
     if (is_factor_prediction) {
-      if (err_train) {
         pooled_only$pooled_pred_train <- factor(lev[
           pooled_only$pooled_pred_train], levels = lev)
-      }
       pooled_only$pooled_pred_test <- factor(lev[
         pooled_only$pooled_pred_test], levels = lev)
     }
   }
   pooled_error_train <- NULL
-  if (err_train) {
     pooled_error_train <- err_fun(pooled_only$pooled_obs_train,
                                   pooled_only$pooled_pred_train)
-  }
 
   list(train = pooled_error_train,
        test = err_fun(pooled_only$pooled_obs_test,

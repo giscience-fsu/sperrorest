@@ -678,10 +678,8 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
                           pooled_only$pooled_obs_test <- factor(lev[
                             pooled_only$pooled_obs_test], levels = lev)
                           if (is_factor_prediction) {
-                            if (err_train) {
                               pooled_only$pooled_pred_train <- factor(lev[
                                 pooled_only$pooled_pred_train], levels = lev)
-                            }
                             pooled_only$pooled_pred_test <- factor(lev[
                               pooled_only$pooled_pred_test], levels = lev)
                           }
