@@ -28,7 +28,7 @@ These settings can be specified using `model_args` and `pred_args` in `sperrores
 ## Solution
 
 In this case, we need to write a wrapper function for `glmmPQL` (named `glmmPQL_modelfun` here) which accounts for this naming problem. Here, we are passing the `formula` argument to our custom model function which then does the actual call to `glmmPQL()` using the supplied `formula` object as the `fixed` argument of `glmmPQL`.  
-By default, `glmmPQL()` has further arguments like `family` or `random`. If we want to use these, we pass them to `model_args` which appends them to the arguments of `glmmPQL_modelfun`.
+By default, `glmmPQL()` has further arguments like `family` or `random`. If we want to use these, we pass them to `model_args` which then appends these to the arguments of `glmmPQL_modelfun`.
 
 ```{r}
 glmmPQL_modelfun <- function(formula = NULL, data = NULL) {
@@ -51,7 +51,7 @@ Since there is no way to account for this in a general way (when every package m
 ### randomForest
 
 When calling predict on a fitted `randomForest` model with a binary response variable, the predicted values are actually stored in the resulting object returned by `predict()` (here called `pred`). So why do we have trouble here then?  
-Simply because `pred` is a matrix containing both probabilities for the `FALSE` (= 0) and `TRUE` (= 1) case. `sperrorest()` needs only the predicted values of the `TRUE` case to pass these further onto `err_fun()` which takes care of calculating all the error measures. So the important part is to subset the resulting `pred` object to `TRUE` cases only and return the result.
+Simply because `pred` is a matrix containing both probabilities for the `FALSE` (= 0) and `TRUE` (= 1) case. `sperrorest()` needs a vector containing only the predicted values of the `TRUE` case to pass these further onto `err_fun()` which then takes care of calculating all the error measures. So the important part is to subset the resulting matrix in the `pred` object to `TRUE` cases only and return the result.
 
 ```{r, eval = FALSE}
 rf_predfun <- function(object = NULL, newdata = NULL) {
@@ -62,7 +62,7 @@ rf_predfun <- function(object = NULL, newdata = NULL) {
 
 ### svm
 
-The same case (binary response) using `svm` from the `e1071` package. Here, the predicted probabilities are stored in a sub-object of `pred`. Then again, we only need the `TRUE` cases.
+The same case (binary response) using `svm` from the `e1071` package. Here, the predicted probabilities are stored in a sub-object of `pred`. We can address it using the `attr()` function. Then again, we only need the `TRUE` cases for `sperrorest()`.
 
 ```{r}
 svm_predfun <- function(object = NULL, newdata = NULL) {
