@@ -374,7 +374,6 @@ runreps <- function(current_sample = NULL, data = NULL, formula = NULL,
               pooled_error = current_pooled_error, importance = impo_only))
 }
 
-
 #' @title transfer_parallel_output
 #' @description transfers output of parallel calls to runreps
 #' @keywords internal
@@ -456,7 +455,6 @@ remove_missing_levels <- function(fit, test_data) {
 
   # Select column names in test data that are factor predictors in
   # trained model
-
   predictors <- names(test_data[names(test_data) %in% factors])
 
   # For each factor predictor in your data, if the level is not in the model,
@@ -480,6 +478,5 @@ remove_missing_levels <- function(fit, test_data) {
                       var))
     }
   }
-  return(test_data)
+  return(test_data) # nocov end
 }
-

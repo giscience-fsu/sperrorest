@@ -5,7 +5,7 @@
 \title{Partition the data for a (non-spatial) cross-validation}
 \usage{
 partition_cv(data, coords = c("x", "y"), nfold = 10, repetition = 1,
-  seed1 = NULL, return.factor = FALSE)
+  seed1 = NULL, return_factor = FALSE)
 }
 \arguments{
 \item{data}{\code{data.frame} containing at least the columns specified
@@ -26,13 +26,13 @@ to obtain a different set of 100 repetitions.}
 \link{set.seed} in repetition \code{i} (\code{i} in \code{repetition})
 to initialize the random number generator before sampling from the data set.}
 
-\item{return.factor}{if \code{FALSE} (default), return a
+\item{return_factor}{if \code{FALSE} (default), return a
 \link{represampling} object; if \code{TRUE} (used internally by
 other \code{sperrorest} functions), return a \code{list} containing factor
 vectors (see Value)}
 }
 \value{
-If \code{return.factor = FALSE} (the default), a
+If \code{return_factor = FALSE} (the default), a
 \link{represampling} object. Specifically, this is a (named) list of
 \code{length(repetition)} \code{resampling} objects.
 Each of these \link{resampling} objects is a list of length
@@ -40,7 +40,7 @@ Each of these \link{resampling} objects is a list of length
 Each fold is represented by a list of containing the components \code{train}
 and \code{test}, specifying the indices of training and test samples
 (row indices for \code{data}).
-If \code{return.factor = TRUE} (mainly used internally), a (named) list of
+If \code{return_factor = TRUE} (mainly used internally), a (named) list of
 length \code{length(repetition)}.
 Each component of this list is a vector of length \code{nrow(data)} of type
 \code{factor}, specifying for each sample the fold to which it belongs.
@@ -58,7 +58,7 @@ containing the indices of training and test samples.
 \examples{
 data(ecuador)
 ## non-spatial cross-validation:
-resamp <- partition_cv(ecuador, nfold = 5, repetition = 1:2)
+resamp <- partition_cv(ecuador, nfold = 5, repetition = 5)
 # plot(resamp, ecuador)
 # first repetition, second fold, test set indices:
 idx <- resamp[['1']][[2]]$test

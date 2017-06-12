@@ -1,12 +1,14 @@
-#' Default error function
+#' @title Default error function
 #'
-#' Calculate a variety of accuracy measures from observations and predictions
+#' @description Calculate a variety of accuracy measures from observations and predictions
 #' of numerical and categorical response variables.
 #'
 #' @name err_default
+#'
 #' @importFrom ROCR prediction performance
 #'
 #' @param obs factor, logical, or numeric vector with observations
+#'
 #' @param pred factor, logical, or numeric vector with predictions. Must be of
 #' same type as `obs` with the exception that `pred` may be numeric
 #' if `obs` is `factor` or `logical` ('soft' classification).
@@ -45,23 +47,30 @@ err_default <- function(obs, pred) {
   # The following wrapper functions are used in order to avoid warning messages:
   mmin <- function(x, ...) {
     if (length(x) == 0) {
-      x <- Inf
+      x <- Inf # nocov
     }
     return(min(x, ...))
   }
   mmax <- function(x, ...) {
     if (length(x) == 0) {
-      x <- -Inf
+      x <- -Inf # nocov
     }
     return(max(x, ...))
   }
 
   # Convert logical to factor if necessary:
   if (is.logical(obs)) {
-    obs <- factor(obs, levels = c("FALSE", "TRUE"))
+    obs <- factor(obs, levels = c("FALSE", "TRUE")) # nocov
   }
   if (is.logical(pred)) {
-    pred <- factor(pred, levels = c("FALSE", "TRUE"))
+    pred <- factor(pred, levels = c("FALSE", "TRUE")) # nocov
+  }
+
+  # remove NAs in both obs and pred
+  if (any(is.na(pred))) { # nocov start
+    index_na <- which(pred %in% NA)
+    obs <- obs[-index_na]
+    pred <- pred[-index_na] # nocov end
   }
 
   # remove NAs in both obs and pred
@@ -78,7 +87,8 @@ err_default <- function(obs, pred) {
       pred <- as.character(pred)
       pred <- factor(pred, levels = levels(obs))
       err <- list(error = mean(obs != pred), accuracy = mean(obs == pred))
-      if (nlevels(obs) == 2) {
+      # binary classification without probabilities
+      if (nlevels(obs) == 2) { # nocov start
         npos <- sum(obs == levels(obs)[2])
         nneg <- sum(obs == levels(obs)[1])
         ntruepos <- sum((obs == levels(obs)[2]) & (pred == levels(obs)[2])) # nolint
@@ -93,9 +103,16 @@ err_default <- function(obs, pred) {
         pexp <- (npos / n) * (npospred / n) + (nneg / n) * (nnegpred / n)
         if (pexp == 1) {
           err$kappa <- NA
-        } else err$kappa <- (err$accuracy - pexp) / (1 - pexp)
+        } else err$kappa <- (err$accuracy - pexp) / (1 - pexp) # nocov end
       }
     } else {
+
+      # make sure 'pred' is a vector (sometimes 'atomic'); probably if error
+      # measures are too small (?)
+      if (!is.vector(pred)) {
+        pred <- as.numeric(pred)
+      }
+
       # 'soft' classification: Calculate area under the ROC curve:
 
       # make sure 'pred' is a vector (sometimes 'atomic')
@@ -126,27 +143,28 @@ err_default <- function(obs, pred) {
 
       thrs <- unique(pred)
 
-      if (length(thrs) > 500)
+      if (length(thrs) > 500) {
         thrs <- seq(min(pred) + 1e-04, max(pred) + 1e-04, length = 500)
+      }
 
       thr <- mmax(thrs[sapply(thrs, function(x) tpr(obs == pos, pred, npos,
-        x) >= 0.7)])
+                                                    x) >= 0.7)])
       err$fpr70 <- fpr(obs == pos, pred, nneg, thr)
       thr <- mmax(thrs[sapply(thrs, function(x) tpr(obs == pos, pred, npos,
-        x) >= 0.8)])
+                                                    x) >= 0.8)])
       err$fpr80 <- fpr(obs == pos, pred, nneg, thr)
       thr <- mmax(thrs[sapply(thrs, function(x) tpr(obs == pos, pred, npos,
-        x) >= 0.9)])
+                                                    x) >= 0.9)])
       err$fpr90 <- fpr(obs == pos, pred, nneg, thr)
 
       thr <- mmin(thrs[sapply(thrs, function(x) fpr(obs == pos, pred, nneg,
-        x) <= 0.2)])
+                                                    x) <= 0.2)])
       err$tpr80 <- tpr(obs == pos, pred, npos, thr)
       thr <- mmin(thrs[sapply(thrs, function(x) fpr(obs == pos, pred, nneg,
-        x) <= 0.1)])
+                                                    x) <= 0.1)])
       err$tpr90 <- tpr(obs == pos, pred, npos, thr)
       thr <- mmin(thrs[sapply(thrs, function(x) fpr(obs == pos, pred, nneg,
-        x) <= 0.05)])
+                                                    x) <= 0.05)])
       err$tpr95 <- tpr(obs == pos, pred, npos, thr)
     }
     err$events <- sum(obs == levels(obs)[2])

@@ -6,7 +6,7 @@
 level}
 \usage{
 partition_factor_cv(data, coords = c("x", "y"), fac, nfold = 10,
-  repetition = 1, seed1 = NULL, return.factor = FALSE)
+  repetition = 1, seed1 = NULL, return_factor = FALSE)
 }
 \arguments{
 \item{data}{\code{data.frame} containing at least the columns specified
@@ -32,7 +32,7 @@ to obtain a different set of 100 repetitions.}
 \link{set.seed} in repetition \code{i} (\code{i} in \code{repetition})
 to initialize the random number generator before sampling from the data set.}
 
-\item{return.factor}{if \code{FALSE} (default), return a
+\item{return_factor}{if \code{FALSE} (default), return a
 \link{represampling} object; if \code{TRUE} (used internally by
 other \code{sperrorest} functions), return a \code{list} containing factor
 vectors (see Value)}

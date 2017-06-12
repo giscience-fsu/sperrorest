@@ -9,8 +9,8 @@ test_that("sp_tune_rf works with randomForest package", {
   data <- ecuador
   fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
 
-  out <- sptune_rf(fo, ecuador, accelerate = 4, nfold = 5,
-                   rf_fun = "randomForest", partition_fun = "partition_kmeans")
+  out <- sptune_rf(fo, ecuador, step_factor = 1, nfold = 5,
+                   rf_fun = "randomForest", partition_fun = "partition_cv")
 
   expect_length(out, 2)
 })
@@ -22,7 +22,19 @@ test_that("sp_tune_rf works with randomForestSRC package", {
   data <- ecuador
   fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
 
-  out <- sptune_rf(fo, ecuador, accelerate = 5, nfold = 5,
+  out <- sptune_rf(fo, ecuador, step_factor = 5, nfold = 5,
+                   rf_fun = "rfsrc", partition_fun = "partition_kmeans")
+
+  expect_length(out, 2)
+})
+
+test_that("sp_tune_rf works with custom hyperparam range", {
+
+  data <- ecuador
+  fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
+
+  out <- sptune_rf(fo, ecuador, nfold = 5,
+                   ntree = seq(1, 5), mtry = seq(1, 5),
                    rf_fun = "rfsrc", partition_fun = "partition_kmeans")
 
   expect_length(out, 2)

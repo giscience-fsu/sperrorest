@@ -5,9 +5,9 @@
 \title{Partition the study area into rectangular tiles}
 \usage{
 partition_tiles(data, coords = c("x", "y"), dsplit = NULL, nsplit = NULL,
-  rotation = c("none", "random", "user"), user.rotation, offset = c("none",
-  "random", "user"), user.offset, reassign = TRUE, min_frac = 0.025,
-  min_n = 5, iterate = 1, return.factor = FALSE, repetition = 1,
+  rotation = c("none", "random", "user"), user_rotation, offset = c("none",
+  "random", "user"), user_offset, reassign = TRUE, min_frac = 0.025,
+  min_n = 5, iterate = 1, return_factor = FALSE, repetition = 1,
   seed1 = NULL)
 }
 \arguments{
@@ -30,7 +30,7 @@ its value is recycled.}
 \item{rotation}{indicates whether and how the rectangular grid should
 be rotated; random rotation is only between \code{-45} and \code{+45} degrees.}
 
-\item{user.rotation}{if \code{rotation='user'}, angles (in degrees) by which
+\item{user_rotation}{if \code{rotation='user'}, angles (in degrees) by which
 the rectangular grid is to be rotated in each repetition. Either a vector of
 same length as \code{repetition}, or a single number that will be replicated
 \code{length(repetition)} times.}
@@ -38,7 +38,7 @@ same length as \code{repetition}, or a single number that will be replicated
 \item{offset}{indicates whether and how the rectangular grid should be
 shifted by an offset.}
 
-\item{user.offset}{if \code{offset='user'}, a list (or vector) of two
+\item{user_offset}{if \code{offset='user'}, a list (or vector) of two
 components specifying a shift of the rectangular grid in (possibly rotated) x
 and y direction. The offset values are relative values, a value of \code{0.5}
 resulting in a one-half tile shift towards the left, or upward.
@@ -64,7 +64,7 @@ Will be ignored if \code{NULL}.}
 
 \item{iterate}{argument to be passed to \link{tile_neighbors}}
 
-\item{return.factor}{if \code{FALSE} (default), return a
+\item{return_factor}{if \code{FALSE} (default), return a
 \link{represampling} object; if \code{TRUE} (used internally by
 other \code{sperrorest} functions), return a \code{list} containing factor
 vectors (see Value)}
@@ -103,7 +103,7 @@ thresholds is therefore recommended for non-zero (including random) offsets.
 }
 \examples{
 data(ecuador)
-parti <- partition_tiles(ecuador, nsplit = c(4,3), reassign = FALSE)
+parti <- partition_tiles(ecuador, nsplit = c(4, 3), reassign = FALSE)
 # plot(parti,ecuador)
 summary(parti) # tile A4 has only 55 samples
 # same partitioning, but now merge tiles with less than 100 samples to

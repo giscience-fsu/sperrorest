@@ -1,6 +1,6 @@
 context("sperrorest-resampling.R")
 
-pacman::p_load(sperrorest, testthat)
+library(sperrorest)
 
 # partition_cv() Mon Feb  6 21:57:08 2017 ------------------------------
 
@@ -42,7 +42,7 @@ test_that("partition_factor_cv() output is of correct length", {
 
 test_that("partition_tiles() output is of correct length", {
   data(ecuador)
-  parti <- partition_tiles(ecuador, nsplit = c(4,2), reassign = FALSE)
+  parti <- partition_tiles(ecuador, nsplit = c(4, 2), reassign = FALSE)
   expect_equal(length(parti[[1]]), 8)
 })
 

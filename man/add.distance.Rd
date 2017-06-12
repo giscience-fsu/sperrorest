@@ -3,7 +3,6 @@
 \name{add.distance}
 \alias{add.distance}
 \alias{add.distance.resampling}
-\alias{add.distance_represampling}
 \alias{add.distance.represampling}
 \title{Add distance information to resampling objects}
 \usage{

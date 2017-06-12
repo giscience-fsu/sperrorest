@@ -29,21 +29,21 @@
 #' `data.frame` with mean, and at level 0 also standard deviation,
 #' median and IQR of the error measures.
 #'
-#' @details Let's use an example to explain the `error.rep` argument.
+#' @details Let's use an example to explain the `error_rep` argument.
 #' E.g., assume we are using 100-repeated 10-fold cross-validation.
-#' If `error.rep = TRUE` (default), the mean and standard deviation calculated
+#' If `error_rep = TRUE` (default), the mean and standard deviation calculated
 #' when summarizing at `level = 0`
 #' are calculated across the error estimates obtained for
 #' each of the `100*10 = 1000` folds.
-#' If `error.rep = FALSE`, mean and standard deviation are calculated across
+#' If `error_rep = FALSE`, mean and standard deviation are calculated across
 #' the `100` repetitions, using the weighted average of the fold-level
 #' errors to calculate an error value for the entire sample.
 #' This will essentially not affect the mean value but of course the
-#' standard deviation of the error. `error.rep = FALSE` is not recommended,
+#' standard deviation of the error. `error_rep = FALSE` is not recommended,
 #' it is mainly for testing purposes; when the test sets are small
 #' (as in leave-one-out cross-validation, in the extreme case),
-#' consider running [sperrorest] with `error.rep = TRUE` and
-#' examine only the `error.rep` component of its result.
+#' consider running [sperrorest] with `error_rep = TRUE` and
+#' examine only the `error_rep` component of its result.
 #'
 #' @seealso [sperrorest]
 #'
@@ -53,9 +53,11 @@ summary.sperroresterror <- function(object, level = 0, pooled = TRUE,
   err <- unclass(object)
   if (pooled) {
     if (level <= 2) {
-      err <- lapply(err, function(x) t(sapply(x, function(y) data.frame(train = y$train,
-        test = y$test, distance = ifelse(any(names(y) == "distance"), y$distance,
-          -1)))))
+      err <- lapply(err, function(x) t(sapply(x, function(y)
+        data.frame(train = y$train,
+                   test = y$test,
+                   distance = ifelse(any(names(y) == "distance"), y$distance,
+                                     -1)))))
     }
     if (level <= 1) {
       errdf <- err[[1]]
@@ -68,28 +70,35 @@ summary.sperroresterror <- function(object, level = 0, pooled = TRUE,
       err <- as.data.frame(errdf)
     }
     if (level <= 0) {
-      err <- data.frame(mean = apply(err, 2, function(y) mean(unlist(y), na.rm = na.rm)),
-        sd = apply(err, 2, function(y) sd(unlist(y), na.rm = na.rm)), median = apply(err,
-          2, function(y) median(unlist(y), na.rm = na.rm)), IQR = apply(err,
-          2, function(y) IQR(unlist(y), na.rm = na.rm)))
+      err <- data.frame(mean = apply(err, 2, function(y)
+        mean(unlist(y), na.rm = na.rm)),
+        sd = apply(err, 2, function(y)
+          sd(unlist(y), na.rm = na.rm)),
+        median = apply(err, 2, function(y)
+          median(unlist(y), na.rm = na.rm)),
+        IQR = apply(err, 2, function(y) IQR(unlist(y), na.rm = na.rm)))
     }
   } else {
     if (level <= 2) {
-      err <- lapply(err, function(x) t(sapply(x, function(y) data.frame(train = y$train,
-        test = y$test, distance = ifelse(any(names(y) == "distance"), y$distance,
-          -1)))))
+      err <- lapply(err, function(x) t(sapply(x, function(y)
+        data.frame(train = y$train,
+                   test = y$test,
+                   distance = ifelse(any(names(y) == "distance"), y$distance,
+                                     -1)))))
     }
     if (level <= 1) {
       ### w = summary.partition(resampling) ?????
-      err <- lapply(err, function(x) apply(x, 2, function(y) weighted.mean(unlist(y),
-        na.rm = na.rm)))
+      err <- lapply(err, function(x) apply(x, 2, function(y)
+        weighted.mean(unlist(y),
+                      na.rm = na.rm)))
       nms <- names(err)
       err <- as.data.frame(t(as.data.frame(err)))
       rownames(err) <- nms
     }
     if (level <= 0) {
-      err <- data.frame(mean = sapply(err, mean), sd = sapply(err, sd), median = sapply(err,
-        median), IQR = sapply(err, IQR))
+      err <- data.frame(mean = sapply(err, mean), sd = sapply(err, sd),
+                        median = sapply(err,
+                                        median), IQR = sapply(err, IQR))
     }
   }
   return(err)
@@ -105,7 +114,8 @@ summary.sperrorestreperror <- function(object, level = 0, na.rm = TRUE, ...) {
   object <- as.data.frame(object)
   if (level <= 0) {
     object <- data.frame(mean = sapply(object, mean), sd = sapply(object, sd),
-      median = sapply(object, median), IQR = sapply(object, IQR))
+                         median = sapply(object, median),
+                         IQR = sapply(object, IQR))
   }
   return(object)
 }
@@ -130,8 +140,8 @@ summary.sperrorestreperror <- function(object, level = 0, na.rm = TRUE, ...) {
 summary.sperrorestimportance <- function(object, level = 0, na.rm = TRUE,
                                          which = NULL, ...) {
   arrdim <- c(length(object), length(object[[1]]), dim(object[[1]][[1]]))
-  arrdimnames <- list(names(object), names(object[[1]]), rownames(object[[1]][[1]]),
-    colnames(object[[1]][[1]]))
+  arrdimnames <- list(names(object), names(object[[1]]),
+                      rownames(object[[1]][[1]]), colnames(object[[1]][[1]]))
   arr <- array(NA, dim = arrdim, dimnames = arrdimnames)
   for (i in 1:length(object)) {
     for (j in 1:length(object[[i]])) {
@@ -143,55 +153,22 @@ summary.sperrorestimportance <- function(object, level = 0, na.rm = TRUE,
   }
   if (level <= 0) {
     if (is.null(which)) {
-      arr <- data.frame(mean = apply(arr, c(2, 3), mean, na.rm = na.rm), sd = apply(arr,
-        c(2, 3), sd, na.rm = na.rm), median = apply(arr, c(2, 3), median,
-        na.rm = na.rm), IQR = apply(arr, c(2, 3), IQR, na.rm = na.rm))
+      arr <- data.frame(mean = apply(arr, c(2, 3), mean, na.rm = na.rm),
+                        sd = apply(arr, c(2, 3), sd, na.rm = na.rm),
+                        median = apply(arr, c(2, 3), median,
+                                       na.rm = na.rm),
+                        IQR = apply(arr, c(2, 3), IQR, na.rm = na.rm))
     } else { # when does this happen?
-      arr <- arr[, , which] # nocov
-      arr <- data.frame(mean = apply(arr, 2, mean, na.rm = na.rm), sd = apply(arr, # nocov
-        2, sd, na.rm = na.rm), median = apply(arr, 2, median, na.rm = na.rm), # nocov
-        IQR = apply(arr, 2, IQR, na.rm = na.rm)) # nocov
+      arr <- arr[, , which] # nocov start
+      arr <- data.frame(mean = apply(arr, 2, mean, na.rm = na.rm),
+                        sd = apply(arr, 2, sd, na.rm = na.rm),
+                        median = apply(arr, 2, median, na.rm = na.rm),
+                        IQR = apply(arr, 2, IQR, na.rm = na.rm)) # nocov end
     }
   }
   return(arr)
 }
 
-#' Summarize benchmark information obtained by `sperrorest`
-#'
-#' `summary.sperrorestbenchmarks` shows information on runtime performance,
-#' used cores and system information
-#' @name summary.sperrorestbenchmarks
-#' @method summary sperrorestbenchmarks
-#' @inheritParams summary.sperroresterror
-#'
-#' @param object `sperrorestbenchmarks` object returned class by
-#' [sperrorest]
-#' @return List of length seven
-#'
-#' @export
-summary.sperrorestbenchmarks <- function(object, ...) {
-  class(object) <- NULL
-  object <- unlist(object)
-  object <- as.matrix(object)
-  colnames(object) <- "benchmarks"
-  return(object)
-}
-
-#' Summarize package version information obtained by `sperrorest`
-#'
-#' `summary.sperrorestpackageversion` returns the package version of sperrorest
-#' @name summary.sperrorestpackageversion
-#' @method summary sperrorestpackageversion
-#' @inheritParams summary.sperroresterror
-#'
-#' @param object `sperrorestpackageversion` object calculated by
-#' [sperrorest]
-#' @return character vector of length one
-#'
-#' @export
-summary.sperrorestpackageversion <- function(object, ...) {
-  paste(object[[1]], collapse = ".")
-}
 
 #' Summary and print methods for sperrorest results
 #'
@@ -213,12 +190,12 @@ summary.sperrorestpackageversion <- function(object, ...) {
 #'
 #' @export
 summary.sperrorest <- function(object, ...) {
-  list(error.rep = summary(object$error.rep, ...),
-       error.fold = summary(object$error.fold, ...),
+  list(error_rep = summary(object$error_rep, ...),
+       error_fold = summary(object$error_fold, ...),
        represampling = summary(object$represampling, ...),
        importance = summary(object$importance, ...),
        benchmark = summary(object$benchmark, ...),
-       packageVersion = summary(object$package.version, ...))
+       packageVersion = summary(object$package_version, ...))
 }
 
 #' @rdname summary.sperrorest
@@ -226,7 +203,7 @@ summary.sperrorest <- function(object, ...) {
 #' @method print sperrorestimportance
 #' @export
 print.sperrorestimportance <- function(x, ...) {
-  print(unclass(summary(x, level = Inf, ...)))
+  print(unclass(summary(x, level = Inf, ...))) # nocov
 }
 
 #' @rdname summary.sperrorest
@@ -234,7 +211,7 @@ print.sperrorestimportance <- function(x, ...) {
 #' @method print sperroresterror
 #' @export
 print.sperroresterror <- function(x, ...) {
-  print(unclass(summary(x, level = Inf, ...)))
+  print(unclass(summary(x, level = Inf, ...))) # nocov
 }
 
 #' @rdname summary.sperrorest
@@ -242,8 +219,8 @@ print.sperroresterror <- function(x, ...) {
 #' @method print sperrorestreperror
 #' @export
 print.sperrorestreperror <- function(x, ...) {
-  print(unclass(summary(x, level = Inf,
-  ...)))
+  print(unclass(summary(x, level = Inf, # nocov
+                        ...))) # nocov
 }
 
 #' @rdname summary.sperrorest
@@ -251,7 +228,7 @@ print.sperrorestreperror <- function(x, ...) {
 #' @method print sperrorest
 #' @export
 print.sperrorest <- function(x, ...) {
-  print(unclass(summary(x, level = Inf, ...)))
+  print(unclass(summary(x, level = Inf, ...))) # nocov
 }
 
 #' @rdname summary.sperrorest
@@ -259,7 +236,7 @@ print.sperrorest <- function(x, ...) {
 #' @method print sperrorestbenchmarks
 #' @export
 print.sperrorestbenchmarks <- function(x, ...) {
-  print(summary(x), ...)
+  print(summary(x), ...) # nocov
 }
 
 #' @rdname summary.sperrorest
@@ -267,7 +244,7 @@ print.sperrorestbenchmarks <- function(x, ...) {
 #' @method print sperrorestpackageversion
 #' @export
 print.sperrorestpackageversion <- function(x, ...) {
-  print(summary(x))
+  print(summary(x)) # nocov
 }
 
 

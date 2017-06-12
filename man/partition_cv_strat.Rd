@@ -5,7 +5,7 @@
 \title{Partition the data for a stratified (non-spatial) cross-validation}
 \usage{
 partition_cv_strat(data, coords = c("x", "y"), nfold = 10,
-  return.factor = FALSE, repetition = 1, seed1 = NULL, strat)
+  return_factor = FALSE, repetition = 1, seed1 = NULL, strat)
 }
 \arguments{
 \item{data}{\code{data.frame} containing at least the columns specified
@@ -17,7 +17,7 @@ contain the x and y coordinates of sample locations}
 \item{nfold}{number of partitions (folds) in \code{nfold}-fold
 cross-validation partitioning}
 
-\item{return.factor}{if \code{FALSE} (default), return a
+\item{return_factor}{if \code{FALSE} (default), return a
 \link{represampling} object; if \code{TRUE} (used internally by
 other \code{sperrorest} functions), return a \code{list} containing factor
 vectors (see Value)}

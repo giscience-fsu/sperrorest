@@ -12,12 +12,29 @@ test_that("sp_tune_svm works with kernlab package", {
    fo <- croptype ~ b82 + b83 + b84 + b85 + b86 + b87 + ndvi01 +
          ndvi02 + ndvi03 + ndvi04
    data(maipo)
-   out <- sptune_svm(fo, maipo, accelerate = 8, nfold = 5,
+   out <- sptune_svm(fo, maipo, accelerate = 4, nfold = 5,
                      coords = c("utmx", "utmy"),
                      partition_fun = "partition_kmeans",
                      svm_fun = "ksvm", type = "C-svc", kernel = "rbfdot")
 
    expect_length(out, 2)
+})
+
+test_that("sp_tune_svm works with custom hyperparam range", {
+
+  # ---
+  ## multiclass classification
+  # ---
+  fo <- croptype ~ b82 + b83 + b84 + b85 + b86 + b87 + ndvi01 +
+    ndvi02 + ndvi03 + ndvi04
+  data(maipo)
+  out <- sptune_svm(fo, maipo, accelerate = 1, nfold = 5,
+                    coords = c("utmx", "utmy"), cost = seq(1, 5),
+                    gamma = seq(1, 5),
+                    partition_fun = "partition_kmeans",
+                    svm_fun = "ksvm", type = "C-svc", kernel = "rbfdot")
+
+  expect_length(out, 2)
 })
 
 # e1071 Sun May 28 12:43:01 2017 ------------------------------
@@ -37,15 +54,4 @@ test_that("sp_tune_svm works with e1071 package", {
   expect_length(out, 2)
 })
 
-# gmum.r Sun May 28 12:43:01 2017 ------------------------------
 
-test_that("sp_tune_svm works with gmum.r package", {
-  kernels <- c("rbf", "poly", "sigmoid", "linear")
-  data <- ecuador
-  fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
-
-  out <- map(kernels, function(x)
-    sptune_svm(fo, ecuador, accelerate = 8, nfold = 5, svm_fun = "SVM",
-                         partition_fun = "partition_kmeans", kernel = x,
-                         type = "C-classification"))
-})

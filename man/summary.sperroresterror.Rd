@@ -36,21 +36,21 @@ median etc. of the calculated error measures at the specified level
 at the overall or repetition level.
 }
 \details{
-Let's use an example to explain the \code{error.rep} argument.
+Let's use an example to explain the \code{error_rep} argument.
 E.g., assume we are using 100-repeated 10-fold cross-validation.
-If \code{error.rep = TRUE} (default), the mean and standard deviation calculated
+If \code{error_rep = TRUE} (default), the mean and standard deviation calculated
 when summarizing at \code{level = 0}
 are calculated across the error estimates obtained for
 each of the \code{100*10 = 1000} folds.
-If \code{error.rep = FALSE}, mean and standard deviation are calculated across
+If \code{error_rep = FALSE}, mean and standard deviation are calculated across
 the \code{100} repetitions, using the weighted average of the fold-level
 errors to calculate an error value for the entire sample.
 This will essentially not affect the mean value but of course the
-standard deviation of the error. \code{error.rep = FALSE} is not recommended,
+standard deviation of the error. \code{error_rep = FALSE} is not recommended,
 it is mainly for testing purposes; when the test sets are small
 (as in leave-one-out cross-validation, in the extreme case),
-consider running \link{sperrorest} with \code{error.rep = TRUE} and
-examine only the \code{error.rep} component of its result.
+consider running \link{sperrorest} with \code{error_rep = TRUE} and
+examine only the \code{error_rep} component of its result.
 }
 \seealso{
 \link{sperrorest}

@@ -1,0 +1,73 @@
+---
+title: "Custom Predict and Model Functions"
+author: "Patrick Schratz"
+date: "June 10 2017"
+output: 
+    rmarkdown::html_vignette:
+      toc: true
+vignette: >
+  %\VignetteIndexEntry{Custom Predict and Model Functions}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+# Introduction
+
+`sperrorest` is a generic framework which aims to work with all R models/packages. In statistical learning, model setups, their formulas and error measures all depend on the family of the response variable. Various families exist (numeric, binary, multiclass) which again include sub-families (e.g. gaussian or poisson distribution of a numeric response). 
+
+This detail needs to be specified via the respective function, e.g. when using `glm()` with a binary response, one needs to set `family = "binomial"` to make sure that the model does something meaningful. Most of the time, the same applies to the generic `predict()` function. For the `glm()` case, one would need to set `type = "response"` if the predicted values should reflect probabilities instead of log-odds. 
+
+These settings can be specified using `model_args` and `pred_args` in `sperrorest()`. So fine, "why do we need to write all these wrappers and custom model/predict functions then?!"
+
+# User-defined Model Functions
+
+## Problem
+
+`model_fun` expects at least formula argument and a data.frame with the learning sample. All arguments, including the additional ones provided via `model_args`, are getting passed to `model_fun` via a `do.call()` call. However, if `model_fun` does not have an argument named `formula` but e.g. `fixed` (like it is the case for `glmmPQL()`) the `do.call()` call will fail because `sperrorest()` tries to pass an argument named `formula` but `glmmPQL` expects an argument named `fixed`.
+
+## Solution
+
+In this case, we need to write a wrapper function for `glmmPQL` (named `glmmPQL_modelfun` here) which accounts for this naming problem. Here, we are passing the `formula` argument to our custom model function which then does the actual call to `glmmPQL()` using the supplied `formula` object as the `fixed` argument of `glmmPQL`.  
+By default, `glmmPQL()` has further arguments like `family` or `random`. If we want to use these, we pass them to `model_args` which then appends these to the arguments of `glmmPQL_modelfun`.
+
+```{r}
+glmmPQL_modelfun <- function(formula = NULL, data = NULL) {
+  fit <- glmmPQL(fixed = formula, data = data, random = random, family = family)
+  return(fit)
+}
+```
+
+# User-defined Predict Functions
+
+## Problem
+
+Unless specified explicitly, `sperrorest()` tries to use the generic `predict()` function. This function works differently depending on the class of the provided fitted model, i.e. many models slightly differ in the naming (and availability) of their arguments. For example, when fitting a Support Vector Machine (SVM) with a binary response variable, package `kernlab` expects an argument `type = "probabilities"` in its `predict()` call to receive predicted probabilities while in package `e1071` it is `"probability  = TRUE"`. Similar to `model_args`, this can be accounted for in the `pred_args` of `sperrorest()`. 
+
+However, `sperrorest()` expects that the predicted values (of any response type) are stored directly in the returned object of the `predict()` function. While this is the case for many models, mainly with a numeric response, classification cases often behave differently. Here, the predicted values (classes in this case) are often stored in a sub-object named `class` or `predicted`.
+
+## Solution 
+Since there is no way to account for this in a general way (when every package may return the predicted values in a different format/column), we need to account for it by providing a custom predict function which returns only the predicted values so that `sperrorest()` can continue properly. This time we are showing two examples. The first takes again a binary classification using `randomForest`. 
+
+### randomForest
+
+When calling predict on a fitted `randomForest` model with a binary response variable, the predicted values are actually stored in the resulting object returned by `predict()` (here called `pred`). So why do we have trouble here then?  
+Simply because `pred` is a matrix containing both probabilities for the `FALSE` (= 0) and `TRUE` (= 1) case. `sperrorest()` needs a vector containing only the predicted values of the `TRUE` case to pass these further onto `err_fun()` which then takes care of calculating all the error measures. So the important part is to subset the resulting matrix in the `pred` object to `TRUE` cases only and return the result.
+
+```{r, eval = FALSE}
+rf_predfun <- function(object = NULL, newdata = NULL) {
+  pred <- predict(object = object, newdata = newdata, type = type)
+  pred <- pred[, 2]
+}
+```
+
+### svm
+
+The same case (binary response) using `svm` from the `e1071` package. Here, the predicted probabilities are stored in a sub-object of `pred`. We can address it using the `attr()` function. Then again, we only need the `TRUE` cases for `sperrorest()`.
+
+```{r}
+svm_predfun <- function(object = NULL, newdata = NULL) {
+  pred <- predict(object, newdata = newdata, probability = TRUE)
+  pred <- attr(pred, "probabilities")[, 2]
+}
+```
+

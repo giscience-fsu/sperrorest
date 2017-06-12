@@ -6,7 +6,7 @@
 \title{Leave-one-disc-out cross-validation and leave-one-out cross-validation}
 \usage{
 partition_disc(data, coords = c("x", "y"), radius, buffer = NULL,
-  ndisc = nrow(data), seed1 = NULL, return.train = TRUE, prob = NULL,
+  ndisc = nrow(data), seed1 = NULL, return_train = TRUE, prob = NULL,
   replace = FALSE, repetition = 1)
 
 partition_loo(data, ndisc = nrow(data), replace = FALSE, ...)
@@ -33,7 +33,7 @@ each sample.}
 \link{set.seed} in repetition \code{i} (\code{i} in \code{repetition})
 to initialize the random number generator before sampling from the data set.}
 
-\item{return.train}{If \code{FALSE}, returns only test sample;
+\item{return_train}{If \code{FALSE}, returns only test sample;
 if \code{TRUE}, also the training area.}
 
 \item{prob}{optional argument to \link{sample}.}
@@ -50,7 +50,7 @@ see Note below: \code{repetition} should normally be \code{= 1} in this function
 A \link{represampling} object.
 Contains \code{length(repetition)} \code{resampling} objects.
 Each of these contains \code{ndisc} lists with indices of test and
-(if \code{return.train = TRUE}) training sets.
+(if \code{return_train = TRUE}) training sets.
 }
 \description{
 \code{partition_disc} partitions the sample into training and tests set by

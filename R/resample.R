@@ -41,10 +41,10 @@ resample_strat_uniform <- function(data, param = list(strat = "class",
 
   # Use defaults if not specified:
   if (is.null(param$strat)) {
-    param$strat <- "class"
+    param$strat <- "class" # nocov
   }
   if (is.null(param$nstrat)) {
-    param$nstrat <- Inf
+    param$nstrat <- Inf # nocov
   }
   if (is.null(param$replace)) {
     param$replace <- FALSE
@@ -54,11 +54,11 @@ resample_strat_uniform <- function(data, param = list(strat = "class",
   if (length(param$strat == 1)) {
     strat <- data[, param$strat]
   } else {
-    strat <- param$strat
+    strat <- param$strat # nocov
   }
   if (!is.factor(strat)) {
-    stop("'strat' must either be a vector of factor type, or the name of
-         a factor variable in 'data'")
+    stop(paste0("'strat' must either be a vector of factor type, or the name", # nocov
+                " of a factor variable in 'data'")) # nocov
   }
   # Each factor level must have at least one sample, otherwise sampling within
   # this level is impossible:
@@ -111,7 +111,7 @@ resample_strat_uniform <- function(data, param = list(strat = "class",
 resample_uniform <- function(data, param = list(n = Inf, replace = FALSE)) {
   # Apply defaults if missing from parameter list:
   if (is.null(param$n)) {
-    param$n <- Inf
+    param$n <- Inf # nocov
   }
   if (is.null(param$replace)) {
     param$replace <- FALSE
@@ -148,16 +148,10 @@ resample_uniform <- function(data, param = list(n = Inf, replace = FALSE)) {
 #'
 #' @seealso [resample_strat_uniform()], [sample()]
 #'
-#' @examples
-#' data(ecuador) # Muenchow et al. (2012), see ?ecuador
-#' d <- resample_uniform(ecuador, param = list(strat = 'slides', n = 200))
-#' nrow(d) # == 200
-#' sum(d$slides == 'TRUE')
-#'
 #' @export
 resample_factor <- function(data, param = list(fac = "class", n = Inf,
                                                replace = FALSE)) {
-  if (is.null(param$fac)) {
+  if (is.null(param$fac)) { # nocov start
     param$fac <- "class"
   }
   if (is.null(param$replace)) {
@@ -182,5 +176,5 @@ resample_factor <- function(data, param = list(fac = "class", n = Inf,
   }
   sel <- sample(levels(fac), size = param$n, replace = param$replace)
   sel <- fac %in% sel
-  return(data[sel, ])
+  return(data[sel, ]) # nocov end
 }
