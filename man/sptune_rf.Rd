@@ -4,7 +4,7 @@
 \alias{sptune_rf}
 \title{sptune_rf}
 \usage{
-sptune_rf(formula = NULL, data = NULL, step_factor = 1, nfold = NULL,
+sptune_rf(formula = NULL, data = NULL, step_factor = 2, nfold = NULL,
   partition_fun = NULL, rf_fun = "rfsrc", error_measure = NULL,
   mtrys = NULL, ntrees = NULL, ...)
 }

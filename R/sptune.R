@@ -329,7 +329,7 @@ sptune_svm <- function(formula = NULL, data = NULL, cost = NULL, gamma = NULL,
 #' partition_fun = "partition_kmeans", rf_fun = "randomForest")
 #'
 #' @export
-sptune_rf <- function(formula = NULL, data = NULL, step_factor = 1,
+sptune_rf <- function(formula = NULL, data = NULL, step_factor = 2,
                       nfold = NULL, partition_fun = NULL,
                       rf_fun = "rfsrc", error_measure = NULL,
                       mtrys = NULL, ntrees = NULL, ...) {
@@ -356,6 +356,11 @@ sptune_rf <- function(formula = NULL, data = NULL, step_factor = 1,
   test <- data[parti[[1]][[1]]$test, ]
 
   if (is.null(mtrys) && is.null(ntrees)) {
+    # make sure that step_factor is not 1; otherwise inf while loop
+    if (step_factor == 1) {
+      step_factor <- 2
+      message(paste0("'step_factor' must be > 1; setting it to '2'."))
+    }
     # Perform a complete grid search over the following range of values:
     ntrees_all <- c(10)
     while (tail(ntrees_all, n = 1) < 2500) {
@@ -408,9 +413,9 @@ sptune_rf <- function(formula = NULL, data = NULL, step_factor = 1,
   # append 'mtrys' and 'ntrees' vectors to respective lists
   perf_measures %>%
     map2(.y = mtrys_all,
-         .f = ~ mutate(.x, mtry = .y)) %>%
+         .f = ~ plyr::mutate(.x, mtry = .y)) %>%
     map2(.y = ntrees_all,
-         .f = ~ mutate(.x, ntree = .y)) -> perf_measures
+         .f = ~ plyr::mutate(.x, ntree = .y)) -> perf_measures
 
   tmp1 <- check_response_type(train[[response]], error_measure,
                               perf_measures, option = TRUE)
