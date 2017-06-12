@@ -38,6 +38,8 @@ test_that("runfolds works on missing factor levels in
 
 test_that("runfolds works on glm example", {
 
+  skip_on_cran()
+
   j <- 1 # running the first repetition of 'current_sample', normally we are
   # calling an apply call to seq_along nFolds of repetition
   # see also 'runreps()'
@@ -61,6 +63,8 @@ test_that("runfolds works on glm example", {
 })
 
 test_that("runfolds works on LDA example", {
+
+  skip_on_cran()
 
   data <- ecuador
   current_sample <- partition_cv(maipo, nfold = 4)[[1]]
@@ -105,6 +109,8 @@ test_that("runfolds works on LDA example", {
 
 test_that("runfolds works on rpart example", {
 
+  skip_on_cran()
+
   data <- ecuador
   current_sample <- partition_cv(ecuador, nfold = 4)[[1]]
   current_res <- current_sample
@@ -136,6 +142,8 @@ test_that("runfolds works on rpart example", {
 # runreps Sun May 21 23:07:03 2017 ------------------------------
 
 test_that("runreps works on lda example", {
+
+  skip_on_cran()
 
   j <- 1 # running the first repetition of 'current_sample', normally we are
   # calling an apply call to seq_along nFolds of repetition

@@ -43,13 +43,11 @@ test_that("output type (= list) for different logical combinations of
 
             data(maipo)
 
-            # err.rep = TRUE, err.fold = TRUE
             out <- sperrorest(fo, data = maipo, coords = c("utmx","utmy"),
                               model_fun = lda,
                               pred_fun = lda_predfun,
                               smp_fun = partition_cv,
                               smp_args = list(repetition = 1:2, nfold = 4),
-                              error_rep = TRUE, error_fold = TRUE,
                               benchmark = TRUE, progress = 2)
 
             expect_equal(typeof(out$error_rep), "list")
@@ -58,8 +56,10 @@ test_that("output type (= list) for different logical combinations of
             expect_equal(names(out$error_rep)[[1]], "train_error")
           })
 
-test_that("output length of list is correct for error_rep = TRUE and
-          error_fold  = TRUE for par_mode = 'foreach' on rpart example", {
+test_that("output length of list is correct for par_mode = 'foreach' on rpart
+          example", {
+
+            skip_on_cran()
 
             data(ecuador)
             fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
@@ -81,16 +81,14 @@ test_that("output length of list is correct for error_rep = TRUE and
                               smp_args = list(repetition = 1:2,
                                               nfold = 2),
                               par_args = list(par_mode = "foreach",
-                                              par_units = 2),
-                              error_rep = TRUE, error_fold = TRUE)
+                                              par_units = 2))
 
             expect_equal(length(out$error_fold[[1]]), 2)
           })
 
 # variable importance Wed Feb  8 21:59:03 2017
 
-test_that("sperrorest() variable importance with error_rep = T and
-          error_fold = T", {
+test_that("sperrorest() variable importance (foreach)", {
 
             skip_on_cran()
 
@@ -111,27 +109,6 @@ test_that("sperrorest() variable importance with error_rep = T and
             expect_equal(class(out$importance[[1]][[1]]), "data.frame")
           })
 
-test_that("sperrorest() variable importance with error_rep = F and
-          error_fold = T", {
-
-            skip_on_cran()
-
-            data(ecuador) # Muenchow et al. (2012), see ?ecuador
-            fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
-
-            out <- sperrorest(data = ecuador, formula = fo,
-                              model_fun = glm,
-                              model_args = list(family = "binomial"),
-                              pred_fun = predict,
-                              pred_args = list(type = "response"),
-                              smp_fun = partition_cv,
-                              smp_args = list(repetition = 1:2, nfold = 4),
-                              par_args = list(par_mode = "foreach",
-                                              par_units = 2),
-                              benchmark = TRUE, error_rep = FALSE,
-                              importance = TRUE, imp_permutations = 10)
-            expect_equal(class(out$importance[[1]][[1]]), "data.frame")
-          })
 
 # binary response Wed Feb  8 22:43:12 2017
 
@@ -220,7 +197,6 @@ test_that("output type (= list) for different logical combinations of
               ndwi01 + ndwi02 + ndwi03 + ndwi04 + ndwi05 + ndwi06 + ndwi07 +
               ndwi08
 
-            # err.rep = TRUE, err.fold = TRUE
             out <- sperrorest(fo, data = maipo, coords = c("utmx","utmy"),
                               model_fun = lda,
                               pred_fun = lda_predfun,
@@ -229,40 +205,12 @@ test_that("output type (= list) for different logical combinations of
                               par_args = list(par_mode = "future",
                                               par_option = "cluster",
                                               par_units = 2),
-                              error_rep = TRUE, error_fold = TRUE,
                               benchmark = TRUE, progress = FALSE)
 
             expect_equal(typeof(out$error_rep), "list")
             expect_equal(typeof(out$error_fold), "list")
             # check for train_error existence
             expect_equal(names(out$error_rep)[[1]], "train_error")
-
-            # err.rep = TRUE, err.fold = FALSE
-            out <- sperrorest(fo, data = maipo, coords = c("utmx","utmy"),
-                              model_fun = lda,
-                              pred_fun = lda_predfun,
-                              smp_fun = partition_cv,
-                              smp_args = list(repetition = 1:2, nfold = 2),
-                              par_args = list(par_mode = "future",
-                                              par_units = 2),
-                              error_rep = TRUE, error_fold = FALSE,
-                              benchmark = TRUE, progress = FALSE)
-
-            expect_equal(typeof(out$error_rep), "list")
-            expect_equal(typeof(out$error_fold), "NULL")
-
-            # err.rep = FALSE, err.fold = TRUE
-            out <- sperrorest(fo, data = maipo, coords = c("utmx","utmy"),
-                              model_fun = lda,
-                              pred_fun = lda_predfun,
-                              smp_fun = partition_cv,
-                              smp_args = list(repetition = 1:2, nfold = 2),
-                              par_args = list(par_mode = "future", par_units = 2),
-                              error_rep = FALSE, error_fold = TRUE,
-                              benchmark = TRUE, progress = FALSE)
-
-            expect_equal(typeof(out$error_rep), "NULL")
-            expect_equal(typeof(out$error_fold), "list")
 
           })
 
@@ -317,8 +265,8 @@ test_that("do.try argument", {
 
 })
 
-test_that("output length of list is correct for error_rep = TRUE and
-          error_fold  = TRUE or par_mode = 'future' on rpart example", {
+test_that("output length of list is correct for par_mode = 'future' on rpart
+          example", {
 
             skip_on_cran()
 
@@ -340,8 +288,7 @@ test_that("output length of list is correct for error_rep = TRUE and
                               smp_fun = partition_cv,
                               smp_args = list(repetition = 1:2, nfold = 2),
                               par_args = list(par_mode = "future",
-                                              par_units = 2),
-                              error_rep = TRUE, error_fold = TRUE)
+                                              par_units = 2))
 
             expect_equal(length(out$error_fold[[1]]), 2)
           })
@@ -440,7 +387,7 @@ test_that("partition_factor_cv works (LDA)", {
   # Construct a formula:
   fo <- as.formula(paste("croptype ~", paste(predictors, collapse = "+")))
 
-  res.lda.sp.par <- sperrorest(fo, data = maipo, coords = c("utmx","utmy"),
+  res_lda_sp_par <- sperrorest(fo, data = maipo, coords = c("utmx","utmy"),
                                model_fun = lda,
                                pred_fun = lda_predfun,
                                pred_args = list(fac = "field"),
@@ -491,14 +438,12 @@ test_that("output type (= list) for different logical combinations of error_rep
 
             data(maipo)
 
-            # err.rep = TRUE, err.fold = TRUE
             out <- sperrorest(fo, data = maipo, coords = c("utmx","utmy"),
                               model_fun = lda,
                               pred_fun = lda_predfun,
                               smp_fun = partition_cv,
                               smp_args = list(repetition = 1:2, nfold = 4),
                               par_args = list(par_mode = "sequential"),
-                              error_rep = TRUE, error_fold = TRUE,
                               benchmark = TRUE, progress = T)
 
             expect_equal(typeof(out$error_rep), "list")
@@ -640,7 +585,7 @@ test_that("sperrorest() when missing factor levels in train data", {
     as_tibble() %>%
     as.data.frame() -> df
   fo <- diplo01 ~ temp + p_sum + r_sum + elevation + slope + hail + age +
-  ph + lithology + soil
+    ph + lithology + soil
 
   out <- sperrorest(data = df, formula = fo,
                     model_fun = glm, model_args = list(family = "binomial"),

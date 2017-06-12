@@ -8,6 +8,8 @@ pacman::p_load(sperrorest, rpart, testthat, MASS)
 
 test_that("sperrorest() produces correct output for binary response", {
 
+  skip_on_cran()
+
   data(ecuador) # Muenchow et al. (2012), see ?ecuador
   fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
 
@@ -34,6 +36,8 @@ test_that("sperrorest() produces correct output for binary response", {
 # sperorrest() continuous response Wed Feb  8 22:19:57 2017 --------------------
 
 test_that("sperrorest() produces correct output for binary response", {
+
+  skip_on_cran()
 
   data(ecuador) # Muenchow et al. (2012), see ?ecuador
   fo <- slope ~ hcurv + vcurv + log.carea + cslope
@@ -66,6 +70,8 @@ test_that("sperrorest() produces correct output for binary response", {
 
 test_that("sperrorest() produces correct output for binary response", {
 
+  skip_on_cran()
+
   data(ecuador) # Muenchow et al. (2012), see ?ecuador
   fo <- slope ~ hcurv + vcurv + log.carea + cslope
 
@@ -84,6 +90,8 @@ test_that("sperrorest() produces correct output for binary response", {
 
 test_that("summary.sperroresterror() produces correct output for binary
           response", {
+
+            skip_on_cran()
 
             data(ecuador) # Muenchow et al. (2012), see ?ecuador
             fo <- slope ~ hcurv + vcurv + log.carea + cslope
@@ -109,6 +117,8 @@ test_that("summary.sperroresterror() produces correct output for binary
 
 test_that("summary.sperroresterror() with pooled = FALSE produces correct
           output for binary response", {
+
+            skip_on_cran()
 
             data(ecuador) # Muenchow et al. (2012), see ?ecuador
             fo <- slope ~ hcurv + vcurv + log.carea + cslope
@@ -169,6 +179,8 @@ test_that("deprecated args", {
 test_that("sperrorest() produces correct output for binary response for
           non-default arguments", {
 
+            skip_on_cran()
+
             data(ecuador) # Muenchow et al. (2012), see ?ecuador
             fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
 
@@ -194,6 +206,8 @@ test_that("sperrorest() produces correct output for binary response for
 # summary.sperrorest() Sun Feb 12 11:56:13 2017 ------------------------------
 
 test_that("summary.sperrorest() works correctly", {
+
+  skip_on_cran()
 
   data(ecuador) # Muenchow et al. (2012), see ?ecuador
   fo <- slope ~ hcurv + vcurv + log.carea + cslope
