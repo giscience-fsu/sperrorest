@@ -36,7 +36,7 @@ test_that("runfolds works on missing factor levels in
             expect_equal(length(runfolds_single), 6)
           })
 
-testthat::test_that("runfolds works on glm example", {
+test_that("runfolds works on glm example", {
 
   j <- 1 # running the first repetition of 'current_sample', normally we are
   # calling an apply call to seq_along nFolds of repetition
@@ -60,7 +60,7 @@ testthat::test_that("runfolds works on glm example", {
   expect_equal(length(runfolds_single), 6)
 })
 
-testthat::test_that("runfolds works on LDA example", {
+test_that("runfolds works on LDA example", {
 
   data <- ecuador
   current_sample <- partition_cv(maipo, nfold = 4)[[1]]
@@ -103,7 +103,7 @@ testthat::test_that("runfolds works on LDA example", {
   expect_equal(length(runfolds_single), 6)
 })
 
-testthat::test_that("runfolds works on rpart example", {
+test_that("runfolds works on rpart example", {
 
   data <- ecuador
   current_sample <- partition_cv(ecuador, nfold = 4)[[1]]
@@ -135,7 +135,7 @@ testthat::test_that("runfolds works on rpart example", {
 
 # runreps Sun May 21 23:07:03 2017 ------------------------------
 
-testthat::test_that("runreps works on lda example", {
+test_that("runreps works on lda example", {
 
   j <- 1 # running the first repetition of 'current_sample', normally we are
   # calling an apply call to seq_along nFolds of repetition
@@ -179,7 +179,7 @@ testthat::test_that("runreps works on lda example", {
 
 })
 
-testthat::test_that("runreps works on glm example", {
+test_that("runreps works on glm example", {
 
   skip("internal use")
 
@@ -204,7 +204,7 @@ testthat::test_that("runreps works on glm example", {
             pooled_obs_test = c(), err_fun = err_default))
 })
 
-testthat::test_that("runreps works on rpart example", {
+test_that("runreps works on rpart example", {
 
   skip("internal use")
 

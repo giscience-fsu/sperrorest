@@ -8,8 +8,6 @@ pacman::p_load(sperrorest, rpart, testthat, MASS)
 
 test_that("sperrorest() produces correct output for binary response", {
 
-  #skip_on_os("mac") # don't know why summary tests failing on mac atm
-
   data(ecuador) # Muenchow et al. (2012), see ?ecuador
   fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
 
@@ -36,8 +34,6 @@ test_that("sperrorest() produces correct output for binary response", {
 # sperorrest() continuous response Wed Feb  8 22:19:57 2017 --------------------
 
 test_that("sperrorest() produces correct output for binary response", {
-
-  #skip_on_os("mac") # don't know why summary tests failing on mac atm
 
   data(ecuador) # Muenchow et al. (2012), see ?ecuador
   fo <- slope ~ hcurv + vcurv + log.carea + cslope
@@ -70,8 +66,6 @@ test_that("sperrorest() produces correct output for binary response", {
 
 test_that("sperrorest() produces correct output for binary response", {
 
-  #skip_on_os("mac") # don't know why summary tests failing on mac atm
-
   data(ecuador) # Muenchow et al. (2012), see ?ecuador
   fo <- slope ~ hcurv + vcurv + log.carea + cslope
 
@@ -90,8 +84,6 @@ test_that("sperrorest() produces correct output for binary response", {
 
 test_that("summary.sperroresterror() produces correct output for binary
           response", {
-
-            #skip_on_os("mac") # don't know why summary tests failing on mac atm
 
             data(ecuador) # Muenchow et al. (2012), see ?ecuador
             fo <- slope ~ hcurv + vcurv + log.carea + cslope
@@ -118,8 +110,6 @@ test_that("summary.sperroresterror() produces correct output for binary
 test_that("summary.sperroresterror() with pooled = FALSE produces correct
           output for binary response", {
 
-            #skip_on_os("mac") # don't know why summary tests failing on mac atm
-
             data(ecuador) # Muenchow et al. (2012), see ?ecuador
             fo <- slope ~ hcurv + vcurv + log.carea + cslope
 
@@ -140,8 +130,6 @@ test_that("summary.sperroresterror() with pooled = FALSE produces correct
 # sperrorest depr. args Thu Feb  9 22:42:48 2017 ------------------------------
 
 test_that("deprecated args", {
-
-  #skip_on_os("mac") # don't know why summary tests failing on mac atm
 
   data(ecuador) # Muenchow et al. (2012), see ?ecuador
   fo <- slope ~ hcurv + vcurv + log.carea + cslope
@@ -181,8 +169,6 @@ test_that("deprecated args", {
 test_that("sperrorest() produces correct output for binary response for
           non-default arguments", {
 
-            #skip_on_os("mac") # don't know why summary tests failing on mac atm
-
             data(ecuador) # Muenchow et al. (2012), see ?ecuador
             fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
 
@@ -209,8 +195,6 @@ test_that("sperrorest() produces correct output for binary response for
 
 test_that("summary.sperrorest() works correctly", {
 
-  #skip_on_os("mac") # don't know why summary tests failing on mac atm
-
   data(ecuador) # Muenchow et al. (2012), see ?ecuador
   fo <- slope ~ hcurv + vcurv + log.carea + cslope
 
@@ -230,9 +214,7 @@ test_that("summary.sperrorest() works correctly", {
 
 test_that("is_factor_prediction object for classification models", {
 
-  #skip_on_os("mac") # don't know why summary tests failing on mac atm
-
-  testthat::skip_on_cran()
+  skip_on_cran()
 
   lda_predfun <- function(object, newdata, fac = NULL) {
     library(nnet)
