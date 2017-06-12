@@ -1228,7 +1228,7 @@ represampling_disc_bootstrap <- function(data, coords = c("x", "y"), nboot,
 #' coordinates of samples as specified by `coords`.
 #' @param coords vector of length 2 defining the variables in `data` that
 #' contain the x and y coordinates of sample locations.
-#' @param pch point symbold (to be passed to [points]).
+#' @param pch point symbol (to be passed to [points]).
 #' @param wiggle_sd 'wiggle' the point locations in x and y direction to avoid
 #' overplotting of samples drawn multiple times by bootstrap methods;
 #' this is a standard deviation (in the units of the x/y coordinates) of a

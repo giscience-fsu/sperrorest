@@ -52,7 +52,7 @@ i.e. contain \code{k} lists. Each of these \code{k} lists defines a training
 set of size \code{n(k-1)/k} (where \code{n} is the overall sample size), and
 a test set of size \code{n/k}.
 The \code{resampling} object does, however, not contain the data itself, but
-only indices between \code{1} and \code{n} identifying the seleciton
+only indices between \code{1} and \code{n} identifying the selection
 (see Examples).
 
 Another example is bootstrap resampling. \link{represampling_bootstrap}

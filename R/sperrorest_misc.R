@@ -289,7 +289,7 @@ get_small_tiles <- function(tile, min_n = NULL, min_frac = 0, ignore = c()) {
 #' @param tileset Admissible tile names; if missing and `nm` is a factor
 #' variable, then `levels(nm)` is used as a default for `tileset`.
 #' @param iterate internal - do not change default: to control behaviour in an
-#' interative call to this function.
+#' interactive call to this function.
 #' @param diagonal if `TRUE`, diagonal neighbours are also considered
 #' neighbours.
 #'
@@ -378,7 +378,7 @@ tile_neighbors <- function(nm, tileset, iterate = 0, diagonal = FALSE) { # nocov
 #' set of size `n(k-1)/k` (where `n` is the overall sample size), and
 #' a test set of size `n/k`.
 #' The `resampling` object does, however, not contain the data itself, but
-#' only indices between `1` and `n` identifying the seleciton
+#' only indices between `1` and `n` identifying the selection
 #' (see Examples).
 #'
 #' Another example is bootstrap resampling. [represampling_bootstrap]

@@ -13,7 +13,7 @@ tile_neighbors(nm, tileset, iterate = 0, diagonal = FALSE)
 variable, then \code{levels(nm)} is used as a default for \code{tileset}.}
 
 \item{iterate}{internal - do not change default: to control behaviour in an
-interative call to this function.}
+interactive call to this function.}
 
 \item{diagonal}{if \code{TRUE}, diagonal neighbours are also considered
 neighbours.}
