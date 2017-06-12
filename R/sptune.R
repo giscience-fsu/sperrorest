@@ -7,7 +7,6 @@
 #' @import doFuture
 #' @import parallel
 #' @import foreach
-#' @importFrom plyr mutate
 #' @importFrom purrr map2 map
 #'
 #' @param formula formula.
@@ -178,9 +177,9 @@ sptune_svm <- function(formula = NULL, data = NULL, cost = NULL, gamma = NULL,
   # append 'mtrys' and 'ntrees' vectors to respective lists
   perf_measures %>%
     map2(.y = costs_all,
-         .f = ~ mutate(.x, cost = .y)) %>%
+         .f = ~ plyr::mutate(.x, cost = .y)) %>%
     map2(.y = gammas_all,
-         .f = ~ mutate(.x, gamma = .y)) -> perf_measures
+         .f = ~ plyr::mutate(.x, gamma = .y)) -> perf_measures
 
   tmp1 <- check_response_type(train[[response]], error_measure,
                               perf_measures, option = TRUE)
@@ -249,7 +248,6 @@ sptune_svm <- function(formula = NULL, data = NULL, cost = NULL, gamma = NULL,
 #' @import doFuture
 #' @import parallel
 #' @import foreach
-#' @importFrom plyr mutate
 #' @importFrom purrr map2 map
 #'
 #' @param formula formula.
