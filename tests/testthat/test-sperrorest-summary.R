@@ -30,7 +30,7 @@ test_that("sperrorest() produces correct output for binary response", {
   expect_equal(length(summary_fold), 4) # binary response
   expect_equal(length(summary_resampling), 2) # resampling summary
   # check for auroc existence
-  expect_equal(names(nspres$error_rep)[[1]], "train.auroc")
+  expect_equal(names(nspres$error_rep)[[1]], "train_auroc")
 })
 
 # sperorrest() continuous response Wed Feb  8 22:19:57 2017 --------------------
@@ -63,7 +63,7 @@ test_that("sperrorest() produces correct output for binary response", {
   expect_equal(length(nspres$importance[[1]]), 2) # import folds
   expect_equal(length(nspres$importance), 2) # import reps
   # check for bias existence
-  expect_equal(names(nspres$error_rep)[[1]], "train.bias")
+  expect_equal(names(nspres$error_rep)[[1]], "train_bias")
 })
 
 # pred_fun = NULL response Wed Feb  8 22:19:57 2017 ----------------------------
