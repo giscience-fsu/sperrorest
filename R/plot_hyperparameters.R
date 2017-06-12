@@ -67,7 +67,8 @@ plot_hyper_svm <- function(object = NULL, error_measure = NULL, mtry = NULL,
     geom_point() +
     geom_line() +
     scale_color_viridis(discrete = TRUE, option = color_palette) +
-    labs(x = "cost", y = error_measure,
+    scale_x_continuous(trans = 'log10') +
+    labs(x = "log10(cost)", y = error_measure,
          title = "Support Vector Machine hyperparameter tuning results",
          subtitle = sprintf(paste0("Total combinations: %s.",
                                    " Package: '%s'.",
