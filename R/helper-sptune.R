@@ -280,12 +280,13 @@ check_response_type <- function(object = NULL, error_measure = NULL,
 
   # binary classification
   if (is.factor(object) &&
-      length(levels(object)) == 2) {
+      length(levels(object)) == 2 |
+      class(object) == "matrix") {
     if (is.null(error_measure)) {
       error_measure <- "auroc"
     }
     if (option == TRUE) {
-      # get list index with lowest rmse
+      # get list index with highest auroc
       perf_measures %>%
         map(error_measure) %>%
         which.max() -> list_index
