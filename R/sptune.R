@@ -113,7 +113,7 @@ sptune_svm <- function(formula = NULL, data = NULL, cost = NULL, gamma = NULL,
   response <- as.character(formula)[2]
 
   # partition the data
-  partition_args <- list(data = data, nfold = nfold, order.cluster = FALSE,
+  partition_args <- list(data = data, nfold = nfold,
                          ...)
   parti <- do.call(partition_fun, args = partition_args)
   train <- data[parti[[1]][[1]]$train, ]
@@ -349,7 +349,7 @@ sptune_rf <- function(formula = NULL, data = NULL, step_factor = 2,
   response <- as.character(formula)[2]
 
   # partition the data
-  partition_args <- list(data = data, nfold = nfold, order.cluster = FALSE,
+  partition_args <- list(data = data, nfold = nfold,
                          ...)
   parti <- do.call(partition_fun, args = partition_args)
   train <- data[parti[[1]][[1]]$train, ]
