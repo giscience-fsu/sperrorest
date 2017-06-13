@@ -23,7 +23,6 @@
 <link href="../pkgdown.css" rel="stylesheet">
 <script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
-
 <!-- mathjax -->
 <script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
@@ -79,20 +78,65 @@
     </div>
 
     <div class="contents">
+    <div id="sperrorest-2-0-0-12-jun-2017" class="section level1">
+<h1 class="hasAnchor">
+<a href="#sperrorest-2-0-0-12-jun-2017" class="anchor"> </a>sperrorest 2.0.0 (12-Jun-2017)</h1>
+<p>Major:</p>
+<ul>
+<li>integration of <code>parsperrorest()</code> into <code><a href="../reference/sperrorest.html">sperrorest()</a></code>.</li>
+<li>by default, <code><a href="../reference/sperrorest.html">sperrorest()</a></code> now runs in parallel using all available cores.</li>
+<li>
+<code><a href="../reference/runfolds.html">runfolds()</a></code> and <code><a href="../reference/runreps.html">runreps()</a></code> are now doing the heavy lifting in the background. All modes are now running on the same code base. Before, all parallel modes were running on different code implementations.</li>
+<li>function and argument name changes to ‘snake_case’</li>
+</ul>
+<p>Features:</p>
+<ul>
+<li>new (parallel) modes:
+<ul>
+<li>
+<code>apply</code>: calls <code>pbmclapply()</code> on Unix and <code>pbapply()</code> on Windows.</li>
+<li>
+<code>future</code>: calls <code>future_lapply()</code> with various <code>future</code> options (<code>multiprocess</code>, <code>multicore</code>, etc.).</li>
+<li>
+<code>foreach</code>: <code>foreach()</code> with various <code>future</code> options (<code>multiprocess</code>, <code>multicore</code>, etc.). Default option to <code>cluster</code>. This is also the overall default mode for <code><a href="../reference/sperrorest.html">sperrorest()</a></code>.</li>
+<li>
+<code>sequential</code>: sequential execution using <code>future</code> backend.</li>
+</ul>
+</li>
+<li>RMSE instead of MSE as error measure</li>
+<li>You can now pass also single values to <code>repetition</code> argument of <code><a href="../reference/sperrorest.html">sperrorest()</a></code>. Specifying a range like <code>repetition = 1:10</code> will also stay valid.</li>
+<li>New vignette <code>sperrorest::parallel-modes</code> comparing the various parallel modes.</li>
+<li>New vignette <code>sperrorest::custom-pred-and-model-functions</code> explaining why and how custom defined model and predict functions are needed for some model setups.</li>
+</ul>
+<p>Misc:</p>
+<ul>
+<li>Limit workers to number of repetitions if number of cores &gt; number of repetitions. This ensures that no unnecessary workers are started and increases robustness of parallel execuction.</li>
+<li>documentation improvements.</li>
+<li>
+<code>do_try</code> argument has been removed.</li>
+<li>
+<code>error.fold</code>, <code>error.rep</code> and <code>err.train</code> arguments have been removed because they are all calculated by default now.</li>
+</ul>
+<p>Bugfixes:</p>
+<ul>
+<li>partial matching of arguments</li>
+<li>account for factor levels only present in test data but missing in training data. Previously, <code>sperrorest</code> errored during the predict step when this case occured. Now, this is accounted for and an informative message is given.</li>
+</ul>
+</div>
     <div id="sperrorest-1-0-0-08-mar-2017" class="section level1">
 <h1 class="hasAnchor">
-<a href="#sperrorest-1-0-0-08-mar-2017" class="anchor"></a>sperrorest 1.0.0 (08-Mar-2017)</h1>
+<a href="#sperrorest-1-0-0-08-mar-2017" class="anchor"> </a>sperrorest 1.0.0 (08-Mar-2017)</h1>
 <p>New features:</p>
 <ul>
-<li><p>add <code><a href="../reference/parsperrorest.html">parsperrorest()</a></code>: This function lets you exexute <code><a href="../reference/sperrorest.html">sperrorest()</a></code> in parallel. It includes two modes (<code>par.mode = 1</code> and <code>par.mode = 2</code>) which use different parallelization approaches in the background. See <code><a href="../reference/parsperrorest.html">?parsperrorest()</a></code> for more details.</p></li>
-<li><p>add <code><a href="../reference/partition.factor.cv.html">partition.factor.cv()</a></code>: This resampling method enables partitioning based on a given factor variable. This can be used, for example, to resample agricultural data, that is grouped by fields, at the agricultural field level in order to preserve spatial autocorrelation within fields.</p></li>
-<li><p><code><a href="../reference/sperrorest.html">sperrorest()</a></code> and <code><a href="../reference/parsperrorest.html">parsperrorest()</a></code>: Add <code>benchmark</code> item to returned object giving information about execution time, used cores and other system details.</p></li>
+<li><p>add <code>parsperrorest()</code>: This function lets you exexute <code><a href="../reference/sperrorest.html">sperrorest()</a></code> in parallel. It includes two modes (<code>par.mode = 1</code> and <code>par.mode = 2</code>) which use different parallelization approaches in the background. See <code>?parsperrorest()</code> for more details.</p></li>
+<li><p>add <code>partition.factor.cv()</code>: This resampling method enables partitioning based on a given factor variable. This can be used, for example, to resample agricultural data, that is grouped by fields, at the agricultural field level in order to preserve spatial autocorrelation within fields.</p></li>
+<li><p><code><a href="../reference/sperrorest.html">sperrorest()</a></code> and <code>parsperrorest()</code>: Add <code>benchmark</code> item to returned object giving information about execution time, used cores and other system details.</p></li>
 </ul>
 <p>Changes to functions:</p>
 <ul>
 <li><p><code>sperrorest</code>(): Change argument naming. <code>err.unpooled</code> is now <code>error.fold</code> and <code>err.pooled</code> is now <code>error.rep</code></p></li>
 <li>
-<code><a href="../reference/sperrorest.html">sperrorest()</a></code> and <code><a href="../reference/parsperrorest.html">parsperrorest()</a></code>: Change order and naming of returned object
+<code><a href="../reference/sperrorest.html">sperrorest()</a></code> and <code>parsperrorest()</code>: Change order and naming of returned object
 <ul>
 <li>class <code>sperrorestpoolederror</code> is now <code>sperrorestreperror</code>
 </li>
@@ -111,21 +155,21 @@
 <p>Package related:</p>
 <ul>
 <li><p>add package NEWS</p></li>
-<li><p>add package vignette -&gt; <code>vignette("sperrorest-vignette", package = "sperrorest")</code></p></li>
+<li><p>add package vignette -&gt; <code><a href="../articles/sperrorest-vignette.html">vignette("sperrorest-vignette", package = "sperrorest")</a></code></p></li>
 <li><p>package is now ByteCompiled</p></li>
 <li><p>Github repo of <code>sperrorest</code> now at <a href="https://github.com/pat-s/sperrorest/" class="uri">https://github.com/pat-s/sperrorest/</a></p></li>
 </ul>
 </div>
     <div id="sperrorest-0-2-1-19-june-2012" class="section level1">
 <h1 class="hasAnchor">
-<a href="#sperrorest-0-2-1-19-june-2012" class="anchor"></a>sperrorest 0.2-1 (19 June 2012)</h1>
+<a href="#sperrorest-0-2-1-19-june-2012" class="anchor"> </a>sperrorest 0.2-1 (19 June 2012)</h1>
 <ul>
 <li>First release on CRAN</li>
 </ul>
 </div>
     <div id="sperrorest-0-2-0-19-june-2012" class="section level1">
 <h1 class="hasAnchor">
-<a href="#sperrorest-0-2-0-19-june-2012" class="anchor"></a>sperrorest 0.2-0 (19 June 2012)</h1>
+<a href="#sperrorest-0-2-0-19-june-2012" class="anchor"> </a>sperrorest 0.2-0 (19 June 2012)</h1>
 <ul>
 <li>last pre-release version</li>
 <li>replaced Stoyan’s data set with Jannes Muenchow’s data, adapted examples</li>
@@ -133,7 +177,7 @@
 </div>
     <div id="sperrorest-0-1-5-1-mar-2012" class="section level1">
 <h1 class="hasAnchor">
-<a href="#sperrorest-0-1-5-1-mar-2012" class="anchor"></a>sperrorest 0.1-5 (1 Mar 2012)</h1>
+<a href="#sperrorest-0-1-5-1-mar-2012" class="anchor"> </a>sperrorest 0.1-5 (1 Mar 2012)</h1>
 <ul>
 <li>made training set estimation optional</li>
 <li>robustified code using try()</li>
@@ -141,7 +185,7 @@
 </div>
     <div id="sperrorest-0-1-2-29-jan-2012" class="section level1">
 <h1 class="hasAnchor">
-<a href="#sperrorest-0-1-2-29-jan-2012" class="anchor"></a>sperrorest 0.1-2 (29 Jan 2012)</h1>
+<a href="#sperrorest-0-1-2-29-jan-2012" class="anchor"> </a>sperrorest 0.1-2 (29 Jan 2012)</h1>
 <ul>
 <li>internal release 0.1-2</li>
 <li>some bug fixes, e.g. in err.* functions</li>
@@ -152,14 +196,14 @@
 </div>
     <div id="sperrorest-0-1-1-29-dec-2011" class="section level1">
 <h1 class="hasAnchor">
-<a href="#sperrorest-0-1-1-29-dec-2011" class="anchor"></a>sperrorest 0.1-1 (29 Dec 2011)</h1>
+<a href="#sperrorest-0-1-1-29-dec-2011" class="anchor"> </a>sperrorest 0.1-1 (29 Dec 2011)</h1>
 <ul>
 <li>built internal release 0.1-1</li>
 </ul>
 </div>
     <div id="sperrorest-0-1" class="section level1">
 <h1 class="hasAnchor">
-<a href="#sperrorest-0-1" class="anchor"></a>sperrorest 0.1</h1>
+<a href="#sperrorest-0-1" class="anchor"> </a>sperrorest 0.1</h1>
 <ul>
 <li>general code development (2009 - 2011)</li>
 <li>package project and documentation created (Oct-Dec 2011)</li>
@@ -172,6 +216,7 @@
     <div id="tocnav">
       <h2>Contents</h2>
       <ul class="nav nav-pills nav-stacked">
+        <li><a href="#sperrorest-2-0-0-12-jun-2017">2.0.0</a></li>
         <li><a href="#sperrorest-1-0-0-08-mar-2017">1.0.0</a></li>
         <li><a href="#sperrorest-0-2-1-19-june-2012">0.2-1</a></li>
         <li><a href="#sperrorest-0-2-0-19-june-2012">0.2-0</a></li>

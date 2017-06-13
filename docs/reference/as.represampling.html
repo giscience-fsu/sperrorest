@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Resampling objects with repetition, i.e. sets of partitionings or boostrap
-samples — as.represampling • sperrorest</title>
+ — as.represampling • sperrorest</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -24,7 +24,6 @@ samples — as.represampling • sperrorest</title>
 <link href="../pkgdown.css" rel="stylesheet">
 <script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
-
 <!-- mathjax -->
 <script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
@@ -76,12 +75,12 @@ samples — as.represampling • sperrorest</title>
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Resampling objects with repetition, i.e. sets of partitionings or boostrap
-samples</h1>
+</h1>
     </div>
 
     
-    <p>Functions for handling <code>represampling</code> objects, i.e. <code>list</code>s of
-<code><a href='as.resampling.html'>resampling()</a></code> objects.</p>
+    Functions for handling <code>represampling</code> objects, i.e. <code>list</code>s of
+<a href='as.resampling.html'>resampling</a> objects.
     
 
     <pre class="usage"><span class='fu'>as.represampling</span>(<span class='no'>object</span>, <span class='no'>...</span>)
@@ -92,49 +91,49 @@ samples</h1>
 <span class='co'># S3 method for represampling</span>
 <span class='fu'>print</span>(<span class='no'>x</span>, <span class='no'>...</span>)
 
-<span class='fu'>is.represampling</span>(<span class='no'>object</span>)</pre>
+<span class='fu'>is_represampling</span>(<span class='no'>object</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>object</th>
-      <td><p>object of class <code>represampling</code>, or a list to be coerced
-to this class.</p></td>
+      <td>object of class <code>represampling</code>, or a list to be coerced
+to this class.</td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>currently not used.</p></td>
+      <td>currently not used.</td>
     </tr>
     <tr>
       <th>x</th>
-      <td><p>object of class <code>represampling</code>.</p></td>
+      <td>object of class <code>represampling</code>.</td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p><code>as.represampling</code> methods return an object of class
-<code>represampling</code> with the contents of <code>object</code>.</p>
+    <code>as.represampling</code> methods return an object of class
+<code>represampling</code> with the contents of <code>object</code>.
     
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p><code>represampling</code> objects are (names) lists of
-<code><a href='as.resampling.html'>resampling()</a></code> objects. Such objects are typically created by
-<code><a href='partition.cv.html'>partition.cv()</a></code>, <code><a href='partition.kmeans.html'>partition.kmeans()</a></code>,
-<code><a href='represampling.disc.bootstrap.html'>represampling.disc.bootstrap()</a></code> and related functions.</p>
-<p>In <code>r</code>-repeated <code>k</code>-fold cross-validation, for example, the
+    <code>represampling</code> objects are (names) lists of
+<a href='as.resampling.html'>resampling</a> objects. Such objects are typically created by
+<a href='partition_cv.html'>partition_cv</a>, <a href='partition_kmeans.html'>partition_kmeans</a>,
+<a href='represampling_disc_bootstrap.html'>represampling_disc_bootstrap</a> and related functions.
+    In <code>r</code>-repeated <code>k</code>-fold cross-validation, for example, the
 corresponding <code>represampling</code> object has length <code>r</code>, and each of
-its <code>r</code> <code><a href='as.resampling.html'>resampling()</a></code> objects has length <code>k</code>.
-    <code>as.resampling.list</code> coerces <code>object</code> to class <code>represampling</code>
-while coercing its elements to <code><a href='as.resampling.html'>resampling()</a></code> objects.
-Some validity checks are performed.</p>
+its <code>r</code> <a href='as.resampling.html'>resampling</a> objects has length <code>k</code>.
+    <code>as.resampling_list</code> coerces <code>object</code> to class <code>represampling</code>
+while coercing its elements to <a href='as.resampling.html'>resampling</a> objects.
+Some validity checks are performed.
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <p><code><a href='as.resampling.html'>resampling()</a></code>, <code><a href='partition.cv.html'>partition.cv()</a></code>,
-<code><a href='partition.kmeans.html'>partition.kmeans()</a></code>,
-<code><a href='represampling.disc.bootstrap.html'>represampling.disc.bootstrap()</a></code>, etc.</p>
+    <a href='as.resampling.html'>resampling</a>, <a href='partition_cv.html'>partition_cv</a>,
+<a href='partition_kmeans.html'>partition_kmeans</a>,
+<a href='represampling_disc_bootstrap.html'>represampling_disc_bootstrap</a>, etc.
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
@@ -164,7 +163,7 @@ Some validity checks are performed.</p>
 #&gt;  $ 9 :List of 2
 #&gt;   ..$ train: int [1:1845] 1 2 3 4 5 6 8 9 10 11 ...
 #&gt;   ..$ test : int [1:155] 7 13 17 35 44 75 78 79 88 97 ...
-#&gt;  - attr(*, "class")= chr "resampling"</div><div class='input'><span class='fu'>summary</span>(<span class='no'>parti</span>)</div><div class='output co'>#&gt;    n.train n.test
+#&gt;  - attr(*, &quot;class&quot;)= chr &quot;resampling&quot;</div><div class='input'><span class='fu'>summary</span>(<span class='no'>parti</span>)</div><div class='output co'>#&gt;    n.train n.test
 #&gt; 10    1985     15
 #&gt; 5     1885    115
 #&gt; 6     1296    704

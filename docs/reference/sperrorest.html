@@ -6,7 +6,8 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Perform spatial error estimation and variable importance assessment — sperrorest • sperrorest</title>
+<title>Perform spatial error estimation and variable importance assessment
+ — sperrorest • sperrorest</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -23,7 +24,6 @@
 <link href="../pkgdown.css" rel="stylesheet">
 <script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
-
 <!-- mathjax -->
 <script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
@@ -74,275 +74,305 @@
       <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Perform spatial error estimation and variable importance assessment</h1>
+    <h1>Perform spatial error estimation and variable importance assessment
+</h1>
     </div>
 
     
-    <p><code>sperrorest</code> is a flexible interface for multiple types of spatial and
-non-spatial cross-validation and bootstrap error estimation and
-permutation-based assessment of spatial variable importance.</p>
+    <code>sperrorest</code> is a flexible interface for multiple types of
+parallelized spatial and non-spatial cross-validation
+and bootstrap error estimation and parallelized permutation-based
+assessment of spatial variable importance.
     
 
-    <pre class="usage"><span class='fu'>sperrorest</span>(<span class='no'>formula</span>, <span class='no'>data</span>, <span class='kw'>coords</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"x"</span>, <span class='st'>"y"</span>), <span class='no'>model.fun</span>,
-  <span class='kw'>model.args</span> <span class='kw'>=</span> <span class='fu'>list</span>(), <span class='kw'>pred.fun</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>pred.args</span> <span class='kw'>=</span> <span class='fu'>list</span>(),
-  <span class='kw'>smp.fun</span> <span class='kw'>=</span> <span class='no'>partition.loo</span>, <span class='kw'>smp.args</span> <span class='kw'>=</span> <span class='fu'>list</span>(), <span class='kw'>train.fun</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>train.param</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>test.fun</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>test.param</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>err.fun</span> <span class='kw'>=</span> <span class='no'>err.default</span>, <span class='kw'>error.fold</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>error.rep</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>err.train</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>imp.variables</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>imp.permutations</span> <span class='kw'>=</span> <span class='fl'>1000</span>,
-  <span class='kw'>importance</span> <span class='kw'>=</span> !<span class='fu'>is.null</span>(<span class='no'>imp.variables</span>), <span class='kw'>distance</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>do.gc</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>do.try</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>benchmark</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>sperrorest</span>(<span class='no'>formula</span>, <span class='no'>data</span>, <span class='kw'>coords</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"x"</span>, <span class='st'>"y"</span>), <span class='no'>model_fun</span>,
+  <span class='kw'>model_args</span> <span class='kw'>=</span> <span class='fu'>list</span>(), <span class='kw'>pred_fun</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>pred_args</span> <span class='kw'>=</span> <span class='fu'>list</span>(),
+  <span class='kw'>smp_fun</span> <span class='kw'>=</span> <span class='no'>partition_cv</span>, <span class='kw'>smp_args</span> <span class='kw'>=</span> <span class='fu'>list</span>(), <span class='kw'>train_fun</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>train_param</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>test_fun</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>test_param</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>err_fun</span> <span class='kw'>=</span> <span class='no'>err_default</span>, <span class='kw'>imp_variables</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>imp_permutations</span> <span class='kw'>=</span> <span class='fl'>1000</span>,
+  <span class='kw'>importance</span> <span class='kw'>=</span> !<span class='fu'>is.null</span>(<span class='no'>imp_variables</span>), <span class='kw'>distance</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>par_args</span> <span class='kw'>=</span> <span class='fu'>list</span>(<span class='kw'>par_mode</span> <span class='kw'>=</span> <span class='st'>"foreach"</span>, <span class='kw'>par_units</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>par_option</span> <span class='kw'>=</span> <span class='kw'>NULL</span>),
+  <span class='kw'>do_gc</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>progress</span> <span class='kw'>=</span> <span class='st'>"all"</span>, <span class='kw'>out_progress</span> <span class='kw'>=</span> <span class='st'>""</span>, <span class='kw'>benchmark</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>formula</th>
-      <td><p>A formula specifying the variables used by the <code>model</code>.
+      <td>A formula specifying the variables used by the <code>model</code>.
 Only simple formulas without interactions or nonlinear terms should
 be used, e.g. <code>y~x1+x2+x3</code> but not <code>y~x1*x2+log(x3)</code>.
 Formulas involving interaction and nonlinear terms may possibly work
 for error estimation but not for variable importance assessment,
-but should be used with caution.</p></td>
+but should be used with caution.</td>
     </tr>
     <tr>
       <th>data</th>
-      <td><p>a <code>data.frame</code> with predictor and response variables.
-Training and test samples will be drawn from this data set by <code>train.fun</code>
-and <code>test.fun</code>, respectively.</p></td>
+      <td>a <code>data.frame</code> with predictor and response variables.
+Training and test samples will be drawn from this data set by <code>train_fun</code>
+and <code>test_fun</code>, respectively.</td>
     </tr>
     <tr>
       <th>coords</th>
-      <td><p>vector of length 2 defining the variables in <code>data</code> that
-contain the x and y coordinates of sample locations.</p></td>
+      <td>vector of length 2 defining the variables in <code>data</code> that
+contain the x and y coordinates of sample locations.</td>
     </tr>
     <tr>
-      <th>model.fun</th>
-      <td><p>Function that fits a predictive model, such as <code>glm</code>
+      <th>model_fun</th>
+      <td>Function that fits a predictive model, such as <code>glm</code>
 or <code>rpart</code>. The function must accept at least two arguments, the first
-one being a formula and the second a data.frame with the learning sample.</p></td>
+one being a formula and the second a data.frame with the learning sample.</td>
     </tr>
     <tr>
-      <th>model.args</th>
-      <td><p>Arguments to be passed to <code>model.fun</code>
+      <th>model_args</th>
+      <td>Arguments to be passed to <code>model_fun</code>
 (in addition to the <code>formula</code> and <code>data</code> argument,
-which are provided by <code>sperrorest</code>)</p></td>
+which are provided by <code>sperrorest</code>)</td>
     </tr>
     <tr>
-      <th>pred.fun</th>
-      <td><p>Prediction function for a fitted model object created
+      <th>pred_fun</th>
+      <td>Prediction function for a fitted model object created
 by <code>model</code>. Must accept at least two arguments: the fitted
 <code>object</code> and a <code>data.frame</code> <code>newdata</code> with data
-on which to predict the outcome.</p></td>
+on which to predict the outcome.</td>
     </tr>
     <tr>
-      <th>pred.args</th>
-      <td><p>(optional) Arguments to <code>pred.fun</code> (in addition to the
+      <th>pred_args</th>
+      <td>(optional) Arguments to <code>pred_fun</code> (in addition to the
 fitted model object and the <code>newdata</code> argument,
-which are provided by <code>sperrorest</code>)</p></td>
+which are provided by <code>sperrorest</code>).</td>
     </tr>
     <tr>
-      <th>smp.fun</th>
-      <td><p>A function for sampling training and test sets from
-<code>data</code>. E.g., <code><a href='partition.kmeans.html'>partition.kmeans()</a></code> for
-spatial cross-validation using spatial <em>k</em>-means clustering.</p></td>
+      <th>smp_fun</th>
+      <td>A function for sampling training and test sets from
+<code>data</code>. E.g. <a href='partition_kmeans.html'>partition_kmeans</a> for
+spatial cross-validation using spatial <em>k</em>-means clustering.</td>
     </tr>
     <tr>
-      <th>smp.args</th>
-      <td><p>(optional) Arguments to be passed to <code>est.fun</code></p></td>
+      <th>smp_args</th>
+      <td>(optional) Arguments to be passed to <code>smp_fun</code>.</td>
     </tr>
     <tr>
-      <th>train.fun</th>
-      <td><p>(optional) A function for resampling or subsampling the
+      <th>train_fun</th>
+      <td>(optional) A function for resampling or subsampling the
 training sample in order to achieve, e.g., uniform sample sizes on all
 training sets, or maintaining a certain ratio of positives and negatives
 in training sets.
-E.g., <code><a href='resample.uniform.html'>resample.uniform()</a></code> or <code><a href='resample.strat.uniform.html'>resample.strat.uniform()</a></code></p></td>
+E.g. <a href='resample_uniform.html'>resample_uniform</a> or <a href='resample_strat_uniform.html'>resample_strat_uniform</a>.</td>
     </tr>
     <tr>
-      <th>train.param</th>
-      <td><p>(optional) Arguments to be passed to <code>resample.fun</code></p></td>
+      <th>train_param</th>
+      <td>(optional) Arguments to be passed to <code>resample_fun</code>.</td>
     </tr>
     <tr>
-      <th>test.fun</th>
-      <td><p>(optional) Like <code>train.fun</code> but for the test set.</p></td>
+      <th>test_fun</th>
+      <td>(optional) Like <code>train_fun</code> but for the test set.</td>
     </tr>
     <tr>
-      <th>test.param</th>
-      <td><p>(optional) Arguments to be passed to <code>test.fun</code></p></td>
+      <th>test_param</th>
+      <td>(optional) Arguments to be passed to <code>test_fun</code>.</td>
     </tr>
     <tr>
-      <th>err.fun</th>
-      <td><p>A function that calculates selected error measures from the
+      <th>err_fun</th>
+      <td>A function that calculates selected error measures from the
 known responses in <code>data</code> and the model predictions delivered
-by <code>pred.fun</code>. E.g., <code><a href='err.default.html'>err.default()</a></code> (the default).
-See example and details below.</p></td>
+by <code>pred_fun</code>. E.g. <a href='err_default.html'>err_default</a> (the default).</td>
     </tr>
     <tr>
-      <th>error.fold</th>
-      <td><p>logical (default: <code>TRUE</code> if <code>importance</code> is
-<code>TRUE</code>, otherwise <code>FALSE</code>): calculate error measures on each fold
-within a resampling repetition.</p></td>
-    </tr>
-    <tr>
-      <th>error.rep</th>
-      <td><p>logical (default: <code>TRUE</code>): calculate error measures
-based on the pooled predictions of all folds within a resampling repetition.</p></td>
-    </tr>
-    <tr>
-      <th>err.train</th>
-      <td><p>logical (default: <code>TRUE</code>): calculate error measures on
-the training set (in addition to the test set estimation).</p></td>
-    </tr>
-    <tr>
-      <th>imp.variables</th>
-      <td><p>(optional; used if <code>importance = TRUE</code>)
+      <th>imp_variables</th>
+      <td>(optional; used if <code>importance = TRUE</code>).
 Variables for which permutation-based variable importance assessment
-is performed. If <code>importance = TRUE</code> and <code>imp.variables</code> is
-<code>NULL</code>, all variables in <code>formula</code> will be used.</p></td>
+is performed. If <code>importance = TRUE</code> and <code>imp_variables</code> ==
+<code>NULL</code>, all variables in <code>formula</code> will be used.</td>
     </tr>
     <tr>
-      <th>imp.permutations</th>
-      <td><p>(optional; used if <code>importance = TRUE</code>)
-Number of permutations used for variable importance assessment.</p></td>
+      <th>imp_permutations</th>
+      <td>(optional; used if <code>importance = TRUE</code>).
+Number of permutations used for variable importance assessment.</td>
     </tr>
     <tr>
       <th>importance</th>
-      <td><p>logical: perform permutation-based variable
-importance assessment?</p></td>
+      <td>logical (default: <code>FALSE</code>): perform permutation-based
+variable importance assessment?</td>
     </tr>
     <tr>
       <th>distance</th>
-      <td><p>logical (default: <code>FALSE</code>): if <code>TRUE</code>, calculate
+      <td>logical (default: <code>FALSE</code>): if <code>TRUE</code>, calculate
 mean nearest-neighbour distances from test samples to training samples using
-<code><a href='add.distance.html'>add.distance.represampling()</a></code></p></td>
+<a href='add.distance.html'>add.distance.represampling</a>.</td>
     </tr>
     <tr>
-      <th>do.gc</th>
-      <td><p>numeric (default: 1): defines frequency of memory garbage
-collection by calling <code>gc()</code>; if <code>&lt;1</code>, no garbage collection;
-if <code>&gt;=1</code>, run a <code>gc()</code> after each repetition;
-if <code>&gt;=2</code>, after each fold</p></td>
+      <th>par_args</th>
+      <td>list of parallelization parameters:
+<ul>
+<li><code>par_mode</code>: the parallelization mode. See details.
+</li>
+<li><code>par_units</code>: the number of parallel processing units.
+</li>
+<li><code>par_option</code>: optional future settings for <code>par_mode = &quot;future&quot;</code> or
+<code>par_mode = &quot;foreach&quot;</code>.
+</li>
+</ul>
+</td>
     </tr>
     <tr>
-      <th>do.try</th>
-      <td><p>logical (default: <code>FALSE</code>): if <code>TRUE</code> (untested!!),
-use <code>try()</code> to robustify calls to <code>model.fun</code> and
-<code>err.fun</code>; use with caution!</p></td>
+      <th>do_gc</th>
+      <td>numeric (default: 1): defines frequency of memory garbage
+collection by calling gc; if <code>&lt; 1</code>, no garbage collection;
+if <code>&gt;= 1</code>, run a gc after each repetition;
+if <code>&gt;= 2</code>, after each fold.</td>
     </tr>
     <tr>
       <th>progress</th>
-      <td><p>if <code>progress = 1</code>, repetition and fold progress is
-shown in console (in Windows Rgui, disable 'Buffered output' in 'Misc' menu).
-If <code>progress = 2</code>, only repetition information is shown.
-Set to <code>FALSE</code> for no progress information.</p></td>
+      <td>character (default: <code>all</code>): Whether to show progress
+information (if possible). Default shows repetition, fold and (if enabled)
+variable importance progress for <code>par_mode = &quot;foreach&quot;</code> or
+<code>par_mode = &quot;sequential&quot;</code>.
+Set to <code>&quot;rep&quot;</code> for repetition information only or <code>FALSE</code> for no progress
+information.</td>
+    </tr>
+    <tr>
+      <th>out_progress</th>
+      <td>only used if <code>par_mode = foreach</code>: Write progress
+output to a file instead of console output.
+The default (<code>&#39;&#39;</code>) results in console output for Unix-systems and
+file output (&#39;sperrorest.progress.txt&#39;) in the current working directory
+for Windows systems. No console output is possible on Windows systems.</td>
     </tr>
     <tr>
       <th>benchmark</th>
-      <td><p>(optional) logical (default: <code>FALSE</code>): if <code>TRUE</code>,
-perform benchmarking and return <code>sperrorestbenchmarks</code> object</p></td>
+      <td>(optional) logical (default: <code>FALSE</code>): if <code>TRUE</code>,
+perform benchmarking and return <code>sperrorestbenchmark</code> object.</td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>currently not used</p></td>
+      <td>Further options passed to makeCluster for
+<code>par_mode = &quot;foreach&quot;</code>.</td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A list (object of class <code>sperrorest</code>) with (up to) six components:</p>
-<dt>error.rep</dt><dd><p>a <code>sperrorestreperror</code> object containing
-predictive performances at the repetition level</p></dd>
-<dt>error.fold</dt><dd><p>a <code>sperroresterror</code> object containing predictive
-performances at the fold level</p></dd>
-<dt>represampling</dt><dd><p>a <code>represampling()</code> object</p></dd>
-<dt>importance</dt><dd><p>a <code>sperrorestimportance</code> object containing
-permutation-based variable importances at the fold level</p></dd>
-<dt>benchmarks</dt><dd><p>a <code>sperrorestbenchmarks</code> object containing
-information on the system the code is running on, starting and
-finishing times, number of available CPU cores, parallelization mode,
-number of parallel units, and runtime performance</p></dd>
-<dt>package.version</dt><dd><p>a <code>sperrorestpackageversion</code> object containing
-information about the <code>sperrorest</code> package version</p></dd>
+    A list (object of class <code>sperrorest</code>) with (up to) six components:
+    
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
+    By default <code>sperrorest</code> runs in parallel on all cores using
+<code>foreach</code> with the future backend. If this is not desired, specify
+<code>par_units</code> in <code>par_args</code> or set <code>par_mode = &quot;sequential&quot;</code>.
+    Available parallelization modes include <code>par_mode = &quot;apply&quot;</code>
+(calls pbmclapply on Unix, parApply on Windows) and
+<code>future</code> (future_lapply).
+For the latter and <code>par_mode = &quot;foreach&quot;</code>, <code>par_option</code>
+(default to <code>multiprocess</code> and
+<code>cluster</code>, respectively) can be specified. See plan for further details.
     
     <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
 
-    <p>(1) Optionally save fitted models, training and test samples in the
-results object; (2) Optionally save intermediate results in some file, and
-enable the function to continue an interrupted sperrorest call where it
-was interrupted. (3) Optionally have sperrorest dump the result of each
-repetition into a file, and to skip repetitions for which a file already exists.</p>
+    Custom predict functions passed to <code>pred_fun</code>, which consist of
+multiple custom defined child functions, must be defined in one function.
     
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
-    <p>Brenning, A. 2012. Spatial cross-validation and bootstrap for
-the assessment of prediction rules in remote sensing: the R package 'sperrorest'.
+    Brenning, A. 2012. Spatial cross-validation and bootstrap for
+the assessment of prediction rules in remote sensing: the R package
+&#39;sperrorest&#39;.
 2012 IEEE International Geoscience and Remote Sensing Symposium (IGARSS),
-23-27 July 2012, p. 5372-5375.</p>
-<p>Brenning, A. 2005. Spatial prediction models for landslide hazards: review,
-comparison and evaluation. Natural Hazards and Earth System Sciences, 5(6): 853-862.</p>
-<p>Brenning, A., S. Long &amp; P. Fieguth. Forthcoming. Detecting rock glacier flow
+23-27 July 2012, p. 5372-5375.
+    Brenning, A. 2005. Spatial prediction models for landslide hazards: review,
+comparison and evaluation. Natural Hazards and Earth System Sciences,
+5(6): 853-862.
+    Brenning, A., S. Long &amp; P. Fieguth. Forthcoming. Detecting rock glacier flow
 structures using Gabor filters and IKONOS imagery.
-Submitted to Remote Sensing of Environment.</p>
-<p>Russ, G. &amp; A. Brenning. 2010a. Data mining in precision agriculture:
+Submitted to Remote Sensing of Environment.
+    Russ, G. &amp; A. Brenning. 2010a. Data mining in precision agriculture:
 Management of spatial information. In 13th International Conference on
 Information Processing and Management of Uncertainty, IPMU 2010; Dortmund;
-28 June - 2 July 2010. Lecture Notes in Computer Science, 6178 LNAI: 350-359.</p>
-<p>Russ, G. &amp; A. Brenning. 2010b. Spatial variable importance assessment for
+28 June - 2 July 2010. Lecture Notes in Computer Science, 6178 LNAI: 350-359.
+    Russ, G. &amp; A. Brenning. 2010b. Spatial variable importance assessment for
 yield prediction in Precision Agriculture. In Advances in Intelligent
 Data Analysis IX, Proceedings, 9th International Symposium,
 IDA 2010, Tucson, AZ, USA, 19-21 May 2010.
-Lecture Notes in Computer Science, 6065 LNCS: 184-195.</p>
-    
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
-    <p><code><a href='parsperrorest.html'>parsperrorest()</a></code></p>
+Lecture Notes in Computer Science, 6065 LNCS: 184-195.
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>not_run</span>({
-  <span class='fu'>data</span>(<span class='no'>ecuador</span>) <span class='co'># Muenchow et al. (2012), see ?ecuador</span>
-  <span class='no'>fo</span> <span class='kw'>&lt;-</span> <span class='no'>slides</span> ~ <span class='no'>dem</span> + <span class='no'>slope</span> + <span class='no'>hcurv</span> + <span class='no'>vcurv</span> + <span class='no'>log.carea</span> + <span class='no'>cslope</span>
-
-  <span class='co'># Example of a classification tree fitted to this data:</span>
-  <span class='fu'>library</span>(<span class='no'>rpart</span>)
-  <span class='no'>ctrl</span> <span class='kw'>&lt;-</span> <span class='fu'>rpart.control</span>(<span class='kw'>cp</span> <span class='kw'>=</span> <span class='fl'>0.005</span>) <span class='co'># show the effects of overfitting</span>
-  <span class='no'>fit</span> <span class='kw'>&lt;-</span> <span class='fu'>rpart</span>(<span class='no'>fo</span>, <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>ecuador</span>, <span class='kw'>control</span> <span class='kw'>=</span> <span class='no'>ctrl</span>)
-  <span class='fu'>par</span>(<span class='kw'>xpd</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
-  <span class='fu'>plot</span>(<span class='no'>fit</span>, <span class='kw'>compress</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>main</span> <span class='kw'>=</span> <span class='st'>'Stoyans landslide data set'</span>)
-  <span class='fu'>text</span>(<span class='no'>fit</span>, <span class='kw'>use.n</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
-
-  <span class='co'># Non-spatial 5-repeated 10-fold cross-validation:</span>
-  <span class='no'>mypred.rpart</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>object</span>, <span class='no'>newdata</span>) <span class='fu'>predict</span>(<span class='no'>object</span>, <span class='no'>newdata</span>)[, <span class='fl'>2</span>]
-  <span class='no'>nspres</span> <span class='kw'>&lt;-</span> <span class='fu'>sperrorest</span>(<span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>ecuador</span>, <span class='kw'>formula</span> <span class='kw'>=</span> <span class='no'>fo</span>,
-                       <span class='kw'>model.fun</span> <span class='kw'>=</span> <span class='no'>rpart</span>, <span class='kw'>model.args</span> <span class='kw'>=</span> <span class='fu'>list</span>(<span class='kw'>control</span> <span class='kw'>=</span> <span class='no'>ctrl</span>),
-                       <span class='kw'>pred.fun</span> <span class='kw'>=</span> <span class='no'>mypred.rpart</span>,
-                       <span class='kw'>smp.fun</span> <span class='kw'>=</span> <span class='no'>partition.cv</span>,
-                       <span class='kw'>smp.args</span> <span class='kw'>=</span> <span class='fu'>list</span>(<span class='kw'>repetition</span> <span class='kw'>=</span> <span class='fl'>1</span>:<span class='fl'>5</span>, <span class='kw'>nfold</span> <span class='kw'>=</span> <span class='fl'>10</span>))
-  <span class='fu'>summary</span>(<span class='no'>nspres</span>$<span class='no'>error.rep</span>)
-  <span class='fu'>summary</span>(<span class='no'>nspres</span>$<span class='no'>error.fold</span>)
-  <span class='fu'>summary</span>(<span class='no'>nspres</span>$<span class='no'>represampling</span>)
-  <span class='co'># plot(nspres$represampling, ecuador)</span>
-
-  <span class='co'># Spatial 5-repeated 10-fold spatial cross-validation:</span>
-  <span class='no'>spres</span> <span class='kw'>&lt;-</span> <span class='fu'>sperrorest</span>(<span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>ecuador</span>, <span class='kw'>formula</span> <span class='kw'>=</span> <span class='no'>fo</span>,
-                      <span class='kw'>model.fun</span> <span class='kw'>=</span> <span class='no'>rpart</span>, <span class='kw'>model.args</span> <span class='kw'>=</span> <span class='fu'>list</span>(<span class='kw'>control</span> <span class='kw'>=</span> <span class='no'>ctrl</span>),
-                      <span class='kw'>pred.fun</span> <span class='kw'>=</span> <span class='no'>mypred.rpart</span>,
-                      <span class='kw'>smp.fun</span> <span class='kw'>=</span> <span class='no'>partition.kmeans</span>,
-                      <span class='kw'>smp.args</span> <span class='kw'>=</span> <span class='fu'>list</span>(<span class='kw'>repetition</span> <span class='kw'>=</span> <span class='fl'>1</span>:<span class='fl'>5</span>, <span class='kw'>nfold</span> <span class='kw'>=</span> <span class='fl'>10</span>))
-  <span class='fu'>summary</span>(<span class='no'>spres</span>$<span class='no'>error.rep</span>)
-  <span class='fu'>summary</span>(<span class='no'>spres</span>$<span class='no'>represampling</span>)
-  <span class='co'># plot(spres$represampling, ecuador)</span>
-
-  <span class='no'>smry</span> <span class='kw'>&lt;-</span> <span class='fu'>data.frame</span>(
-       <span class='kw'>nonspat.training</span> <span class='kw'>=</span> <span class='fu'>unlist</span>(<span class='fu'>summary</span>(<span class='no'>nspres</span>$<span class='no'>error.rep</span>, <span class='kw'>level</span> <span class='kw'>=</span> <span class='fl'>1</span>)$<span class='no'>train.auroc</span>),
-       <span class='kw'>nonspat.test</span>     <span class='kw'>=</span> <span class='fu'>unlist</span>(<span class='fu'>summary</span>(<span class='no'>nspres</span>$<span class='no'>error.rep</span>, <span class='kw'>level</span> <span class='kw'>=</span> <span class='fl'>1</span>)$<span class='no'>test.auroc</span>),
-       <span class='kw'>spatial.training</span> <span class='kw'>=</span> <span class='fu'>unlist</span>(<span class='fu'>summary</span>(<span class='no'>spres</span>$<span class='no'>error.rep</span>,  <span class='kw'>level</span> <span class='kw'>=</span> <span class='fl'>1</span>)$<span class='no'>train.auroc</span>),
-       <span class='kw'>spatial.test</span>     <span class='kw'>=</span> <span class='fu'>unlist</span>(<span class='fu'>summary</span>(<span class='no'>spres</span>$<span class='no'>error.rep</span>,  <span class='kw'>level</span> <span class='kw'>=</span> <span class='fl'>1</span>)$<span class='no'>test.auroc</span>))
-  <span class='fu'>boxplot</span>(<span class='no'>smry</span>, <span class='kw'>col</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>'red'</span>,<span class='st'>'red'</span>,<span class='st'>'red'</span>,<span class='st'>'green'</span>),
-          <span class='kw'>main</span> <span class='kw'>=</span> <span class='st'>'Training vs. test, nonspatial vs. spatial'</span>,
-          <span class='kw'>ylab</span> <span class='kw'>=</span> <span class='st'>'Area under the ROC curve'</span>)
-})</div></pre>
+    <pre class="examples"><div class='input'><span class='co'>## Not run: ------------------------------------</span>
+<span class='co'># </span>
+<span class='co'># ##------------------------------------------------------------</span>
+<span class='co'># ## Classification tree example using non-spatial partitioning</span>
+<span class='co'># ## setup and default parallel mode ("foreach")</span>
+<span class='co'># ##------------------------------------------------------------</span>
+<span class='co'># </span>
+<span class='co'># data(ecuador) # Muenchow et al. (2012), see ?ecuador</span>
+<span class='co'># fo &lt;- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope</span>
+<span class='co'># </span>
+<span class='co'># library(rpart)</span>
+<span class='co'># mypred_part &lt;- function(object, newdata) predict(object, newdata)[, 2]</span>
+<span class='co'># ctrl &lt;- rpart.control(cp = 0.005) # show the effects of overfitting</span>
+<span class='co'># fit &lt;- rpart(fo, data = ecuador, control = ctrl)</span>
+<span class='co'># </span>
+<span class='co'># ### Non-spatial 5-repeated 10-fold cross-validation:</span>
+<span class='co'># mypred_part &lt;- function(object, newdata) predict(object, newdata)[, 2]</span>
+<span class='co'># par_nsp_res &lt;- sperrorest(data = ecuador, formula = fo,</span>
+<span class='co'>#                           model_fun = rpart,</span>
+<span class='co'>#                           model_args = list(control = ctrl),</span>
+<span class='co'>#                           pred_fun = mypred_part,</span>
+<span class='co'>#                           progress = TRUE,</span>
+<span class='co'>#                           smp_fun = partition_cv,</span>
+<span class='co'>#                           smp_args = list(repetition = 1:5, nfold = 10))</span>
+<span class='co'># summary(par_nsp_res$error_rep)</span>
+<span class='co'># summary(par_nsp_res$error_fold)</span>
+<span class='co'># summary(par_nsp_res$represampling)</span>
+<span class='co'># # plot(par_nsp_res$represampling, ecuador)</span>
+<span class='co'># </span>
+<span class='co'># ### Spatial 5-repeated 10-fold spatial cross-validation:</span>
+<span class='co'># par_sp_res &lt;- sperrorest(data = ecuador, formula = fo,</span>
+<span class='co'>#                          model_fun = rpart,</span>
+<span class='co'>#                          model_args = list(control = ctrl),</span>
+<span class='co'>#                          pred_fun = mypred_part,</span>
+<span class='co'>#                          progress = TRUE,</span>
+<span class='co'>#                          smp_fun = partition_kmeans,</span>
+<span class='co'>#                          smp_args = list(repetition = 1:5, nfold = 10))</span>
+<span class='co'># summary(par_sp_res$error_rep)</span>
+<span class='co'># summary(par_sp_res$error_fold)</span>
+<span class='co'># summary(par_sp_res$represampling)</span>
+<span class='co'># # plot(par_sp_res$represampling, ecuador)</span>
+<span class='co'># </span>
+<span class='co'># smry &lt;- data.frame(</span>
+<span class='co'>#     nonspat_training = unlist(summary(par_nsp_res$error_rep,</span>
+<span class='co'>#                                       level = 1)$train_auroc),</span>
+<span class='co'>#     nonspat_test     = unlist(summary(par_nsp_res$error_rep,</span>
+<span class='co'>#                                       level = 1)$test_auroc),</span>
+<span class='co'>#     spatial_training = unlist(summary(par_sp_res$error_rep,</span>
+<span class='co'>#                                       level = 1)$train_auroc),</span>
+<span class='co'>#     spatial_test     = unlist(summary(par_sp_res$error_rep,</span>
+<span class='co'>#                                      level = 1)$test_auroc))</span>
+<span class='co'># boxplot(smry, col = c('red','red','red','green'),</span>
+<span class='co'>#     main = 'Training vs. test, nonspatial vs. spatial',</span>
+<span class='co'>#     ylab = 'Area under the ROC curve')</span>
+<span class='co'># </span>
+<span class='co'># ##------------------------------------------------------------</span>
+<span class='co'># ## Logistic regression example (glm) using partition_kmeans</span>
+<span class='co'># ## and computation of permutation based variable importance</span>
+<span class='co'># ##------------------------------------------------------------</span>
+<span class='co'># </span>
+<span class='co'># data(ecuador)</span>
+<span class='co'># fo &lt;- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope</span>
+<span class='co'># </span>
+<span class='co'># out &lt;- sperrorest(data = ecuador, formula = fo,</span>
+<span class='co'>#                   model_fun = glm,</span>
+<span class='co'>#                   model_args = list(family = "binomial"),</span>
+<span class='co'>#                   pred_fun = predict,</span>
+<span class='co'>#                   pred_args = list(type = "response"),</span>
+<span class='co'>#                   smp_fun = partition_cv,</span>
+<span class='co'>#                   smp_args = list(repetition = 1:2, nfold = 4),</span>
+<span class='co'>#                   par_args = list(par_mode = "future"),</span>
+<span class='co'>#                   importance = TRUE, imp_permutations = 10)</span>
+<span class='co'># summary(out$error_rep)</span>
+<span class='co'># summary(out$importance)</span>
+<span class='co'>## ---------------------------------------------</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -351,11 +381,11 @@ Lecture Notes in Computer Science, 6065 LNCS: 184-195.</p>
       
       <li><a href="#value">Value</a></li>
 
+      <li><a href="#details">Details</a></li>
+
       <li><a href="#note">Note</a></li>
 
       <li><a href="#references">References</a></li>
-
-      <li><a href="#see-also">See also</a></li>
       
       <li><a href="#examples">Examples</a></li>
     </ul>

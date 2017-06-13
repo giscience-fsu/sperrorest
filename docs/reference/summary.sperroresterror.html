@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Summarize error statistics obtained by <code>sperrorest</code> — summary.sperroresterror • sperrorest</title>
+<title>Summarize error statistics obtained by  — summary.sperroresterror • sperrorest</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -23,7 +23,6 @@
 <link href="../pkgdown.css" rel="stylesheet">
 <script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
-
 <!-- mathjax -->
 <script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
@@ -74,15 +73,15 @@
       <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Summarize error statistics obtained by <code>sperrorest</code></h1>
+    <h1>Summarize error statistics obtained by </h1>
     </div>
 
     
-    <p><code>summary.sperroresterror</code> calculates mean, standard deviation,
+    <code>summary.sperroresterror</code> calculates mean, standard deviation,
 median etc. of the calculated error measures at the specified level
 (overall, repetition, or fold).
 <code>summary.sperrorestreperror</code> does the same with the pooled error,
-at the overall or repetition level.</p>
+at the overall or repetition level.
     
 
     <pre class="usage"><span class='co'># S3 method for sperroresterror</span>
@@ -94,58 +93,58 @@ at the overall or repetition level.</p>
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>object</th>
-      <td><p><code>sperroresterror</code> resp. <code>sperrorestcombinederror</code>
-error object calculated by <code><a href='sperrorest.html'>sperrorest()</a></code></p></td>
+      <td><code>sperroresterror</code> resp. <code>sperrorestcombinederror</code>
+error object calculated by <a href='sperrorest.html'>sperrorest</a></td>
     </tr>
     <tr>
       <th>level</th>
-      <td><p>Level at which errors are summarized:
-0: overall; 1: repetition; 2: fold</p></td>
+      <td>Level at which errors are summarized:
+0: overall; 1: repetition; 2: fold</td>
     </tr>
     <tr>
       <th>pooled</th>
-      <td><p>If <code>TRUE</code> (default), mean and standard deviation etc are
+      <td>If <code>TRUE</code> (default), mean and standard deviation etc are
 calculated between fold-level error estimates. If <code>FALSE</code>,
-apply first a <code>weighted.mean()</code> among folds before calculating
-mean, standard deviation etc among repetitions. See also Details.</p></td>
+apply first a weighted.mean among folds before calculating
+mean, standard deviation etc among repetitions. See also Details.</td>
     </tr>
     <tr>
       <th>na.rm</th>
-      <td><p>Remove <code>NA</code> values? See <code>mean()</code> etc.</p></td>
+      <td>Remove <code>NA</code> values? See mean etc.</td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>additional arguments (currently ignored)</p></td>
+      <td>additional arguments (currently ignored)</td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>Depending on the level of aggregation, a <code>list</code> or
+    Depending on the level of aggregation, a <code>list</code> or
 <code>data.frame</code> with mean, and at level 0 also standard deviation,
-median and IQR of the error measures.</p>
+median and IQR of the error measures.
     
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>Let's use an example to explain the <code>error.rep</code> argument.
+    Let&#39;s use an example to explain the <code>error_rep</code> argument.
 E.g., assume we are using 100-repeated 10-fold cross-validation.
-If <code>error.rep = TRUE</code> (default), the mean and standard deviation calculated
+If <code>error_rep = TRUE</code> (default), the mean and standard deviation calculated
 when summarizing at <code>level = 0</code>
 are calculated across the error estimates obtained for
 each of the <code>100*10 = 1000</code> folds.
-If <code>error.rep = FALSE</code>, mean and standard deviation are calculated across
+If <code>error_rep = FALSE</code>, mean and standard deviation are calculated across
 the <code>100</code> repetitions, using the weighted average of the fold-level
 errors to calculate an error value for the entire sample.
 This will essentially not affect the mean value but of course the
-standard deviation of the error. <code>error.rep = FALSE</code> is not recommended,
+standard deviation of the error. <code>error_rep = FALSE</code> is not recommended,
 it is mainly for testing purposes; when the test sets are small
 (as in leave-one-out cross-validation, in the extreme case),
-consider running <code><a href='sperrorest.html'>sperrorest()</a></code> with <code>error.rep = TRUE</code> and
-examine only the <code>error.rep</code> component of its result.</p>
+consider running <a href='sperrorest.html'>sperrorest</a> with <code>error_rep = TRUE</code> and
+examine only the <code>error_rep</code> component of its result.
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <p><code>sperrorest::parsperrorest()</code></p>
+    <a href='sperrorest.html'>sperrorest</a>
     
 
   </div>
