@@ -6,14 +6,7 @@
 
 ## R CMD check results
 
-0 errors | 1 warnings | 0 notes
-
-* checking top-level files ... WARNING
-Conversion of 'README.md' failed:
-pandoc.exe: Could not fetch https://img.shields.io/badge/R%3E%3D-2.10-6666ff.svg
-TlsExceptionHostPort (HandshakeFailed Error_EOF) "img.shields.io" 443
-
-This can be ignored as the README builds fine even with error.
+0 errors | 0 warnings | 0 notes
 
 ## Reverse dependencies
 
