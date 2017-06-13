@@ -25,12 +25,14 @@
 <script src="../pkgdown.js"></script>
 
 <!-- mathjax -->
-<script src='https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
+<script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
 <!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
+
+
   </head>
 
   <body>
@@ -80,22 +82,38 @@
 of numerical and categorical response variables.</p>
     
 
-    <pre><span class='fu'>err.default</span>(<span class='no'>obs</span>, <span class='no'>pred</span>)</pre>
+    <pre class="usage"><span class='fu'>err.default</span>(<span class='no'>obs</span>, <span class='no'>pred</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
-    <dl class="dl-horizontal">
-      <dt>obs</dt>
-      <dd>factor, logical, or numeric vector with observations</dd>
-      <dt>pred</dt>
-      <dd>factor, logical, or numeric vector with predictions. Must be of
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>obs</th>
+      <td><p>factor, logical, or numeric vector with observations</p></td>
+    </tr>
+    <tr>
+      <th>pred</th>
+      <td><p>factor, logical, or numeric vector with predictions. Must be of
 same type as <code>obs</code> with the exception that <code>pred</code> may be numeric
-if <code>obs</code> is <code>factor</code> or <code>logical</code> (&#39;soft&#39; classification).</dd>
-    </dl>
+if <code>obs</code> is <code>factor</code> or <code>logical</code> ('soft' classification).</p></td>
+    </tr>
+    </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>A list with (currently) the following components, depending on the
 type of prediction problem:</p>
+<dt>'hard' classification</dt><dd><p>misclassification error, overall accuracy;
+if two classes, sensitivity, specificity, positive predictive value (PPV),
+negative predictive value (NPV), kappa</p></dd>
+<dt>'soft' classification</dt><dd><p>area under the ROC curve, error and accuracy
+at a obs&gt;0.5 dichotomization, false-positive rate (FPR; 1-specificity)
+at 70, 80 and 90 percent sensitivity, true-positive rate (sensitivity)
+at 80, 90 and 95 percent specificity</p></dd>
+<dt>regression</dt><dd><p>bias, standard deviation, mean squared error,
+MAD (<code>mad()</code>), median, interquartile range (<code>IQR()</code>)
+of residuals</p></dd>
+
     
     <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
 
@@ -111,7 +129,7 @@ i.e. they will result in an error.</p>
     <pre class="examples"><div class='input'><span class='no'>obs</span> <span class='kw'>&lt;-</span> <span class='fu'>rnorm</span>(<span class='fl'>1000</span>)
 <span class='co'># Two mock (soft) classification examples:</span>
 <span class='fu'>err.default</span>( <span class='no'>obs</span> <span class='kw'>&gt;</span> <span class='fl'>0</span>, <span class='fu'>rnorm</span>(<span class='fl'>1000</span>) ) <span class='co'># just noise</span></div><div class='output co'>#&gt; $auroc
-#&gt; [1] 0.494
+#&gt; [1] 0.4935626
 #&gt; 
 #&gt; $error
 #&gt; [1] 0.509
@@ -120,28 +138,28 @@ i.e. they will result in an error.</p>
 #&gt; [1] 0.491
 #&gt; 
 #&gt; $sensitivity
-#&gt; [1] 0.321
+#&gt; [1] 0.3205374
 #&gt; 
 #&gt; $specificity
-#&gt; [1] 0.676
+#&gt; [1] 0.6764092
 #&gt; 
 #&gt; $fpr70
-#&gt; [1] 0.718
+#&gt; [1] 0.7181628
 #&gt; 
 #&gt; $fpr80
-#&gt; [1] 0.843
+#&gt; [1] 0.8434238
 #&gt; 
 #&gt; $fpr90
-#&gt; [1] 0.906
+#&gt; [1] 0.9060543
 #&gt; 
 #&gt; $tpr80
-#&gt; [1] 0.221
+#&gt; [1] 0.2207294
 #&gt; 
 #&gt; $tpr90
-#&gt; [1] 0.136
+#&gt; [1] 0.1362764
 #&gt; 
 #&gt; $tpr95
-#&gt; [1] 0.0614
+#&gt; [1] 0.06142035
 #&gt; 
 #&gt; $events
 #&gt; [1] 521
@@ -149,7 +167,7 @@ i.e. they will result in an error.</p>
 #&gt; $count
 #&gt; [1] 1000
 #&gt; </div><div class='input'><span class='fu'>err.default</span>( <span class='no'>obs</span> <span class='kw'>&gt;</span> <span class='fl'>0</span>, <span class='no'>obs</span> + <span class='fu'>rnorm</span>(<span class='fl'>1000</span>) ) <span class='co'># some discrimination</span></div><div class='output co'>#&gt; $auroc
-#&gt; [1] 0.842
+#&gt; [1] 0.8417529
 #&gt; 
 #&gt; $error
 #&gt; [1] 0.277
@@ -158,28 +176,28 @@ i.e. they will result in an error.</p>
 #&gt; [1] 0.723
 #&gt; 
 #&gt; $sensitivity
-#&gt; [1] 0.574
+#&gt; [1] 0.5738964
 #&gt; 
 #&gt; $specificity
-#&gt; [1] 0.885
+#&gt; [1] 0.8851775
 #&gt; 
 #&gt; $fpr70
-#&gt; [1] 0.198
+#&gt; [1] 0.1983299
 #&gt; 
 #&gt; $fpr80
-#&gt; [1] 0.296
+#&gt; [1] 0.2964509
 #&gt; 
 #&gt; $fpr90
-#&gt; [1] 0.463
+#&gt; [1] 0.4634656
 #&gt; 
 #&gt; $tpr80
-#&gt; [1] 0.702
+#&gt; [1] 0.7024952
 #&gt; 
 #&gt; $tpr90
-#&gt; [1] 0.541
+#&gt; [1] 0.5412668
 #&gt; 
 #&gt; $tpr95
-#&gt; [1] 0.464
+#&gt; [1] 0.4644914
 #&gt; 
 #&gt; $events
 #&gt; [1] 521
@@ -188,42 +206,42 @@ i.e. they will result in an error.</p>
 #&gt; [1] 1000
 #&gt; </div><div class='input'><span class='co'># Three mock regression examples:</span>
 <span class='fu'>err.default</span>( <span class='no'>obs</span>, <span class='fu'>rnorm</span>(<span class='fl'>1000</span>) ) <span class='co'># just noise, but no bias</span></div><div class='output co'>#&gt; $bias
-#&gt; [1] 0.0167
+#&gt; [1] 0.01665322
 #&gt; 
 #&gt; $stddev
-#&gt; [1] 1.39
+#&gt; [1] 1.388829
 #&gt; 
 #&gt; $mse
-#&gt; [1] 1.93
+#&gt; [1] 1.927196
 #&gt; 
 #&gt; $mad
-#&gt; [1] 1.39
+#&gt; [1] 1.392276
 #&gt; 
 #&gt; $median
-#&gt; [1] -0.015
+#&gt; [1] -0.01502064
 #&gt; 
 #&gt; $iqr
-#&gt; [1] 1.88
+#&gt; [1] 1.879338
 #&gt; 
 #&gt; $count
 #&gt; [1] 1000
 #&gt; </div><div class='input'><span class='fu'>err.default</span>( <span class='no'>obs</span>, <span class='no'>obs</span> + <span class='fu'>rnorm</span>(<span class='fl'>1000</span>) ) <span class='co'># some association, no bias</span></div><div class='output co'>#&gt; $bias
-#&gt; [1] 0.00218
+#&gt; [1] 0.002175692
 #&gt; 
 #&gt; $stddev
-#&gt; [1] 0.989
+#&gt; [1] 0.9893763
 #&gt; 
 #&gt; $mse
-#&gt; [1] 0.978
+#&gt; [1] 0.9778914
 #&gt; 
 #&gt; $mad
-#&gt; [1] 1.07
+#&gt; [1] 1.074292
 #&gt; 
 #&gt; $median
-#&gt; [1] -0.00503
+#&gt; [1] -0.005034918
 #&gt; 
 #&gt; $iqr
-#&gt; [1] 1.44
+#&gt; [1] 1.439094
 #&gt; 
 #&gt; $count
 #&gt; [1] 1000
@@ -231,7 +249,7 @@ i.e. they will result in an error.</p>
 #&gt; [1] -1
 #&gt; 
 #&gt; $stddev
-#&gt; [1] 6.42e-17
+#&gt; [1] 6.419493e-17
 #&gt; 
 #&gt; $mse
 #&gt; [1] 1

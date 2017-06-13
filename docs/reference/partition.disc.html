@@ -25,12 +25,14 @@
 <script src="../pkgdown.js"></script>
 
 <!-- mathjax -->
-<script src='https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
+<script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
 <!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
+
+
   </head>
 
   <body>
@@ -83,49 +85,72 @@ cross-validation). <code>partition.loo</code> creates training and test sets for
 leave-one-out cross-validation with (optional) buffer.</p>
     
 
-    <pre><span class='fu'>partition.disc</span>(<span class='no'>data</span>, <span class='kw'>coords</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"x"</span>, <span class='st'>"y"</span>), <span class='no'>radius</span>, <span class='kw'>buffer</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+    <pre class="usage"><span class='fu'>partition.disc</span>(<span class='no'>data</span>, <span class='kw'>coords</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"x"</span>, <span class='st'>"y"</span>), <span class='no'>radius</span>, <span class='kw'>buffer</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>ndisc</span> <span class='kw'>=</span> <span class='fu'>nrow</span>(<span class='no'>data</span>), <span class='kw'>seed1</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>return.train</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>prob</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>replace</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>repetition</span> <span class='kw'>=</span> <span class='fl'>1</span>)
 
 <span class='fu'>partition.loo</span>(<span class='no'>data</span>, <span class='kw'>ndisc</span> <span class='kw'>=</span> <span class='fu'>nrow</span>(<span class='no'>data</span>), <span class='kw'>replace</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
-    <dl class="dl-horizontal">
-      <dt>data</dt>
-      <dd><code>data.frame</code> containing at least the columns specified
-by <code>coords</code></dd>
-      <dt>coords</dt>
-      <dd>vector of length 2 defining the variables in <code>data</code> that
-contain the x and y coordinates of sample locations.</dd>
-      <dt>radius</dt>
-      <dd>radius of test area discs; performs leave-one-out resampling
-if radius &lt;0.</dd>
-      <dt>buffer</dt>
-      <dd>radius of additional &#39;neutral area&#39; around test area discs
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>data</th>
+      <td><p><code>data.frame</code> containing at least the columns specified
+by <code>coords</code></p></td>
+    </tr>
+    <tr>
+      <th>coords</th>
+      <td><p>vector of length 2 defining the variables in <code>data</code> that
+contain the x and y coordinates of sample locations.</p></td>
+    </tr>
+    <tr>
+      <th>radius</th>
+      <td><p>radius of test area discs; performs leave-one-out resampling
+if radius &lt;0.</p></td>
+    </tr>
+    <tr>
+      <th>buffer</th>
+      <td><p>radius of additional 'neutral area' around test area discs
 that is excluded from training and test sets; defaults to 0,
-i.e. all samples are either in the test area or in the training area.</dd>
-      <dt>ndisc</dt>
-      <dd>Number of discs to be randomly selected; each disc constitutes
+i.e. all samples are either in the test area or in the training area.</p></td>
+    </tr>
+    <tr>
+      <th>ndisc</th>
+      <td><p>Number of discs to be randomly selected; each disc constitutes
 a separate test set. Defaults to <code>nrow(data)</code>, i.e. one disc around
-each sample.</dd>
-      <dt>seed1</dt>
-      <dd><code>seed1+i</code> is the random seed that will be used by
+each sample.</p></td>
+    </tr>
+    <tr>
+      <th>seed1</th>
+      <td><p><code>seed1+i</code> is the random seed that will be used by
 <code>set.seed()</code> in repetition <code>i</code> (<code>i</code> in <code>repetition</code>)
-to initialize the random number generator before sampling from the data set.</dd>
-      <dt>return.train</dt>
-      <dd>If <code>FALSE</code>, returns only test sample;
-if <code>TRUE</code>, also the training area.</dd>
-      <dt>prob</dt>
-      <dd>optional argument to <code>sample()</code>.</dd>
-      <dt>replace</dt>
-      <dd>optional argument to <code>sample()</code>: sampling with or
-without replacement?</dd>
-      <dt>repetition</dt>
-      <dd>see <code>partition.cv</code>; however,
-see Note below: <code>repetition</code> should normally be <code>= 1</code> in this function.</dd>
-      <dt>...</dt>
-      <dd>arguments to be passed to <code>partition.disc</code></dd>
-    </dl>
+to initialize the random number generator before sampling from the data set.</p></td>
+    </tr>
+    <tr>
+      <th>return.train</th>
+      <td><p>If <code>FALSE</code>, returns only test sample;
+if <code>TRUE</code>, also the training area.</p></td>
+    </tr>
+    <tr>
+      <th>prob</th>
+      <td><p>optional argument to <code>sample()</code>.</p></td>
+    </tr>
+    <tr>
+      <th>replace</th>
+      <td><p>optional argument to <code>sample()</code>: sampling with or
+without replacement?</p></td>
+    </tr>
+    <tr>
+      <th>repetition</th>
+      <td><p>see <code>partition.cv</code>; however,
+see Note below: <code>repetition</code> should normally be <code>= 1</code> in this function.</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>arguments to be passed to <code>partition.disc</code></p></td>
+    </tr>
+    </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
@@ -139,8 +164,8 @@ Each of these contains <code>ndisc</code> lists with indices of test and
     <p>Test area discs are centered at (random) samples, not at general
 random locations. Test area discs may (and likely will) overlap independently
 of the value of <code>replace</code>. <code>replace</code> only controls the replacement
-of the center point of discs when drawing center points from the samples.</p>
-    <p><code>radius &lt; 0</code> does leave-one-out resampling with an optional buffer.
+of the center point of discs when drawing center points from the samples.
+    <code>radius &lt; 0</code> does leave-one-out resampling with an optional buffer.
 <code>radius = 0</code> is similar except that samples with identical coordinates
 would fall within the test area disc.</p>
     

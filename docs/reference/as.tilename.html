@@ -25,12 +25,14 @@
 <script src="../pkgdown.js"></script>
 
 <!-- mathjax -->
-<script src='https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
+<script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
 <!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
+
+
   </head>
 
   <body>
@@ -77,11 +79,11 @@
 
     
     <p>Functions for generating and handling alphanumeric tile names of the
-form <code>&#39;X2:Y7&#39;</code> as used by <code><a href='partition.tiles.html'>partition.tiles()</a></code> and
+form <code>'X2:Y7'</code> as used by <code><a href='partition.tiles.html'>partition.tiles()</a></code> and
 <code><a href='represampling.tile.bootstrap.html'>represampling.tile.bootstrap()</a></code>.</p>
     
 
-    <pre><span class='fu'>as.tilename</span>(<span class='no'>x</span>, <span class='no'>...</span>)
+    <pre class="usage"><span class='fu'>as.tilename</span>(<span class='no'>x</span>, <span class='no'>...</span>)
 
 <span class='co'># S3 method for numeric</span>
 <span class='fu'>as.tilename</span>(<span class='no'>x</span>, <span class='no'>...</span>)
@@ -99,13 +101,18 @@ form <code>&#39;X2:Y7&#39;</code> as used by <code><a href='partition.tiles.html
 <span class='fu'>print</span>(<span class='no'>x</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
-    <dl class="dl-horizontal">
-      <dt>x</dt>
-      <dd>object of class <code>tilename</code>, <code>character</code>, or
-<code>numeric</code> (of length 2).</dd>
-      <dt>...</dt>
-      <dd>additional arguments (currently ignored).</dd>
-    </dl>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>x</th>
+      <td><p>object of class <code>tilename</code>, <code>character</code>, or
+<code>numeric</code> (of length 2).</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>additional arguments (currently ignored).</p></td>
+    </tr>
+    </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
@@ -120,7 +127,7 @@ vector of length 2</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='no'>tnm</span> <span class='kw'>&lt;-</span> <span class='fu'>as.tilename</span>(<span class='fu'>c</span>(<span class='fl'>2</span>,<span class='fl'>3</span>))
-<span class='no'>tnm</span> <span class='co'># 'X2:Y3'</span></div><div class='output co'>#&gt; [1] &quot;X2:Y3&quot;</div><div class='input'><span class='fu'>as.numeric</span>(<span class='no'>tnm</span>) <span class='co'># c(2,3)</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NAs introduced by coercion</span></div><div class='output co'>#&gt; [1] NA</div></pre>
+<span class='no'>tnm</span> <span class='co'># 'X2:Y3'</span></div><div class='output co'>#&gt; [1] "X2:Y3"</div><div class='input'><span class='fu'>as.numeric</span>(<span class='no'>tnm</span>) <span class='co'># c(2,3)</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NAs introduced by coercion</span></div><div class='output co'>#&gt; [1] NA</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

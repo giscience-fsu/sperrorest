@@ -25,12 +25,14 @@
 <script src="../pkgdown.js"></script>
 
 <!-- mathjax -->
-<script src='https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
+<script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
 <!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
+
+
   </head>
 
   <body>
@@ -80,40 +82,55 @@
 to cross-validation test and training sets.</p>
     
 
-    <pre><span class='fu'>partition.cv.strat</span>(<span class='no'>data</span>, <span class='kw'>coords</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"x"</span>, <span class='st'>"y"</span>), <span class='kw'>nfold</span> <span class='kw'>=</span> <span class='fl'>10</span>,
+    <pre class="usage"><span class='fu'>partition.cv.strat</span>(<span class='no'>data</span>, <span class='kw'>coords</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"x"</span>, <span class='st'>"y"</span>), <span class='kw'>nfold</span> <span class='kw'>=</span> <span class='fl'>10</span>,
   <span class='kw'>return.factor</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>repetition</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>seed1</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>strat</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
-    <dl class="dl-horizontal">
-      <dt>data</dt>
-      <dd><code>data.frame</code> containing at least the columns specified
-by <code>coords</code></dd>
-      <dt>coords</dt>
-      <dd>vector of length 2 defining the variables in <code>data</code> that 
-contain the x and y coordinates of sample locations</dd>
-      <dt>nfold</dt>
-      <dd>number of partitions (folds) in <code>nfold</code>-fold
-cross-validation partitioning</dd>
-      <dt>return.factor</dt>
-      <dd>if <code>FALSE</code> (default), return a
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>data</th>
+      <td><p><code>data.frame</code> containing at least the columns specified
+by <code>coords</code></p></td>
+    </tr>
+    <tr>
+      <th>coords</th>
+      <td><p>vector of length 2 defining the variables in <code>data</code> that 
+contain the x and y coordinates of sample locations</p></td>
+    </tr>
+    <tr>
+      <th>nfold</th>
+      <td><p>number of partitions (folds) in <code>nfold</code>-fold
+cross-validation partitioning</p></td>
+    </tr>
+    <tr>
+      <th>return.factor</th>
+      <td><p>if <code>FALSE</code> (default), return a
 <code><a href='as.represampling.html'>represampling()</a></code> object; if <code>TRUE</code> (used internally by
 other <code>sperrorest</code> functions), return a <code>list</code> containing factor
-vectors (see Value)</dd>
-      <dt>repetition</dt>
-      <dd>numeric vector: cross-validation repetitions
+vectors (see Value)</p></td>
+    </tr>
+    <tr>
+      <th>repetition</th>
+      <td><p>numeric vector: cross-validation repetitions
 to be generated. Note that this is not the number of repetitions,
 but the indices of these repetitions. E.g., use <code>repetition = c(1:100)</code>
-to obtain (the &#39;first&#39;) 100 repetitions, and <code>repetition = c(101:200)</code>
-to obtain a different set of 100 repetitions.</dd>
-      <dt>seed1</dt>
-      <dd><code>seed1+i</code> is the random seed that will be used by
+to obtain (the 'first') 100 repetitions, and <code>repetition = c(101:200)</code>
+to obtain a different set of 100 repetitions.</p></td>
+    </tr>
+    <tr>
+      <th>seed1</th>
+      <td><p><code>seed1+i</code> is the random seed that will be used by
 <code>set.seed()</code> in repetition <code>i</code> (<code>i</code> in <code>repetition</code>)
-to initialize the random number generator before sampling from the data set.</dd>
-      <dt>strat</dt>
-      <dd>character: column in <code>data</code> containing a factor variable 
+to initialize the random number generator before sampling from the data set.</p></td>
+    </tr>
+    <tr>
+      <th>strat</th>
+      <td><p>character: column in <code>data</code> containing a factor variable 
 over which the partitioning should be stratified; or factor vector of length 
-<code>nrow(data)</code>: variable over which to stratify</dd>
-    </dl>
+<code>nrow(data)</code>: variable over which to stratify</p></td>
+    </tr>
+    </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
@@ -138,7 +155,7 @@ the <code>i</code>th folds of all levels are combined into one cross-validation 
 <span class='co'># Non-stratified cross-validation:</span>
 <span class='no'>parti</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition.cv.html'>partition.cv</a></span>(<span class='no'>ecuador</span>, <span class='kw'>nfold</span> <span class='kw'>=</span> <span class='fl'>5</span>, <span class='kw'>repetition</span> <span class='kw'>=</span> <span class='fl'>1</span>)
 <span class='no'>idx</span> <span class='kw'>&lt;-</span> <span class='no'>parti</span><span class='kw'>[[</span><span class='st'>'1'</span>]]<span class='kw'>[[</span><span class='fl'>1</span>]]$<span class='no'>train</span>
-<span class='fu'>mean</span>(<span class='no'>ecuador</span>$<span class='no'>slides</span>[<span class='no'>idx</span>] <span class='kw'>==</span> <span class='st'>'TRUE'</span>) / <span class='fu'>mean</span>(<span class='no'>ecuador</span>$<span class='no'>slides</span> <span class='kw'>==</span> <span class='st'>'TRUE'</span>)</div><div class='output co'>#&gt; [1] 1.02</div><div class='input'><span class='co'># close to 1 because of large sample size, but with some random variation</span></div></pre>
+<span class='fu'>mean</span>(<span class='no'>ecuador</span>$<span class='no'>slides</span>[<span class='no'>idx</span>] <span class='kw'>==</span> <span class='st'>'TRUE'</span>) / <span class='fu'>mean</span>(<span class='no'>ecuador</span>$<span class='no'>slides</span> <span class='kw'>==</span> <span class='st'>'TRUE'</span>)</div><div class='output co'>#&gt; [1] 1.01625</div><div class='input'><span class='co'># close to 1 because of large sample size, but with some random variation</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
