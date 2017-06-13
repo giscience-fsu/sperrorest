@@ -2,7 +2,7 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 #### General
 
-[![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active) [![minimal R version](https://img.shields.io/badge/R%3E%3D-2.10-6666ff.svg)](https://cran.r-project.org/) [![Last-changedate](https://img.shields.io/badge/last%20change-2017--06--05-yellowgreen.svg)](/commits/dev)
+[![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
 
 | Resource:     | CRAN                                                                                                                                                                       | Travis CI                                                                                                                                                 | Appveyor                                                                                                                                                                       |
 |---------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -13,10 +13,6 @@
 #### CRAN
 
 [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/sperrorest)](https://cran.r-project.org/package=sperrorest) [![Downloads](https://cranlogs.r-pkg.org/badges/sperrorest?color=brightgreen)](https://www.r-pkg.org/pkg/sperrorest) ![](https://cranlogs.r-pkg.org/badges/grand-total/sperrorest)
-
-#### Github
-
-[![packageversion](https://img.shields.io/badge/Package%20version-2.0.0.9000-orange.svg?style=flat-square)](commits/dev)
 
 Description
 ===========

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Summarize variable importance statistics obtained by  — summary.sperrorestimportance • sperrorest</title>
+<title>Summarize variable importance statistics obtained by <code>sperrorest</code> — summary.sperrorestimportance • sperrorest</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -25,12 +25,14 @@
 <script src="../pkgdown.js"></script>
 
 <!-- mathjax -->
-<script src='https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
+<script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
 <!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
+
+
   </head>
 
   <body>
@@ -72,7 +74,7 @@
       <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Summarize variable importance statistics obtained by </h1>
+    <h1>Summarize variable importance statistics obtained by <code>sperrorest</code></h1>
     </div>
 
     
@@ -81,26 +83,37 @@ median etc. of the calculated error measures at the specified level
 (overall, repetition, or fold).</p>
     
 
-    <pre><span class='co'># S3 method for sperrorestimportance</span>
+    <pre class="usage"><span class='co'># S3 method for sperrorestimportance</span>
 <span class='fu'>summary</span>(<span class='no'>object</span>, <span class='kw'>level</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>na.rm</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>which</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
-    <dl class="dl-horizontal">
-      <dt>object</dt>
-      <dd><code><a href='sperrorest.html'>sperrorestimportance()</a></code> object calculated by
-<code><a href='sperrorest.html'>sperrorest()</a></code> called with argument <code>importance=TRUE</code></dd>
-      <dt>level</dt>
-      <dd>Level at which errors are summarized:
-0: overall; 1: repetition; 2: fold</dd>
-      <dt>na.rm</dt>
-      <dd>Remove <code>NA</code> values? See <code>mean()</code> etc.</dd>
-      <dt>which</dt>
-      <dd>optional character vector specifying selected variables for
-which the importances should be summarized (to do: check implementation)</dd>
-      <dt>...</dt>
-      <dd>additional arguments (currently ignored)</dd>
-    </dl>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>object</th>
+      <td><p><code><a href='sperrorest.html'>sperrorestimportance()</a></code> object calculated by
+<code><a href='sperrorest.html'>sperrorest()</a></code> called with argument <code>importance=TRUE</code></p></td>
+    </tr>
+    <tr>
+      <th>level</th>
+      <td><p>Level at which errors are summarized:
+0: overall; 1: repetition; 2: fold</p></td>
+    </tr>
+    <tr>
+      <th>na.rm</th>
+      <td><p>Remove <code>NA</code> values? See <code>mean()</code> etc.</p></td>
+    </tr>
+    <tr>
+      <th>which</th>
+      <td><p>optional character vector specifying selected variables for
+which the importances should be summarized (to do: check implementation)</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>additional arguments (currently ignored)</p></td>
+    </tr>
+    </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 

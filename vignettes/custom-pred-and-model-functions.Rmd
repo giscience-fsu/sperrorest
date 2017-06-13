@@ -31,7 +31,8 @@ In this case, we need to write a wrapper function for `glmmPQL` (named `glmmPQL_
 By default, `glmmPQL()` has further arguments like `family` or `random`. If we want to use these, we pass them to `model_args` which then appends these to the arguments of `glmmPQL_modelfun`.
 
 ```{r}
-glmmPQL_modelfun <- function(formula = NULL, data = NULL) {
+glmmPQL_modelfun <- function(formula = NULL, data = NULL, random = NULL,
+                             family = NULL) {
   fit <- glmmPQL(fixed = formula, data = data, random = random, family = family)
   return(fit)
 }
@@ -54,7 +55,7 @@ When calling predict on a fitted `randomForest` model with a binary response var
 Simply because `pred` is a matrix containing both probabilities for the `FALSE` (= 0) and `TRUE` (= 1) case. `sperrorest()` needs a vector containing only the predicted values of the `TRUE` case to pass these further onto `err_fun()` which then takes care of calculating all the error measures. So the important part is to subset the resulting matrix in the `pred` object to `TRUE` cases only and return the result.
 
 ```{r, eval = FALSE}
-rf_predfun <- function(object = NULL, newdata = NULL) {
+rf_predfun <- function(object = NULL, newdata = NULL, type = NULL) {
   pred <- predict(object = object, newdata = newdata, type = type)
   pred <- pred[, 2]
 }
@@ -65,7 +66,7 @@ rf_predfun <- function(object = NULL, newdata = NULL) {
 The same case (binary response) using `svm` from the `e1071` package. Here, the predicted probabilities are stored in a sub-object of `pred`. We can address it using the `attr()` function. Then again, we only need the `TRUE` cases for `sperrorest()`.
 
 ```{r}
-svm_predfun <- function(object = NULL, newdata = NULL) {
+svm_predfun <- function(object = NULL, newdata = NULL, probability = NULL) {
   pred <- predict(object, newdata = newdata, probability = TRUE)
   pred <- attr(pred, "probabilities")[, 2]
 }

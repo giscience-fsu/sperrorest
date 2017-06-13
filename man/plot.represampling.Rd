@@ -19,7 +19,7 @@ coordinates of samples as specified by \code{coords}.}
 \item{coords}{vector of length 2 defining the variables in \code{data} that
 contain the x and y coordinates of sample locations.}
 
-\item{pch}{point symbold (to be passed to \link{points}).}
+\item{pch}{point symbol (to be passed to \link{points}).}
 
 \item{wiggle_sd}{'wiggle' the point locations in x and y direction to avoid
 overplotting of samples drawn multiple times by bootstrap methods;
