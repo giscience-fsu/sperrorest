@@ -12,7 +12,6 @@
 #' @import magrittr
 #' @import pbmcapply
 #' @import parallel
-#' @import foreach
 #' @import future
 #' @import doFuture
 #' @import rpart
@@ -334,6 +333,11 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
     } # nocov end
   }
 
+  # account for tibbles as input
+  if (any(class(data) == "tbl")) {
+    data <- as.data.frame(data)
+  }
+
   # Name of response variable:
   response <- as.character(attr(terms(formula), "variables"))[2]
 
@@ -410,7 +414,6 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
     if (par_args$par_units > availableCores()) {
       par_args$par_units <- availableCores() # nolint # nocov
     }
-
 
     # parallelization here (par_mode = 1 & par_mode = 2) For each repetition:
     if (.Platform$OS.type == "windows") {
@@ -599,7 +602,6 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
       }
     }
     if (par_args$par_mode == "sequential") {
-      registerDoFuture()
       plan(sequential)
       message(sprintf("Using 'foreach' sequential mode."))
     }

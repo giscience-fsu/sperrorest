@@ -73,6 +73,13 @@ err_default <- function(obs, pred) {
     pred <- pred[-index_na] # nocov end
   }
 
+  # remove NAs in both obs and pred
+  if (any(is.na(pred))) {
+    index_na <- which(pred %in% NA)
+    obs <- obs[-index_na]
+    pred <- pred[-index_na]
+  }
+
   # Classification problem:
   if (is.factor(obs)) {
     if (is.factor(pred)) {
@@ -107,6 +114,11 @@ err_default <- function(obs, pred) {
       }
 
       # 'soft' classification: Calculate area under the ROC curve:
+
+      # make sure 'pred' is a vector (sometimes 'atomic')
+      if (!is.vector(pred) && !is.matrix(pred)) {
+        pred <- as.numeric(pred)
+      }
       predobj <- prediction(pred, obs)
       auroc <- performance(predobj, measure = "auc")@y.values[[1]]
       err <- list(auroc = auroc)
@@ -114,7 +126,7 @@ err_default <- function(obs, pred) {
       pos <- levels(obs)[2]
       # neg <- levels(obs)[1] # not in use
 
-      err$error <- mean((obs == pos) != (pred >= 0.5)) # nolint
+      err$error <- mean((obs == pos) != (pred >= 0.5), na.rm = TRUE) # nolint
       err$accuracy <- 1 - err$error
 
       # internal functions for calculating false positive rate (1-specificity)

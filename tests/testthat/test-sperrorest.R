@@ -72,6 +72,7 @@ test_that("output length of list is correct for par_mode = 'foreach' on rpart
             # Non-spatial 5-repeated 10-fold cross-validation:
             mypred_rpart <- function(object, newdata) predict(object,
                                                               newdata)[,2]
+
             out <- sperrorest(data = ecuador, formula = fo,
                               model_fun = rpart,
                               model_args = list(control = ctrl),
@@ -84,6 +85,51 @@ test_that("output length of list is correct for par_mode = 'foreach' on rpart
                                               par_units = 2))
 
             expect_equal(length(out$error_fold[[1]]), 2)
+          })
+
+test_that("output length of list is correct for error_rep = TRUE and
+          error_fold  = TRUE for par_mode = 'foreach' on svm example", {
+
+            data(ecuador)
+            fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
+
+            svm_predfun <- function(object, newdata) {
+              pred <- predict(object, newdata = newdata, probability = TRUE)
+              pred <- attr(pred, "probabilities")[, 2]
+            }
+
+            par.nsp.res <- sperrorest(data = ecuador, formula = fo,
+                                      model_fun = svm,
+                                      model_args = list(cost = 10000, gamma = 0.0001,
+                                                        kernel = "sigmoid",
+                                                        probability = TRUE),
+                                      pred_fun = svm_predfun,
+                                      progress = TRUE,
+                                      smp_fun = partition_cv,
+                                      smp_args = list(repetition = 1:2,
+                                                      nfold = 2),
+                                      par_args = list(par_mode = "foreach"),
+                                      error_rep = TRUE, error_fold = TRUE)
+
+            expect_equal(length(par.nsp.res$error_fold[[1]]), 2)
+          })
+
+test_that("output length of list is correct for error_rep = TRUE and
+          error_fold  = TRUE for par_mode = 'foreach' on svm example", {
+
+            data(ecuador)
+            fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
+
+            rf_spcv <- sperrorest(formula = fo, data = df,
+                                  model_fun = randomForest,
+                                  model_args = list(ntree = 1900,
+                                                    mtry = 9),
+                                  pred_args = list(type = "prob"),
+                                  par_args = list(par_mode = "foreach"),
+                                  smp_fun = partition_kmeans, progress = 2,
+                                  smp_args = list(repetition = 1:4, nfold = 5))
+
+            expect_equal(length(par.nsp.res$error_fold[[1]]), 2)
           })
 
 # variable importance Wed Feb  8 21:59:03 2017
@@ -600,4 +646,25 @@ test_that("sperrorest() when missing factor levels in train data", {
   summary_impo <- summary(out$importance)
   # check for train_auroc for binary response
   expect_equal(names(out$error_rep)[[1]], "train_auroc")
+})
+
+test_that("sperrorest() when missing factor levels in train data", {
+
+  readRDS("/Users/pjs/Servers/GIServer/home/shares/data/LIFE/mod/survey_data/data-clean.rda") %>%
+    as_tibble() -> df
+  fo <- diplo01 ~ temp + p_sum + r_sum + elevation + slope + hail + age +
+    ph + lithology + soil
+
+  nspres <- sperrorest(data = df, formula = fo,
+                       model_fun = glm, model_args = list(family = "binomial"),
+                       pred_args = list(type = "response"),
+                       smp_fun = partition_kmeans,
+                       smp_args = list(repetition = 1:2, nfold = 4),
+                       par_args = list(par_mode = "sequential"))
+  summary.rep <- summary(nspres$error_rep)
+  summary.fold <- summary(nspres$error_fold)
+  summary.resampling <- summary(nspres$represampling)
+  summary.impo <- summary(nspres$importance)
+  # check for train.auroc for binary response
+  expect_equal(names(nspres$error_rep)[[1]], "train.auroc")
 })
