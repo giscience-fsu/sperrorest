@@ -28,6 +28,10 @@ Increase to reduce number of tuning combinations.}
 \item{partition_fun}{character. Data partitioning method
 (e.g. \link{partition_kmeans})}
 
+\item{kernel}{the kernel to use.}
+
+\item{type}{classification type to use. See \link{svm} or \link{ksvm} for details.}
+
 \item{error_measure}{which error measure to use for optimization.
 Default to 'RMSE' for numeric responses, 'AUROC' for binary classification
 and 'error' for multiclass classiciation.}
@@ -41,8 +45,8 @@ Tuning of a Support Vector Machine (cost & gamma) using spatial
 cross-validation
 }
 \details{
-This function tunes a Support Vector Machine either from \link{e1071}
-or \link{kernlab} package using (spatial) cross-validation.
+This function tunes a Support Vector Machine either from \code{e1071}
+or \code{kernlab} package using (spatial) cross-validation.
 
 Tuning is performed over the following ranges (\href{https://stats.stackexchange.com/questions/43943/which-search-range-for-determining-svm-optimal-c-and-gamma-parameters}{reference}):
 \tabular{rr}{

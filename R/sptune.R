@@ -8,6 +8,7 @@
 #' @import parallel
 #' @import foreach
 #' @importFrom purrr map2 map
+#' @importFrom utils tail
 #'
 #' @param formula formula.
 #'
@@ -34,10 +35,14 @@
 #' @param gamma optional user-defined vector of 'gamma' hyperparameter to
 #' tune over. See details.
 #'
+#' @param kernel the kernel to use.
+#'
+#' @param type classification type to use. See [svm] or [ksvm] for details.
+#'
 #' @param ... additional options passed to `partition_fun`.
 #'
-#' @details This function tunes a Support Vector Machine either from [e1071]
-#' or [kernlab] package using (spatial) cross-validation.
+#' @details This function tunes a Support Vector Machine either from `e1071`
+#' or `kernlab` package using (spatial) cross-validation.
 #'
 #' @details
 #' Tuning is performed over the following ranges ([reference](https://stats.stackexchange.com/questions/43943/which-search-range-for-determining-svm-optimal-c-and-gamma-parameters)):
@@ -260,6 +265,7 @@ sptune_svm <- function(formula = NULL, data = NULL, cost = NULL, gamma = NULL,
 #' @import parallel
 #' @import foreach
 #' @importFrom purrr map2 map
+#' @importFrom utils tail
 #'
 #' @param formula formula.
 #'
