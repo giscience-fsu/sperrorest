@@ -10,8 +10,8 @@ plot_hyper_rf(object = NULL, error_measure = NULL, mtry = NULL,
 \arguments{
 \item{object}{a fitted object of \link{randomForest} or \link{rfsrc}.}
 
-\item{error_measure}{the error_measure which the model was tuned on.
-Only needed if the default one from \link{sptune_rf} was changed.}
+\item{error_measure}{an optional error measure to use which differs from the
+default.}
 
 \item{mtry}{optional user-defined numeric vector of 'mtry' values to plot.}
 
@@ -28,7 +28,7 @@ Plots tuning results of Random Forest
 data(ecuador) # Muenchow et al. (2012), see ?ecuador
 fo <- dem ~ slides + slope + hcurv + vcurv + log.carea + cslope
 
-out <- sptune_rf(fo, ecuador, accelerate = 16, nfold = 5,
+out <- sptune_rf(fo, ecuador, step_factor = 16, nfold = 5,
 partition_fun = "partition_kmeans", rf_fun = "randomForest")
 
 plot_hyper_rf(out)

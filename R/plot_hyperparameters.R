@@ -1,4 +1,15 @@
 #' @title plot_hyper_svm
+#' @description Plots tuning paramters cost and gamma of a tuned svm model
+#' using an appropiate error measure.
+#'
+#' @param object a tuned object from [sptune_svm]
+#'
+#' @param error_measure an optional error measure to use which differs from the
+#' default.
+#'
+#' @param gamma optional user-defined vector specyfing 'mtry' values to plot
+#'
+#' @param color_palette which color palette to use from [scale_colour_viridis]
 #'
 #' @import tibble
 #' @import ggplot2
@@ -9,7 +20,7 @@
 #'
 #' @export
 
-plot_hyper_svm <- function(object = NULL, error_measure = NULL, mtry = NULL,
+plot_hyper_svm <- function(object = NULL, error_measure = NULL, gamma = NULL,
                            color_palette = NULL) {
   if (any(class(object$fit) == "svm")) {
     lib <- "e1071"
@@ -31,7 +42,7 @@ plot_hyper_svm <- function(object = NULL, error_measure = NULL, mtry = NULL,
   }
 
   if (any(class(object$fit) == "svm")) {
-  error_measure <- check_response_type(object$fit$fitted, error_measure)
+    error_measure <- check_response_type(object$fit$fitted, error_measure)
   } else {
     error_measure <- check_response_type(object$fit@fitted, error_measure)
   }
@@ -47,13 +58,13 @@ plot_hyper_svm <- function(object = NULL, error_measure = NULL, mtry = NULL,
 
     # sort df
     df %>%
-      arrange(mtry) -> df
+      arrange(gamma) -> df
     # get value of 10th index
-    index <- unique(df$mtry)[10]
+    index <- unique(df$gamma)[10]
 
     # filter df
     df %>%
-      filter(mtry <= index) -> df
+      filter(gamma <= index) -> df
   }
 
   # check for color palette
@@ -93,8 +104,8 @@ plot_hyper_svm <- function(object = NULL, error_measure = NULL, mtry = NULL,
 #'
 #' @param object a fitted object of [randomForest] or [rfsrc].
 #'
-#' @param error_measure the error_measure which the model was tuned on.
-#' Only needed if the default one from [sptune_rf] was changed.
+#' @param error_measure an optional error measure to use which differs from the
+#' default.
 #'
 #' @param mtry optional user-defined numeric vector of 'mtry' values to plot.
 #'
@@ -115,7 +126,7 @@ plot_hyper_svm <- function(object = NULL, error_measure = NULL, mtry = NULL,
 #' data(ecuador) # Muenchow et al. (2012), see ?ecuador
 #' fo <- dem ~ slides + slope + hcurv + vcurv + log.carea + cslope
 #'
-#' out <- sptune_rf(fo, ecuador, accelerate = 16, nfold = 5,
+#' out <- sptune_rf(fo, ecuador, step_factor = 16, nfold = 5,
 #' partition_fun = "partition_kmeans", rf_fun = "randomForest")
 #'
 #' plot_hyper_rf(out)

@@ -4,6 +4,20 @@
 \alias{plot_hyper_svm}
 \title{plot_hyper_svm}
 \usage{
-plot_hyper_svm(object = NULL, error_measure = NULL, mtry = NULL,
+plot_hyper_svm(object = NULL, error_measure = NULL, gamma = NULL,
   color_palette = NULL)
+}
+\arguments{
+\item{object}{a tuned object from \link{sptune_svm}}
+
+\item{error_measure}{an optional error measure to use which differs from the
+default.}
+
+\item{gamma}{optional user-defined vector specyfing 'mtry' values to plot}
+
+\item{color_palette}{which color palette to use from \link{scale_colour_viridis}}
+}
+\description{
+Plots tuning paramters cost and gamma of a tuned svm model
+using an appropiate error measure.
 }
