@@ -115,7 +115,8 @@ svm_cv_err <- function(cost = NULL, gamma = NULL, train = NULL, test = NULL,
                  kernel = kernel, probability = probability, cost = cost,
                  gamma = gamma)
   }
-  fit <- do.call(svm_fun, args)
+  fit <- try(do.call(svm_fun, args))
+  cat(class(fit))
 
   ### predict
   if (svm_fun == "ksvm") {
@@ -124,9 +125,21 @@ svm_cv_err <- function(cost = NULL, gamma = NULL, train = NULL, test = NULL,
     } else {
       type <- "response"
     }
-    pred <- kernlab::predict(fit, newdata = test, type = type)
+    # we do not see the error message, so returning none
+    pred <- tryCatch(kernlab::predict(fit, newdata = test, type = type),
+                     error = function(cond) {
+                       return(NA)
+                     })
   } else {
-    pred <- predict(fit, newdata = test, probability = probability)
+    pred <- tryCatch(predict(fit, newdata = test, probability = probability),
+                     error = function(cond) {
+                       return(NA)
+                     })
+  }
+  # if NA is assigned to 'pred' due to tryCatch, we break the function and
+  # return NA
+  if (is.na(pred)) {
+    return(pred)
   }
 
   ### error measures

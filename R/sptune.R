@@ -130,7 +130,7 @@ sptune_svm <- function(formula = NULL, data = NULL, cost = NULL, gamma = NULL,
     #                                      fixed = TRUE)[[1]])
     # gammas_all <- unique(c(default_gamma,
     #                        10 ^ seq(-4, 1, by = 0.5 * accelerate)))
-    gammas_all <- c(2 ^ -15, 2 ^ -13, 2 ^ -11, 2 ^ -9, 2 ^ 3, 2 ^ -7, 2 ^ -5,
+    gammas_all <- c(2 ^ -15, 2 ^ -13, 2 ^ -11, 2 ^ -9, 2 ^ -7, 2 ^ -5,
                     2 ^ -3, 2 ^ -1, 2 ^ 1, 2 ^ 3)
 
     # recycle vector if desired
@@ -173,6 +173,17 @@ sptune_svm <- function(formula = NULL, data = NULL, cost = NULL, gamma = NULL,
             return(out)
           } -> perf_measures
   stopCluster(cl)
+
+  # check for NAs, subset cost and gamma and print message
+  if (any(is.na(perf_measures))) {
+    na_index <- which(is.na(perf_measures))
+    costs_all <- costs_all[-na_index]
+    gammas_all <- gammas_all[-na_index]
+    perf_measures <- perf_measures[-na_index]
+
+    warning(sprintf(paste0("Removing %s combinations due to non-convergence."),
+                    length(na_index)))
+  }
 
   # append 'mtrys' and 'ntrees' vectors to respective lists
   perf_measures %>%
