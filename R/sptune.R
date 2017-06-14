@@ -186,7 +186,7 @@ sptune_svm <- function(formula = NULL, data = NULL, cost = NULL, gamma = NULL,
     gammas_all <- gammas_all[-na_index]
     perf_measures <- perf_measures[-na_index]
 
-    warning(sprintf(paste0("Removing %s combinations due to non-convergence."),
+    message(sprintf(paste0("Removed %s combinations due to non-convergence.\n"),
                     length(na_index)))
   }
 
