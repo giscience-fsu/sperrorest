@@ -29,7 +29,7 @@ Calculates AUROC for different gamma and cost values
 ## binary classification
 ##------------------------------------------------------------
 
-parti <- partition_kmeans(ecuador, nfold = 5, order.clusters = FALSE)
+parti <- partition_kmeans(ecuador, nfold = 5)
 train <- ecuador[parti[[1]][[1]]$train, ]
 test <- ecuador[parti[[1]][[1]]$test, ]
 response <- "slides"
@@ -52,7 +52,7 @@ formula = fo, response = "dem", rf_fun = "rfsrc")
 ##------------------------------------------------------------
 ## multiclass classification
 ##------------------------------------------------------------
-parti <- partition_kmeans(maipo, nfold = 5, order.clusters = FALSE,
+parti <- partition_kmeans(maipo, nfold = 5,
                           coords = c("utmx", "utmy"))
 train <- maipo[parti[[1]][[1]]$train, ]
 test <- maipo[parti[[1]][[1]]$test, ]

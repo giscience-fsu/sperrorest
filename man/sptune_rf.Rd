@@ -66,7 +66,7 @@ predictors but runtime depends on your cpu power / number of cores.
 data(ecuador) # Muenchow et al. (2012), see ?ecuador
 fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
 
-out <- sptune_rf(fo, ecuador, accelerate = 16, nfold = 5,
+out <- sptune_rf(fo, ecuador, step_factor = 16, nfold = 5,
 partition_fun = "partition_kmeans", rf_fun = "randomForest")
 
 ##------------------------------------------------------------
@@ -75,7 +75,7 @@ partition_fun = "partition_kmeans", rf_fun = "randomForest")
 fo <- croptype ~ b82 + b83 + b84 + b85 + b86 + b87 + ndvi01 +
       ndvi02 + ndvi03 + ndvi04
 data(maipo)
-out <- sptune_rf(fo, maipo, accelerate = 32, nfold = 5,
+out <- sptune_rf(fo, maipo, step_factor = 32, nfold = 5,
                  coords = c("utmx", "utmy"),
                  partition_fun = "partition_kmeans",
                  rf_fun = "randomForest")
@@ -87,7 +87,7 @@ out <- sptune_rf(fo, maipo, accelerate = 32, nfold = 5,
 data(ecuador) # Muenchow et al. (2012), see ?ecuador
 fo <- dem ~ slides + slope + hcurv + vcurv + log.carea + cslope
 
-out <- sptune_rf(fo, ecuador, accelerate = 16, nfold = 5,
+out <- sptune_rf(fo, ecuador, step_factor = 16, nfold = 5,
 partition_fun = "partition_kmeans", rf_fun = "randomForest")
 
 }
@@ -95,5 +95,5 @@ partition_fun = "partition_kmeans", rf_fun = "randomForest")
 \link{plot_hyper_rf}
 }
 \author{
-Alexander Brenning, Patrick Schratz
+Patrick Schratz, Alexander Brenning
 }

@@ -186,7 +186,7 @@ svm_cv_err <- function(cost = NULL, gamma = NULL, train = NULL, test = NULL,
 #' ## binary classification
 #' ##------------------------------------------------------------
 #'
-#' parti <- partition_kmeans(ecuador, nfold = 5, order.clusters = FALSE)
+#' parti <- partition_kmeans(ecuador, nfold = 5)
 #' train <- ecuador[parti[[1]][[1]]$train, ]
 #' test <- ecuador[parti[[1]][[1]]$test, ]
 #' response <- "slides"
@@ -209,7 +209,7 @@ svm_cv_err <- function(cost = NULL, gamma = NULL, train = NULL, test = NULL,
 #' ##------------------------------------------------------------
 #' ## multiclass classification
 #' ##------------------------------------------------------------
-#' parti <- partition_kmeans(maipo, nfold = 5, order.clusters = FALSE,
+#' parti <- partition_kmeans(maipo, nfold = 5,
 #'                           coords = c("utmx", "utmy"))
 #' train <- maipo[parti[[1]][[1]]$train, ]
 #' test <- maipo[parti[[1]][[1]]$test, ]

@@ -21,6 +21,7 @@ default.}
 Plots tuning results of Random Forest
 }
 \examples{
+\dontrun{
 ##------------------------------------------------------------
 ## regression
 ##------------------------------------------------------------
@@ -32,5 +33,6 @@ out <- sptune_rf(fo, ecuador, step_factor = 16, nfold = 5,
 partition_fun = "partition_kmeans", rf_fun = "randomForest")
 
 plot_hyper_rf(out)
+}
 
 }

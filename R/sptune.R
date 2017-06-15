@@ -98,7 +98,6 @@ sptune_svm <- function(formula = NULL, data = NULL, cost = NULL, gamma = NULL,
                        kernel = NULL, type = NULL, error_measure = NULL,
                        svm_fun = "svm", ...) {
 
-
   if (is.null(partition_fun)) {
     message("Partitioning method: 'partition.kmeans'.")
     partition_fun <- "partition.kmeans"
@@ -166,6 +165,10 @@ sptune_svm <- function(formula = NULL, data = NULL, cost = NULL, gamma = NULL,
                          " Unique 'gamma': %s."),
                   length(unique(costs_all)),
                   length(unique(gammas_all))))
+
+  #  for some reason we need to initialize 'i' here to suppress
+  # 'no-visible-binding-for-global-variable' warning
+  i <- NULL
 
   foreach(i = 1:length(costs_all), .packages = (.packages()),
           .errorhandling = "remove", .verbose = FALSE) %dopar% {
@@ -258,7 +261,7 @@ sptune_svm <- function(formula = NULL, data = NULL, cost = NULL, gamma = NULL,
 #' @title sptune_rf
 #' @description Tuning of Random Forest (mtry & ntrees) using spatial
 #' cross-validation
-#' @author Alexander Brenning, Patrick Schratz
+#' @author Patrick Schratz, Alexander Brenning
 #'
 #' @import future
 #' @import doFuture
@@ -321,7 +324,7 @@ sptune_svm <- function(formula = NULL, data = NULL, cost = NULL, gamma = NULL,
 #' data(ecuador) # Muenchow et al. (2012), see ?ecuador
 #' fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
 #'
-#' out <- sptune_rf(fo, ecuador, accelerate = 16, nfold = 5,
+#' out <- sptune_rf(fo, ecuador, step_factor = 16, nfold = 5,
 #' partition_fun = "partition_kmeans", rf_fun = "randomForest")
 #'
 #' ##------------------------------------------------------------
@@ -330,7 +333,7 @@ sptune_svm <- function(formula = NULL, data = NULL, cost = NULL, gamma = NULL,
 #' fo <- croptype ~ b82 + b83 + b84 + b85 + b86 + b87 + ndvi01 +
 #'       ndvi02 + ndvi03 + ndvi04
 #' data(maipo)
-#' out <- sptune_rf(fo, maipo, accelerate = 32, nfold = 5,
+#' out <- sptune_rf(fo, maipo, step_factor = 32, nfold = 5,
 #'                  coords = c("utmx", "utmy"),
 #'                  partition_fun = "partition_kmeans",
 #'                  rf_fun = "randomForest")
@@ -342,7 +345,7 @@ sptune_svm <- function(formula = NULL, data = NULL, cost = NULL, gamma = NULL,
 #' data(ecuador) # Muenchow et al. (2012), see ?ecuador
 #' fo <- dem ~ slides + slope + hcurv + vcurv + log.carea + cslope
 #'
-#' out <- sptune_rf(fo, ecuador, accelerate = 16, nfold = 5,
+#' out <- sptune_rf(fo, ecuador, step_factor = 16, nfold = 5,
 #' partition_fun = "partition_kmeans", rf_fun = "randomForest")
 #'
 #' @export
