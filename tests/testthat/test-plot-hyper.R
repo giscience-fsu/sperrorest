@@ -1,5 +1,7 @@
 context("plot_hyper")
 
+Sys.setenv(R_TESTS = "")
+
 pacman::p_load(sperrorest)
 
 # plot_hyper_rf Fri Jun  9 11:55:51 2017 ------------------------------

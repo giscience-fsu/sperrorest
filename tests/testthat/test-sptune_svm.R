@@ -1,5 +1,7 @@
 context("sptune_svm")
 
+Sys.setenv(R_TESTS = "")
+
 pacman::p_load(testthat, sperrorest, kernlab, e1071, gmum.r, purrr,
                magrittr)
 

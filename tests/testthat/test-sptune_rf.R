@@ -1,5 +1,7 @@
 context("sptune_rf")
 
+Sys.setenv(R_TESTS = "")
+
 pacman::p_load(testthat, sperrorest, randomForest, randomForestSRC, purrr)
 
 # randomForest Mon May 29 16:50:09 2017 ------------------------------
