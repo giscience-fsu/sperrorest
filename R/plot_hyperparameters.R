@@ -93,8 +93,8 @@ plot_hyper_svm <- function(object = NULL, error_measure = NULL, gamma = NULL,
                             toupper(error_measure),
                             round(object$tune$performances_best_run[[
                               error_measure]], 3),
-                            round(object$tune$optimal_cost, 3),
-                            round(object$tune$optimal_gamma), 3)) +
+                            object$tune$optimal_cost,
+                            object$tune$optimal_gamma)) +
     theme_ipsum() +
     guides(color = guide_legend(title = "gamma"))
 }
