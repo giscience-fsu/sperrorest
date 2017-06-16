@@ -24,7 +24,7 @@ rf_cv_err(ntree = NULL, mtry = NULL, train = NULL, test = NULL,
 Calculates AUROC for different gamma and cost values
 }
 \examples{
-
+\dontrun{
 ##------------------------------------------------------------
 ## binary classification
 ##------------------------------------------------------------
@@ -69,6 +69,6 @@ fo <- croptype ~ b12 + b13 + b14 + b15 + b16 + b17 + b22 + b23 +
 data(maipo)
 out <- rf_cv_err(mtry = 3, ntree = 1000, train = train, test = test,
 formula = fo, response = "croptype", rf_fun = "randomForest")
-
+}
 }
 \keyword{internal}

@@ -59,7 +59,7 @@ predictors but runtime depends on your cpu power / number of cores.
 \code{sptune_rf} is parallelized and runs on all possible cores.
 }
 \examples{
-
+\dontrun{
 ##------------------------------------------------------------
 ## binary classification
 ##------------------------------------------------------------
@@ -89,7 +89,7 @@ fo <- dem ~ slides + slope + hcurv + vcurv + log.carea + cslope
 
 out <- sptune_rf(fo, ecuador, step_factor = 16, nfold = 5,
 partition_fun = "partition_kmeans", rf_fun = "randomForest")
-
+}
 }
 \seealso{
 \link{plot_hyper_rf}

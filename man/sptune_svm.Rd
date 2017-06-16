@@ -62,6 +62,7 @@ is chosen and for classification cases the highest.
 \code{sptune_svm} is parallelized and runs on all possible cores.
 }
 \examples{
+\dontrun{
 ##------------------------------------------------------------
 ## binary classification
 ##------------------------------------------------------------
@@ -93,6 +94,7 @@ fo <- dem ~ slides + slope + hcurv + vcurv + log.carea + cslope
 out <- sptune_svm(fo, ecuador, accelerate = 8, nfold = 5,
                   partition_fun = "partition_kmeans", svm_fun = "svm",
                   kernel = "radial", type = "eps-regression")
+}
 }
 \seealso{
 \link{plot_hyper_svm}

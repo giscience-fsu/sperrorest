@@ -29,6 +29,7 @@ svm_cv_err(cost = NULL, gamma = NULL, train = NULL, test = NULL,
 Calculates AUROC for different gamma and cost values
 }
 \examples{
+\dontrun{
 parti <- partition_kmeans(ecuador, nfold = 5, order.clusters = FALSE)
 train <- ecuador[parti[[1]][[1]]$train, ]
 test <- ecuador[parti[[1]][[1]]$test, ]
@@ -67,7 +68,7 @@ out <- svm_cv_err(cost = 0.01, gamma = 0.166, train = train, test = test,
 ##------------------------------------------------------------
 ## multiclass classification
 ##------------------------------------------------------------
-parti <- partition_kmeans(maipo, nfold = 5, order.clusters = FALSE,
+parti <- partition_kmeans(maipo, nfold = 5,
                           coords = c("utmx", "utmy"))
 train <- maipo[parti[[1]][[1]]$train, ]
 test <- maipo[parti[[1]][[1]]$test, ]
@@ -90,6 +91,6 @@ out <- svm_cv_err(cost = 0.01, gamma = 0.166, train = train, test = test,
 out <- svm_cv_err(cost = 0.01, gamma = 0.166, train = train, test = test,
                   formula = fo, response = "croptype", kernel = "rbfdot",
                   svm_fun = "ksvm", type = "C-svc")
-
+}
 }
 \keyword{internal}

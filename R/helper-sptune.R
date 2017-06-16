@@ -25,6 +25,7 @@
 #' @keywords internal
 #'
 #' @examples
+#' \dontrun{
 #' parti <- partition_kmeans(ecuador, nfold = 5, order.clusters = FALSE)
 #' train <- ecuador[parti[[1]][[1]]$train, ]
 #' test <- ecuador[parti[[1]][[1]]$test, ]
@@ -63,7 +64,7 @@
 #' ##------------------------------------------------------------
 #' ## multiclass classification
 #' ##------------------------------------------------------------
-#' parti <- partition_kmeans(maipo, nfold = 5, order.clusters = FALSE,
+#' parti <- partition_kmeans(maipo, nfold = 5,
 #'                           coords = c("utmx", "utmy"))
 #' train <- maipo[parti[[1]][[1]]$train, ]
 #' test <- maipo[parti[[1]][[1]]$test, ]
@@ -86,7 +87,7 @@
 #' out <- svm_cv_err(cost = 0.01, gamma = 0.166, train = train, test = test,
 #'                   formula = fo, response = "croptype", kernel = "rbfdot",
 #'                   svm_fun = "ksvm", type = "C-svc")
-#'
+#' }
 #' @export
 svm_cv_err <- function(cost = NULL, gamma = NULL, train = NULL, test = NULL,
                        response = NULL, formula = NULL, kernel = NULL,
@@ -181,7 +182,7 @@ svm_cv_err <- function(cost = NULL, gamma = NULL, train = NULL, test = NULL,
 #' @keywords internal
 #'
 #' @examples
-#'
+#' \dontrun{
 #' ##------------------------------------------------------------
 #' ## binary classification
 #' ##------------------------------------------------------------
@@ -226,7 +227,7 @@ svm_cv_err <- function(cost = NULL, gamma = NULL, train = NULL, test = NULL,
 #' data(maipo)
 #' out <- rf_cv_err(mtry = 3, ntree = 1000, train = train, test = test,
 #' formula = fo, response = "croptype", rf_fun = "randomForest")
-#'
+#' }
 #' @export
 rf_cv_err <- function(ntree = NULL, mtry = NULL, train = NULL, test = NULL,
                       response = NULL, formula = NULL, rf_fun = NULL, ...) {

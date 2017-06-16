@@ -61,6 +61,7 @@
 #' @seealso [plot_hyper_svm]
 #'
 #' @examples
+#' \dontrun{
 #' ##------------------------------------------------------------
 #' ## binary classification
 #' ##------------------------------------------------------------
@@ -92,6 +93,7 @@
 #' out <- sptune_svm(fo, ecuador, accelerate = 8, nfold = 5,
 #'                   partition_fun = "partition_kmeans", svm_fun = "svm",
 #'                   kernel = "radial", type = "eps-regression")
+#' }
 #' @export
 sptune_svm <- function(formula = NULL, data = NULL, cost = NULL, gamma = NULL,
                        accelerate = 1, nfold = NULL, partition_fun = NULL,
@@ -317,7 +319,7 @@ sptune_svm <- function(formula = NULL, data = NULL, cost = NULL, gamma = NULL,
 #' @seealso [plot_hyper_rf]
 #'
 #' @examples
-#'
+#' \dontrun{
 #' ##------------------------------------------------------------
 #' ## binary classification
 #' ##------------------------------------------------------------
@@ -347,7 +349,7 @@ sptune_svm <- function(formula = NULL, data = NULL, cost = NULL, gamma = NULL,
 #'
 #' out <- sptune_rf(fo, ecuador, step_factor = 16, nfold = 5,
 #' partition_fun = "partition_kmeans", rf_fun = "randomForest")
-#'
+#' }
 #' @export
 sptune_rf <- function(formula = NULL, data = NULL, step_factor = 2,
                       nfold = NULL, partition_fun = NULL,
