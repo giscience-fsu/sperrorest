@@ -7,6 +7,10 @@ pacman::p_load(sperrorest)
 # plot_hyper_rf Fri Jun  9 11:55:51 2017 ------------------------------
 
 test_that("plot_hyper_rf works correctly with 'mtry' < 12", {
+
+  skip_on_travis()
+  skip_on_appveyor()
+
   data(ecuador) # Muenchow et al. (2012), see ?ecuador
   fo <- dem ~ slides + slope + hcurv + vcurv + log.carea + cslope
 
@@ -19,6 +23,10 @@ test_that("plot_hyper_rf works correctly with 'mtry' < 12", {
 })
 
 test_that("plot_hyper_rf works correctly with 'mtry' > 12", {
+
+  skip_on_travis()
+  skip_on_appveyor()
+
   fo <- croptype ~ b82 + b83 + b84 + b85 + b86 + b87 + ndvi01 +
     ndvi02 + ndvi03 + ndvi04 + b25 + b44 + b47
   data(maipo)
@@ -33,6 +41,9 @@ test_that("plot_hyper_rf works correctly with 'mtry' > 12", {
 # plot_hyper_svm Mon Jun 12 12:11:12 2017 ------------------------------
 
 test_that("plot_hyper_svm works correctly (multiclass)", {
+
+  skip_on_travis()
+  skip_on_appveyor()
 
   # ---
   ## multiclass classification
@@ -50,6 +61,9 @@ test_that("plot_hyper_svm works correctly (multiclass)", {
 })
 
 test_that("plot_hyper_svm works correctly (binary)", {
+
+  skip_on_travis()
+  skip_on_appveyor()
 
   # ---
   ## binary classification

@@ -8,6 +8,9 @@ pacman::p_load(testthat, sperrorest, randomForest, randomForestSRC, purrr)
 
 test_that("sp_tune_rf works with randomForest package", {
 
+  skip_on_travis()
+  skip_on_appveyor()
+
   data <- ecuador
   fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
 
@@ -21,6 +24,9 @@ test_that("sp_tune_rf works with randomForest package", {
 
 test_that("sp_tune_rf works with randomForestSRC package", {
 
+  skip_on_travis()
+  skip_on_appveyor()
+
   data <- ecuador
   fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
 
@@ -31,6 +37,9 @@ test_that("sp_tune_rf works with randomForestSRC package", {
 })
 
 test_that("sp_tune_rf works with custom hyperparam range", {
+
+  skip_on_travis()
+  skip_on_appveyor()
 
   data <- ecuador
   fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope

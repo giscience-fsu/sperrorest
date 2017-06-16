@@ -9,6 +9,9 @@ pacman::p_load(testthat, sperrorest, kernlab, e1071, gmum.r, purrr,
 
 test_that("sp_tune_svm works with kernlab package", {
 
+  skip_on_travis()
+  skip_on_appveyor()
+
   # ---
   ## multiclass classification
   # ---
@@ -26,6 +29,9 @@ test_that("sp_tune_svm works with kernlab package", {
 test_that("sp_tune_svm works with non-converging
           hyperparameter combinations", {
 
+            skip_on_travis()
+            skip_on_appveyor()
+
             readRDS(paste0("/Users/pjs/Servers/GIServer/home/shares/data/LIFE/",
                            "mod/survey_data/data-clean.rda")) %>%
               as.data.frame() -> df
@@ -41,6 +47,9 @@ test_that("sp_tune_svm works with non-converging
           })
 
 test_that("sp_tune_svm works with custom hyperparam range", {
+
+  skip_on_travis()
+  skip_on_appveyor()
 
   # ---
   ## multiclass classification
