@@ -632,10 +632,10 @@ partition_tiles <- function(data, coords = c("x", "y"), dsplit = NULL,
 #'
 #' @note Default parameter settings may change in future releases.
 #'
-#' @references Brenning, A., S. Long & P. Fieguth. Forthcoming.
+#' @references Brenning, A., Long, S., & Fieguth, P. (2012).
 #' Detecting rock glacier flow structures using Gabor filters and IKONOS
-#' imagery.
-#' Submitted to Remote Sensing of Environment.
+#' imagery. Remote Sensing of Environment, 125, 227–237.
+#' doi:10.1016/j.rse.2012.07.005
 #'
 #' Russ, G. & A. Brenning. 2010a. Data mining in precision agriculture:
 #' Management of spatial information. In 13th International Conference on
