@@ -74,7 +74,7 @@ plot_hyper_svm <- function(object = NULL, error_measure = NULL, gamma = NULL,
 
   df %>%
     mutate(gamma = as.factor(gamma)) %>%
-    ggplot(aes_(x = ~ cost, y = ~ var_error, color = gamma, group = gamma)) +
+    ggplot(aes_(x = ~ cost, y = ~ var_error, color = ~ gamma, group = ~ gamma)) +
     geom_point() +
     geom_line() +
     scale_color_viridis(discrete = TRUE, option = color_palette) +
@@ -176,7 +176,7 @@ plot_hyper_rf <- function(object = NULL, error_measure = NULL, mtry = NULL,
   # plot!
   df %>%
     mutate(mtry = as.factor(mtry)) %>%
-    ggplot(aes_(x = ~ ntrees, y = ~var_error, color = mtry, group = mtry)) +
+    ggplot(aes_(x = ~ ntrees, y = ~var_error, color = ~ mtry, group = ~ mtry)) +
     geom_point() +
     geom_line() +
     scale_color_viridis(discrete = TRUE, option = color_palette) +
