@@ -60,6 +60,15 @@
 #'
 #' @seealso [plot_hyper_svm]
 #'
+#' @references Brenning, A., Long, S., & Fieguth, P. (2012).
+#' Detecting rock glacier flow structures using Gabor filters and IKONOS
+#' imagery. Remote Sensing of Environment, 125, 227–237.
+#' doi:10.1016/j.rse.2012.07.005
+#'
+#' Peña, M. A., & Brenning, A. (2015). Assessing fruit-tree crop classification
+#' from Landsat-8 time series for the Maipo Valley, Chile. Remote Sensing of
+#' Environment, 171, 234–244. doi:10.1016/j.rse.2015.10.029
+#'
 #' @examples
 #' \dontrun{
 #' ##------------------------------------------------------------
@@ -317,6 +326,15 @@ sptune_svm <- function(formula = NULL, data = NULL, cost = NULL, gamma = NULL,
 #' `sptune_rf` is parallelized and runs on all possible cores.
 #'
 #' @seealso [plot_hyper_rf]
+#'
+#' @references Brenning, A., Long, S., & Fieguth, P. (2012).
+#' Detecting rock glacier flow structures using Gabor filters and IKONOS
+#' imagery. Remote Sensing of Environment, 125, 227–237.
+#' doi:10.1016/j.rse.2012.07.005
+#'
+#' Peña, M. A., & Brenning, A. (2015). Assessing fruit-tree crop classification
+#' from Landsat-8 time series for the Maipo Valley, Chile. Remote Sensing of
+#' Environment, 171, 234–244. doi:10.1016/j.rse.2015.10.029
 #'
 #' @examples
 #' \dontrun{
