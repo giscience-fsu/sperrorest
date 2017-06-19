@@ -15,7 +15,8 @@ test_that("sp_tune_rf works with randomForest package", {
   fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
 
   out <- sptune_rf(fo, ecuador, step_factor = 1, nfold = 5,
-                   rf_fun = "randomForest", partition_fun = "partition_cv")
+                   rf_fun = "randomForest", partition_fun = "partition_cv",
+                   importance = "permute")
 
   expect_length(out, 2)
 })
