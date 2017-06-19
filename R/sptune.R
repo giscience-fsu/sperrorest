@@ -309,7 +309,8 @@ sptune_svm <- function(formula = NULL, data = NULL, cost = NULL, gamma = NULL,
 #' @param ... additional options passed to `partition_fun`.
 #'
 #' @param importance whether to calculate variable importance on the best
-#' model selected by tuning. See `?rfsrc` for more details.
+#' model selected by tuning. See `?rfsrc` or `?randomForest` for more details
+#' on how to set this argument correctly.
 #'
 #' @details This function tunes a Random Forest model either from [randomForest],
 #' or [randomForestSRC] package using (spatial) cross-validation.
@@ -480,14 +481,14 @@ sptune_rf <- function(formula = NULL, data = NULL, step_factor = 2,
                      "\n", sep = ""),
               error_measure))
 
+  # account for different default setting of importance argument
+  if (rf_fun == "randomForest" && importance == "none") {
+    importance <- FALSE
+  }
+
   # Generate the actual fit object using optimized hyperparameters:
-  if (rf_fun == "rfsrc") {
   args <- list(formula = formula, data = train, ntree = best_ntree,
                mtry = best_mtry, importance = importance)
-  } else {
-  args <- list(formula = formula, data = train, ntree = best_ntree,
-               mtry = best_mtry)
-  }
   fit <- do.call(rf_fun, args)
 
   list_out <- list(fit = fit,

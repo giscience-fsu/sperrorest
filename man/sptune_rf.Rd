@@ -35,7 +35,8 @@ tune over. See details.}
 tune over. See details.}
 
 \item{importance}{whether to calculate variable importance on the best
-model selected by tuning. See \code{?rfsrc} for more details.}
+model selected by tuning. See \code{?rfsrc} or \code{?randomForest} for more details
+on how to set this argument correctly.}
 
 \item{...}{additional options passed to \code{partition_fun}.}
 }
