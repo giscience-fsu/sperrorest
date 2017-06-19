@@ -6,7 +6,7 @@
 \usage{
 sptune_rf(formula = NULL, data = NULL, step_factor = 2, nfold = NULL,
   partition_fun = NULL, rf_fun = "rfsrc", error_measure = NULL,
-  mtrys = NULL, ntrees = NULL, ...)
+  mtrys = NULL, ntrees = NULL, importance = "none", ...)
 }
 \arguments{
 \item{formula}{formula.}
@@ -33,6 +33,9 @@ tune over. See details.}
 
 \item{ntrees}{optional user-defined vector of 'ntrees' hyperparameter to
 tune over. See details.}
+
+\item{importance}{whether to calculate variable importance on the best
+model selected by tuning. See \code{?rfsrc} for more details.}
 
 \item{...}{additional options passed to \code{partition_fun}.}
 }
