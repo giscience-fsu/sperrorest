@@ -181,7 +181,7 @@ plot_hyper_rf <- function(object = NULL, error_measure = NULL, mtry = NULL,
     geom_line() +
     scale_color_viridis(discrete = TRUE, option = color_palette) +
     labs(x = "ntrees", y = toupper(error_measure),
-         title = "Random Forest hyperparameter tuning results",
+         title = "Random Forests hyperparameter tuning results",
          subtitle = sprintf(paste0("Total combinations: %s.",
                                    " Package: '%s'.",
                                    " Best '%s': %s.\n",
