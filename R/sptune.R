@@ -322,7 +322,7 @@ sptune_svm <- function(formula = NULL, data = NULL, cost = NULL, gamma = NULL,
 #'
 #' The default behaviour of [sptune_rf] tunes over all possible 'mtry' values
 #' (which are of `length(predictors)`) and a selection of 'ntrees' ranging
-#' between 10 and 2500. Use `accelerate` to reduce the number of 'ntrees'.
+#' between 10 and 1000. Use `accelerate` to reduce the number of 'ntrees'.
 #' Specify a custom vector if you want to modify the number of `mtry` used
 #' for testing. This is useful if the model contains > 20
 #' predictors but runtime depends on your cpu power / number of cores.
@@ -408,7 +408,7 @@ sptune_rf <- function(formula = NULL, data = NULL, step_factor = 2,
     }
     # Perform a complete grid search over the following range of values:
     ntrees_all <- c(10)
-    while (tail(ntrees_all, n = 1) < 2500) {
+    while (tail(ntrees_all, n = 1) < 1000) {
       i <- tail(ntrees_all, n = 1) * step_factor
       ntrees_all <- c(ntrees_all, i)
     }
@@ -421,7 +421,7 @@ sptune_rf <- function(formula = NULL, data = NULL, step_factor = 2,
   }
 
   ntrees_all <- c(10)
-  while (tail(ntrees_all, n = 1) < 2500) {
+  while (tail(ntrees_all, n = 1) < 1000) {
     i <- tail(ntrees_all, n = 1) * step_factor
     ntrees_all <- c(ntrees_all, i)
   }
