@@ -773,5 +773,12 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
               package_version = package_version)
   class(res) <- "sperrorest"
 
+  if (!is.null(counter)) {
+    # print counter
+    cat(sprintf("%s folds of %s total folds (%s rep * %s folds) did not converge."),
+        counter, smp_args$repetition * smp_args$nfold,
+        smp_args$repetition, smp_args$nfold)
+  }
+
   return(res)
 }
