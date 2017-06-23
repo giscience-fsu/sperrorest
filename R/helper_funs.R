@@ -324,6 +324,15 @@ runreps <- function(current_sample = NULL, data = NULL, formula = NULL,
     data <- as.data.frame(data)
   }
 
+  # temporary workaround
+  # only applies if all fold results of a rep are NA
+  # then is_factor_prediction is not set within runfolds and we need to set it here
+  # unsure if is_factor_prediction is needed at all or if we can set it to
+  # TRUE permanently
+  if (is.null(is_factor_prediction)) {
+    is_factor_prediction <- TRUE
+  }
+
   # Calculate error measures on pooled results
   if (error_rep) {
     if (is.factor(data[, response])) {
@@ -334,7 +343,7 @@ runreps <- function(current_sample = NULL, data = NULL, formula = NULL,
       }
       pooled_only$pooled_obs_test <- factor(lev[pooled_only$pooled_obs_test],
                                             levels = lev)
-      if (is_factor_prediction) {
+      if (is_factor_prediction) { # is this needed here at all?
         if (err_train) {
           pooled_only$pooled_pred_train <- factor(lev[
             pooled_only$pooled_pred_train], levels = lev)
@@ -472,7 +481,7 @@ remove_missing_levels <- function(fit, test_data) {
       test_data %>%
         droplevels() -> test_data
       # issue warning to console
-      message(sprintf(paste0("\nFrom 'sperrorest()': Setting missing levels in",
+      message(sprintf(paste0("\n'sperrorest()': Setting missing levels in",
                              " '%s', only present in test data but missing",
                              "in train data, to 'NA'."),
                       var))
