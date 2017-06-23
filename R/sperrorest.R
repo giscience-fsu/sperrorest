@@ -728,12 +728,24 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
     }
   }
 
+  # check if any rep is NA in all folds and if, remove entry
+  # this happens e.g. in maxent
+
+  check_na <- map(my_res, function(x) all(is.na(x)))
+
+  if (any(check_na) == TRUE) {
+    which(map(my_res, function(x) all(is.na(x))) == "TRUE") %>%
+      as.numeric() -> check_na
+
+    my_res <- my_res[-check_na]
+  }
+
   ### format parallel outputs ----
 
   if (par_args$par_mode == "foreach" | par_args$par_mode == "sequential") {
     # split combined lists from foreach output into sublists referring
     # to repetitions
-    my_res <- split(my_res[[1]], 1:length(resamp))
+    my_res <- split(my_res[[1]], 1:length(my_res))
   }
 
   # assign names to sublists - otherwise `transfer_parallel_output` doesn't work

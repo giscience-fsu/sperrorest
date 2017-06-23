@@ -268,7 +268,7 @@ runreps <- function(current_sample = NULL, data = NULL, formula = NULL,
   # if (is.null(is_factor_prediction)) {
   #   is_factor_prediction <- TRUE
   # }
-  if (all(is.na(runfolds_merged))) {
+  if (all(is.na(runfolds_merged$pooled_obs_train))) {
     return(list(error = NA,
                 pooled_error = NA, importance = NA))
   }
