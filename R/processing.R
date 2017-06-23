@@ -223,6 +223,7 @@ runreps <- function(current_sample = NULL, data = NULL, formula = NULL,
   current_res <- NULL
   current_impo <- current_sample
   current_pooled_error <- NULL
+  counter <<- counter
 
   current_res <- lapply(current_sample, unclass)
   class(current_res) <- "sperroresterror"
