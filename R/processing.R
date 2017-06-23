@@ -42,7 +42,7 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
   })
   # error handling for model fitting (e.g. maxent)
   if (any(is.na(fit))) {
-    message(sprintf(paste0("Non-convergence during model fit. ",
+    message(sprintf(paste0("\nNon-convergence during model fit. ",
                            "Setting results of this fold",
                            " (Repetition %s, Fold %s) to NA."),
                     i, j
