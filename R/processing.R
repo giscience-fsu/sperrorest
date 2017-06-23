@@ -37,7 +37,7 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
   margs <- c(list(formula = formula, data = nd), model_args)
 
   # initialize object
-  counter <- NULL
+  not_converged_folds <- 0
 
   # we do not see the error message, so returning none
   fit <- tryCatch(do.call(model_fun, args = margs), error = function(cond) {
@@ -46,18 +46,22 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
   # error handling for model fitting (e.g. maxent)
   if (any(is.na(fit))) {
     message(sprintf(paste0("\n'sperrorest()': Non-convergence during model fit.",
-                           " Setting results of this fold",
-                           " (Repetition %s, Fold %s) to NA."),
+                           " Setting results of",
+                           " Repetition %s Fold %s to NA."),
                     i, j
-    ),
-    counter <<- counter + 1)
+    ))
+
+    not_converged_folds <- not_converged_folds + 1
+    #assign("not_converged_folds", not_converged_folds + 1, pos = 1)
+    #assign("not_converged_folds", not_converged_folds + 1, env = .GlobalEnv)
 
     return(list(pooled_obs_train = NA,
                 pooled_obs_test = NA,
                 pooled_pred_train = NA,
                 pooled_pred_test = NA,
                 current_res = NA,
-                current_impo = NA))
+                current_impo = NA,
+                not_converged_folds = not_converged_folds))
   }
 
   # Apply model to training sample:
@@ -197,7 +201,8 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
               pooled_pred_train = pooled_pred_train,
               pooled_pred_test = pooled_pred_test,
               current_res = current_res,
-              current_impo = current_impo))
+              current_impo = current_impo,
+              not_converged_folds = not_converged_folds))
 }
 
 #' @title runreps
@@ -219,11 +224,11 @@ runreps <- function(current_sample = NULL, data = NULL, formula = NULL,
                     pooled_pred_train = NULL, response = NULL,
                     is_factor_prediction = NULL, pooled_pred_test = NULL,
                     coords = NULL, test_fun = NULL, par_mode = NULL, i = NULL) {
+
   # output data structures
   current_res <- NULL
   current_impo <- current_sample
   current_pooled_error <- NULL
-  counter <<- counter
 
   current_res <- lapply(current_sample, unclass)
   class(current_res) <- "sperroresterror"
@@ -331,5 +336,6 @@ runreps <- function(current_sample = NULL, data = NULL, formula = NULL,
   }
 
   return(list(error = runfolds_merged$current_res,
-              pooled_error = current_pooled_error, importance = impo_only))
+              pooled_error = current_pooled_error, importance = impo_only,
+              not_converged_folds = runfolds_merged$not_converged_folds))
 }

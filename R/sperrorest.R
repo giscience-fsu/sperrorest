@@ -720,12 +720,21 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
 
                         result <- list(error = runfolds_merged$current_res,
                                        pooled_error = current_pooled_error,
-                                       importance = impo_only)
+                                       importance = impo_only,
+                                       not_converged_folds = runfolds_merged$not_converged_folds)
                         return(list(result))
                       }
     if (par_args$par_mode == "foreach") {
       on.exit(stopCluster(cl))
     }
+  }
+
+  ### format parallel outputs ----
+
+  if (par_args$par_mode == "foreach" | par_args$par_mode == "sequential") {
+    # split combined lists from foreach output into sublists referring
+    # to repetitions
+    my_res <- split(my_res[[1]], 1:length(resamp))
   }
 
   # check if any rep is NA in all folds and if, remove entry
@@ -740,18 +749,16 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
     my_res <- my_res[-check_na]
   }
 
-  ### format parallel outputs ----
-
-  if (par_args$par_mode == "foreach" | par_args$par_mode == "sequential") {
-    # split combined lists from foreach output into sublists referring
-    # to repetitions
-    my_res <- split(my_res[[1]], 1:length(my_res))
-  }
-
   # assign names to sublists - otherwise `transfer_parallel_output` doesn't work
   for (i in 1:length(my_res)) {
-    names(my_res[[i]]) <- c("error", "pooled_error", "importance")
+    names(my_res[[i]]) <- c("error", "pooled_error", "importance",
+                            "non-converged-folds")
   }
+
+  # flatten list & calc sum
+  map(my_res, function(x) flatten_dbl(x[["non-converged-folds"]])) %>%
+    unlist() %>%
+    sum() -> not_converged_folds
 
   # transfer results of lapply() to respective data objects
   my_res_mod <- transfer_parallel_output(my_res, res, impo, pooled_error)
@@ -785,11 +792,12 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
               package_version = package_version)
   class(res) <- "sperrorest"
 
-  if (!is.null(counter)) {
+  if (not_converged_folds > 0) {
     # print counter
-    cat(sprintf("%s folds of %s total folds (%s rep * %s folds) did not converge."),
-        counter, smp_args$repetition * smp_args$nfold,
-        smp_args$repetition, smp_args$nfold)
+    cat(sprintf("%s folds of %s total folds (%s rep * %s folds) did not converge.",
+        not_converged_folds, smp_args$repetition * smp_args$nfold,
+        smp_args$repetition, smp_args$nfold))
+    assign("not_converged_folds", not_converged_folds, env = .GlobalEnv)
   }
 
   return(res)
