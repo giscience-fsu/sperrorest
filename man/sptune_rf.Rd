@@ -55,7 +55,7 @@ is chosen and for classification cases the highest.
 
 The default behaviour of \link{sptune_rf} tunes over all possible 'mtry' values
 (which are of \code{length(predictors)}) and a selection of 'ntrees' ranging
-between 10 and 2500. Use \code{accelerate} to reduce the number of 'ntrees'.
+between 10 and 1000. Use \code{accelerate} to reduce the number of 'ntrees'.
 Specify a custom vector if you want to modify the number of \code{mtry} used
 for testing. This is useful if the model contains > 20
 predictors but runtime depends on your cpu power / number of cores.
