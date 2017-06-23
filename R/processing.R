@@ -36,6 +36,9 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
   # Train model on training sample:
   margs <- c(list(formula = formula, data = nd), model_args)
 
+  # initialize object
+  counter <- NULL
+
   # we do not see the error message, so returning none
   fit <- tryCatch(do.call(model_fun, args = margs), error = function(cond) {
     return(NA)
@@ -46,7 +49,8 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
                            " Setting results of this fold",
                            " (Repetition %s, Fold %s) to NA."),
                     i, j
-    ))
+    ),
+    counter <<- counter + 1)
 
     return(list(pooled_obs_train = NA,
                 pooled_obs_test = NA,
@@ -261,8 +265,12 @@ runreps <- function(current_sample = NULL, data = NULL, formula = NULL,
   # then is_factor_prediction is not set within runfolds and we need to set it here
   # unsure if is_factor_prediction is needed at all or if we can set it to
   # TRUE permanently
-  if (is.null(is_factor_prediction)) {
-    is_factor_prediction <- TRUE
+  # if (is.null(is_factor_prediction)) {
+  #   is_factor_prediction <- TRUE
+  # }
+  if (all(is.na(runfolds_merged))) {
+    return(list(error = NA,
+                pooled_error = NA, importance = NA))
   }
 
   if (importance == TRUE) {
