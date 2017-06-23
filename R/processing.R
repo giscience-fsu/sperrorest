@@ -36,7 +36,25 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
   # Train model on training sample:
   margs <- c(list(formula = formula, data = nd), model_args)
 
-  fit <- do.call(model_fun, args = margs)
+  # we do not see the error message, so returning none
+  fit <- tryCatch(do.call(model_fun, args = margs), error = function(cond) {
+    return(NA)
+  })
+  # error handling for model fitting (e.g. maxent)
+  if (any(is.na(fit))) {
+    message(sprintf(paste0("Non-convergence during model fit. ",
+                           "Setting results of this fold",
+                           " (Repetition %s, Fold %s) to NA."),
+                    i, j
+    ))
+
+    return(list(pooled_obs_train = NA,
+                pooled_obs_test = NA,
+                pooled_pred_train = NA,
+                pooled_pred_test = NA,
+                current_res = NA,
+                current_impo = NA))
+  }
 
   # Apply model to training sample:
   pargs <- c(list(object = fit, newdata = nd), pred_args)
