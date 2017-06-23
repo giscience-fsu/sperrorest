@@ -1,6 +1,6 @@
 context("processing.R")
 
-pacman::p_load(sperrorest, rpart, MASS)
+pacman::p_load(sperrorest, rpart, MASS, tidyverse, maxnet)
 
 # runfolds Sun May 21 22:58:39 2017 ------------------------------
 
@@ -152,12 +152,11 @@ test_that("runfolds works on maxnet example", {
 
   maxnet_modfun <- function(data = data, formula = formula) {
 
-    df <- data
-    df %>%
-      dplyr::select(-id, -fus01, -x, -y, -hail, -diplo01, -geometry) %>%
+    data %>%
+      dplyr::select(-id, -fus01, -x, -y, -hail, -diplo01, -geometry, -year) %>%
       as.data.frame() -> maxent_pred
 
-    df %>%
+    data %>%
       dplyr::select(diplo01) %>%
       .$diplo01 -> maxent_response
 
@@ -198,8 +197,6 @@ test_that("runfolds works on maxnet example", {
     # maxnet needs a numeric response
     maxnet_response <- as.numeric(levels(maxent_response))[maxent_response]
 
-    length(maxent_pred)
-
     maxnet_out <- maxnet(data = maxent_pred,
                          p = maxnet_response)
 
@@ -212,18 +209,18 @@ test_that("runfolds works on maxnet example", {
     return(pred)
   }
 
-  current_sample <- partition_cv(df, nfold = 5)[[1]]
+  current_sample <- partition_kmeans(df, nfold = 5, seed1 = 12345)[[1]]
   current_res <- current_sample
 
   runfolds_single <- runfolds(j = 1, data = df,
                               current_sample = current_sample,
-                              formula = diplo01 ~ temp + p_sum + r_sum +
-                                elevation + slope + hail + age + ph +
-                                lithology + soil,
+                              formula = fo,
                               model_fun = maxnet_modfun,
                               pred_fun = maxnet_predfun,
                               pred_args = list(type = "logistic"),
-                              importance = FALSE,
+                              importance = TRUE,
+                              imp_variables = c("elevation", "lithology"),
+                              imp_permutations = 2,
                               par_mode = "sequential",
                               current_res = current_res,
                               response = "diplo01", par_cl = 2,
@@ -375,13 +372,12 @@ test_that("runfolds works on maxnet example", {
 
             maxnet_modfun <- function(data = data, formula = formula) {
 
-              df <- data
-
-              df %>%
-                dplyr::select(-id, -fus01, -x, -y, -hail, -diplo01, -geometry, -year) %>%
+              data %>%
+                dplyr::select(-id, -fus01, -x, -y, -hail, -diplo01,
+                              -geometry, -year) %>%
                 as.data.frame() -> maxent_pred
 
-              df %>%
+              data %>%
                 dplyr::select(diplo01) %>%
                 .$diplo01 -> maxent_response
 
@@ -434,14 +430,17 @@ test_that("runfolds works on maxnet example", {
               return(pred)
             }
 
-            current_sample <- partition_kmeans(df, nfold = 5, repetition = 1:5)
+            current_sample <- partition_kmeans(df, nfold = 5, repetition = 1:5,
+                                               seed1 = 12345)
             current_res <- current_sample
 
             runreps_res <- lapply(current_sample, function(x)
               runreps(current_sample = x, do_gc = 1,
                       formula = fo, par_mode = "sequential", data = df,
                       model_fun = maxnet_modfun,
-                      importance = FALSE,
+                      importance = TRUE,
+                      imp_variables = c("elevation", "lithology"),
+                      imp_permutations = 2,
                       current_res = current_res,
                       pred_fun = maxnet_predfun,
                       pred_args = list(type = "logistic"), response = "diplo01",

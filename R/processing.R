@@ -256,6 +256,15 @@ runreps <- function(current_sample = NULL, data = NULL, formula = NULL,
   # http://stackoverflow.com/questions/43963683/r-flexible-passing-of-sublists-to-following-function # nolint
   runfolds_merged <- do.call(Map, c(f = list, runfolds_list))
 
+  # temporary workaround
+  # only applies if all fold results of a rep are NA
+  # then is_factor_prediction is not set within runfolds and we need to set it here
+  # unsure if is_factor_prediction is needed at all or if we can set it to
+  # TRUE permanently
+  if (is.null(is_factor_prediction)) {
+    is_factor_prediction <- TRUE
+  }
+
   if (importance == TRUE) {
     # subset fold result to importance results only
     impo_only <- runfolds_merged[6][[1]]
