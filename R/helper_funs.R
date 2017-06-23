@@ -472,9 +472,9 @@ remove_missing_levels <- function(fit, test_data) {
       test_data %>%
         droplevels() -> test_data
       # issue warning to console
-      message(sprintf(paste0("Setting missing levels in '%s', only present",
-                             " in test data but missing in train data,",
-                             " to 'NA'."),
+      message(sprintf(paste0("\nFrom 'sperrorest()': Setting missing levels in",
+                             " '%s', only present in test data but missing",
+                             "in train data, to 'NA'."),
                       var))
     }
   }
