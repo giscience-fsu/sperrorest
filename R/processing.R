@@ -46,7 +46,7 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
   # error handling for model fitting (e.g. maxent)
   # we need the first condition to handle S4 objects. They do not work with
   # is.na()
-  if (is.na(fit)) {
+  if (!typeof(fit) == "S4" && is.na(fit)) {
     message(sprintf(paste0("\n'sperrorest()': Non-convergence during model fit.",
                            " Setting results of",
                            " Repetition %s Fold %s to NA."),
@@ -137,17 +137,17 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
   if (any(class(nd) == "tbl")) {
     nd <- as.data.frame(nd) # nocov
   }
-  current_res[[j]]$test <- err_fun(nd[, response], pred_test)
-  #res[[i]][[j]]$test  = err_fun(nd[,response], pred_test)
-
-  pooled_obs_test <- c(pooled_obs_test, nd[, response])
-  pooled_pred_test <- c(pooled_pred_test, pred_test)
-  # assign to outer scope; otherwise object is NULL in runreps
-  is_factor_prediction <<- is.factor(pred_test)
-
-  ### Permutation-based variable importance assessment:
-  if (importance == TRUE) {
-
+  current_res[[j]]$test <- tryCatch(err_fun(nd[, response], pred_train),
+                                     error = function(cond) {
+                                       return(NA)
+                                     })
+  if (is.na(current_res[[j]]$test)) {
+    message(sprintf(paste0("\n'sperrorest()': Non-convergence during",
+                           " performance calculation.",
+                           " Setting results of",
+                           " Repetition %s Fold %s to NA."),
+                    i, j
+    ))
     # account for possible missing factor levels in test data
     if (any(class(fit) == "lm" | class(fit) == "glmmPQL")) {
       nd <- remove_missing_levels(fit, nd)
