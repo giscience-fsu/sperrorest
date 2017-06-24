@@ -46,7 +46,7 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
   # error handling for model fitting (e.g. maxent)
   # we need the first condition to handle S4 objects. They do not work with
   # is.na()
-  if (class(fit) == "logical" && is.na(fit[1])) {
+  if (is.na(fit)) {
     message(sprintf(paste0("\n'sperrorest()': Non-convergence during model fit.",
                            " Setting results of",
                            " Repetition %s Fold %s to NA."),
@@ -78,10 +78,28 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
   if (any(class(nd) == "tbl")) {
     nd <- as.data.frame(nd) # nocov
   }
-  current_res[[j]]$train <- err_fun(nd[, response], pred_train)
-  #res[[i]][[j]]$train = err_fun(nd[,response], pred_train)
+  current_res[[j]]$train <- tryCatch(err_fun(nd[, response], pred_train),
+                                     error = function(cond) {
+                                       return(NA)
+                                     })
+  if (is.na(current_res[[j]]$train)) {
+    message(sprintf(paste0("\n'sperrorest()': Non-convergence during",
+                           " performance calculation.",
+                           " Setting results of",
+                           " Repetition %s Fold %s to NA."),
+                    i, j
+    ))
 
+    not_converged_folds <- not_converged_folds + 1
 
+    return(list(pooled_obs_train = NA,
+                pooled_obs_test = NA,
+                pooled_pred_train = NA,
+                pooled_pred_test = NA,
+                current_res = NA,
+                current_impo = NA,
+                not_converged_folds = not_converged_folds))
+  }
 
   pooled_obs_train <- c(pooled_obs_train, nd[, response])
   pooled_pred_train <- c(pooled_pred_train, pred_train)
