@@ -44,7 +44,9 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
     return(NA)
   })
   # error handling for model fitting (e.g. maxent)
-  if (any(is.na(fit))) {
+  # we need the first condition to handle S4 objects. They do not work with
+  # is.na()
+  if (class(fit) == "logical" && is.na(fit[1])) {
     message(sprintf(paste0("\n'sperrorest()': Non-convergence during model fit.",
                            " Setting results of",
                            " Repetition %s Fold %s to NA."),
@@ -52,8 +54,6 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
     ))
 
     not_converged_folds <- not_converged_folds + 1
-    #assign("not_converged_folds", not_converged_folds + 1, pos = 1)
-    #assign("not_converged_folds", not_converged_folds + 1, env = .GlobalEnv)
 
     return(list(pooled_obs_train = NA,
                 pooled_obs_test = NA,
