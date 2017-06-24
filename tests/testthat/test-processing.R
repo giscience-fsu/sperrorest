@@ -1,6 +1,6 @@
 context("processing.R")
 
-pacman::p_load(sperrorest, rpart, MASS, tidyverse, maxnet)
+pacman::p_load(sperrorest, rpart, MASS, tidyverse, maxnet, dismo, rJava)
 
 # runfolds Sun May 21 22:58:39 2017 ------------------------------
 
@@ -212,7 +212,7 @@ test_that("runfolds works on maxnet example", {
   current_sample <- partition_kmeans(df, nfold = 5, seed1 = 12345)[[1]]
   current_res <- current_sample
 
-  runfolds_single <- runfolds(j = 1, data = df,
+  runfolds_single <- runfolds(j = 3, data = df,
                               current_sample = current_sample,
                               formula = fo,
                               model_fun = maxnet_modfun,
@@ -220,6 +220,135 @@ test_that("runfolds works on maxnet example", {
                               pred_args = list(type = "logistic"),
                               importance = TRUE,
                               imp_variables = c("elevation", "lithology"),
+                              imp_permutations = 2,
+                              par_mode = "sequential",
+                              current_res = current_res,
+                              response = "diplo01", par_cl = 2,
+                              coords = c("x", "y"), progress = 1,
+                              pooled_obs_train = c(),
+                              pooled_obs_test = c(), err_fun = err_default)
+})
+
+test_that("runfolds works on maxent example", {
+
+  skip("internal use")
+
+  readRDS(paste0("/Users/pjs/Servers/GIServer/home/shares/data/LIFE",
+                 "/mod/survey_data/data-clean.rda")) %>%
+    as_tibble() %>%
+    as.data.frame() -> df
+  fo <- diplo01 ~ temp + p_sum + r_sum + elevation + slope + hail_new +
+    age + ph + lithology + soil
+
+  maxent_modfun <- function(data = data, formula = formula) {
+
+    data %>%
+      dplyr::select(-id, -fus01, -x, -y, -hail, -diplo01, -geometry, -year) %>%
+      as.data.frame() -> maxent_pred
+
+    data %>%
+      dplyr::select(diplo01) %>%
+      .$diplo01 -> maxent_response
+
+    maxent_pred %>%
+      dplyr::mutate(lithology = forcats::fct_recode(lithology,
+                                                    "1" = "Depsitos superficiales",
+                                                    "2" = "Detrticos alternantes",
+                                                    "3" = "Margas descarbonatadas",
+                                                    "4" = "Calizas impuras y calcarenitas",
+                                                    "5" = "Rocas volcnicas piroclsticas",
+                                                    "6" = "Rocas volcnicas en coladas",
+                                                    "7" = "Arcillas con yesos y otras sales",
+                                                    "8" = "Alternancia de margocalizas margas calizas y calcarenitas",
+                                                    "9" = "Granitos de grano grueso",
+                                                    "10" = "Areniscas",
+                                                    "11" = "Limolitas",
+                                                    "12" = "Lutitas",
+                                                    "13" = "Margas",
+                                                    "14" = "Calizas",
+                                                    "15" = "Ofitas",
+                                                    "16" = "Pizarras",
+                                                    "17" = "Granodioritas")) %>%
+      dplyr::mutate(soil = forcats::fct_recode(soil,
+                                               "1" = "Cambisols",
+                                               "2" = "Chernozems",
+                                               "3" = "Cryosols",
+                                               "4" = "Durisols",
+                                               "5" = "Ferralsols",
+                                               "6" = "Fluvisols",
+                                               "7" = "Gleysols",
+                                               "8" = "Gypsisols",
+                                               "9" = "Histosols",
+                                               "10" = "Kastanozems",
+                                               "11" = "Leptosols",
+                                               "12" = "Lixisols",
+                                               "13" = "Luvisols")) -> maxent_pred
+
+    # maxnet needs a numeric response
+    #maxent_response <- as.numeric(levels(maxent_response))[maxent_response]
+
+    maxent_out <- maxent(x = maxent_pred,
+                         p = maxent_response)
+
+    return(maxent_out)
+  }
+
+  maxent_predfun <- function(object = NULL, newdata = NULL) {
+
+    newdata %>%
+      dplyr::select(-id, -fus01, -x, -y, -hail, -diplo01, -geometry, -year) %>%
+      as.data.frame() -> maxent_pred
+
+    maxent_pred %>%
+      dplyr::mutate(lithology = forcats::fct_recode(lithology,
+                                                    "1" = "Depsitos superficiales",
+                                                    "2" = "Detrticos alternantes",
+                                                    "3" = "Margas descarbonatadas",
+                                                    "4" = "Calizas impuras y calcarenitas",
+                                                    "5" = "Rocas volcnicas piroclsticas",
+                                                    "6" = "Rocas volcnicas en coladas",
+                                                    "7" = "Arcillas con yesos y otras sales",
+                                                    "8" = "Alternancia de margocalizas margas calizas y calcarenitas",
+                                                    "9" = "Granitos de grano grueso",
+                                                    "10" = "Areniscas",
+                                                    "11" = "Limolitas",
+                                                    "12" = "Lutitas",
+                                                    "13" = "Margas",
+                                                    "14" = "Calizas",
+                                                    "15" = "Ofitas",
+                                                    "16" = "Pizarras",
+                                                    "17" = "Granodioritas")) %>%
+      dplyr::mutate(soil = forcats::fct_recode(soil,
+                                               "1" = "Cambisols",
+                                               "2" = "Chernozems",
+                                               "3" = "Cryosols",
+                                               "4" = "Durisols",
+                                               "5" = "Ferralsols",
+                                               "6" = "Fluvisols",
+                                               "7" = "Gleysols",
+                                               "8" = "Gypsisols",
+                                               "9" = "Histosols",
+                                               "10" = "Kastanozems",
+                                               "11" = "Leptosols",
+                                               "12" = "Lixisols",
+                                               "13" = "Luvisols")) -> maxent_pred
+
+    pred <- predict(object, maxent_pred)
+
+    return(pred)
+  }
+
+  current_sample <- partition_kmeans(df, nfold = 5, seed1 = 12345)[[1]]
+  current_res <- current_sample
+
+  runfolds_single <- runfolds(j = 2, data = df,
+                              current_sample = current_sample,
+                              formula = fo,
+                              model_fun = maxent_modfun,
+                              pred_fun = maxent_predfun,
+                              # pred_args = list(type = "logistic"),
+                              importance = FALSE,
+                              #imp_variables = c("elevation", "lithology"),
                               imp_permutations = 2,
                               par_mode = "sequential",
                               current_res = current_res,
