@@ -16,7 +16,7 @@
 #' @import doFuture
 #' @import rpart
 #' @importFrom utils packageVersion
-#' @importFrom purrr walk map
+#' @importFrom purrr walk map flatten_dbl
 #' @importFrom stringr str_replace_all
 #'
 #' @param data a `data.frame` with predictor and response variables.
@@ -741,8 +741,9 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
   # this happens e.g. in maxent
 
   check_na <- map(my_res, function(x) all(is.na(x)))
+  check_na_flat <- unlist(check_na)
 
-  if (any(check_na) == TRUE) {
+  if (any(check_na_flat) == TRUE) {
     which(map(my_res, function(x) all(is.na(x))) == "TRUE") %>%
       as.numeric() -> check_na
 
@@ -793,6 +794,9 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
   class(res) <- "sperrorest"
 
   if (not_converged_folds > 0) {
+    if (length(smp_args$repetition) > 1) {
+      smp_args$repetition <- tail(repetition, n = 1)
+    }
     # print counter
     cat(sprintf("%s folds of %s total folds (%s rep * %s folds) did not converge.",
         not_converged_folds, smp_args$repetition * smp_args$nfold,
