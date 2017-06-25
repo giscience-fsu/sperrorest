@@ -46,7 +46,7 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
   # error handling for model fitting (e.g. maxent)
   # we need the first condition to handle S4 objects. They do not work with
   # is.na()
-  if (!typeof(fit) == "S4" && is.na(fit)) {
+  if (class(fit)[1] == "logical") {
     message(sprintf(paste0("\n'sperrorest()': Non-convergence during model fit.",
                            " Setting results of",
                            " Repetition %s Fold %s to NA."),
@@ -82,7 +82,7 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
                                      error = function(cond) {
                                        return(NA)
                                      })
-  if (is.na(current_res[[j]]$train)) {
+  if (class(current_res[[j]]$train) == "logical") {
     message(sprintf(paste0("\n'sperrorest()': Non-convergence during",
                            " performance calculation.",
                            " Setting results of",
@@ -103,7 +103,6 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
 
   pooled_obs_train <- c(pooled_obs_train, nd[, response])
   pooled_pred_train <- c(pooled_pred_train, pred_train)
-
 
   # Create test sample:
   nd <- data[current_sample[[j]]$test, ]
@@ -137,17 +136,40 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
   if (any(class(nd) == "tbl")) {
     nd <- as.data.frame(nd) # nocov
   }
-  current_res[[j]]$test <- tryCatch(err_fun(nd[, response], pred_train),
+  current_res[[j]]$test <- tryCatch(err_fun(nd[, response], pred_test),
                                      error = function(cond) {
                                        return(NA)
                                      })
-  if (is.na(current_res[[j]]$test)) {
+
+  if (class(current_res[[j]]$test) == "logical") {
     message(sprintf(paste0("\n'sperrorest()': Non-convergence during",
                            " performance calculation.",
                            " Setting results of",
                            " Repetition %s Fold %s to NA."),
                     i, j
     ))
+
+    is_factor_prediction <<- is.factor(pred_test)
+
+    not_converged_folds <- not_converged_folds + 1
+
+    return(list(pooled_obs_train = NA,
+                pooled_obs_test = NA,
+                pooled_pred_train = NA,
+                pooled_pred_test = NA,
+                current_res = NA,
+                current_impo = NA,
+                not_converged_folds = not_converged_folds))
+  }
+
+  pooled_obs_test <- c(pooled_obs_test, nd[, response])
+  pooled_pred_test <- c(pooled_pred_test, pred_test)
+
+  is_factor_prediction <<- is.factor(pred_test)
+
+  ### Permutation-based variable importance assessment:
+  if (importance == TRUE) {
+
     # account for possible missing factor levels in test data
     if (any(class(fit) == "lm" | class(fit) == "glmmPQL")) {
       nd <- remove_missing_levels(fit, nd)
@@ -317,12 +339,14 @@ runreps <- function(current_sample = NULL, data = NULL, formula = NULL,
         pooled_only$pooled_obs_train], levels = lev)
     pooled_only$pooled_obs_test <- factor(lev[pooled_only$pooled_obs_test],
                                           levels = lev)
-    if (is_factor_prediction) {
+
+    if (is_factor_prediction == TRUE) {
         pooled_only$pooled_pred_train <- factor(lev[
           pooled_only$pooled_pred_train], levels = lev)
       pooled_only$pooled_pred_test <- factor(lev[
         pooled_only$pooled_pred_test], levels = lev)
     }
+
   }
   pooled_error_train <- NULL
     pooled_error_train <- err_fun(pooled_only$pooled_obs_train,
