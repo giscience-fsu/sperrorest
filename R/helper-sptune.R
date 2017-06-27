@@ -277,6 +277,177 @@ rf_cv_err <- function(ntree = NULL, mtry = NULL, train = NULL, test = NULL,
   return(perf_measures)
 }
 
+#' @title maxent_cv_err
+#' @description Calculates AUROC for different beta_multiplier and
+#' feature_classes values
+#'
+#' @importFrom ROCR prediction performance
+#' @importFrom dismo maxent
+#' @importFrom dplyr semi_join
+#'
+#' @param formula model formula
+#'
+#' @inheritParams beta_multiplier
+#'
+#' @inheritParams feature_classes
+#'
+#' @param train training data
+#'
+#' @param test testing data
+#'
+#' @param response response variable
+#'
+#' @keywords internal
+#'
+#' @examples
+#' \dontrun{
+#' data(maxent_pred)
+#' data(maxent_response)
+#'
+#' parti <- partition_kmeans(basque, nfold = 5)
+#' train <- maxent_pred[parti[[1]][[1]]$train, ]
+#' test <- maxent_pred[parti[[1]][[1]]$test, ]
+#'
+#' out <- maxent_cv_err(beta_multiplier = 10,
+#'                      feature_classes = "LQ",
+#'                      train = train, test = test, x = maxent_pred,
+#'                      p = maxent_response,
+#'                      absence = TRUE)
+#' @export
+maxent_cv_err <- function(beta_multiplier = NULL, feature_classes = NULL,
+                          train = NULL, test = NULL, x = NULL, p = NULL,
+                          absence = NULL, ...) {
+
+  # account for feature classes
+  if (feature_classes == "L") {
+    linear <- TRUE
+    quadratic <- FALSE
+    product <- FALSE
+    threshold <- FALSE
+    hinge <- FALSE
+  } else if (feature_classes == "Q") {
+    linear <- FALSE
+    quadratic <- TRUE
+    product <- FALSE
+    threshold <- FALSE
+    hinge <- FALSE
+  } else if (feature_classes == "H") {
+    linear <- FALSE
+    quadratic <- FALSE
+    product <- FALSE
+    threshold <- FALSE
+    hinge <- TRUE
+  } else if (feature_classes == "T") {
+    linear <- FALSE
+    quadratic <- FALSE
+    product <- FALSE
+    threshold <- TRUE
+    hinge <- FALSE
+  } else if (feature_classes == "LQ") {
+    linear <- TRUE
+    quadratic <- TRUE
+    product <- FALSE
+    threshold <- FALSE
+    hinge <- FALSE
+  } else if (feature_classes == "HQ") {
+    linear <- FALSE
+    quadratic <- TRUE
+    product <- FALSE
+    threshold <- FALSE
+    hinge <- TRUE
+  } else if (feature_classes == "LQP") {
+    linear <- TRUE
+    quadratic <- TRUE
+    product <- TRUE
+    threshold <- FALSE
+    hinge <- FALSE
+  } else if (feature_classes == "LQT") {
+    linear <- TRUE
+    quadratic <- TRUE
+    product <- FALSE
+    threshold <- TRUE
+    hinge <- FALSE
+  } else if (feature_classes == "QHP") {
+    linear <- FALSE
+    quadratic <- TRUE
+    product <- TRUE
+    threshold <- FALSE
+    hinge <- TRUE
+  } else if (feature_classes == "QHT") {
+    linear <- FALSE
+    quadratic <- TRUE
+    product <- FALSE
+    threshold <- TRUE
+    hinge <- TRUE
+  } else if (feature_classes == "QHPT") {
+    linear <- FALSE
+    quadratic <- TRUE
+    product <- TRUE
+    threshold <- TRUE
+    hinge <- TRUE
+  }
+
+  sprintf(paste0("betamultiplier=%s,",
+                 "linear=%s,quadratic=%s,product=%s,threshold=%s,",
+                 "hinge=%s"), beta_multiplier, linear, quadratic, product,
+          threshold, hinge) -> my_args
+  str_split(my_args, pattern = ",")[[1]] -> my_args
+
+  # subset response vector for train and test
+  x$pa <- p
+  train_tmp <- suppressMessages(semi_join(x, train))
+  p_train <- train_tmp$pa
+
+  test_tmp <- suppressMessages(semi_join(x, test))
+  p_test <- test_tmp$pa
+
+  args <- list(x = train, p = p_train, args = my_args)
+
+  # fit model
+  fit <- tryCatch(do.call(maxent, args),
+                  error = function(cond) {
+                    return(NA)
+                  })
+
+  # if NA is assigned to 'fit' due to tryCatch, we break the function and
+  # return NA
+  if (is.logical(fit)) {
+    return(fit)
+  }
+
+  # p must be numeric here
+  prev_pa <- mean(as.numeric(as.character(p_train)))
+
+  # post-process predict results http://onlinelibrary.wiley.com/store/10.1111/2041-210X.12252/asset/supinfo/mee312252-sup-0003-Appendix5.R?v=1&s=13755a940831aa9186cf931209e826a304e9868e
+  if (absence == TRUE) {
+    pred <- tryCatch(dismo::predict(fit, x = test, args = "outputformat=raw"),
+                     error = function(cond) {
+                       return(NA)
+                     })
+    numbg <- fit@results["X.Background.points", ] # number of points in background
+    pred <- pred * prev_pa * numbg # adjusted raw output (probabilities)
+    pred[pred > 1] <- 1   # clipped to 1
+  } else {
+    # return pred for presence-only in logistic format
+    pred <- tryCatch(dismo::predict(fit, x = test,
+                                    args = "outputformat=logistic"),
+                     error = function(cond) {
+                       return(NA)
+                     })
+  }
+
+  # if NA is assigned to 'pred' due to tryCatch, we break the function and
+  # return NA
+  if (is.logical(pred)) {
+    return(pred)
+  }
+
+  # calculate error measures
+  perf_measures <- err_default(p_test, pred)
+
+  return(perf_measures)
+}
+
 #' @title check_response_type
 #' @description Checks response type of input and sets error measure
 #'

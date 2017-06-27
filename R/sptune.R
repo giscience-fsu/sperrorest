@@ -505,3 +505,279 @@ sptune_rf <- function(formula = NULL, data = NULL, step_factor = 2,
   return(list_out)
 }
 
+#' @title sptune_maxent
+#' @description Tuning of Maxent ($\beta$ & feature classes) using spatial
+#' cross-validation
+#' @author Patrick Schratz, Alexander Brenning
+#'
+#' @import future
+#' @import doFuture
+#' @import parallel
+#' @import foreach
+#' @importFrom purrr map2 map
+#' @importFrom utils tail
+#'
+#' @param x Predictors. Raster* object or SpatialGridDataFrame, containing
+#' grids with predictor variables. These will be used to extract values from
+#' for the point locations. x can also be a data.frame, in which case each
+#' column should be a predictor variable and each row a presence or background
+#' record
+#'
+#' @param p Occurrence data. This can be a data.frame, matrix, SpatialPoints
+#' object, or a vector. If p is a data.frame or matrix it represents a set of
+#' point locations; and it must have two columns with the first being the
+#' x-coordinate (longitude) and the second the y-coordinate (latitude).
+#' Coordinates can also be specified with a SpatialPoints* object
+#'
+#' @param data dataframe.
+#'
+#' @param beta_multiplier optional user-defined vector of 'beta_multiplier'
+#' hyperparameter to tune over. See details.
+#'
+#' @param feature_classes optional user-defined vector of 'feature_classes'
+#' hyperparameter to tune over. See details.
+#'
+#' @param nfold number of folds for cross-validation.
+#'
+#' @param partition_fun character. Data partitioning method
+#' (e.g. [partition_kmeans])
+#'
+#' @param error_measure which error measure to use for optimization.
+#' Default to 'RMSE' for numeric responses, 'AUROC' for binary classification
+#' and 'error' for multiclass classiciation.
+#'
+#' @param ... additional options passed to `partition_fun`.
+#'
+#' @details This function tunes a Maxent model from the [dismo] package
+#' using (spatial) cross-validation.
+#'
+#' `error_measure` can be specified by the user, selecting one of the returned
+#' error measures of [sptune_rf]. However, note that for
+#' regression type responses always the minimum value of the passed error measure
+#' is chosen and for classification cases the highest.
+#'
+#'
+#' `sptune_maxent` is parallelized and runs on all possible cores.
+#'
+#' @seealso [plot_hyper_maxent]
+#'
+#' @references Brenning, A., Long, S., & Fieguth, P. (2012).
+#' Detecting rock glacier flow structures using Gabor filters and IKONOS
+#' imagery. Remote Sensing of Environment, 125, 227-237.
+#' doi:10.1016/j.rse.2012.07.005
+#'
+#' Pena, M. A., & Brenning, A. (2015). Assessing fruit-tree crop classification
+#' from Landsat-8 time series for the Maipo Valley, Chile. Remote Sensing of
+#' Environment, 171, 234-244. doi:10.1016/j.rse.2015.10.029
+#'
+#' @examples
+#' \dontrun{
+#' library(sperrorest)
+#' data(maxent_pred)
+#' data(maxent_response)
+#' data(basque)
+#'
+#' sptune_maxent(x = maxent_pred, p = maxent_response, data = basque,
+#'               absence = TRUE, feature_classes = "QHPT")
+#'
+#' out <- sptune_maxent(x = maxent_pred, p = maxent_response, data = basque,
+#'                      absence = TRUE)
+#' }
+#' @export
+sptune_maxent <- function(x = NULL, p = NULL, data = NULL,
+                          nfold = NULL, partition_fun = NULL,
+                          error_measure = NULL, absence = FALSE,
+                          beta_multiplier = NULL,
+                          feature_classes = NULL, ...) {
+
+  if (is.null(partition_fun)) {
+    message("Partitioning method: 'partition_kmeans'.")
+    partition_fun <- "partition_kmeans"
+  } else {
+    message(sprintf("Partitioning method: '%s'.", partition_fun))
+  }
+
+  if (is.null(nfold)) {
+    nfold <- 5
+    warning(sprintf("Using %s folds since 'nfold' was not set.", nfold))
+  }
+
+  # partition the data
+  partition_args <- list(data = data, nfold = nfold,
+                         ...)
+  parti <- do.call(partition_fun, args = partition_args)
+  train <- x[parti[[1]][[1]]$train, ]
+  test <- x[parti[[1]][[1]]$test, ]
+
+  ## feature classes L, Q, H, T, LQ, HQ, LQP, LQT, QHP, QHT, QHPT,
+
+  if (is.null(beta_multiplier) && !is.null(feature_classes)) {
+    beta_multiplier_all <- seq(-10, 20, 2)
+    # remove 0
+    beta_multiplier_all <- beta_multiplier_all[ -which(beta_multiplier_all %in% 0)]
+    feature_classes_all <- feature_classes
+  } else if (is.null(feature_classes) && !is.null(beta_multiplier)) {
+    feature_classes_all <- c("L", "Q", "H", "T", "LQ", "HQ", "LQP", "LQT", "QHP",
+                             "QHT", "QHPT")
+    beta_multiplier_all <- beta_multiplier
+  } else {
+    beta_multiplier_all <- seq(-10, 20, 2)
+    # remove 0
+    beta_multiplier_all <- beta_multiplier_all[ -which(beta_multiplier_all %in% 0)]
+    feature_classes_all <- c("L", "Q", "H", "T", "LQ", "HQ", "LQP", "LQT", "QHP",
+                             "QHT", "QHPT")
+  }
+
+  # Set up variables for loop:
+  beta_multiplier <- length(beta_multiplier_all)
+  beta_multiplier_all <- rep(beta_multiplier_all, length(feature_classes_all))
+  feature_classes_all <- rep(feature_classes_all, each = beta_multiplier)
+
+  # Calculate perf. measures for all combinations of 'beta_multiplier' and 'feature_classes'
+  registerDoFuture()
+  cl <- makeCluster(availableCores())
+  plan(cluster, workers = cl)
+  #plan(sequential)
+
+  message(sprintf(paste0("Using 'foreach' parallel mode with %s cores on",
+                         " %s combinations."),
+                  availableCores(), length(beta_multiplier_all)))
+  message(sprintf(paste0("Unique 'beta_multiplier': %s.",
+                         " Unique 'feature_classes': %s."),
+                  length(unique(beta_multiplier_all)),
+                  length(unique(feature_classes_all))))
+
+  foreach(i = 1:length(beta_multiplier_all), .packages = (.packages()),
+          .errorhandling = "remove", .verbose = FALSE) %dopar% {
+
+            out <- maxent_cv_err(beta_multiplier = beta_multiplier_all[i],
+                                 feature_classes = feature_classes_all[i],
+                                 train = train, test = test,
+                                 x = x, p = p, absence = absence)
+            return(out)
+          } -> perf_measures
+
+  stopCluster(cl)
+
+  # append 'beta_multiplier' and 'feature_classes' vectors to respective lists
+  perf_measures %>%
+    map2(.y = feature_classes_all,
+         .f = ~ plyr::mutate(.x, feature_classes = .y)) %>%
+    map2(.y = beta_multiplier_all,
+         .f = ~ plyr::mutate(.x, beta_multiplier = .y)) -> perf_measures
+
+  tmp1 <- check_response_type(p, error_measure,
+                              perf_measures, option = TRUE)
+  error_measure <- tmp1[[1]]
+  list_index <- tmp1[[2]]
+
+  perf_measures %>%
+    map(error_measure) %>%
+    unlist() -> all_error_measures
+
+  best_beta_multiplier <- beta_multiplier_all[list_index]
+  best_feature_class <- feature_classes_all[list_index]
+
+  # output on screen:
+  cat(sprintf(paste0("Optimal beta multiplier: ", best_beta_multiplier, ";    optimal feature class combination: ",
+                     best_feature_class,";    best %s: ",
+                     perf_measures[[list_index]][[error_measure]],
+                     "\n", sep = ""),
+              error_measure))
+
+  # Generate the actual fit object using optimized hyperparameters:
+
+  # account for feature classes
+  if (best_feature_class == "L") {
+    linear <- TRUE
+    quadratic <- FALSE
+    product <- FALSE
+    threshold <- FALSE
+    hinge <- FALSE
+  } else if (best_feature_class == "Q") {
+    linear <- FALSE
+    quadratic <- TRUE
+    product <- FALSE
+    threshold <- FALSE
+    hinge <- FALSE
+  } else if (best_feature_class == "H") {
+    linear <- FALSE
+    quadratic <- FALSE
+    product <- FALSE
+    threshold <- FALSE
+    hinge <- TRUE
+  } else if (best_feature_class == "T") {
+    linear <- FALSE
+    quadratic <- FALSE
+    product <- FALSE
+    threshold <- TRUE
+    hinge <- FALSE
+  } else if (best_feature_class == "LQ") {
+    linear <- TRUE
+    quadratic <- TRUE
+    product <- FALSE
+    threshold <- FALSE
+    hinge <- FALSE
+  } else if (best_feature_class == "HQ") {
+    linear <- FALSE
+    quadratic <- TRUE
+    product <- FALSE
+    threshold <- FALSE
+    hinge <- TRUE
+  } else if (best_feature_class == "LQP") {
+    linear <- TRUE
+    quadratic <- TRUE
+    product <- TRUE
+    threshold <- FALSE
+    hinge <- FALSE
+  } else if (best_feature_class == "LQT") {
+    linear <- TRUE
+    quadratic <- TRUE
+    product <- FALSE
+    threshold <- TRUE
+    hinge <- FALSE
+  } else if (best_feature_class == "QHP") {
+    linear <- FALSE
+    quadratic <- TRUE
+    product <- TRUE
+    threshold <- FALSE
+    hinge <- TRUE
+  } else if (best_feature_class == "QHT") {
+    linear <- FALSE
+    quadratic <- TRUE
+    product <- FALSE
+    threshold <- TRUE
+    hinge <- TRUE
+  } else if (best_feature_class == "QHPT") {
+    linear <- FALSE
+    quadratic <- TRUE
+    product <- TRUE
+    threshold <- TRUE
+    hinge <- TRUE
+  }
+
+  sprintf(paste0("betamultiplier=%s,",
+                 "linear=%s,quadratic=%s,product=%s,threshold=%s,",
+                 "hinge=%s"), best_beta_multiplier, linear, quadratic, product,
+          threshold, hinge) -> my_args
+  str_split(my_args, pattern = ",")[[1]] -> my_args
+
+  args <- list(x = x, p = p, args = my_args)
+
+  fit <- suppressMessages(do.call(maxent, args = args))
+
+  list_out <- list(fit = fit,
+                   tune = list(best_beta_multiplier,
+                               beta_multiplier_all,
+                               best_feature_class,
+                               feature_classes_all,
+                               all_error_measures,
+                               perf_measures[[list_index]],
+                               perf_measures))
+  set_names(list_out[[2]], c("optimal_beta_multiplier", "all_beta_multiplier",
+                             "optimal_feature_classes", "all_feature_classes",
+                             "all_error_measures",
+                             "performances_best_run", "performances_all_runs"))
+  return(list_out)
+}
+
