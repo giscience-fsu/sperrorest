@@ -293,5 +293,5 @@ plot_hyper_maxent <- function(object = NULL, error_measure = NULL,
                             object$tune$optimal_beta_multiplier,
                             object$tune$optimal_feature_classes)) +
     theme_ipsum() +
-    guides(color = guide_legend(title = "feature_classes"))
+    guides(color = guide_legend(title = "feature classes"))
 }

@@ -62,9 +62,6 @@ data(maxent_pred)
 data(maxent_response)
 data(basque)
 
-sptune_maxent(x = maxent_pred, p = maxent_response, data = basque,
-              absence = TRUE, feature_classes = "QHPT")
-
 out <- sptune_maxent(x = maxent_pred, p = maxent_response, data = basque,
                      absence = TRUE)
 }

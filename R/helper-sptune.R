@@ -387,7 +387,7 @@ maxent_cv_err <- function(beta_multiplier = NULL, feature_classes = NULL,
     hinge <- TRUE
   }
 
-  sprintf(paste0("betamultiplier=%s,",
+  sprintf(paste0("betamultiplier=%s,autofeature=FALSE,",
                  "linear=%s,quadratic=%s,product=%s,threshold=%s,",
                  "hinge=%s"), beta_multiplier, linear, quadratic, product,
           threshold, hinge) -> my_args

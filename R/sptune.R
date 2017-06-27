@@ -577,9 +577,6 @@ sptune_rf <- function(formula = NULL, data = NULL, step_factor = 2,
 #' data(maxent_response)
 #' data(basque)
 #'
-#' sptune_maxent(x = maxent_pred, p = maxent_response, data = basque,
-#'               absence = TRUE, feature_classes = "QHPT")
-#'
 #' out <- sptune_maxent(x = maxent_pred, p = maxent_response, data = basque,
 #'                      absence = TRUE)
 #' }
