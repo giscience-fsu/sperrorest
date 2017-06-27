@@ -611,9 +611,7 @@ sptune_maxent <- function(x = NULL, p = NULL, data = NULL,
   # partition the data
   partition_args <- list(data = data, nfold = nfold,
                          ...)
-  parti <- do.call(partition_fun, args = partition_args)
-  train <- x[parti[[1]][[1]]$train, ]
-  test <- x[parti[[1]][[1]]$test, ]
+  resamp <- do.call(partition_fun, args = partition_args)[[1]]
 
   ## feature classes L, Q, H, T, LQ, HQ, LQP, LQT, QHP, QHT, QHPT,
 
@@ -639,11 +637,6 @@ sptune_maxent <- function(x = NULL, p = NULL, data = NULL,
   beta_multiplier_all <- rep(beta_multiplier_all, length(feature_classes_all))
   feature_classes_all <- rep(feature_classes_all, each = beta_multiplier)
 
-  # Calculate perf. measures for all combinations of 'beta_multiplier' and 'feature_classes'
-  registerDoFuture()
-  cl <- makeCluster(availableCores())
-  plan(cluster, workers = cl)
-
   message(sprintf(paste0("Using 'foreach' parallel mode with %s cores on",
                          " %s combinations."),
                   availableCores(), length(beta_multiplier_all)))
@@ -652,31 +645,51 @@ sptune_maxent <- function(x = NULL, p = NULL, data = NULL,
                   length(unique(beta_multiplier_all)),
                   length(unique(feature_classes_all))))
 
-  foreach(i = 1:length(beta_multiplier_all), .packages = (.packages()),
-          .errorhandling = "remove", .verbose = FALSE) %dopar% {
+  perf_measures <- list()
+  for (f in 1:length(resamp)) {
 
-            out <- maxent_cv_err(beta_multiplier = beta_multiplier_all[i],
-                                 feature_classes = feature_classes_all[i],
-                                 train = train, test = test,
-                                 x = x, p = p, absence = absence)
-            return(out)
-          } -> perf_measures
+    cat(sprintf("Fold %s\n", f))
 
-  stopCluster(cl)
+    train <- x[resamp[[f]]$train, ]
+    test <- x[resamp[[f]]$test, ]
+
+    registerDoFuture()
+    cl <- makeCluster(availableCores())
+    plan(cluster, workers = cl)
+
+    foreach(i = 1:length(beta_multiplier_all), .packages = (.packages()),
+            .errorhandling = "remove", .verbose = FALSE) %dopar% {
+
+              out <- maxent_cv_err(beta_multiplier = beta_multiplier_all[i],
+                                   feature_classes = feature_classes_all[i],
+                                   train = train, test = test,
+                                   x = x, p = p, absence = absence)
+              return(out)
+            } -> perf_measures[[f]]
+    stopCluster(cl)
+  }
+
+  # combine lists by folds
+  runfolds_merged <- do.call(Map, c(f = list,perf_measures))
+  # merge folds into one list for each parameter combination
+  runfolds_merged <- map(runfolds_merged, function(x) do.call(Map,c(c, x)))
+  # get mean
+  runfolds_merged <- map(runfolds_merged, function(y)
+    map(y, function(x) mean(x)))
 
   # append 'beta_multiplier' and 'feature_classes' vectors to respective lists
-  perf_measures %>%
+  runfolds_merged %>%
     map2(.y = feature_classes_all,
          .f = ~ plyr::mutate(.x, feature_classes = .y)) %>%
     map2(.y = beta_multiplier_all,
-         .f = ~ plyr::mutate(.x, beta_multiplier = .y)) -> perf_measures
+         .f = ~ plyr::mutate(.x, beta_multiplier = .y)) -> runfolds_merged
 
   tmp1 <- check_response_type(p, error_measure,
-                              perf_measures, option = TRUE)
+                              runfolds_merged, option = TRUE)
   error_measure <- tmp1[[1]]
   list_index <- tmp1[[2]]
 
-  perf_measures %>%
+  runfolds_merged %>%
     map(error_measure) %>%
     unlist() -> all_error_measures
 
@@ -686,7 +699,7 @@ sptune_maxent <- function(x = NULL, p = NULL, data = NULL,
   # output on screen:
   cat(sprintf(paste0("Optimal beta multiplier: ", best_beta_multiplier, ";    optimal feature class combination: ",
                      best_feature_class,";    best %s: ",
-                     perf_measures[[list_index]][[error_measure]],
+                     runfolds_merged[[list_index]][[error_measure]],
                      "\n", sep = ""),
               error_measure))
 
@@ -777,8 +790,8 @@ sptune_maxent <- function(x = NULL, p = NULL, data = NULL,
                                best_feature_class,
                                feature_classes_all,
                                all_error_measures,
-                               perf_measures[[list_index]],
-                               perf_measures))
+                               runfolds_merged[[list_index]],
+                               runfolds_merged))
   set_names(list_out[[2]], c("optimal_beta_multiplier", "all_beta_multiplier",
                              "optimal_feature_classes", "all_feature_classes",
                              "all_error_measures",
