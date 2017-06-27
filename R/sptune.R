@@ -506,8 +506,8 @@ sptune_rf <- function(formula = NULL, data = NULL, step_factor = 2,
 }
 
 #' @title sptune_maxent
-#' @description Tuning of Maxent ($\beta$ & feature classes) using spatial
-#' cross-validation
+#' @description Tuning of Maxent (regularization parameter \eqn{\beta} &
+#' feature classes) using spatial cross-validation.
 #' @author Patrick Schratz, Alexander Brenning
 #'
 #' @import future
@@ -537,6 +537,8 @@ sptune_rf <- function(formula = NULL, data = NULL, step_factor = 2,
 #' @param feature_classes optional user-defined vector of 'feature_classes'
 #' hyperparameter to tune over. See details.
 #'
+#' @param absence is the data of type 'presence-absence'?
+#'
 #' @param nfold number of folds for cross-validation.
 #'
 #' @param partition_fun character. Data partitioning method
@@ -552,26 +554,40 @@ sptune_rf <- function(formula = NULL, data = NULL, step_factor = 2,
 #' using (spatial) cross-validation.
 #'
 #' `error_measure` can be specified by the user, selecting one of the returned
-#' error measures of [sptune_rf]. However, note that for
-#' regression type responses always the minimum value of the passed error measure
-#' is chosen and for classification cases the highest.
-#'
+#' error measures of [sptune_maxent].
 #'
 #' `sptune_maxent` is parallelized and runs on all possible cores.
 #'
+#' Tuning is performed over the following ranges:
+#' \tabular{rr}{
+#' beta: \tab -10, -8, -6, -4, -2, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20\cr
+#' feature classes: \tab "L", "Q", "H", "T", "LQ", "HQ", "LQP", "LQT", "QHP",
+#' "QHT", "QHPT"
+#' }
+#'
+#' Currently, fitting/testing for every parameter combination is only performed
+#' on 1 of the partitioned folds. Hence, results reflect the performance on one
+#' fold and are not averaged across folds.
+#'
+#' WARNING: Setting `absence = TRUE` will alter the predicted values from
+#' relative probabilities (presence-only) to probabilities (presence-absence).
+#' Make sure to set the switch according to your data type. Results will be
+#' biased otherwise!
+#'
 #' @seealso [plot_hyper_maxent]
 #'
-#' @references Brenning, A., Long, S., & Fieguth, P. (2012).
-#' Detecting rock glacier flow structures using Gabor filters and IKONOS
-#' imagery. Remote Sensing of Environment, 125, 227-237.
-#' doi:10.1016/j.rse.2012.07.005
-#'
-#' Pena, M. A., & Brenning, A. (2015). Assessing fruit-tree crop classification
-#' from Landsat-8 time series for the Maipo Valley, Chile. Remote Sensing of
-#' Environment, 171, 234-244. doi:10.1016/j.rse.2015.10.029
+#' @references Guillera-Arroita, G., Lahoz-Monfort, J. J., & Elith, J. (2014).
+#' Maxent is not a presence-absence method: a comment on Thibaudet al. Methods
+#' in Ecology and Evolution, 5(11), 1192-1197. doi:10.1111/2041-210x.12252
 #'
 #' @examples
 #' \dontrun{
+#' data(maxent_pred)
+#' data(maxent_response)
+#' data(basque)
+#'
+#' sptune_maxent(x = maxent_pred, p = maxent_response,
+#'               data = basque, absence = TRUE)
 #' }
 #' @export
 sptune_maxent <- function(x = NULL, p = NULL, data = NULL,
@@ -592,25 +608,30 @@ sptune_maxent <- function(x = NULL, p = NULL, data = NULL,
     warning(sprintf("Using %s folds since 'nfold' was not set.", nfold))
   }
 
-  response <- as.character(x)
-
   # partition the data
   partition_args <- list(data = data, nfold = nfold,
                          ...)
   parti <- do.call(partition_fun, args = partition_args)
-  train <- data[parti[[1]][[1]]$train, ]
-  test <- data[parti[[1]][[1]]$test, ]
+  train <- x[parti[[1]][[1]]$train, ]
+  test <- x[parti[[1]][[1]]$test, ]
 
   ## feature classes L, Q, H, T, LQ, HQ, LQP, LQT, QHP, QHT, QHPT,
 
-  if (is.null(beta_multiplier) && is.null(feature_classes)) {
-
+  if (is.null(beta_multiplier) && !is.null(feature_classes)) {
     beta_multiplier_all <- seq(-10, 20, 2)
-    feature_classes_all <- c("L", "Q", "H", "T", "LQ", "HQ", "LQP", "LQT", "QHP",
-                         "QHT", "QHPT")
-  } else {
-    beta_multiplier_all <- beta_multiplier
+    # remove 0
+    beta_multiplier_all <- beta_multiplier_all[ -which(beta_multiplier_all %in% 0)]
     feature_classes_all <- feature_classes
+  } else if (is.null(feature_classes) && !is.null(beta_multiplier)) {
+    feature_classes_all <- c("L", "Q", "H", "T", "LQ", "HQ", "LQP", "LQT", "QHP",
+                             "QHT", "QHPT")
+    beta_multiplier_all <- beta_multiplier
+  } else {
+    beta_multiplier_all <- seq(-10, 20, 2)
+    # remove 0
+    beta_multiplier_all <- beta_multiplier_all[ -which(beta_multiplier_all %in% 0)]
+    feature_classes_all <- c("L", "Q", "H", "T", "LQ", "HQ", "LQP", "LQT", "QHP",
+                             "QHT", "QHPT")
   }
 
   # Set up variables for loop:
@@ -628,19 +649,19 @@ sptune_maxent <- function(x = NULL, p = NULL, data = NULL,
                   availableCores(), length(beta_multiplier_all)))
   message(sprintf(paste0("Unique 'beta_multiplier': %s.",
                          " Unique 'feature_classes': %s."),
-                  length(unique(beta_multiplier)),
+                  length(unique(beta_multiplier_all)),
                   length(unique(feature_classes_all))))
 
   foreach(i = 1:length(beta_multiplier_all), .packages = (.packages()),
           .errorhandling = "remove", .verbose = FALSE) %dopar% {
 
             out <- maxent_cv_err(beta_multiplier = beta_multiplier_all[i],
-                             feature_classes = feature_classes_all[i],
-                             train = train, test = test,
-                             response = response,
-                             x = x, p = p, absence = absence)
+                                 feature_classes = feature_classes_all[i],
+                                 train = train, test = test,
+                                 x = x, p = p, absence = absence)
             return(out)
           } -> perf_measures
+
   stopCluster(cl)
 
   # append 'beta_multiplier' and 'feature_classes' vectors to respective lists
@@ -650,7 +671,7 @@ sptune_maxent <- function(x = NULL, p = NULL, data = NULL,
     map2(.y = beta_multiplier_all,
          .f = ~ plyr::mutate(.x, beta_multiplier = .y)) -> perf_measures
 
-  tmp1 <- check_response_type(train[[response]], error_measure,
+  tmp1 <- check_response_type(p, error_measure,
                               perf_measures, option = TRUE)
   error_measure <- tmp1[[1]]
   list_index <- tmp1[[2]]
@@ -659,7 +680,7 @@ sptune_maxent <- function(x = NULL, p = NULL, data = NULL,
     map(error_measure) %>%
     unlist() -> all_error_measures
 
-  best_beta_multiplier <- beta_multiplier[list_index]
+  best_beta_multiplier <- beta_multiplier_all[list_index]
   best_feature_class <- feature_classes_all[list_index]
 
   # output on screen:
@@ -672,67 +693,67 @@ sptune_maxent <- function(x = NULL, p = NULL, data = NULL,
   # Generate the actual fit object using optimized hyperparameters:
 
   # account for feature classes
-  if (feature_classes == "L") {
+  if (best_feature_class == "L") {
     linear <- TRUE
     quadratic <- FALSE
     product <- FALSE
     threshold <- FALSE
     hinge <- FALSE
-  } else if (feature_classes == "Q") {
+  } else if (best_feature_class == "Q") {
     linear <- FALSE
     quadratic <- TRUE
     product <- FALSE
     threshold <- FALSE
     hinge <- FALSE
-  } else if (feature_classes == "H") {
+  } else if (best_feature_class == "H") {
     linear <- FALSE
     quadratic <- FALSE
     product <- FALSE
     threshold <- FALSE
     hinge <- TRUE
-  } else if (feature_classes == "T") {
+  } else if (best_feature_class == "T") {
     linear <- FALSE
     quadratic <- FALSE
     product <- FALSE
     threshold <- TRUE
     hinge <- FALSE
-  } else if (feature_classes == "LQ") {
+  } else if (best_feature_class == "LQ") {
     linear <- TRUE
     quadratic <- TRUE
     product <- FALSE
     threshold <- FALSE
     hinge <- FALSE
-  } else if (feature_classes == "HQ") {
+  } else if (best_feature_class == "HQ") {
     linear <- FALSE
     quadratic <- TRUE
     product <- FALSE
     threshold <- FALSE
     hinge <- TRUE
-  } else if (feature_classes == "LQP") {
+  } else if (best_feature_class == "LQP") {
     linear <- TRUE
     quadratic <- TRUE
     product <- TRUE
     threshold <- FALSE
     hinge <- FALSE
-  } else if (feature_classes == "LQT") {
+  } else if (best_feature_class == "LQT") {
     linear <- TRUE
     quadratic <- TRUE
     product <- FALSE
     threshold <- TRUE
     hinge <- FALSE
-  } else if (feature_classes == "QHP") {
+  } else if (best_feature_class == "QHP") {
     linear <- FALSE
     quadratic <- TRUE
     product <- TRUE
     threshold <- FALSE
     hinge <- TRUE
-  } else if (feature_classes == "QHT") {
+  } else if (best_feature_class == "QHT") {
     linear <- FALSE
     quadratic <- TRUE
     product <- FALSE
     threshold <- TRUE
     hinge <- TRUE
-  } else if (feature_classes == "QHT") {
+  } else if (best_feature_class == "QHPT") {
     linear <- FALSE
     quadratic <- TRUE
     product <- TRUE
@@ -740,21 +761,21 @@ sptune_maxent <- function(x = NULL, p = NULL, data = NULL,
     hinge <- TRUE
   }
 
-  sprintf(paste0("outputformat = raw,betamultiplier = %s,",
-                 "linear = %s,quadratic = %s,product = %s,threshold = %s,",
-                 "hinge = %s"), best_beta_multiplier, linear, quadratic, product,
-          threshold, hinge) %>%
-    str_split(",")[[1]] -> my_args
+  sprintf(paste0("betamultiplier=%s,",
+                 "linear=%s,quadratic=%s,product=%s,threshold=%s,",
+                 "hinge=%s"), best_beta_multiplier, linear, quadratic, product,
+          threshold, hinge) -> my_args
+  str_split(my_args, pattern = ",")[[1]] -> my_args
 
   args <- list(x = x, p = p, args = my_args)
 
-  fit <- do.call(maxent, args = args)
+  fit <- suppressMessages(do.call(maxent, args = args))
 
   list_out <- list(fit = fit,
                    tune = list(best_beta_multiplier,
-                               best_beta_multiplier_all,
+                               beta_multiplier_all,
                                best_feature_class,
-                               best_feature_class_all,
+                               feature_classes_all,
                                all_error_measures,
                                perf_measures[[list_index]],
                                perf_measures))

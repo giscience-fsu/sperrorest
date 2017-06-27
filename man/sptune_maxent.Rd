@@ -32,6 +32,8 @@ Coordinates can also be specified with a SpatialPoints* object}
 Default to 'RMSE' for numeric responses, 'AUROC' for binary classification
 and 'error' for multiclass classiciation.}
 
+\item{absence}{is the data of type 'presence-absence'?}
+
 \item{beta_multiplier}{optional user-defined vector of 'beta_multiplier'
 hyperparameter to tune over. See details.}
 
@@ -41,33 +43,48 @@ hyperparameter to tune over. See details.}
 \item{...}{additional options passed to \code{partition_fun}.}
 }
 \description{
-Tuning of Maxent ($\beta$ & feature classes) using spatial
-cross-validation
+Tuning of Maxent (regularization parameter \eqn{\beta} &
+feature classes) using spatial cross-validation.
 }
 \details{
 This function tunes a Maxent model from the \link{dismo} package
 using (spatial) cross-validation.
 
 \code{error_measure} can be specified by the user, selecting one of the returned
-error measures of \link{sptune_rf}. However, note that for
-regression type responses always the minimum value of the passed error measure
-is chosen and for classification cases the highest.
+error measures of \link{sptune_maxent}.
 
 \code{sptune_maxent} is parallelized and runs on all possible cores.
+
+Tuning is performed over the following ranges:
+\tabular{rr}{
+beta: \tab -10, -8, -6, -4, -2, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20\cr
+feature classes: \tab "L", "Q", "H", "T", "LQ", "HQ", "LQP", "LQT", "QHP",
+"QHT", "QHPT"
+}
+
+Currently, fitting/testing for every parameter combination is only performed
+on 1 of the partitioned folds. Hence, results reflect the performance on one
+fold and are not averaged across folds.
+
+WARNING: Setting \code{absence = TRUE} will alter the predicted values from
+relative probabilities (presence-only) to probabilities (presence-absence).
+Make sure to set the switch according to your data type. Results will be
+biased otherwise!
 }
 \examples{
 \dontrun{
+data(maxent_pred)
+data(maxent_response)
+data(basque)
+
+sptune_maxent(x = maxent_pred, p = maxent_response,
+              data = basque, absence = TRUE)
 }
 }
 \references{
-Brenning, A., Long, S., & Fieguth, P. (2012).
-Detecting rock glacier flow structures using Gabor filters and IKONOS
-imagery. Remote Sensing of Environment, 125, 227-237.
-doi:10.1016/j.rse.2012.07.005
-
-Pena, M. A., & Brenning, A. (2015). Assessing fruit-tree crop classification
-from Landsat-8 time series for the Maipo Valley, Chile. Remote Sensing of
-Environment, 171, 234-244. doi:10.1016/j.rse.2015.10.029
+Guillera-Arroita, G., Lahoz-Monfort, J. J., & Elith, J. (2014).
+Maxent is not a presence-absence method: a comment on Thibaudet al. Methods
+in Ecology and Evolution, 5(11), 1192-1197. doi:10.1111/2041-210x.12252
 }
 \seealso{
 \link{plot_hyper_maxent}

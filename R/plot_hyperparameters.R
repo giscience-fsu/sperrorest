@@ -186,7 +186,7 @@ plot_hyper_rf <- function(object = NULL, error_measure = NULL, mtry = NULL,
                                    " Package: '%s'.",
                                    " Best '%s': %s.\n",
                                    "Optimal 'ntrees': %s.",
-                                   " Optimal 'mtry: %s."),
+                                   " Optimal 'mtry': %s."),
                             length(object$tune$all_ntrees),
                             lib,
                             toupper(error_measure),
@@ -196,4 +196,102 @@ plot_hyper_rf <- function(object = NULL, error_measure = NULL, mtry = NULL,
                             object$tune$optimal_mtry)) +
     theme_ipsum() +
     guides(color = guide_legend(title = "mtry"))
+}
+
+
+#' @title plot_hyper_maxent
+#' @description Plots tuning results of maxent
+#'
+#' @param object a fitted object of [maxent]
+#'
+#' @param error_measure an optional error measure to use which differs from the
+#' default.
+#'
+#' @param feature_classes optional user-defined numeric vector of
+#' 'feature_classes' values to plot.
+#'
+#' @param color_palette `option` argument from [scale_color_viridis].
+#'
+#' @import tibble
+#' @import ggplot2
+#' @import magrittr
+#' @import hrbrthemes
+#' @import viridis
+#' @importFrom dplyr filter arrange mutate
+#'
+#' @examples
+#' \dontrun{
+#'
+#' library(sperrorest)
+#' data(maxent_pred)
+#' data(maxent_response)
+#' data(basque)
+#'
+#' out <- sptune_maxent(x = maxent_pred, p = maxent_response, data = basque,
+#'                      absence = TRUE)
+#'
+#' plot_hyper_maxent(out)
+#' }
+#'
+#' @export
+
+plot_hyper_maxent <- function(object = NULL, error_measure = NULL,
+                              feature_classes = NULL, color_palette = NULL) {
+
+  lib <- "dismo"
+
+  if (is.null(error_measure)) {
+    error_measure <- "auroc"
+  }
+
+  df <- tibble(beta_multiplier = object$tune$all_beta_multiplier,
+               feature_classes = object$tune$all_feature_classes,
+               var_error = round(object$tune$all_error_measures, 3))
+
+  if (length(unique(df$feature_classes)) > 11) {
+    message(paste0("Plotting of more than 11 'feature_classes' options is not supported.",
+                   " Please specify your own vector of which 'feature_classes' values to",
+                   " plot in argument 'feature_classes'.\n",
+                   " Taking the first 11 values I can find."))
+
+    # sort df
+    df %>%
+      arrange(feature_classes) -> df
+    # get value of 10th index
+    index <- unique(df$feature_classes)[11]
+
+    # filter df
+    df %>%
+      filter(feature_classes <= index) -> df
+  }
+
+  # check for color palette
+  if (is.null(color_palette)) {
+    color_palette <- "viridis"
+  }
+
+  # plot!
+  df %>%
+    mutate(feature_classes = as.factor(feature_classes)) %>%
+    ggplot(aes_(x = ~ beta_multiplier, y = ~var_error, color = ~ feature_classes,
+                group = ~ feature_classes)) +
+    geom_point() +
+    geom_line() +
+    scale_color_viridis(discrete = TRUE, option = color_palette) +
+    labs(x = "beta_multiplier", y = toupper(error_measure),
+         title = "Maxent hyperparameter tuning results",
+         subtitle = sprintf(paste0("Total combinations: %s.",
+                                   " Package: '%s'.",
+                                   " Best '%s': %s.\n",
+                                   "Optimal 'beta multiplier': %s.",
+                                   " Optimal 'feature class combination': %s."),
+                            length(object$tune$all_beta_multiplier),
+                            lib,
+                            toupper(error_measure),
+                            round(object$tune$performances_best_run[[
+                              error_measure]], 3),
+                            object$tune$optimal_beta_multiplier,
+                            object$tune$optimal_feature_classes)) +
+    theme_ipsum() +
+    guides(color = guide_legend(title = "feature classes"))
 }

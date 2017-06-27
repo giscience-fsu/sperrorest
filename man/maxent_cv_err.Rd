@@ -5,20 +5,41 @@
 \title{maxent_cv_err}
 \usage{
 maxent_cv_err(beta_multiplier = NULL, feature_classes = NULL,
-  train = NULL, test = NULL, x = NULL, p = NULL, response = NULL,
-  absence = FALSE, ...)
+  train = NULL, test = NULL, x = NULL, p = NULL, absence = NULL, ...)
 }
 \arguments{
+\item{beta_multiplier}{optional user-defined vector of 'beta_multiplier'
+hyperparameter to tune over. See details.}
+
+\item{feature_classes}{optional user-defined vector of 'feature_classes'
+hyperparameter to tune over. See details.}
+
 \item{train}{training data}
 
 \item{test}{testing data}
 
-\item{response}{response variable}
-
 \item{formula}{model formula}
+
+\item{response}{response variable}
 }
 \description{
-Calculates AUROC for different beta_multiplier and
-feature_classes values
+Tunes maxent hyperparameters beta_multiplier and
+feature_classes using cross-validation with AUROC as error measure
+}
+\examples{
+\dontrun{
+data(maxent_pred)
+data(maxent_response)
+
+parti <- partition_kmeans(basque, nfold = 5)
+train <- maxent_pred[parti[[1]][[1]]$train, ]
+test <- maxent_pred[parti[[1]][[1]]$test, ]
+
+out <- maxent_cv_err(beta_multiplier = 1,
+                     feature_classes = "LQ",
+                     train = train, test = test, x = maxent_pred,
+                     p = maxent_response, response = "diplo01",
+                     absence = TRUE)
+}
 }
 \keyword{internal}

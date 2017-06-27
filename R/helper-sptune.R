@@ -278,8 +278,8 @@ rf_cv_err <- function(ntree = NULL, mtry = NULL, train = NULL, test = NULL,
 }
 
 #' @title maxent_cv_err
-#' @description Calculates AUROC for different beta_multiplier and
-#' feature_classes values
+#' @description Tunes maxent hyperparameters beta_multiplier and
+#' feature_classes using cross-validation with AUROC as error measure
 #'
 #' @importFrom ROCR prediction performance
 #' @importFrom dismo maxent
@@ -287,9 +287,11 @@ rf_cv_err <- function(ntree = NULL, mtry = NULL, train = NULL, test = NULL,
 #'
 #' @param formula model formula
 #'
-#' @inheritParams beta_multiplier
+#' @param beta_multiplier optional user-defined vector of 'beta_multiplier'
+#' hyperparameter to tune over. See details.
 #'
-#' @inheritParams feature_classes
+#' @param feature_classes optional user-defined vector of 'feature_classes'
+#' hyperparameter to tune over. See details.
 #'
 #' @param train training data
 #'
@@ -313,10 +315,11 @@ rf_cv_err <- function(ntree = NULL, mtry = NULL, train = NULL, test = NULL,
 #'                      train = train, test = test, x = maxent_pred,
 #'                      p = maxent_response, response = "diplo01",
 #'                      absence = TRUE)
+#' }
 #' @export
 maxent_cv_err <- function(beta_multiplier = NULL, feature_classes = NULL,
                           train = NULL, test = NULL, x = NULL, p = NULL,
-                          response = NULL, absence = FALSE, ...) {
+                          absence = NULL, ...) {
 
   # account for feature classes
   if (feature_classes == "L") {
@@ -379,7 +382,7 @@ maxent_cv_err <- function(beta_multiplier = NULL, feature_classes = NULL,
     product <- FALSE
     threshold <- TRUE
     hinge <- TRUE
-  } else if (feature_classes == "QHT") {
+  } else if (feature_classes == "QHPT") {
     linear <- FALSE
     quadratic <- TRUE
     product <- TRUE
@@ -387,46 +390,59 @@ maxent_cv_err <- function(beta_multiplier = NULL, feature_classes = NULL,
     hinge <- TRUE
   }
 
-  # subset 'p' to respective subsets
+  sprintf(paste0("betamultiplier=%s,autofeature=FALSE,",
+                 "linear=%s,quadratic=%s,product=%s,threshold=%s,",
+                 "hinge=%s"), beta_multiplier, linear, quadratic, product,
+          threshold, hinge) -> my_args
+  str_split(my_args, pattern = ",")[[1]] -> my_args
+
+  # subset response vector for train and test
   x$pa <- p
   train_tmp <- suppressMessages(semi_join(x, train))
   p_train <- train_tmp$pa
+
   test_tmp <- suppressMessages(semi_join(x, test))
   p_test <- test_tmp$pa
 
-  # # predict args here??
-  # sprintf(paste0("outputformat = raw,betamultiplier = %s,",
-  #              "linear = %s,quadratic = %s,product = %s,threshold = %s,",
-  #              "hinge = %s"), beta_multiplier, linear, quadratic, product,
-  #              threshold, hinge) -> my_args
-  #   str_split(my_args, pattern = ",")[[1]] -> my_args
-
-  # predict args here??
-  sprintf(paste0("betamultiplier=%s,",
-               "linear=%s,quadratic=%s,product=%s,threshold=%s,",
-               "hinge=%s"), beta_multiplier, linear, quadratic, product,
-               threshold, hinge) -> my_args
-    str_split(my_args, pattern = ",")[[1]] -> my_args
-
-    # we need to subset 'p' here to match with 'train' data
-
-
-    args <- list(x = train, p = p_train, args = my_args)
+  args <- list(x = train, p = p_train, args = my_args)
 
   # fit model
-  fit <- do.call(maxent, args)
+  fit <- tryCatch(do.call(maxent, args),
+                  error = function(cond) {
+                    return(NA)
+                  })
+
+  # if NA is assigned to 'fit' due to tryCatch, we break the function and
+  # return NA
+  if (is.logical(fit)) {
+    return(fit)
+  }
 
   # p must be numeric here
-  prev_pa <- mean(as.numeric(as.character(p)))
+  prev_pa <- mean(as.numeric(as.character(p_train)))
 
   # post-process predict results http://onlinelibrary.wiley.com/store/10.1111/2041-210X.12252/asset/supinfo/mee312252-sup-0003-Appendix5.R?v=1&s=13755a940831aa9186cf931209e826a304e9868e
   if (absence == TRUE) {
-    pred <- dismo::predict(fit, x = test, args = "outputformat=raw")
-    numbg <- fit@results["X.Background.points", ] #number of points in background
-    pred <- pred * prev_pa * numbg #adjusted raw output (probabilities)
-    pred[pred > 1] <- 1   #clipped to 1
+    pred <- tryCatch(dismo::predict(fit, x = test, args = "outputformat=raw"),
+                     error = function(cond) {
+                       return(NA)
+                     })
+    numbg <- fit@results["X.Background.points", ] # number of points in background
+    pred <- pred * prev_pa * numbg # adjusted raw output (probabilities)
+    pred[pred > 1] <- 1   # clipped to 1
   } else {
-    pred <- dismo::predict(fit, x = test, args = "outputformat=logistic")
+    # return pred for presence-only in logistic format
+    pred <- tryCatch(dismo::predict(fit, x = test,
+                                    args = "outputformat=logistic"),
+                     error = function(cond) {
+                       return(NA)
+                     })
+  }
+
+  # if NA is assigned to 'pred' due to tryCatch, we break the function and
+  # return NA
+  if (is.logical(pred)) {
+    return(pred)
   }
 
   # calculate error measures
