@@ -55,6 +55,13 @@
 #'
 #' @param smp_args (optional) Arguments to be passed to `smp_fun`.
 #'
+#' @param tune logical (default: `FALSE`) Whether to perform internal tuning
+#' (nested CV) of selected models.
+#' Currently supported: [svm], [ksvm], [randomForest], [rfsrc], [maxent].
+#'
+#' @param tune_args Arguments to [sptune_svm], [sptune_rf] or
+#' [sptune_maxent]. Only applies if `tune = TRUE`.
+#'
 #' @param train_fun (optional) A function for resampling or subsampling the
 #' training sample in order to achieve, e.g., uniform sample sizes on all
 #' training sets, or maintaining a certain ratio of positives and negatives
@@ -143,6 +150,11 @@
 #' For the latter and `par_mode = "foreach"`, `par_option`
 #' (default to `multiprocess` and
 #' `cluster`, respectively) can be specified. See [plan] for further details.
+#'
+#' Nested cross-validation can be performed for SVM, RF and Maxent models.
+#' Hyperparameters of the respective model will be tuned on every fold.
+#' See the respective tuning functions [sptune_svm], [sptune_rf] or
+#' [sptune_maxent] for more details on the tuning process.
 #'
 #' @note Custom predict functions passed to `pred_fun`, which consist of
 #' multiple custom defined child functions, must be defined in one function.
@@ -258,7 +270,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
                        test_param = NULL, err_fun = err_default,
                        imp_variables = NULL,
                        tune_args = list(),
-                       tune = tune,
+                       tune = FALSE,
                        imp_permutations = 1000,
                        importance = !is.null(imp_variables), distance = FALSE,
                        par_args = list(par_mode = "foreach", par_units = NULL,

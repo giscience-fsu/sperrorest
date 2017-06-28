@@ -5,8 +5,10 @@
 \title{sptune_rf}
 \usage{
 sptune_rf(formula = NULL, data = NULL, step_factor = 2, nfold = NULL,
-  partition_fun = NULL, rf_fun = "rfsrc", error_measure = NULL,
-  mtrys = NULL, ntrees = NULL, importance = "none", ...)
+  partition_fun = NULL, train = NULL, test = NULL,
+  average_folds = FALSE, tune = FALSE, rf_fun = "rfsrc",
+  error_measure = NULL, parameter1 = NULL, parameter2 = NULL,
+  importance = "none", ...)
 }
 \arguments{
 \item{formula}{formula.}
@@ -28,17 +30,17 @@ tuning.}
 Default to 'RMSE' for numeric responses, 'AUROC' for binary classification
 and 'error' for multiclass classiciation.}
 
-\item{mtrys}{optional user-defined vector of 'mtry' hyperparameter to
-tune over. See details.}
-
-\item{ntrees}{optional user-defined vector of 'ntrees' hyperparameter to
-tune over. See details.}
-
 \item{importance}{whether to calculate variable importance on the best
 model selected by tuning. See \code{?rfsrc} or \code{?randomForest} for more details
 on how to set this argument correctly.}
 
 \item{...}{additional options passed to \code{partition_fun}.}
+
+\item{mtrys}{optional user-defined vector of 'mtry' hyperparameter to
+tune over. See details.}
+
+\item{ntrees}{optional user-defined vector of 'ntrees' hyperparameter to
+tune over. See details.}
 }
 \description{
 Tuning of Random Forest (mtry & ntrees) using spatial

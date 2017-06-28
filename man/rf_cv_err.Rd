@@ -4,14 +4,10 @@
 \alias{rf_cv_err}
 \title{rf_cv_err}
 \usage{
-rf_cv_err(ntree = NULL, mtry = NULL, train = NULL, test = NULL,
-  response = NULL, formula = NULL, rf_fun = NULL, ...)
+rf_cv_err(parameter1 = NULL, parameter2 = NULL, train = NULL,
+  test = NULL, response = NULL, formula = NULL, rf_fun = NULL, ...)
 }
 \arguments{
-\item{ntree}{number of trees to grow}
-
-\item{mtry}{Number of variables randomly selected as candidates for each node split.}
-
 \item{train}{training data}
 
 \item{test}{testing data}
@@ -19,6 +15,10 @@ rf_cv_err(ntree = NULL, mtry = NULL, train = NULL, test = NULL,
 \item{response}{response variable}
 
 \item{formula}{model formula}
+
+\item{ntree}{number of trees to grow}
+
+\item{mtry}{Number of variables randomly selected as candidates for each node split.}
 }
 \description{
 Calculates AUROC for different gamma and cost values

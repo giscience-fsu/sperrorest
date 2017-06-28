@@ -45,24 +45,26 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
   # tuning of ML models here
 
   if (tune == TRUE) {
-    if (tune_args$model_fun == "ksvm" | tune_args$model_fun == "svm") {
-      tune_args$formula <- formula
-      tune_args$tune <- tune
-      tune_args$train <- nd_train
-      tune_args$test <- nd_test
-      tune_args$svm_fun <- tune_args$model_fun
+    tune_args$formula <- formula
+    tune_args$tune <- tune
+    tune_args$train <- nd_train
+    tune_args$test <- nd_test
 
-      # check for custom defined parameter ranges
-      if (!any(names(tune_args) == "parameter1" | names(tune_args) == "parameter2")) {
-        tune_args$parameter1 <- NULL
-        tune_args$parameter2 <- NULL
-      }
+    if (tune_args$model_fun == "ksvm" | tune_args$model_fun == "svm") {
+      tune_args$svm_fun <- tune_args$model_fun
 
       fit <- tryCatch(do.call(sptune_svm, args = tune_args)$fit,
                       error = function(cond) {
                         return(NA)
                       })
-    } else if (model_fun == "randomForest" | model_fun == "rfsrc") {
+    } else if (tune_args$model_fun == "randomForest" |
+               tune_args$model_fun == "rfsrc") {
+      tune_args$rf_fun <- tune_args$model_fun
+
+      fit <- tryCatch(do.call(sptune_rf, args = tune_args)$fit,
+                      error = function(cond) {
+                        return(NA)
+                      })
     }
   } else {
     # we do not see the error message, so returning none

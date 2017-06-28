@@ -134,8 +134,8 @@ sptune_svm <- function(formula = NULL, data = NULL, parameter1 = NULL,
     partition_args <- list(data = data, nfold = nfold,
                            ...)
     resamp <- do.call(partition_fun, args = partition_args)[[1]]
-    train <- data[resamp[[1]][[1]]$train, ]
-    test <- data[resamp[[1]][[1]]$test, ]
+    train <- data[resamp[[1]]$train, ]
+    test <- data[resamp[[1]]$test, ]
   }
 
   if (is.null(parameter1) && is.null(parameter2)) {
@@ -144,13 +144,13 @@ sptune_svm <- function(formula = NULL, data = NULL, parameter1 = NULL,
 
     # costs_all <- 10 ^ seq(2 ^ -5, 2 ^ 15, by = 2 ^ 2 * accelerate)
     parameter1_all <- c(2 ^ -5, 2 ^ -3, 2 ^ -1, 2 ^ 1, 2 ^ 3, 2 ^ 5, 2 ^ 7, 2 ^ 9,
-                   2 ^ 11, 2 ^ 13, 2 ^ 15)
+                        2 ^ 11, 2 ^ 13, 2 ^ 15)
     # default_gamma <- 1 / length(strsplit(as.character(formula)[3], "+",
     #                                      fixed = TRUE)[[1]])
     # gammas_all <- unique(c(default_gamma,
     #                        10 ^ seq(-4, 1, by = 0.5 * accelerate)))
     parameter2_all <- c(2 ^ -15, 2 ^ -13, 2 ^ -11, 2 ^ -9, 2 ^ -7, 2 ^ -5,
-                    2 ^ -3, 2 ^ -1, 2 ^ 1, 2 ^ 3)
+                        2 ^ -3, 2 ^ -1, 2 ^ 1, 2 ^ 3)
 
     # recycle vector if desired
     if (accelerate > 1) {
@@ -445,106 +445,159 @@ sptune_svm <- function(formula = NULL, data = NULL, parameter1 = NULL,
 #' @export
 sptune_rf <- function(formula = NULL, data = NULL, step_factor = 2,
                       nfold = NULL, partition_fun = NULL,
+                      train = NULL, test = NULL,
+                      average_folds = FALSE, tune = FALSE,
                       rf_fun = "rfsrc", error_measure = NULL,
-                      mtrys = NULL, ntrees = NULL,
+                      parameter1 = NULL, parameter2 = NULL,
                       importance = "none", ...) {
 
-  if (is.null(partition_fun)) {
+  if (is.null(partition_fun) && tune == FALSE) {
     message("Partitioning method: 'partition_kmeans'.")
     partition_fun <- "partition_kmeans"
   } else {
     message(sprintf("Partitioning method: '%s'.", partition_fun))
   }
 
-  if (is.null(nfold)) {
+  if (is.null(nfold) && tune == FALSE) {
     nfold <- 5
     warning(sprintf("Using %s folds since 'nfold' was not set.", nfold))
   }
 
   response <- as.character(formula)[2]
 
-  # partition the data
-  partition_args <- list(data = data, nfold = nfold,
-                         ...)
-  resamp <- do.call(partition_fun, args = partition_args)[[1]]
+  if (is.null(train) && is.null(test)) {
+    # partition the data
+    partition_args <- list(data = data, nfold = nfold,
+                           ...)
+    resamp <- do.call(partition_fun, args = partition_args)[[1]]
+    train <- data[resamp[[1]]$train, ]
+    test <- data[resamp[[1]]$test, ]
+  }
 
-  if (is.null(mtrys) && is.null(ntrees)) {
+  if (is.null(parameter1) && is.null(parameter2)) {
     # make sure that step_factor is not 1; otherwise inf while loop
     if (step_factor == 1) {
       step_factor <- 2
       message(paste0("'step_factor' must be > 1; setting it to '2'."))
     }
+
     # Perform a complete grid search over the following range of values:
-    ntrees_all <- c(10)
-    while (tail(ntrees_all, n = 1) < 1000) {
-      i <- tail(ntrees_all, n = 1) * step_factor
-      ntrees_all <- c(ntrees_all, i)
+    parameter1_all <- c(10)
+    while (tail(parameter1_all, n = 1) < 1000) {
+      i <- tail(parameter1_all, n = 1) * step_factor
+      parameter1_all <- c(parameter1_all, i)
     }
-    default_mtry <- floor(sqrt(ncol(data)))
+    default_parameter2 <- floor(sqrt(ncol(train)))
     n_variables <- length(attr(terms(formula), "term.labels"))
-    mtrys_all <- unique(c(default_mtry, seq(1, n_variables, by = 1)))
+    parameter2_all <- unique(c(default_parameter2, seq(1, n_variables, by = 1)))
   } else {
-    ntrees_all <- ntrees
-    mtrys_all <- mtrys
+    parameter1_all <- parameter2
+    parameter2_all <- parameter1
   }
 
-  ntrees_all <- c(10)
-  while (tail(ntrees_all, n = 1) < 1000) {
-    i <- tail(ntrees_all, n = 1) * step_factor
-    ntrees_all <- c(ntrees_all, i)
-  }
+
 
   # Set up variables for loop:
-  n_tree <- length(ntrees_all)
-  ntrees_all <- rep(ntrees_all, length(mtrys_all))
-  mtrys_all <- rep(mtrys_all, each = n_tree)
+  n_parameter1 <- length(parameter1_all)
+  parameter1_all <- rep(parameter1_all, length(parameter2_all))
+  parameter2_all <- rep(parameter2_all, each = n_parameter1)
 
-  message(sprintf(paste0("Using 'foreach' parallel mode with %s cores on",
-                         " %s combinations."),
-                  availableCores(), length(ntrees_all)))
-  message(sprintf(paste0("Unique 'ntrees': %s.",
-                         " Unique 'mtry': %s."),
-                  length(unique(ntrees_all)),
-                  length(unique(mtrys_all))))
+  registerDoFuture()
 
-  perf_measures <- list()
-  for (f in 1:length(resamp)) {
+  if (average_folds == TRUE) {
+    perf_measures <- list()
+    for (f in 1:length(resamp)) {
 
-    cat(sprintf("Fold %s\n", f))
+      cat(sprintf("Fold %s\n", f))
 
-    train <- data[resamp[[f]]$train, ]
-    test <- data[resamp[[f]]$test, ]
+      train <- data[resamp[[f]]$train, ]
+      test <- data[resamp[[f]]$test, ]
 
-    registerDoFuture()
-    cl <- makeCluster(availableCores())
-    plan(cluster, workers = cl)
+      if (tune == FALSE) {
+        cl <- makeCluster(availableCores())
+        plan(cluster, workers = cl)
+      } else {
+        plan(sequential)
+      }
 
-  foreach(i = 1:length(ntrees_all), .packages = (.packages()),
-          .errorhandling = "remove", .verbose = FALSE) %dopar% {
+      foreach(i = 1:length(parameter1_all), .packages = (.packages()),
+              .errorhandling = "remove", .verbose = FALSE) %dopar% {
 
-            out <- rf_cv_err(ntree = ntrees_all[i], mtry = mtrys_all[i],
-                             train = train, test = test,
-                             response = response, formula = formula,
-                             rf_fun = rf_fun)
-            return(out)
-          } -> perf_measures[[f]]
-  stopCluster(cl)
+                out <- rf_cv_err(ntree = parameter1_all[i], mtry = parameter2_all[i],
+                                 train = train, test = test,
+                                 response = response, formula = formula,
+                                 rf_fun = rf_fun)
+                return(out)
+              } -> perf_measures[[f]]
+      stopCluster(cl)
+    }
+
+    # combine lists by folds
+    runfolds_merged <- do.call(Map, c(f = list,perf_measures))
+    # merge folds into one list for each parameter combination
+    runfolds_merged <- map(runfolds_merged, function(x) do.call(Map,c(c, x)))
+    # get mean
+    runfolds_merged <- map(runfolds_merged, function(y)
+      map(y, function(x) mean(x)))
+  } else {
+
+    if (tune == FALSE) {
+
+      cl <- makeCluster(availableCores())
+      plan(cluster, workers = cl)
+      message(sprintf(paste0("Using 'foreach' parallel mode with %s cores on",
+                             " %s combinations."),
+                      availableCores(), length(parameter1_all)))
+      message(sprintf(paste0("Unique 'ntrees': %s.",
+                             " Unique 'mtry': %s."),
+                      length(unique(parameter1_all)),
+                      length(unique(parameter2_all))))
+    } else {
+
+      message(sprintf(paste0("Unique 'ntrees': %s.",
+                             " Unique 'mtry': %s.",
+                             " Total tuning combinations: %s."),
+                      length(unique(parameter1_all)),
+                      length(unique(parameter2_all)),
+                      length(parameter1_all)))
+      plan(sequential)
+    }
+
+    foreach(i = 1:length(parameter1_all), .packages = (.packages()),
+            .errorhandling = "remove", .verbose = FALSE) %dopar% {
+
+              out <- rf_cv_err(parameter1 = parameter1_all[i],
+                               parameter2 = parameter2_all[i],
+                               train = train, test = test,
+                               response = response, formula = formula,
+                               rf_fun = rf_fun)
+              return(out)
+            } -> perf_measures
   }
 
-  # combine lists by folds
-  runfolds_merged <- do.call(Map, c(f = list,perf_measures))
-  # merge folds into one list for each parameter combination
-  runfolds_merged <- map(runfolds_merged, function(x) do.call(Map,c(c, x)))
-  # get mean
-  runfolds_merged <- map(runfolds_merged, function(y)
-    map(y, function(x) mean(x)))
+  if (average_folds == TRUE) {
+    # combine lists by folds
+    runfolds_merged <- do.call(Map, c(f = list, perf_measures))
+    # merge folds into one list for each parameter combination
+    runfolds_merged <- map(runfolds_merged, function(x) do.call(Map, c(c, x)))
+    # get mean
+    runfolds_merged <- map(runfolds_merged, function(y)
+      map(y, function(x) mean(x)))
 
-  # append 'beta_multiplier' and 'feature_classes' vectors to respective lists
-  runfolds_merged %>%
-    map2(.y = mtrys_all,
-         .f = ~ plyr::mutate(.x, mtry = .y)) %>%
-    map2(.y = ntrees_all,
-         .f = ~ plyr::mutate(.x, ntree = .y)) -> runfolds_merged
+    # append 'parameter1' and 'parameter2' vectors to respective lists
+    runfolds_merged %>%
+      map2(.y = parameter1_all,
+           .f = ~ plyr::mutate(.x, parameter1 = .y)) %>%
+      map2(.y = parameter2_all,
+           .f = ~ plyr::mutate(.x, parameter2 = .y)) -> runfolds_merged
+  } else {
+    # append 'parameter1' and 'parameter2' vectors to respective lists
+    perf_measures %>%
+      map2(.y = parameter1_all,
+           .f = ~ plyr::mutate(.x, parameter1 = .y)) %>%
+      map2(.y = parameter2_all,
+           .f = ~ plyr::mutate(.x, parameter2 = .y)) -> runfolds_merged
+  }
 
   tmp1 <- check_response_type(train[[response]], error_measure,
                               runfolds_merged, option = TRUE)
@@ -555,15 +608,17 @@ sptune_rf <- function(formula = NULL, data = NULL, step_factor = 2,
     map(error_measure) %>%
     unlist() -> all_error_measures
 
-  best_ntree <- ntrees_all[list_index]
-  best_mtry <- mtrys_all[list_index]
+  best_ntree <- parameter1_all[list_index]
+  best_mtry <- parameter2_all[list_index]
 
-  # output on screen:
-  cat(sprintf(paste0("Optimal ntree: ", best_ntree, ";    optimal mtry: ",
-                     best_mtry,";    best %s: ",
-                     runfolds_merged[[list_index]][[error_measure]],
-                     "\n", sep = ""),
-              error_measure))
+  if (tune == FALSE) {
+    # output on screen:
+    cat(sprintf(paste0("Optimal ntree: ", best_ntree, ";    optimal mtry: ",
+                       best_mtry,";    best %s: ",
+                       runfolds_merged[[list_index]][[error_measure]],
+                       "\n", sep = ""),
+                error_measure))
+  }
 
   # account for different default setting of importance argument
   if (rf_fun == "randomForest" && importance == "none") {
@@ -577,9 +632,9 @@ sptune_rf <- function(formula = NULL, data = NULL, step_factor = 2,
 
   list_out <- list(fit = fit,
                    tune = list(best_ntree,
-                               ntrees_all,
+                               parameter1_all,
                                best_mtry,
-                               mtrys_all,
+                               parameter2_all,
                                all_error_measures,
                                runfolds_merged[[list_index]],
                                runfolds_merged))

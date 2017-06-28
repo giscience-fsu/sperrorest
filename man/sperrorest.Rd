@@ -10,7 +10,7 @@ sperrorest(formula, data, coords = c("x", "y"), model_fun,
   smp_fun = partition_cv, smp_args = list(), train_fun = NULL,
   train_param = NULL, test_fun = NULL, test_param = NULL,
   err_fun = err_default, imp_variables = NULL, tune_args = list(),
-  tune = tune, imp_permutations = 1000,
+  tune = FALSE, imp_permutations = 1000,
   importance = !is.null(imp_variables), distance = FALSE,
   par_args = list(par_mode = "foreach", par_units = NULL, par_option = NULL),
   do_gc = 1, progress = "all", out_progress = "", benchmark = FALSE,
@@ -74,6 +74,13 @@ by \code{pred_fun}. E.g. \link{err_default} (the default).}
 Variables for which permutation-based variable importance assessment
 is performed. If \code{importance = TRUE} and \code{imp_variables} ==
 \code{NULL}, all variables in \code{formula} will be used.}
+
+\item{tune_args}{Arguments to \link{sptune_svm}, \link{sptune_rf} or
+\link{sptune_maxent}. Only applies if \code{tune = TRUE}.}
+
+\item{tune}{logical (default: \code{FALSE}) Whether to perform internal tuning
+(nested CV) of selected models.
+Currently supported: \link{svm}, \link{ksvm}, \link{randomForest}, \link{rfsrc}, \link{maxent}.}
 
 \item{imp_permutations}{(optional; used if \code{importance = TRUE}).
 Number of permutations used for variable importance assessment.}
@@ -150,6 +157,11 @@ Available parallelization modes include \code{par_mode = "apply"}
 For the latter and \code{par_mode = "foreach"}, \code{par_option}
 (default to \code{multiprocess} and
 \code{cluster}, respectively) can be specified. See \link{plan} for further details.
+
+Nested cross-validation can be performed for SVM, RF and Maxent models.
+Hyperparameters of the respective model will be tuned on every fold.
+See the respective tuning functions \link{sptune_svm}, \link{sptune_rf} or
+\link{sptune_maxent} for more details on the tuning process.
 }
 \note{
 Custom predict functions passed to \code{pred_fun}, which consist of

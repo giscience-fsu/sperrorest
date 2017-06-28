@@ -229,13 +229,15 @@ svm_cv_err <- function(parameter1 = NULL, parameter2 = NULL,
 #' formula = fo, response = "croptype", rf_fun = "randomForest")
 #' }
 #' @export
-rf_cv_err <- function(ntree = NULL, mtry = NULL, train = NULL, test = NULL,
+rf_cv_err <- function(parameter1 = NULL, parameter2 = NULL, train = NULL, test = NULL,
                       response = NULL, formula = NULL, rf_fun = NULL, ...) {
 
   if (rf_fun == "rfsrc") {
-    args <- list(formula = formula, data = train, ntree = ntree, mtry = mtry)
+    args <- list(formula = formula, data = train, ntree = parameter1,
+                 mtry = parameter2)
   } else if (rf_fun == "randomForest") {
-    args <- list(formula = formula, data = train, ntree = ntree, mtry = mtry)
+    args <- list(formula = formula, data = train, ntree = parameter1,
+                 mtry = parameter2)
   }
   # fit model
   fit <- do.call(rf_fun, args)
