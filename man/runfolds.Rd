@@ -13,7 +13,7 @@ runfolds(j = NULL, current_sample = NULL, data = NULL, i = NULL,
   pooled_pred_train = NULL, response = NULL, progress = NULL,
   is_factor_prediction = NULL, pooled_pred_test = NULL, coords = NULL,
   test_fun = NULL, imp_one_rep = NULL, do_gc = NULL, test_param = NULL,
-  train_param = NULL)
+  train_param = NULL, tune_args = NULL, tune = NULL)
 }
 \description{
 Runs model fitting, error estimation and variable importance

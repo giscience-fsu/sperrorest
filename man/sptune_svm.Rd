@@ -4,20 +4,15 @@
 \alias{sptune_svm}
 \title{sptune_svm}
 \usage{
-sptune_svm(formula = NULL, data = NULL, cost = NULL, gamma = NULL,
+sptune_svm(formula = NULL, data = NULL, parameter1 = NULL,
+  parameter2 = NULL, train = NULL, test = NULL, average_folds = FALSE,
   accelerate = 1, nfold = NULL, partition_fun = NULL, kernel = NULL,
-  type = NULL, error_measure = NULL, svm_fun = "svm", ...)
+  type = NULL, error_measure = NULL, svm_fun = "svm", tune = FALSE, ...)
 }
 \arguments{
 \item{formula}{formula.}
 
 \item{data}{dataframe}
-
-\item{cost}{optional user-defined vector of 'cost' hyperparameter to
-tune over. See details.}
-
-\item{gamma}{optional user-defined vector of 'gamma' hyperparameter to
-tune over. See details.}
 
 \item{accelerate}{option to speed up tuning using less 'cost' and
 'gamma' options. Default to \code{accelerate = 1}.
@@ -39,6 +34,12 @@ and 'error' for multiclass classiciation.}
 \item{svm_fun}{character. Which R svm package to use. See details.}
 
 \item{...}{additional options passed to \code{partition_fun}.}
+
+\item{cost}{optional user-defined vector of 'cost' hyperparameter to
+tune over. See details.}
+
+\item{gamma}{optional user-defined vector of 'gamma' hyperparameter to
+tune over. See details.}
 }
 \description{
 Tuning of a Support Vector Machine (cost & gamma) using spatial

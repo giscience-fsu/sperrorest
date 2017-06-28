@@ -19,7 +19,8 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
                      pooled_pred_train = NULL, response = NULL, progress = NULL,
                      is_factor_prediction = NULL, pooled_pred_test = NULL,
                      coords = NULL, test_fun = NULL, imp_one_rep = NULL,
-                     do_gc = NULL, test_param = NULL, train_param = NULL) {
+                     do_gc = NULL, test_param = NULL, train_param = NULL,
+                     tune_args = NULL, tune = NULL) {
   if (importance == FALSE) {
     if (par_mode == "foreach" | par_mode == "sequential") {
       if (progress == "TRUE" | progress == "all") {
@@ -29,20 +30,47 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
   }
 
   # Create training sample:
-  nd <- data[current_sample[[j]]$train, ]
+  nd_train <- data[current_sample[[j]]$train, ]
   if (!is.null(train_fun))
-    nd <- train_fun(data = nd, param = train_param)
+    nd_train <- train_fun(data = nd_train, param = train_param)
+  # Create test sample:
+  nd_test <- data[current_sample[[j]]$test, ]
 
-  # Train model on training sample:
-  margs <- c(list(formula = formula, data = nd), model_args)
+  # Prepare training args for training on training data
+  margs <- c(list(formula = formula, data = nd_train), model_args)
 
   # initialize object
   not_converged_folds <- 0
 
-  # we do not see the error message, so returning none
-  fit <- tryCatch(do.call(model_fun, args = margs), error = function(cond) {
-    return(NA)
-  })
+  # tuning of ML models here
+
+  if (tune == TRUE) {
+    if (tune_args$model_fun == "ksvm" | tune_args$model_fun == "svm") {
+      tune_args$formula <- formula
+      tune_args$tune <- tune
+      tune_args$train <- nd_train
+      tune_args$test <- nd_test
+      tune_args$svm_fun <- tune_args$model_fun
+
+      # check for custom defined parameter ranges
+      if (!any(names(tune_args) == "parameter1" | names(tune_args) == "parameter2")) {
+        tune_args$parameter1 <- NULL
+        tune_args$parameter2 <- NULL
+      }
+
+      fit <- tryCatch(do.call(sptune_svm, args = tune_args)$fit,
+                      error = function(cond) {
+                        return(NA)
+                      })
+    } else if (model_fun == "randomForest" | model_fun == "rfsrc") {
+    }
+  } else {
+    # we do not see the error message, so returning none
+    fit <- tryCatch(do.call(model_fun, args = margs), error = function(cond) {
+      return(NA)
+    })
+  }
+
   # error handling for model fitting (e.g. maxent)
   # we need the first condition to handle S4 objects. They do not work with
   # is.na()
@@ -65,7 +93,7 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
   }
 
   # Apply model to training sample:
-  pargs <- c(list(object = fit, newdata = nd), pred_args)
+  pargs <- c(list(object = fit, newdata = nd_train), pred_args)
   if (is.null(pred_fun)) {
     pred_train <- do.call(predict, args = pargs)
   } else {
@@ -75,10 +103,10 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
 
   # Calculate error measures on training sample:
 
-  if (any(class(nd) == "tbl")) {
-    nd <- as.data.frame(nd) # nocov
+  if (any(class(nd_train) == "tbl")) {
+    nd <- as.data.frame(nd_train) # nocov
   }
-  current_res[[j]]$train <- tryCatch(err_fun(nd[, response], pred_train),
+  current_res[[j]]$train <- tryCatch(err_fun(nd_train[, response], pred_train),
                                      error = function(cond) {
                                        return(NA)
                                      })
@@ -101,30 +129,28 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
                 not_converged_folds = not_converged_folds))
   }
 
-  pooled_obs_train <- c(pooled_obs_train, nd[, response])
+  pooled_obs_train <- c(pooled_obs_train, nd_train[, response])
   pooled_pred_train <- c(pooled_pred_train, pred_train)
 
-  # Create test sample:
-  nd <- data[current_sample[[j]]$test, ]
   if (!is.null(test_fun)) {
-    nd <- test_fun(data = nd, param = test_param) # nocov
+    nd_test <- test_fun(data = nd, param = test_param) # nocov
   }
   # Create a 'backup' copy for variable importance assessment:
   if (importance == TRUE) {
-    nd_bak <- nd
+    nd_bak <- nd_test
   }
 
   # account for possible missing factor levels in test data
   if (any(class(fit) == "lm" | class(fit) == "glmmPQL")) {
-    nd <- remove_missing_levels(fit, nd)
+    nd_test <- remove_missing_levels(fit, nd_test)
   }
 
   # remove NAs in data.frame if levels are missing
-  nd %>%
-    na.omit() -> nd
+  nd_test %>%
+    na.omit() -> nd_test
 
   # Apply model to test sample:
-  pargs <- c(list(object = fit, newdata = nd), pred_args)
+  pargs <- c(list(object = fit, newdata = nd_test), pred_args)
   if (is.null(pred_fun)) {
     pred_test <- do.call(predict, args = pargs)
   } else {
@@ -133,10 +159,10 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
   rm(pargs)
 
   # Calculate error measures on test sample:
-  if (any(class(nd) == "tbl")) {
-    nd <- as.data.frame(nd) # nocov
+  if (any(class(nd_test) == "tbl")) {
+    nd_test <- as.data.frame(nd_test) # nocov
   }
-  current_res[[j]]$test <- tryCatch(err_fun(nd[, response], pred_test),
+  current_res[[j]]$test <- tryCatch(err_fun(nd_test[, response], pred_test),
                                      error = function(cond) {
                                        return(NA)
                                      })
@@ -162,7 +188,7 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
                 not_converged_folds = not_converged_folds))
   }
 
-  pooled_obs_test <- c(pooled_obs_test, nd[, response])
+  pooled_obs_test <- c(pooled_obs_test, nd_test[, response])
   pooled_pred_test <- c(pooled_pred_test, pred_test)
 
   is_factor_prediction <<- is.factor(pred_test)
@@ -255,7 +281,7 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
 # runreps function for lapply()
 runreps <- function(current_sample = NULL, data = NULL, formula = NULL,
                     model_args = NULL, par_cl = NULL, do_gc = NULL,
-                    imp_one_rep = NULL,
+                    imp_one_rep = NULL, tune_args = NULL, tune = NULL,
                     model_fun = NULL, pred_fun = NULL, imp_variables = NULL,
                     imp_permutations = NULL, err_fun = NULL, train_fun = NULL,
                     importance = NULL, current_res = NULL,
@@ -299,6 +325,7 @@ runreps <- function(current_sample = NULL, data = NULL, formula = NULL,
              coords = coords, progress = progress,
              pooled_obs_train = pooled_obs_train,
              pooled_obs_test = pooled_obs_test,
+             tune = tune, tune_args = tune_args,
              err_fun = err_fun)) -> runfolds_list
 
   # merge sublists of each fold into one list

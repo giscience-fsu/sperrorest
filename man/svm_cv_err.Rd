@@ -4,15 +4,11 @@
 \alias{svm_cv_err}
 \title{svm_cv_err}
 \usage{
-svm_cv_err(cost = NULL, gamma = NULL, train = NULL, test = NULL,
-  response = NULL, formula = NULL, kernel = NULL, type = NULL,
-  svm_fun = NULL, ...)
+svm_cv_err(parameter1 = NULL, parameter2 = NULL, train = NULL,
+  test = NULL, response = NULL, formula = NULL, kernel = NULL,
+  type = NULL, svm_fun = NULL, ...)
 }
 \arguments{
-\item{cost}{cost value}
-
-\item{gamma}{gamma value}
-
 \item{train}{training data}
 
 \item{test}{testing data}
@@ -24,6 +20,10 @@ svm_cv_err(cost = NULL, gamma = NULL, train = NULL, test = NULL,
 \item{kernel}{to use for fitting. See \link{svm}}
 
 \item{type}{classification type to use. See \link{svm}}
+
+\item{cost}{cost value}
+
+\item{gamma}{gamma value}
 }
 \description{
 Calculates AUROC for different gamma and cost values

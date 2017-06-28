@@ -89,7 +89,8 @@
 #'                   svm_fun = "ksvm", type = "C-svc")
 #' }
 #' @export
-svm_cv_err <- function(cost = NULL, gamma = NULL, train = NULL, test = NULL,
+svm_cv_err <- function(parameter1 = NULL, parameter2 = NULL,
+                       train = NULL, test = NULL,
                        response = NULL, formula = NULL, kernel = NULL,
                        type = NULL, svm_fun = NULL, ...) {
 
@@ -105,18 +106,17 @@ svm_cv_err <- function(cost = NULL, gamma = NULL, train = NULL, test = NULL,
 
   if (svm_fun == "ksvm") {
     args <- list(x = formula, data = train, type = type, kernel = kernel,
-                 prob.model = prob.model, C = cost, gamma = gamma)
+                 prob.model = prob.model, C = parameter1, gamma = parameter2)
   } else if (svm_fun == "SVM") {
     args <- list(formula = formula, data = train, type = type,
-                 kernel = kernel, probability = probability, C = cost,
-                 gamma = gamma)
+                 kernel = kernel, probability = probability, C = parameter1,
+                 gamma = parameter2)
   } else if (svm_fun == "svm") {
     args <- list(formula = formula, data = train, type = type,
-                 kernel = kernel, probability = probability, cost = cost,
-                 gamma = gamma)
+                 kernel = kernel, probability = probability, cost = parameter1,
+                 gamma = parameter2)
   }
   fit <- try(do.call(svm_fun, args))
-  cat(class(fit))
 
   ### predict
   if (svm_fun == "ksvm") {
@@ -138,7 +138,7 @@ svm_cv_err <- function(cost = NULL, gamma = NULL, train = NULL, test = NULL,
   }
   # if NA is assigned to 'pred' due to tryCatch, we break the function and
   # return NA
-  if (is.na(pred)) {
+  if (class(pred) == "logical") {
     return(pred)
   }
 

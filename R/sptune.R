@@ -104,19 +104,21 @@
 #'                   kernel = "radial", type = "eps-regression")
 #' }
 #' @export
-sptune_svm <- function(formula = NULL, data = NULL, cost = NULL, gamma = NULL,
+sptune_svm <- function(formula = NULL, data = NULL, parameter1 = NULL,
+                       parameter2 = NULL, train = NULL, test = NULL,
+                       average_folds = FALSE,
                        accelerate = 1, nfold = NULL, partition_fun = NULL,
                        kernel = NULL, type = NULL, error_measure = NULL,
-                       svm_fun = "svm", ...) {
+                       svm_fun = "svm", tune = FALSE, ...) {
 
-  if (is.null(partition_fun)) {
-    message("Partitioning method: 'partition.kmeans'.")
-    partition_fun <- "partition.kmeans"
+  if (is.null(partition_fun) && tune == FALSE) {
+    message("Partitioning method: 'partition_kmeans'.")
+    partition_fun <- "partition_kmeans"
   } else {
     message(sprintf("Partitioning method: '%s'.", partition_fun))
   }
 
-  if (is.null(nfold)) {
+  if (is.null(nfold) && tune == FALSE) {
     nfold <- 5
     warning(sprintf("Using %s folds since 'nfold' was not set.", nfold))
   }
@@ -127,97 +129,150 @@ sptune_svm <- function(formula = NULL, data = NULL, cost = NULL, gamma = NULL,
 
   response <- as.character(formula)[2]
 
-  # partition the data
-  partition_args <- list(data = data, nfold = nfold,
-                         ...)
-  resamp <- do.call(partition_fun, args = partition_args)[[1]]
+  if (is.null(train) && is.null(test)) {
+    # partition the data
+    partition_args <- list(data = data, nfold = nfold,
+                           ...)
+    resamp <- do.call(partition_fun, args = partition_args)[[1]]
+    train <- data[resamp[[1]][[1]]$train, ]
+    test <- data[resamp[[1]][[1]]$test, ]
+  }
 
-  if (is.null(cost) && is.null(gamma)) {
+  if (is.null(parameter1) && is.null(parameter2)) {
     # tuning ranges: https://stats.stackexchange.com/a/69631/101464
     # Perform a complete grid search over the following range of values:
 
     # costs_all <- 10 ^ seq(2 ^ -5, 2 ^ 15, by = 2 ^ 2 * accelerate)
-    costs_all <- c(2 ^ -5, 2 ^ -3, 2 ^ -1, 2 ^ 1, 2 ^ 3, 2 ^ 5, 2 ^ 7, 2 ^ 9,
+    parameter1_all <- c(2 ^ -5, 2 ^ -3, 2 ^ -1, 2 ^ 1, 2 ^ 3, 2 ^ 5, 2 ^ 7, 2 ^ 9,
                    2 ^ 11, 2 ^ 13, 2 ^ 15)
     # default_gamma <- 1 / length(strsplit(as.character(formula)[3], "+",
     #                                      fixed = TRUE)[[1]])
     # gammas_all <- unique(c(default_gamma,
     #                        10 ^ seq(-4, 1, by = 0.5 * accelerate)))
-    gammas_all <- c(2 ^ -15, 2 ^ -13, 2 ^ -11, 2 ^ -9, 2 ^ -7, 2 ^ -5,
+    parameter2_all <- c(2 ^ -15, 2 ^ -13, 2 ^ -11, 2 ^ -9, 2 ^ -7, 2 ^ -5,
                     2 ^ -3, 2 ^ -1, 2 ^ 1, 2 ^ 3)
 
     # recycle vector if desired
     if (accelerate > 1) {
-      costs_all <- costs_all[seq(1, length(costs_all), accelerate)]
-      gammas_all <- gammas_all[seq(1, length(gammas_all), accelerate)]
+      parameter1_all <- parameter1_all[seq(1, length(parameter1_all), accelerate)]
+      parameter2_all <- parameter2_all[seq(1, length(parameter2_all), accelerate)]
     }
   } else {
-    costs_all <- cost
-    gammas_all <- gamma
+    parameter1_all <- parameter1
+    parameter2_all <- parameter2
   }
 
   # Set up variables for loop:
-  n_cost <- length(costs_all)
-  costs_all <- rep(costs_all, length(gammas_all))
-  gammas_all <- rep(gammas_all, each = n_cost)
-
-  message(sprintf(paste0("Using 'foreach' parallel mode with %s cores on",
-                         " %s combinations."),
-                  availableCores(), length(costs_all)))
-  message(sprintf(paste0("Unique 'cost': %s.",
-                         " Unique 'gamma': %s."),
-                  length(unique(costs_all)),
-                  length(unique(gammas_all))))
+  n_cost <- length(parameter1_all)
+  parameter1_all <- rep(parameter1_all, length(parameter2_all))
+  parameter2_all <- rep(parameter2_all, each = n_cost)
 
   #  for some reason we need to initialize 'i' here to suppress
   # 'no-visible-binding-for-global-variable' warning
   i <- NULL
+  registerDoFuture()
 
-  perf_measures <- list()
-  for (f in 1:length(resamp)) {
+  if (average_folds == TRUE) {
+    perf_measures <- list()
+    for (f in 1:length(resamp)) {
 
-    cat(sprintf("Fold %s\n", f))
+      cat(sprintf("Fold %s\n", f))
 
-    train <- data[resamp[[f]]$train, ]
-    test <- data[resamp[[f]]$test, ]
+      train <- data[resamp[[f]]$train, ]
+      test <- data[resamp[[f]]$test, ]
 
-    registerDoFuture()
-    cl <- makeCluster(availableCores())
-    plan(cluster, workers = cl)
+      if (tune == FALSE) {
+        cl <- makeCluster(availableCores())
+        plan(cluster, workers = cl)
+      } else {
+        plan(sequential)
+      }
 
-  foreach(i = 1:length(costs_all), .packages = (.packages()),
-          .errorhandling = "remove", .verbose = FALSE) %dopar% {
+      foreach(i = 1:length(parameter1_all), .packages = (.packages()),
+              .errorhandling = "remove", .verbose = FALSE) %dopar% {
 
-            out <- svm_cv_err(cost = costs_all[i], gamma = gammas_all[i],
-                              train = train, test = test, type = type,
-                              kernel = kernel,
-                              response = response, formula = formula,
-                              svm_fun = svm_fun)
-            return(out)
-          } -> perf_measures[[f]]
-  stopCluster(cl)
+                out <- svm_cv_err(parameter1 = parameter1_all[i],
+                                  parameter2 = parameter2_all[i],
+                                  train = train, test = test, type = type,
+                                  kernel = kernel,
+                                  response = response, formula = formula,
+                                  svm_fun = svm_fun)
+                return(out)
+              } -> perf_measures[[f]]
+      stopCluster(cl)
+    }
+
+    # combine lists by folds
+    runfolds_merged <- do.call(Map, c(f = list,perf_measures))
+    # merge folds into one list for each parameter combination
+    runfolds_merged <- map(runfolds_merged, function(x) do.call(Map,c(c, x)))
+    # get mean
+    runfolds_merged <- map(runfolds_merged, function(y)
+      map(y, function(x) mean(x)))
+  } else {
+
+    if (tune == FALSE) {
+      cl <- makeCluster(availableCores())
+      plan(cluster, workers = cl)
+      message(sprintf(paste0("Using 'foreach' parallel mode with %s cores on",
+                             " %s combinations."),
+                      availableCores(), length(parameter1_all)))
+      message(sprintf(paste0("Unique 'cost': %s.",
+                             " Unique 'gamma': %s."),
+                      length(unique(parameter1_all)),
+                      length(unique(parameter2_all))))
+    } else {
+      message(sprintf(paste0("Unique 'cost': %s.",
+                             " Unique 'gamma': %s.",
+                             " Total tuning combinations: %s."),
+                      length(unique(parameter1_all)),
+                      length(unique(parameter2_all)),
+                      length(parameter1_all)))
+      plan(sequential)
+    }
+
+    foreach(i = 1:length(parameter1_all), .packages = (.packages()),
+            .errorhandling = "remove", .verbose = FALSE) %dopar% {
+
+              out <- svm_cv_err(parameter1 = parameter1_all[i],
+                                parameter2 = parameter2_all[i],
+                                train = train, test = test, type = type,
+                                kernel = kernel,
+                                response = response, formula = formula,
+                                svm_fun = svm_fun)
+              return(out)
+            } -> perf_measures
   }
 
-  # combine lists by folds
-  runfolds_merged <- do.call(Map, c(f = list,perf_measures))
-  # merge folds into one list for each parameter combination
-  runfolds_merged <- map(runfolds_merged, function(x) do.call(Map,c(c, x)))
-  # get mean
-  runfolds_merged <- map(runfolds_merged, function(y)
-    map(y, function(x) mean(x)))
+  if (average_folds == TRUE) {
+    # combine lists by folds
+    runfolds_merged <- do.call(Map, c(f = list, perf_measures))
+    # merge folds into one list for each parameter combination
+    runfolds_merged <- map(runfolds_merged, function(x) do.call(Map, c(c, x)))
+    # get mean
+    runfolds_merged <- map(runfolds_merged, function(y)
+      map(y, function(x) mean(x)))
 
-  # append 'mtrys' and 'ntrees' vectors to respective lists
-  runfolds_merged %>%
-    map2(.y = costs_all,
-         .f = ~ plyr::mutate(.x, cost = .y)) %>%
-    map2(.y = gammas_all,
-         .f = ~ plyr::mutate(.x, gamma = .y)) -> runfolds_merged
+    # append 'parameter1' and 'parameter2' vectors to respective lists
+    runfolds_merged %>%
+      map2(.y = parameter1_all,
+           .f = ~ plyr::mutate(.x, parameter1 = .y)) %>%
+      map2(.y = parameter2_all,
+           .f = ~ plyr::mutate(.x, parameter2 = .y)) -> runfolds_merged
+  } else {
+    # append 'parameter1' and 'parameter2' vectors to respective lists
+    perf_measures %>%
+      map2(.y = parameter1_all,
+           .f = ~ plyr::mutate(.x, parameter1 = .y)) %>%
+      map2(.y = parameter2_all,
+           .f = ~ plyr::mutate(.x, parameter2 = .y)) -> runfolds_merged
+  }
 
   # check for NAs, subset cost and gamma and print message
   if (any(is.na(runfolds_merged))) {
     na_index <- which(is.na(runfolds_merged))
-    costs_all <- costs_all[-na_index]
-    gammas_all <- gammas_all[-na_index]
+    parameter1_all <- parameter1_all[-na_index]
+    parameter2_all <- parameter2_all[-na_index]
     runfolds_merged <- runfolds_merged[-na_index]
 
     message(sprintf(paste0("Removed %s combinations due to non-convergence.\n"),
@@ -233,15 +288,17 @@ sptune_svm <- function(formula = NULL, data = NULL, cost = NULL, gamma = NULL,
     map(error_measure) %>%
     unlist() -> all_error_measures
 
-  best_cost <- costs_all[list_index]
-  best_gamma <- gammas_all[list_index]
+  best_cost <- parameter1_all[list_index]
+  best_gamma <- parameter2_all[list_index]
 
   # output on screen:
-  cat(sprintf(paste0("Optimal cost: ", best_cost, ";    optimal gamma: ",
-                     best_gamma,";    best %s: ",
-                     runfolds_merged[[list_index]][[error_measure]],
-                     "\n", sep = ""),
-              error_measure))
+  if (tune == FALSE) {
+    cat(sprintf(paste0("Optimal cost: ", best_cost, ";    optimal gamma: ",
+                       best_gamma,";    best %s: ",
+                       runfolds_merged[[list_index]][[error_measure]],
+                       "\n", sep = ""),
+                error_measure))
+  }
 
   ### Generate the actual fit object using optimized cost and gamma parameters:
 
@@ -270,9 +327,9 @@ sptune_svm <- function(formula = NULL, data = NULL, cost = NULL, gamma = NULL,
   # create return list
   list_out <- list(fit = fit,
                    tune = list(best_cost,
-                               costs_all,
+                               parameter1_all,
                                best_gamma,
-                               gammas_all,
+                               parameter2_all,
                                all_error_measures,
                                runfolds_merged[[list_index]],
                                runfolds_merged))
