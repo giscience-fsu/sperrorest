@@ -130,9 +130,7 @@ sptune_svm <- function(formula = NULL, data = NULL, cost = NULL, gamma = NULL,
   # partition the data
   partition_args <- list(data = data, nfold = nfold,
                          ...)
-  parti <- do.call(partition_fun, args = partition_args)
-  train <- data[parti[[1]][[1]]$train, ]
-  test <- data[parti[[1]][[1]]$test, ]
+  resamp <- do.call(partition_fun, args = partition_args)[[1]]
 
   if (is.null(cost) && is.null(gamma)) {
     # tuning ranges: https://stats.stackexchange.com/a/69631/101464
@@ -163,12 +161,6 @@ sptune_svm <- function(formula = NULL, data = NULL, cost = NULL, gamma = NULL,
   costs_all <- rep(costs_all, length(gammas_all))
   gammas_all <- rep(gammas_all, each = n_cost)
 
-  # Calculate perf. measures for all combinations of 'cost' and 'gamma'
-
-  registerDoFuture()
-  cl <- makeCluster(availableCores())
-  plan(cluster, workers = cl)
-
   message(sprintf(paste0("Using 'foreach' parallel mode with %s cores on",
                          " %s combinations."),
                   availableCores(), length(costs_all)))
@@ -181,6 +173,18 @@ sptune_svm <- function(formula = NULL, data = NULL, cost = NULL, gamma = NULL,
   # 'no-visible-binding-for-global-variable' warning
   i <- NULL
 
+  perf_measures <- list()
+  for (f in 1:length(resamp)) {
+
+    cat(sprintf("Fold %s\n", f))
+
+    train <- data[resamp[[f]]$train, ]
+    test <- data[resamp[[f]]$test, ]
+
+    registerDoFuture()
+    cl <- makeCluster(availableCores())
+    plan(cluster, workers = cl)
+
   foreach(i = 1:length(costs_all), .packages = (.packages()),
           .errorhandling = "remove", .verbose = FALSE) %dopar% {
 
@@ -190,33 +194,42 @@ sptune_svm <- function(formula = NULL, data = NULL, cost = NULL, gamma = NULL,
                               response = response, formula = formula,
                               svm_fun = svm_fun)
             return(out)
-          } -> perf_measures
+          } -> perf_measures[[f]]
   stopCluster(cl)
+  }
+
+  # combine lists by folds
+  runfolds_merged <- do.call(Map, c(f = list,perf_measures))
+  # merge folds into one list for each parameter combination
+  runfolds_merged <- map(runfolds_merged, function(x) do.call(Map,c(c, x)))
+  # get mean
+  runfolds_merged <- map(runfolds_merged, function(y)
+    map(y, function(x) mean(x)))
+
+  # append 'mtrys' and 'ntrees' vectors to respective lists
+  runfolds_merged %>%
+    map2(.y = costs_all,
+         .f = ~ plyr::mutate(.x, cost = .y)) %>%
+    map2(.y = gammas_all,
+         .f = ~ plyr::mutate(.x, gamma = .y)) -> runfolds_merged
 
   # check for NAs, subset cost and gamma and print message
-  if (any(is.na(perf_measures))) {
-    na_index <- which(is.na(perf_measures))
+  if (any(is.na(runfolds_merged))) {
+    na_index <- which(is.na(runfolds_merged))
     costs_all <- costs_all[-na_index]
     gammas_all <- gammas_all[-na_index]
-    perf_measures <- perf_measures[-na_index]
+    runfolds_merged <- runfolds_merged[-na_index]
 
     message(sprintf(paste0("Removed %s combinations due to non-convergence.\n"),
                     length(na_index)))
   }
 
-  # append 'mtrys' and 'ntrees' vectors to respective lists
-  perf_measures %>%
-    map2(.y = costs_all,
-         .f = ~ plyr::mutate(.x, cost = .y)) %>%
-    map2(.y = gammas_all,
-         .f = ~ plyr::mutate(.x, gamma = .y)) -> perf_measures
-
   tmp1 <- check_response_type(train[[response]], error_measure,
-                              perf_measures, option = TRUE)
+                              runfolds_merged, option = TRUE)
   error_measure <- tmp1[[1]]
   list_index <- tmp1[[2]]
 
-  perf_measures %>%
+  runfolds_merged %>%
     map(error_measure) %>%
     unlist() -> all_error_measures
 
@@ -226,7 +239,7 @@ sptune_svm <- function(formula = NULL, data = NULL, cost = NULL, gamma = NULL,
   # output on screen:
   cat(sprintf(paste0("Optimal cost: ", best_cost, ";    optimal gamma: ",
                      best_gamma,";    best %s: ",
-                     perf_measures[[list_index]][[error_measure]],
+                     runfolds_merged[[list_index]][[error_measure]],
                      "\n", sep = ""),
               error_measure))
 
@@ -261,8 +274,8 @@ sptune_svm <- function(formula = NULL, data = NULL, cost = NULL, gamma = NULL,
                                best_gamma,
                                gammas_all,
                                all_error_measures,
-                               perf_measures[[list_index]],
-                               perf_measures))
+                               runfolds_merged[[list_index]],
+                               runfolds_merged))
   set_names(list_out[[2]], c("optimal_cost", "all_costs", "optimal_gamma",
                              "all_gammas", "all_error_measures",
                              "performances_best_run", "performances_all_runs"))
@@ -396,9 +409,7 @@ sptune_rf <- function(formula = NULL, data = NULL, step_factor = 2,
   # partition the data
   partition_args <- list(data = data, nfold = nfold,
                          ...)
-  parti <- do.call(partition_fun, args = partition_args)
-  train <- data[parti[[1]][[1]]$train, ]
-  test <- data[parti[[1]][[1]]$test, ]
+  resamp <- do.call(partition_fun, args = partition_args)[[1]]
 
   if (is.null(mtrys) && is.null(ntrees)) {
     # make sure that step_factor is not 1; otherwise inf while loop
@@ -431,11 +442,6 @@ sptune_rf <- function(formula = NULL, data = NULL, step_factor = 2,
   ntrees_all <- rep(ntrees_all, length(mtrys_all))
   mtrys_all <- rep(mtrys_all, each = n_tree)
 
-  # Calculate perf. measures for all combinations of 'mtry' and 'ntrees'
-  registerDoFuture()
-  cl <- makeCluster(availableCores())
-  plan(cluster, workers = cl)
-
   message(sprintf(paste0("Using 'foreach' parallel mode with %s cores on",
                          " %s combinations."),
                   availableCores(), length(ntrees_all)))
@@ -443,6 +449,18 @@ sptune_rf <- function(formula = NULL, data = NULL, step_factor = 2,
                          " Unique 'mtry': %s."),
                   length(unique(ntrees_all)),
                   length(unique(mtrys_all))))
+
+  perf_measures <- list()
+  for (f in 1:length(resamp)) {
+
+    cat(sprintf("Fold %s\n", f))
+
+    train <- data[resamp[[f]]$train, ]
+    test <- data[resamp[[f]]$test, ]
+
+    registerDoFuture()
+    cl <- makeCluster(availableCores())
+    plan(cluster, workers = cl)
 
   foreach(i = 1:length(ntrees_all), .packages = (.packages()),
           .errorhandling = "remove", .verbose = FALSE) %dopar% {
@@ -452,22 +470,31 @@ sptune_rf <- function(formula = NULL, data = NULL, step_factor = 2,
                              response = response, formula = formula,
                              rf_fun = rf_fun)
             return(out)
-          } -> perf_measures
+          } -> perf_measures[[f]]
   stopCluster(cl)
+  }
 
-  # append 'mtrys' and 'ntrees' vectors to respective lists
-  perf_measures %>%
+  # combine lists by folds
+  runfolds_merged <- do.call(Map, c(f = list,perf_measures))
+  # merge folds into one list for each parameter combination
+  runfolds_merged <- map(runfolds_merged, function(x) do.call(Map,c(c, x)))
+  # get mean
+  runfolds_merged <- map(runfolds_merged, function(y)
+    map(y, function(x) mean(x)))
+
+  # append 'beta_multiplier' and 'feature_classes' vectors to respective lists
+  runfolds_merged %>%
     map2(.y = mtrys_all,
          .f = ~ plyr::mutate(.x, mtry = .y)) %>%
     map2(.y = ntrees_all,
-         .f = ~ plyr::mutate(.x, ntree = .y)) -> perf_measures
+         .f = ~ plyr::mutate(.x, ntree = .y)) -> runfolds_merged
 
   tmp1 <- check_response_type(train[[response]], error_measure,
-                              perf_measures, option = TRUE)
+                              runfolds_merged, option = TRUE)
   error_measure <- tmp1[[1]]
   list_index <- tmp1[[2]]
 
-  perf_measures %>%
+  runfolds_merged %>%
     map(error_measure) %>%
     unlist() -> all_error_measures
 
@@ -477,7 +504,7 @@ sptune_rf <- function(formula = NULL, data = NULL, step_factor = 2,
   # output on screen:
   cat(sprintf(paste0("Optimal ntree: ", best_ntree, ";    optimal mtry: ",
                      best_mtry,";    best %s: ",
-                     perf_measures[[list_index]][[error_measure]],
+                     runfolds_merged[[list_index]][[error_measure]],
                      "\n", sep = ""),
               error_measure))
 
@@ -497,8 +524,8 @@ sptune_rf <- function(formula = NULL, data = NULL, step_factor = 2,
                                best_mtry,
                                mtrys_all,
                                all_error_measures,
-                               perf_measures[[list_index]],
-                               perf_measures))
+                               runfolds_merged[[list_index]],
+                               runfolds_merged))
   set_names(list_out[[2]], c("optimal_ntree", "all_ntrees", "optimal_mtry",
                              "all_mtrys", "all_error_measures",
                              "performances_best_run", "performances_all_runs"))
