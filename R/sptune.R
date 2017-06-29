@@ -616,6 +616,8 @@ sptune_svm <- function(formula = NULL, data = NULL, tuning_parameters = list(),
     fit <- try(do.call(tuning_parameters$svm_fun,
                        args = c(args1, tuning_parameters)))
   } else {
+    tuning_parameters$x <- tuning_parameters$formula
+    tuning_parameters$formula <- NULL
     fit <- try(do.call(tuning_parameters$svm_fun, args = tuning_parameters))
   }
 
