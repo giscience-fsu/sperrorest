@@ -4,10 +4,10 @@
 \alias{sptune_svm}
 \title{sptune_svm}
 \usage{
-sptune_svm(formula = NULL, data = NULL, parameter1 = NULL,
-  parameter2 = NULL, train = NULL, test = NULL, average_folds = FALSE,
-  accelerate = 1, nfold = NULL, partition_fun = NULL, kernel = NULL,
-  type = NULL, error_measure = NULL, svm_fun = "svm", tune = FALSE, ...)
+sptune_svm(formula = NULL, data = NULL, tuning_parameters = list(),
+  train = NULL, test = NULL, average_folds = FALSE, accelerate = 1,
+  nfold = NULL, partition_fun = NULL, kernel = NULL, type = NULL,
+  error_measure = NULL, svm_fun = "svm", tune = FALSE, ...)
 }
 \arguments{
 \item{formula}{formula.}
@@ -35,11 +35,8 @@ and 'error' for multiclass classiciation.}
 
 \item{...}{additional options passed to \code{partition_fun}.}
 
-\item{cost}{optional user-defined vector of 'cost' hyperparameter to
-tune over. See details.}
-
-\item{gamma}{optional user-defined vector of 'gamma' hyperparameter to
-tune over. See details.}
+\item{tuning_parameter}{named list of tuning parameter containing values
+to tune over.}
 }
 \description{
 Tuning of a Support Vector Machine (cost & gamma) using spatial
@@ -60,6 +57,9 @@ error measures of \link{sptune_svm}. However, note that for
 regression type responses always the minimum value of the passed error measure
 is chosen and for classification cases the highest.
 
+If \code{parameter1} and \code{parameter2} are unspecified, tuning will be performed
+on hyperparameters 'cost' and 'gamma'.
+
 \code{sptune_svm} is parallelized and runs on all possible cores.
 }
 \examples{
@@ -72,6 +72,8 @@ fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
 
 out <- sptune_svm(fo, ecuador, accelerate = 8, nfold = 5,
                   partition_fun = "partition_kmeans", svm_fun = "svm",
+                  tuning_parameters = list(gamma = seq(1,5),
+                  coef0 = seq(1,4)),
                   kernel = "sigmoid", type = "C-classification")
 
 ##------------------------------------------------------------

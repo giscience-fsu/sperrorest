@@ -30,17 +30,17 @@ tuning.}
 Default to 'RMSE' for numeric responses, 'AUROC' for binary classification
 and 'error' for multiclass classiciation.}
 
+\item{parameter1}{optional user-defined vector of hyperparameter to
+tune over. See details.}
+
+\item{parameter2}{optional user-defined vector of hyperparameter to
+tune over. See details.}
+
 \item{importance}{whether to calculate variable importance on the best
 model selected by tuning. See \code{?rfsrc} or \code{?randomForest} for more details
 on how to set this argument correctly.}
 
 \item{...}{additional options passed to \code{partition_fun}.}
-
-\item{mtrys}{optional user-defined vector of 'mtry' hyperparameter to
-tune over. See details.}
-
-\item{ntrees}{optional user-defined vector of 'ntrees' hyperparameter to
-tune over. See details.}
 }
 \description{
 Tuning of Random Forest (mtry & ntrees) using spatial
@@ -55,9 +55,12 @@ error measures of \link{sptune_rf}. However, note that for
 regression type responses always the minimum value of the passed error measure
 is chosen and for classification cases the highest.
 
+If \code{parameter1} and \code{parameter2} are unspecified, tuning will be performed
+on hyperparameters 'ntrees' and 'mtry'.
+
 The default behaviour of \link{sptune_rf} tunes over all possible 'mtry' values
 (which are of \code{length(predictors)}) and a selection of 'ntrees' ranging
-between 10 and 1000. Use \code{accelerate} to reduce the number of 'ntrees'.
+between 10 and 1280. Use \code{accelerate} to reduce the number of 'ntrees'.
 Specify a custom vector if you want to modify the number of \code{mtry} used
 for testing. This is useful if the model contains > 20
 predictors but runtime depends on your cpu power / number of cores.

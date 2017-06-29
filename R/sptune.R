@@ -7,7 +7,8 @@
 #' @import doFuture
 #' @import parallel
 #' @import foreach
-#' @importFrom purrr map2 map
+#' @importFrom purrr map2 map set_names
+#' @importFrom magrittr extract2
 #' @importFrom utils tail
 #'
 #' @param formula formula.
@@ -29,11 +30,8 @@
 #' Default to 'RMSE' for numeric responses, 'AUROC' for binary classification
 #' and 'error' for multiclass classiciation.
 #'
-#' @param cost optional user-defined vector of 'cost' hyperparameter to
-#' tune over. See details.
-#'
-#' @param gamma optional user-defined vector of 'gamma' hyperparameter to
-#' tune over. See details.
+#' @param tuning_parameter named list of tuning parameter containing values
+#' to tune over.
 #'
 #' @param kernel the kernel to use.
 #'
@@ -55,6 +53,9 @@
 #' error measures of [sptune_svm]. However, note that for
 #' regression type responses always the minimum value of the passed error measure
 #' is chosen and for classification cases the highest.
+#'
+#' If `parameter1` and `parameter2` are unspecified, tuning will be performed
+#' on hyperparameters 'cost' and 'gamma'.
 #'
 #' `sptune_svm` is parallelized and runs on all possible cores.
 #'
@@ -79,6 +80,8 @@
 #'
 #' out <- sptune_svm(fo, ecuador, accelerate = 8, nfold = 5,
 #'                   partition_fun = "partition_kmeans", svm_fun = "svm",
+#'                   tuning_parameters = list(gamma = seq(1,5),
+#'                   coef0 = seq(1,4)),
 #'                   kernel = "sigmoid", type = "C-classification")
 #'
 #' ##------------------------------------------------------------
@@ -104,8 +107,8 @@
 #'                   kernel = "radial", type = "eps-regression")
 #' }
 #' @export
-sptune_svm <- function(formula = NULL, data = NULL, parameter1 = NULL,
-                       parameter2 = NULL, train = NULL, test = NULL,
+sptune_svm <- function(formula = NULL, data = NULL, tuning_parameters = list(),
+                       train = NULL, test = NULL,
                        average_folds = FALSE,
                        accelerate = 1, nfold = NULL, partition_fun = NULL,
                        kernel = NULL, type = NULL, error_measure = NULL,
@@ -138,34 +141,75 @@ sptune_svm <- function(formula = NULL, data = NULL, parameter1 = NULL,
     test <- data[resamp[[1]]$test, ]
   }
 
-  if (is.null(parameter1) && is.null(parameter2)) {
+  if (length(tuning_parameters) == 0) {
     # tuning ranges: https://stats.stackexchange.com/a/69631/101464
     # Perform a complete grid search over the following range of values:
 
-    # costs_all <- 10 ^ seq(2 ^ -5, 2 ^ 15, by = 2 ^ 2 * accelerate)
-    parameter1_all <- c(2 ^ -5, 2 ^ -3, 2 ^ -1, 2 ^ 1, 2 ^ 3, 2 ^ 5, 2 ^ 7, 2 ^ 9,
-                        2 ^ 11, 2 ^ 13, 2 ^ 15)
-    # default_gamma <- 1 / length(strsplit(as.character(formula)[3], "+",
-    #                                      fixed = TRUE)[[1]])
-    # gammas_all <- unique(c(default_gamma,
-    #                        10 ^ seq(-4, 1, by = 0.5 * accelerate)))
-    parameter2_all <- c(2 ^ -15, 2 ^ -13, 2 ^ -11, 2 ^ -9, 2 ^ -7, 2 ^ -5,
-                        2 ^ -3, 2 ^ -1, 2 ^ 1, 2 ^ 3)
+    # cost
+    if (svm_fun == "svm") {
+      tuning_parameters$cost <- c(2 ^ -5, 2 ^ -3, 2 ^ -1, 2 ^ 1, 2 ^ 3, 2 ^ 5, 2 ^ 7, 2 ^ 9,
+                                  2 ^ 11, 2 ^ 13, 2 ^ 15)
+    } else {
+      tuning_parameters$C <- c(2 ^ -5, 2 ^ -3, 2 ^ -1, 2 ^ 1, 2 ^ 3, 2 ^ 5, 2 ^ 7, 2 ^ 9,
+                               2 ^ 11, 2 ^ 13, 2 ^ 15)
+    }
+    # gamma
+    tuning_parameters$gamma <- c(2 ^ -15, 2 ^ -13, 2 ^ -11, 2 ^ -9, 2 ^ -7, 2 ^ -5,
+                                 2 ^ -3, 2 ^ -1, 2 ^ 1, 2 ^ 3)
 
     # recycle vector if desired
     if (accelerate > 1) {
-      parameter1_all <- parameter1_all[seq(1, length(parameter1_all), accelerate)]
-      parameter2_all <- parameter2_all[seq(1, length(parameter2_all), accelerate)]
+      tuning_parameters$cost <- tuning_parameters$cost[seq(1, length(tuning_parameters$cost), accelerate)]
+      tuning_parameters$gamma <- tuning_parameters$gamma[seq(1, length(tuning_parameters$gamma), accelerate)]
     }
-  } else {
-    parameter1_all <- parameter1
-    parameter2_all <- parameter2
   }
 
-  # Set up variables for loop:
-  n_cost <- length(parameter1_all)
-  parameter1_all <- rep(parameter1_all, length(parameter2_all))
-  parameter2_all <- rep(parameter2_all, each = n_cost)
+  names <- names(tuning_parameters)
+
+  ### Set up variables for loop:
+
+  # for two tuning parameters
+  if (length(names) == 2) {
+    all_comb <- expand.grid(tuning_parameters[[names[1]]], tuning_parameters[[names[2]]])
+    tuning_parameters[[names[1]]] <- all_comb$Var1
+    tuning_parameters[[names[2]]] <- all_comb$Var2
+  }
+  # for three tuning parameters
+  else if (length(names) == 3) {
+    all_comb <- expand.grid(tuning_parameters[[names[1]]],
+                            tuning_parameters[[names[2]]],
+                            tuning_parameters[[names[3]]])
+    tuning_parameters[[names[1]]] <- all_comb$Var1
+    tuning_parameters[[names[2]]] <- all_comb$Var2
+    tuning_parameters[[names[3]]] <- all_comb$Var3
+  }
+  # for four tuning parameters
+  else if (length(names) == 4) {
+    all_comb <- expand.grid(tuning_parameters[[names[1]]],
+                            tuning_parameters[[names[2]]],
+                            tuning_parameters[[names[3]]],
+                            tuning_parameters[[names[4]]])
+    tuning_parameters[[names[1]]] <- all_comb$Var1
+    tuning_parameters[[names[2]]] <- all_comb$Var2
+    tuning_parameters[[names[3]]] <- all_comb$Var3
+    tuning_parameters[[names[4]]] <- all_comb$Var4
+  }
+  # for five tuning parameters
+  # this is the maximum when using 3 'kpar' + gamma + cost
+  else if (length(names) == 5) {
+    all_comb <- expand.grid(tuning_parameters[[names[1]]],
+                            tuning_parameters[[names[2]]],
+                            tuning_parameters[[names[3]]],
+                            tuning_parameters[[names[4]]],
+                            tuning_parameters[[names[5]]])
+    tuning_parameters[[names[1]]] <- all_comb$Var1
+    tuning_parameters[[names[2]]] <- all_comb$Var2
+    tuning_parameters[[names[3]]] <- all_comb$Var3
+    tuning_parameters[[names[4]]] <- all_comb$Var4
+    tuning_parameters[[names[5]]] <- all_comb$Var5
+  }
+
+  tuning_parameters_bak <- tuning_parameters
 
   #  for some reason we need to initialize 'i' here to suppress
   # 'no-visible-binding-for-global-variable' warning
@@ -188,15 +232,65 @@ sptune_svm <- function(formula = NULL, data = NULL, parameter1 = NULL,
         plan(sequential)
       }
 
-      foreach(i = 1:length(parameter1_all), .packages = (.packages()),
+      foreach(i = 1:length(tuning_parameters[[names[1]]]), .packages = (.packages()),
               .errorhandling = "remove", .verbose = FALSE) %dopar% {
 
-                out <- svm_cv_err(parameter1 = parameter1_all[i],
-                                  parameter2 = parameter2_all[i],
-                                  train = train, test = test, type = type,
-                                  kernel = kernel,
-                                  response = response, formula = formula,
-                                  svm_fun = svm_fun)
+                if (length(names) == 2) {
+                  tuning_parameters[[names[1]]] <- tuning_parameters_bak[[names[1]]][i]
+                  tuning_parameters[[names[2]]] <- tuning_parameters_bak[[names[2]]][i]
+                } else if (length(names) == 3) {
+                  tuning_parameters[[names[1]]] <- tuning_parameters_bak[[names[1]]][i]
+                  tuning_parameters[[names[2]]] <- tuning_parameters_bak[[names[2]]][i]
+                  tuning_parameters[[names[3]]] <- tuning_parameters_bak[[names[3]]][i]
+                } else if (length(names) == 4) {
+                  tuning_parameters[[names[1]]] <- tuning_parameters_bak[[names[1]]][i]
+                  tuning_parameters[[names[2]]] <- tuning_parameters_bak[[names[2]]][i]
+                  tuning_parameters[[names[3]]] <- tuning_parameters_bak[[names[3]]][i]
+                  tuning_parameters[[names[4]]] <- tuning_parameters_bak[[names[4]]][i]
+                } else if (length(names) == 5) {
+                  tuning_parameters[[names[1]]] <- tuning_parameters_bak[[names[1]]][i]
+                  tuning_parameters[[names[2]]] <- tuning_parameters_bak[[names[2]]][i]
+                  tuning_parameters[[names[3]]] <- tuning_parameters_bak[[names[3]]][i]
+                  tuning_parameters[[names[4]]] <- tuning_parameters_bak[[names[4]]][i]
+                  tuning_parameters[[names[5]]] <- tuning_parameters_bak[[names[5]]][i]
+                }
+
+                if (svm_fun == "ksvm" && any(names(tuning_parameters) == "sigma")) {
+                  tuning_parameters$kpar <- list()
+                  tuning_parameters$kpar[["sigma"]] <- tuning_parameters[["sigma"]]
+                  tuning_parameters[["sigma"]] <- NULL
+                } else if (svm_fun == "ksvm" && any(names(tuning_parameters) == "degree")) {
+                  tuning_parameters$kpar <- list()
+                  tuning_parameters$kpar[["degree"]] <-  tuning_parameters[["degree"]]
+                  tuning_parameters[["degree"]] <- NULL
+                } else if (svm_fun == "ksvm" && any(names(tuning_parameters) == "scale")) {
+                  tuning_parameters$kpar <- list()
+                  tuning_parameters$kpar[["scale"]] <-  tuning_parameters[["scale"]]
+                  tuning_parameters[["scale"]] <- NULL
+                } else if (svm_fun == "ksvm" && any(names(tuning_parameters) == "order")) {
+                  tuning_parameters$kpar <- list()
+                  tuning_parameters$kpar[["order"]] <-  tuning_parameters[["order"]]
+                  tuning_parameters[["order"]] <- NULL
+                } else if (svm_fun == "ksvm" && any(names(tuning_parameters) == "length")) {
+                  tuning_parameters$kpar <- list()
+                  tuning_parameters$kpar[["length"]] <-  tuning_parameters[["length"]]
+                  tuning_parameters[["length"]] <- NULL
+                } else if (svm_fun == "ksvm" && any(names(tuning_parameters) == "lambda")) {
+                  tuning_parameters$kpar <- list()
+                  tuning_parameters$kpar[["lambda"]] <-  tuning_parameters[["lambda"]]
+                  tuning_parameters[["lambda"]] <- NULL
+                }
+
+                tuning_parameters$train <- train
+                tuning_parameters$test <- test
+                tuning_parameters$type <- type
+                tuning_parameters$kernel <- kernel
+                tuning_parameters$response <- response
+                tuning_parameters$formula <- formula
+                tuning_parameters$svm_fun <- svm_fun
+
+                out <- do.call(svm_cv_err, args = list(tuning_parameters))
+
                 return(out)
               } -> perf_measures[[f]]
       stopCluster(cl)
@@ -214,32 +308,124 @@ sptune_svm <- function(formula = NULL, data = NULL, parameter1 = NULL,
     if (tune == FALSE) {
       cl <- makeCluster(availableCores())
       plan(cluster, workers = cl)
-      message(sprintf(paste0("Using 'foreach' parallel mode with %s cores on",
-                             " %s combinations."),
-                      availableCores(), length(parameter1_all)))
-      message(sprintf(paste0("Unique 'cost': %s.",
-                             " Unique 'gamma': %s."),
-                      length(unique(parameter1_all)),
-                      length(unique(parameter2_all))))
+
+      if (length(names) == 2) {
+        message(sprintf(paste0("Using 'foreach' parallel mode with %s cores on",
+                               " %s combinations."),
+                        availableCores(), length(tuning_parameters[[names[1]]])))
+        message(sprintf(paste0("Unique '%s': %s.",
+                               " Unique '%s': %s."),
+                        names[1],
+                        length(unique(tuning_parameters[[names[1]]])),
+                        names[2],
+                        length(unique(tuning_parameters[[names[2]]]))))
+      } else if (length(names) == 3) {
+        message(sprintf(paste0("Using 'foreach' parallel mode with %s cores on",
+                               " %s combinations."),
+                        availableCores(), length(tuning_parameters[[names[1]]])))
+        message(sprintf(paste0("Unique '%s': %s.",
+                               " Unique '%s': %s."),
+                        names[1],
+                        length(unique(tuning_parameters[[names[1]]])),
+                        names[2],
+                        length(unique(tuning_parameters[[names[2]]])),
+                        names[3],
+                        length(unique(tuning_parameters[[names[3]]]))))
+      } else if (length(names) == 4) {
+        message(sprintf(paste0("Using 'foreach' parallel mode with %s cores on",
+                               " %s combinations."),
+                        availableCores(), length(tuning_parameters[[names[1]]])))
+        message(sprintf(paste0("Unique '%s': %s.",
+                               " Unique '%s': %s."),
+                        names[1],
+                        length(unique(tuning_parameters[[names[1]]])),
+                        names[2],
+                        length(unique(tuning_parameters[[names[2]]])),
+                        names[3],
+                        length(unique(tuning_parameters[[names[3]]])),
+                        names[4],
+                        length(unique(tuning_parameters[[names[4]]]))))
+      } else if (length(names) == 5) {
+        message(sprintf(paste0("Using 'foreach' parallel mode with %s cores on",
+                               " %s combinations."),
+                        availableCores(), length(tuning_parameters[[names[1]]])))
+        message(sprintf(paste0("Unique '%s': %s.",
+                               " Unique '%s': %s."),
+                        names[1],
+                        length(unique(tuning_parameters[[names[1]]])),
+                        names[2],
+                        length(unique(tuning_parameters[[names[2]]])),
+                        names[3],
+                        length(unique(tuning_parameters[[names[3]]])),
+                        names[4],
+                        length(unique(tuning_parameters[[names[4]]])),
+                        names[4],
+                        length(unique(tuning_parameters[[names[5]]]))))
+      }
     } else {
-      message(sprintf(paste0("Unique 'cost': %s.",
-                             " Unique 'gamma': %s.",
-                             " Total tuning combinations: %s."),
-                      length(unique(parameter1_all)),
-                      length(unique(parameter2_all)),
-                      length(parameter1_all)))
+      message(sprintf("Total tuning combinations: %s.",
+                      length(tuning_parameters[[names[1]]])))
       plan(sequential)
     }
 
-    foreach(i = 1:length(parameter1_all), .packages = (.packages()),
+    foreach(i = 1:length(tuning_parameters[[names[1]]]), .packages = (.packages()),
             .errorhandling = "remove", .verbose = FALSE) %dopar% {
 
-              out <- svm_cv_err(parameter1 = parameter1_all[i],
-                                parameter2 = parameter2_all[i],
-                                train = train, test = test, type = type,
-                                kernel = kernel,
-                                response = response, formula = formula,
-                                svm_fun = svm_fun)
+              if (length(names) == 2) {
+                tuning_parameters[[names[1]]] <- tuning_parameters_bak[[names[1]]][i]
+                tuning_parameters[[names[2]]] <- tuning_parameters_bak[[names[2]]][i]
+              } else if (length(names) == 3) {
+                tuning_parameters[[names[1]]] <- tuning_parameters_bak[[names[1]]][i]
+                tuning_parameters[[names[2]]] <- tuning_parameters_bak[[names[2]]][i]
+                tuning_parameters[[names[3]]] <- tuning_parameters_bak[[names[3]]][i]
+              } else if (length(names) == 4) {
+                tuning_parameters[[names[1]]] <- tuning_parameters_bak[[names[1]]][i]
+                tuning_parameters[[names[2]]] <- tuning_parameters_bak[[names[2]]][i]
+                tuning_parameters[[names[3]]] <- tuning_parameters_bak[[names[3]]][i]
+                tuning_parameters[[names[4]]] <- tuning_parameters_bak[[names[4]]][i]
+              } else if (length(names) == 5) {
+                tuning_parameters[[names[1]]] <- tuning_parameters_bak[[names[1]]][i]
+                tuning_parameters[[names[2]]] <- tuning_parameters_bak[[names[2]]][i]
+                tuning_parameters[[names[3]]] <- tuning_parameters_bak[[names[3]]][i]
+                tuning_parameters[[names[4]]] <- tuning_parameters_bak[[names[4]]][i]
+                tuning_parameters[[names[5]]] <- tuning_parameters_bak[[names[5]]][i]
+              }
+
+              if (svm_fun == "ksvm" && any(names(tuning_parameters) == "sigma")) {
+                tuning_parameters$kpar <- list()
+                tuning_parameters$kpar[["sigma"]] <- tuning_parameters[["sigma"]]
+                tuning_parameters[["sigma"]] <- NULL
+              } else if (svm_fun == "ksvm" && any(names(tuning_parameters) == "degree")) {
+                tuning_parameters$kpar <- list()
+                tuning_parameters$kpar[["degree"]] <-  tuning_parameters[["degree"]]
+                tuning_parameters[["degree"]] <- NULL
+              } else if (svm_fun == "ksvm" && any(names(tuning_parameters) == "scale")) {
+                tuning_parameters$kpar <- list()
+                tuning_parameters$kpar[["scale"]] <-  tuning_parameters[["scale"]]
+                tuning_parameters[["scale"]] <- NULL
+              } else if (svm_fun == "ksvm" && any(names(tuning_parameters) == "order")) {
+                tuning_parameters$kpar <- list()
+                tuning_parameters$kpar[["order"]] <-  tuning_parameters[["order"]]
+                tuning_parameters[["order"]] <- NULL
+              } else if (svm_fun == "ksvm" && any(names(tuning_parameters) == "length")) {
+                tuning_parameters$kpar <- list()
+                tuning_parameters$kpar[["length"]] <-  tuning_parameters[["length"]]
+                tuning_parameters[["length"]] <- NULL
+              } else if (svm_fun == "ksvm" && any(names(tuning_parameters) == "lambda")) {
+                tuning_parameters$kpar <- list()
+                tuning_parameters$kpar[["lambda"]] <-  tuning_parameters[["lambda"]]
+                tuning_parameters[["lambda"]] <- NULL
+              }
+
+              tuning_parameters$train <- train
+              tuning_parameters$test <- test
+              tuning_parameters$type <- type
+              tuning_parameters$kernel <- kernel
+              tuning_parameters$response <- response
+              tuning_parameters$formula <- formula
+              tuning_parameters$svm_fun <- svm_fun
+
+              out <- do.call(svm_cv_err, args = list(tuning_parameters))
               return(out)
             } -> perf_measures
   }
@@ -250,29 +436,75 @@ sptune_svm <- function(formula = NULL, data = NULL, parameter1 = NULL,
     # merge folds into one list for each parameter combination
     runfolds_merged <- map(runfolds_merged, function(x) do.call(Map, c(c, x)))
     # get mean
-    runfolds_merged <- map(runfolds_merged, function(y)
+    perf_measures <- map(runfolds_merged, function(y)
       map(y, function(x) mean(x)))
-
-    # append 'parameter1' and 'parameter2' vectors to respective lists
-    runfolds_merged %>%
-      map2(.y = parameter1_all,
-           .f = ~ plyr::mutate(.x, parameter1 = .y)) %>%
-      map2(.y = parameter2_all,
-           .f = ~ plyr::mutate(.x, parameter2 = .y)) -> runfolds_merged
-  } else {
-    # append 'parameter1' and 'parameter2' vectors to respective lists
-    perf_measures %>%
-      map2(.y = parameter1_all,
-           .f = ~ plyr::mutate(.x, parameter1 = .y)) %>%
-      map2(.y = parameter2_all,
-           .f = ~ plyr::mutate(.x, parameter2 = .y)) -> runfolds_merged
   }
+
+  # append 'parameter1' and 'parameter2' vectors to respective lists
+  if (length(names) == 2) {
+    perf_measures %>%
+      map2(.y = tuning_parameters[[names[1]]],
+           .f = ~ plyr::mutate(.x, param1 = .y)) %>%
+      map2(.y = tuning_parameters[[names[2]]],
+           .f = ~ plyr::mutate(.x, param2 = .y)) -> runfolds_merged
+  } else if (length(names) == 3) {
+    perf_measures %>%
+      map2(.y = tuning_parameters[[names[1]]],
+           .f = ~ plyr::mutate(.x, param1 = .y)) %>%
+      map2(.y = tuning_parameters[[names[2]]],
+           .f = ~ plyr::mutate(.x, param2 = .y)) %>%
+      map2(.y = tuning_parameters[[names[3]]],
+           .f = ~ plyr::mutate(.x, param3 = .y)) -> runfolds_merged
+  } else if (length(names) == 4) {
+    perf_measures %>%
+      map2(.y = tuning_parameters[[names[1]]],
+           .f = ~ plyr::mutate(.x, param1 = .y)) %>%
+      map2(.y = tuning_parameters[[names[2]]],
+           .f = ~ plyr::mutate(.x, param2 = .y)) %>%
+      map2(.y = tuning_parameters[[names[3]]],
+           .f = ~ plyr::mutate(.x, param3 = .y)) %>%
+      map2(.y = tuning_parameters[[names[4]]],
+           .f = ~ plyr::mutate(.x, param4 = .y)) -> runfolds_merged
+  } else if (length(names) == 5) {
+    perf_measures %>%
+      map2(.y = tuning_parameters[[names[1]]],
+           .f = ~ plyr::mutate(.x, param1 = .y)) %>%
+      map2(.y = tuning_parameters[[names[2]]],
+           .f = ~ plyr::mutate(.x, param2 = .y)) %>%
+      map2(.y = tuning_parameters[[names[3]]],
+           .f = ~ plyr::mutate(.x, param3 =  .y)) %>%
+      map2(.y = tuning_parameters[[names[4]]],
+           .f = ~ plyr::mutate(.x, param4 = .y)) %>%
+      map2(.y = tuning_parameters[[names[5]]],
+           .f = ~ plyr::mutate(.x, param5 = .y)) -> runfolds_merged
+  }
+
+  # rename to meaningful variable names
+  runfolds_merged <- map(runfolds_merged, function(x)
+    set_names(x, c(names(runfolds_merged[[1]][1:13]), names)))
 
   # check for NAs, subset cost and gamma and print message
   if (any(is.na(runfolds_merged))) {
     na_index <- which(is.na(runfolds_merged))
-    parameter1_all <- parameter1_all[-na_index]
-    parameter2_all <- parameter2_all[-na_index]
+    if (length(names) == 2) {
+      tuning_parameters[[names[1]]] <- tuning_parameters[[names[1]]][-na_index]
+      tuning_parameters[[names[2]]] <- tuning_parameters[[names[1]]][-na_index]
+    } else if (length(names) == 3) {
+      tuning_parameters[[names[1]]] <- tuning_parameters[[names[1]]][-na_index]
+      tuning_parameters[[names[2]]] <- tuning_parameters[[names[1]]][-na_index]
+      tuning_parameters[[names[3]]] <- tuning_parameters[[names[3]]][-na_index]
+    } else if (length(names) == 4) {
+      tuning_parameters[[names[1]]] <- tuning_parameters[[names[1]]][-na_index]
+      tuning_parameters[[names[2]]] <- tuning_parameters[[names[1]]][-na_index]
+      tuning_parameters[[names[3]]] <- tuning_parameters[[names[3]]][-na_index]
+      tuning_parameters[[names[4]]] <- tuning_parameters[[names[4]]][-na_index]
+    } else if (length(names) == 5) {
+      tuning_parameters[[names[1]]] <- tuning_parameters[[names[1]]][-na_index]
+      tuning_parameters[[names[2]]] <- tuning_parameters[[names[1]]][-na_index]
+      tuning_parameters[[names[3]]] <- tuning_parameters[[names[3]]][-na_index]
+      tuning_parameters[[names[4]]] <- tuning_parameters[[names[4]]][-na_index]
+      tuning_parameters[[names[5]]] <- tuning_parameters[[names[5]]][-na_index]
+    }
     runfolds_merged <- runfolds_merged[-na_index]
 
     message(sprintf(paste0("Removed %s combinations due to non-convergence.\n"),
@@ -288,21 +520,84 @@ sptune_svm <- function(formula = NULL, data = NULL, parameter1 = NULL,
     map(error_measure) %>%
     unlist() -> all_error_measures
 
-  best_cost <- parameter1_all[list_index]
-  best_gamma <- parameter2_all[list_index]
+  if (length(names) == 2) {
+    best_parameter1 <- tuning_parameters[[names[1]]][list_index]
+    best_parameter2 <- tuning_parameters[[names[2]]][list_index]
+  } else if (length(names) == 3) {
+    best_parameter1 <- tuning_parameters[[names[1]]][list_index]
+    best_parameter2 <- tuning_parameters[[names[2]]][list_index]
+    best_parameter3 <- tuning_parameters[[names[3]]][list_index]
+  } else if (length(names) == 4) {
+    best_parameter1 <- tuning_parameters[[names[1]]][list_index]
+    best_parameter2 <- tuning_parameters[[names[2]]][list_index]
+    best_parameter3 <- tuning_parameters[[names[3]]][list_index]
+    best_parameter4 <- tuning_parameters[[names[4]]][list_index]
+  } else if (length(names) == 5) {
+    best_parameter1 <- tuning_parameters[[names[1]]][list_index]
+    best_parameter2 <- tuning_parameters[[names[2]]][list_index]
+    best_parameter3 <- tuning_parameters[[names[3]]][list_index]
+    best_parameter4 <- tuning_parameters[[names[4]]][list_index]
+    best_parameter5 <- tuning_parameters[[names[5]]][list_index]
+  }
 
   # output on screen:
-  if (tune == FALSE) {
-    cat(sprintf(paste0("Optimal cost: ", best_cost, ";    optimal gamma: ",
-                       best_gamma,";    best %s: ",
-                       runfolds_merged[[list_index]][[error_measure]],
-                       "\n", sep = ""),
-                error_measure))
+
+  if (length(names) == 2) {
+    if (tune == FALSE) {
+      cat(sprintf(paste0("Optimal %s: %s \nOptimal %s: %s \n",
+                         "best %s: %s\n", sep = ""),
+                  names[[1]], best_parameter1,
+                  names[[2]], best_parameter2,
+                  error_measure,
+                  runfolds_merged[[list_index]][[error_measure]]))
+    }
+  } else if (length(names) == 3) {
+    if (tune == FALSE) {
+      cat(sprintf(paste0("Optimal %s: %s \nOptimal %s: %s \n",
+                         "Optimal %s: %s \nBest %s: %s\n", sep = ""),
+                  names[[1]], best_parameter1,
+                  names[[2]], best_parameter2,
+                  names[[3]], best_parameter3,
+                  error_measure,
+                  runfolds_merged[[list_index]][[error_measure]]))
+    }
+  } else if (length(names) == 4) {
+    if (tune == FALSE) {
+      cat(sprintf(paste0("Optimal %s: %s \nOptimal %s: %s \n",
+                         "Optimal %s: %s \nOptimal %s: %s \n",
+                         "Best %s: %s\n", sep = ""),
+                  names[[1]], best_parameter1,
+                  names[[2]], best_parameter2,
+                  names[[3]], best_parameter3,
+                  names[[4]], best_parameter4,
+                  error_measure,
+                  runfolds_merged[[list_index]][[error_measure]]))
+    }
+  } else if (length(names) == 5) {
+    if (tune == FALSE) {
+      cat(sprintf(paste0("Optimal %s: %s \nOptimal %s: %s \n",
+                         "Optimal %s: %s \nOptimal %s: %s \n",
+                         "Optimal %s: %s \nBest %s: %s\n", sep = ""),
+                  names[[1]], best_parameter1,
+                  names[[2]], best_parameter2,
+                  names[[3]], best_parameter3,
+                  names[[4]], best_parameter4,
+                  names[[5]], best_parameter5,
+                  error_measure,
+                  runfolds_merged[[list_index]][[error_measure]]))
+    }
   }
 
   ### Generate the actual fit object using optimized cost and gamma parameters:
 
-  # account for binary c
+  tuning_parameters$train <- train
+  tuning_parameters$test <- test
+  tuning_parameters$type <- type
+  tuning_parameters$kernel <- kernel
+  tuning_parameters$response <- response
+  tuning_parameters$formula <- formula
+  tuning_parameters$svm_fun <- svm_fun
+
   if (is.factor(train[[response]]) && length(levels(train[[response]])) == 2) {
     prob_model <- TRUE
     probability <- TRUE
@@ -310,32 +605,99 @@ sptune_svm <- function(formula = NULL, data = NULL, parameter1 = NULL,
     prob_model <- FALSE
     probability <- FALSE
   }
-  if (svm_fun == "ksvm") {
-    args <- list(x = formula, data = train, type = type, kernel = kernel,
-                 prob.model = prob_model, C = best_cost, gamma = best_gamma)
-  } else if (svm_fun == "SVM") {
-    args <- list(formula = formula, data = train, type = type,
-                 kernel = kernel, probability = probability,
-                 C = best_cost, gamma = best_gamma)
-  } else if (svm_fun == "svm") {
-    args <- list(formula = formula, data = train, type = type,
-                 kernel = kernel, probability = probability,
-                 cost = best_cost, gamma = best_gamma)
+  # this is needed because of the S3 methods within svm() -> otherwise the
+  # default methods gets called and errors. 'formula' needs to come first in
+  # the passed list
+  tuning_parameters$data <- tuning_parameters$train
+  if (tuning_parameters$svm_fun == "svm") {
+    args1 <- list()
+    args1$formula <- tuning_parameters$formula
+    tuning_parameters$formula <- NULL
+    fit <- try(do.call(tuning_parameters$svm_fun,
+                       args = c(args1, tuning_parameters)))
+  } else {
+    fit <- try(do.call(tuning_parameters$svm_fun, args = tuning_parameters))
   }
-  fit <- do.call(svm_fun, args)
 
-  # create return list
-  list_out <- list(fit = fit,
-                   tune = list(best_cost,
-                               parameter1_all,
-                               best_gamma,
-                               parameter2_all,
-                               all_error_measures,
-                               runfolds_merged[[list_index]],
-                               runfolds_merged))
-  set_names(list_out[[2]], c("optimal_cost", "all_costs", "optimal_gamma",
-                             "all_gammas", "all_error_measures",
-                             "performances_best_run", "performances_all_runs"))
+  if (length(names) == 2) {
+    list_out <- list(fit = fit,
+                     tune = list(best_parameter1,
+                                 tuning_parameters[[names[1]]],
+                                 best_parameter2,
+                                 tuning_parameters[[names[2]]],
+                                 all_error_measures,
+                                 runfolds_merged[[list_index]],
+                                 runfolds_merged))
+    sprintf(paste0("optimal_%s,all_%s,optimal_%s,all_%s,all_error_measures,",
+                   "performances_best_run,performances_all_runs", sep = ""),
+            names[1], names[1], names[2], names[2]) %>%
+      str_split(",") %>%
+      extract2(1) -> list_names
+    list_out[[2]] <- set_names(list_out[[2]], list_names)
+
+  } else if (length(names) == 3) {
+    list_out <- list(fit = fit,
+                     tune = list(best_parameter1,
+                                 tuning_parameters[[names[1]]],
+                                 best_parameter2,
+                                 tuning_parameters[[names[2]]],
+                                 best_parameter3,
+                                 tuning_parameters[[names[3]]],
+                                 all_error_measures,
+                                 runfolds_merged[[list_index]],
+                                 runfolds_merged))
+    sprintf(paste0("optimal_%s,all_%s,optimal_%s,all_%s,optimal_%s,all_%s,",
+                   "all_error_measures,",
+                   "performances_best_run,performances_all_runs", sep = ""),
+            names[1], names[1], names[2], names[2], names[3], names[3]) %>%
+      str_split(",") %>%
+      extract2(1) -> list_names
+    list_out[[2]] <- set_names(list_out[[2]], list_names)
+  } else if (length(names) == 4) {
+    list_out <- list(fit = fit,
+                     tune = list(best_parameter1,
+                                 tuning_parameters[[names[1]]],
+                                 best_parameter2,
+                                 tuning_parameters[[names[2]]],
+                                 best_parameter3,
+                                 tuning_parameters[[names[3]]],
+                                 best_parameter4,
+                                 tuning_parameters[[names[4]]],
+                                 all_error_measures,
+                                 runfolds_merged[[list_index]],
+                                 runfolds_merged))
+    sprintf(paste0("optimal_%s,all_%s,optimal_%s,all_%s,optimal_%s,all_%s,",
+                   "optimal_%s,all_%s,all_error_measures,",
+                   "performances_best_run,performances_all_runs", sep = ""),
+            names[1], names[1], names[2], names[2], names[3], names[3],
+            names[4], names[4]) %>%
+      str_split(",") %>%
+      extract2(1) -> list_names
+    list_out[[2]] <- set_names(list_out[[2]], list_names)
+  } else if (length(names) == 5) {
+    list_out <- list(fit = fit,
+                     tune = list(best_parameter1,
+                                 tuning_parameters[[names[1]]],
+                                 best_parameter2,
+                                 tuning_parameters[[names[2]]],
+                                 best_parameter3,
+                                 tuning_parameters[[names[3]]],
+                                 best_parameter4,
+                                 tuning_parameters[[names[4]]],
+                                 best_parameter5,
+                                 tuning_parameters[[names[5]]],
+                                 all_error_measures,
+                                 runfolds_merged[[list_index]],
+                                 runfolds_merged))
+    sprintf(paste0("optimal_%s,all_%s,optimal_%s,all_%s,optimal_%s,all_%s,",
+                   "optimal_%s,all_%s,optimal_%s,all_%s,all_error_measures,",
+                   "performances_best_run,performances_all_runs", sep = ""),
+            names[1], names[1], names[2], names[2], names[3], names[3],
+            names[4], names[4], names[5], names[5]) %>%
+      str_split(",") %>%
+      extract2(1) -> list_names
+    list_out[[2]] <- set_names(list_out[[2]], list_names)
+  }
   return(list_out)
 }
 
@@ -370,10 +732,10 @@ sptune_svm <- function(formula = NULL, data = NULL, parameter1 = NULL,
 #' Default to 'RMSE' for numeric responses, 'AUROC' for binary classification
 #' and 'error' for multiclass classiciation.
 #'
-#' @param mtrys optional user-defined vector of 'mtry' hyperparameter to
+#' @param parameter1 optional user-defined vector of hyperparameter to
 #' tune over. See details.
 #'
-#' @param ntrees optional user-defined vector of 'ntrees' hyperparameter to
+#' @param parameter2 optional user-defined vector of hyperparameter to
 #' tune over. See details.
 #'
 #' @param ... additional options passed to `partition_fun`.
@@ -390,9 +752,12 @@ sptune_svm <- function(formula = NULL, data = NULL, parameter1 = NULL,
 #' regression type responses always the minimum value of the passed error measure
 #' is chosen and for classification cases the highest.
 #'
+#' If `parameter1` and `parameter2` are unspecified, tuning will be performed
+#' on hyperparameters 'ntrees' and 'mtry'.
+#'
 #' The default behaviour of [sptune_rf] tunes over all possible 'mtry' values
 #' (which are of `length(predictors)`) and a selection of 'ntrees' ranging
-#' between 10 and 1000. Use `accelerate` to reduce the number of 'ntrees'.
+#' between 10 and 1280. Use `accelerate` to reduce the number of 'ntrees'.
 #' Specify a custom vector if you want to modify the number of `mtry` used
 #' for testing. This is useful if the model contains > 20
 #' predictors but runtime depends on your cpu power / number of cores.
@@ -670,11 +1035,11 @@ sptune_rf <- function(formula = NULL, data = NULL, step_factor = 2,
 #'
 #' @param data dataframe.
 #'
-#' @param beta_multiplier optional user-defined vector of 'beta_multiplier'
-#' hyperparameter to tune over. See details.
+#' @param parameter1 optional user-defined vector of hyperparameter
+#' to tune over. See details.
 #'
-#' @param feature_classes optional user-defined vector of 'feature_classes'
-#' hyperparameter to tune over. See details.
+#' @param parameter2 optional user-defined vector of hyperparameter
+#' to tune over. See details.
 #'
 #' @param absence is the data of type 'presence-absence'?
 #'
@@ -732,96 +1097,161 @@ sptune_rf <- function(formula = NULL, data = NULL, step_factor = 2,
 sptune_maxent <- function(x = NULL, p = NULL, data = NULL,
                           nfold = NULL, partition_fun = NULL,
                           error_measure = NULL, absence = FALSE,
-                          beta_multiplier = NULL,
-                          feature_classes = NULL, ...) {
+                          parameter1 = NULL,
+                          parameter2 = NULL, tune = FALSE,
+                          train = NULL, test = NULL, ...) {
 
-  if (is.null(partition_fun)) {
+  if (is.null(partition_fun) && tune == FALSE) {
     message("Partitioning method: 'partition_kmeans'.")
     partition_fun <- "partition_kmeans"
   } else {
     message(sprintf("Partitioning method: '%s'.", partition_fun))
   }
 
-  if (is.null(nfold)) {
+  if (is.null(nfold) && tune == FALSE) {
     nfold <- 5
     warning(sprintf("Using %s folds since 'nfold' was not set.", nfold))
   }
 
-  # partition the data
-  partition_args <- list(data = data, nfold = nfold,
-                         ...)
-  resamp <- do.call(partition_fun, args = partition_args)[[1]]
+  if (is.null(train) && is.null(test)) {
+    # partition the data
+    partition_args <- list(data = data, nfold = nfold,
+                           ...)
+    resamp <- do.call(partition_fun, args = partition_args)[[1]]
+    train <- data[resamp[[1]][[1]]$train, ]
+    test <- data[resamp[[1]][[1]]$test, ]
+  }
 
   ## feature classes L, Q, H, T, LQ, HQ, LQP, LQT, QHP, QHT, QHPT,
 
-  if (is.null(beta_multiplier) && !is.null(feature_classes)) {
-    beta_multiplier_all <- seq(-10, 20, 2)
+  if (is.null(parameter1) && !is.null(parameter2)) {
+    parameter1_all <- seq(-10, 20, 2)
     # remove 0
-    beta_multiplier_all <- beta_multiplier_all[ -which(beta_multiplier_all %in% 0)]
-    feature_classes_all <- feature_classes
-  } else if (is.null(feature_classes) && !is.null(beta_multiplier)) {
-    feature_classes_all <- c("L", "Q", "H", "T", "LQ", "HQ", "LQP", "LQT", "QHP",
-                             "QHT", "QHPT")
-    beta_multiplier_all <- beta_multiplier
+    parameter1_all <- parameter1_all[ -which(parameter1_all %in% 0)]
+    parameter2_all <- parameter2
+  } else if (is.null(parameter2) && !is.null(parameter1)) {
+    parameter2_all <- c("L", "Q", "H", "T", "LQ", "HQ", "LQP", "LQT", "QHP",
+                        "QHT", "QHPT")
+    parameter1_all <- parameter1
+    if (0 %in% parameter1_all) {
+      parameter1_all <- parameter1_all[ -which(parameter1_all %in% 0)]
+    }
   } else {
-    beta_multiplier_all <- seq(-10, 20, 2)
+    parameter1_all <- seq(-10, 20, 2)
     # remove 0
-    beta_multiplier_all <- beta_multiplier_all[ -which(beta_multiplier_all %in% 0)]
-    feature_classes_all <- c("L", "Q", "H", "T", "LQ", "HQ", "LQP", "LQT", "QHP",
-                             "QHT", "QHPT")
+    parameter1_all <- parameter1_all[ -which(parameter1_all %in% 0)]
+    parameter2_all <- c("L", "Q", "H", "T", "LQ", "HQ", "LQP", "LQT", "QHP",
+                        "QHT", "QHPT")
   }
 
   # Set up variables for loop:
-  beta_multiplier <- length(beta_multiplier_all)
-  beta_multiplier_all <- rep(beta_multiplier_all, length(feature_classes_all))
-  feature_classes_all <- rep(feature_classes_all, each = beta_multiplier)
+  parameter1 <- length(parameter1_all)
+  parameter1_all <- rep(parameter1_all, length(parameter2_all))
+  parameter2_all <- rep(parameter2_all, each = parameter1)
 
   message(sprintf(paste0("Using 'foreach' parallel mode with %s cores on",
                          " %s combinations."),
-                  availableCores(), length(beta_multiplier_all)))
+                  availableCores(), length(parameter1_all)))
   message(sprintf(paste0("Unique 'beta_multiplier': %s.",
                          " Unique 'feature_classes': %s."),
-                  length(unique(beta_multiplier_all)),
-                  length(unique(feature_classes_all))))
+                  length(unique(parameter1_all)),
+                  length(unique(parameter2_all))))
 
-  perf_measures <- list()
-  for (f in 1:length(resamp)) {
+  registerDoFuture()
 
-    cat(sprintf("Fold %s\n", f))
+  if (average_folds == TRUE) {
 
-    train <- x[resamp[[f]]$train, ]
-    test <- x[resamp[[f]]$test, ]
+    perf_measures <- list()
+    for (f in 1:length(resamp)) {
 
-    registerDoFuture()
-    cl <- makeCluster(availableCores())
-    plan(cluster, workers = cl)
+      cat(sprintf("Fold %s\n", f))
 
-    foreach(i = 1:length(beta_multiplier_all), .packages = (.packages()),
+      train <- x[resamp[[f]]$train, ]
+      test <- x[resamp[[f]]$test, ]
+
+      if (tune == FALSE) {
+        cl <- makeCluster(availableCores())
+        plan(cluster, workers = cl)
+      } else {
+        plan(sequential)
+      }
+
+      foreach(i = 1:length(parameter1_all), .packages = (.packages()),
+              .errorhandling = "remove", .verbose = FALSE) %dopar% {
+
+                out <- maxent_cv_err(beta_multiplier = parameter1_all[i],
+                                     feature_classes = parameter2_all[i],
+                                     train = train, test = test,
+                                     x = x, p = p, absence = absence)
+                return(out)
+              } -> perf_measures[[f]]
+      stopCluster(cl)
+    }
+
+    # combine lists by folds
+    runfolds_merged <- do.call(Map, c(f = list,perf_measures))
+    # merge folds into one list for each parameter combination
+    runfolds_merged <- map(runfolds_merged, function(x) do.call(Map,c(c, x)))
+    # get mean
+    runfolds_merged <- map(runfolds_merged, function(y)
+      map(y, function(x) mean(x)))
+  } else {
+
+    if (tune == FALSE) {
+      cl <- makeCluster(availableCores())
+      plan(cluster, workers = cl)
+      message(sprintf(paste0("Using 'foreach' parallel mode with %s cores on",
+                             " %s combinations."),
+                      availableCores(), length(parameter1_all)))
+      message(sprintf(paste0("Unique 'beta_multiplier': %s.",
+                             " Unique 'feature_classes': %s."),
+                      length(unique(parameter1_all)),
+                      length(unique(parameter2_all))))
+    } else {
+      message(sprintf(paste0("Unique 'beta_multiplier': %s.",
+                             " Unique 'feature_classes': %s.",
+                             " Total tuning combinations: %s."),
+                      length(unique(parameter1_all)),
+                      length(unique(parameter2_all)),
+                      length(parameter1_all)))
+      plan(sequential)
+    }
+
+    foreach(i = 1:length(parameter1_all), .packages = (.packages()),
             .errorhandling = "remove", .verbose = FALSE) %dopar% {
 
-              out <- maxent_cv_err(beta_multiplier = beta_multiplier_all[i],
-                                   feature_classes = feature_classes_all[i],
+              out <- maxent_cv_err(beta_multiplier = parameter1_all[i],
+                                   feature_classes = parameter2_all[i],
                                    train = train, test = test,
                                    x = x, p = p, absence = absence)
               return(out)
-            } -> perf_measures[[f]]
-    stopCluster(cl)
+            } -> perf_measures
   }
 
-  # combine lists by folds
-  runfolds_merged <- do.call(Map, c(f = list,perf_measures))
-  # merge folds into one list for each parameter combination
-  runfolds_merged <- map(runfolds_merged, function(x) do.call(Map,c(c, x)))
-  # get mean
-  runfolds_merged <- map(runfolds_merged, function(y)
-    map(y, function(x) mean(x)))
+  if (average_folds == TRUE) {
 
-  # append 'beta_multiplier' and 'feature_classes' vectors to respective lists
-  runfolds_merged %>%
-    map2(.y = feature_classes_all,
-         .f = ~ plyr::mutate(.x, feature_classes = .y)) %>%
-    map2(.y = beta_multiplier_all,
-         .f = ~ plyr::mutate(.x, beta_multiplier = .y)) -> runfolds_merged
+    # combine lists by folds
+    runfolds_merged <- do.call(Map, c(f = list, perf_measures))
+    # merge folds into one list for each parameter combination
+    runfolds_merged <- map(runfolds_merged, function(x) do.call(Map, c(c, x)))
+    # get mean
+    runfolds_merged <- map(runfolds_merged, function(y)
+      map(y, function(x) mean(x)))
+
+    # append 'beta_multiplier' and 'feature_classes' vectors to respective lists
+    runfolds_merged %>%
+      map2(.y = parameter2_all,
+           .f = ~ plyr::mutate(.x, feature_classes = .y)) %>%
+      map2(.y = parameter1_all,
+           .f = ~ plyr::mutate(.x, beta_multiplier = .y)) -> runfolds_merged
+  } else {
+    # append 'parameter1' and 'parameter2' vectors to respective lists
+    perf_measures %>%
+      map2(.y = parameter1_all,
+           .f = ~ plyr::mutate(.x, parameter1 = .y)) %>%
+      map2(.y = parameter2_all,
+           .f = ~ plyr::mutate(.x, parameter2 = .y)) -> runfolds_merged
+  }
 
   tmp1 <- check_response_type(p, error_measure,
                               runfolds_merged, option = TRUE)
@@ -832,8 +1262,8 @@ sptune_maxent <- function(x = NULL, p = NULL, data = NULL,
     map(error_measure) %>%
     unlist() -> all_error_measures
 
-  best_beta_multiplier <- beta_multiplier_all[list_index]
-  best_feature_class <- feature_classes_all[list_index]
+  best_beta_multiplier <- parameter1_all[list_index]
+  best_feature_class <- parameter2_all[list_index]
 
   # output on screen:
   cat(sprintf(paste0("Optimal beta multiplier: ", best_beta_multiplier, ";    optimal feature class combination: ",
@@ -925,9 +1355,9 @@ sptune_maxent <- function(x = NULL, p = NULL, data = NULL,
 
   list_out <- list(fit = fit,
                    tune = list(best_beta_multiplier,
-                               beta_multiplier_all,
+                               parameter1_all,
                                best_feature_class,
-                               feature_classes_all,
+                               parameter2_all,
                                all_error_measures,
                                runfolds_merged[[list_index]],
                                runfolds_merged))

@@ -4,14 +4,14 @@
 \alias{maxent_cv_err}
 \title{maxent_cv_err}
 \usage{
-maxent_cv_err(beta_multiplier = NULL, feature_classes = NULL,
-  train = NULL, test = NULL, x = NULL, p = NULL, absence = NULL, ...)
+maxent_cv_err(parameter1 = NULL, parameter2 = NULL, train = NULL,
+  test = NULL, x = NULL, p = NULL, absence = NULL, ...)
 }
 \arguments{
-\item{beta_multiplier}{optional user-defined vector of 'beta_multiplier'
+\item{parameter1}{optional user-defined vector of 'parameter1'
 hyperparameter to tune over. See details.}
 
-\item{feature_classes}{optional user-defined vector of 'feature_classes'
+\item{parameter2}{optional user-defined vector of 'parameter2'
 hyperparameter to tune over. See details.}
 
 \item{train}{training data}
@@ -23,8 +23,8 @@ hyperparameter to tune over. See details.}
 \item{response}{response variable}
 }
 \description{
-Tunes maxent hyperparameters beta_multiplier and
-feature_classes using cross-validation with AUROC as error measure
+Tunes maxent hyperparameters parameter1 and
+parameter2 using cross-validation with AUROC as error measure
 }
 \examples{
 \dontrun{
@@ -35,8 +35,8 @@ parti <- partition_kmeans(basque, nfold = 5)
 train <- maxent_pred[parti[[1]][[1]]$train, ]
 test <- maxent_pred[parti[[1]][[1]]$test, ]
 
-out <- maxent_cv_err(beta_multiplier = 1,
-                     feature_classes = "LQ",
+out <- maxent_cv_err(parameter1 = 1,
+                     parameter2 = "LQ",
                      train = train, test = test, x = maxent_pred,
                      p = maxent_response, response = "diplo01",
                      absence = TRUE)

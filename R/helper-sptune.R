@@ -33,17 +33,11 @@
 #' ##------------------------------------------------------------
 #' ## binary classification
 #' ##------------------------------------------------------------
-#' response <- "slides"
 #'
-#' fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
-#'
-#' out <- svm_cv_err(cost = 0.01, gamma = 0.166, train = train, test = test,
-#'                   formula = fo, kernel = "radial", type = "C-classification",
-#'                   response = "slides", svm_fun = "svm")
-#'
-#' out <- svm_cv_err(cost = 0.01, gamma = 0.166, train = train, test = test,
-#'                   formula = fo, kernel = "rbfdot", type = "C-svc",
-#'                   response = "slides", svm_fun = "ksvm")
+#' args <- readRDS("inst/testfiles/svm_cv_err_input.rda")
+#' args <- readRDS("inst/testfiles/svm_cv_err_input_2.rda")
+#' args <- readRDS("inst/testfiles/svm_cv_err_input_3.rda") #svm
+#' out <- svm_cv_err(args)
 #'
 #' ##------------------------------------------------------------
 #' ## regression
@@ -89,49 +83,55 @@
 #'                   svm_fun = "ksvm", type = "C-svc")
 #' }
 #' @export
-svm_cv_err <- function(parameter1 = NULL, parameter2 = NULL,
-                       train = NULL, test = NULL,
-                       response = NULL, formula = NULL, kernel = NULL,
-                       type = NULL, svm_fun = NULL, ...) {
+svm_cv_err <- function(args = NULL) {
 
   ### fit model
   # binary classifcation
-  if (is.factor(train[[response]]) && length(levels(train[[response]])) == 2) {
-    probability <- TRUE
-    prob.model <- TRUE
+  if (is.factor(args$train[[args$response]]) &&
+      length(levels(args$train[[args$response]])) == 2) {
+    args$probability <- TRUE
+    args$prob.model <- TRUE
   } else {
-    probability <- FALSE
-    prob.model <- FALSE
+    args$probability <- FALSE
+    args$prob.model <- FALSE
   }
 
-  if (svm_fun == "ksvm") {
-    args <- list(x = formula, data = train, type = type, kernel = kernel,
-                 prob.model = prob.model, C = parameter1, gamma = parameter2)
-  } else if (svm_fun == "SVM") {
-    args <- list(formula = formula, data = train, type = type,
-                 kernel = kernel, probability = probability, C = parameter1,
-                 gamma = parameter2)
-  } else if (svm_fun == "svm") {
-    args <- list(formula = formula, data = train, type = type,
-                 kernel = kernel, probability = probability, cost = parameter1,
-                 gamma = parameter2)
+  if (args$svm_fun == "ksvm") {
+    args$x <- args$formula
+    args$formula <- NULL
   }
-  fit <- try(do.call(svm_fun, args))
+  args$data <- args$train
+
+  # this is needed because of the S3 methods within svm() -> otherwise the
+  # default methods gets called and errors. 'formula' needs to come first in
+  # the passed list
+  if (args$svm_fun == "svm") {
+    args1 <- list()
+    args1$formula <- args$formula
+    args$formula <- NULL
+    fit <- try(do.call(args$svm_fun, args = c(args1,args)))
+  } else {
+
+    fit <- try(do.call(args$svm_fun, args = args))
+  }
 
   ### predict
-  if (svm_fun == "ksvm") {
-    if (is.factor(train[[response]]) && length(levels(train[[response]])) == 2) {
-      type <- "probabilities"
+  if (args$svm_fun == "ksvm") {
+    if (is.factor(args$train[[args$response]]) &&
+        length(levels(args$train[[args$response]])) == 2) {
+      args$type <- "probabilities"
     } else {
-      type <- "response"
+      args$type <- "response"
     }
     # we do not see the error message, so returning none
-    pred <- tryCatch(kernlab::predict(fit, newdata = test, type = type),
+    pred <- tryCatch(kernlab::predict(fit, newdata = args$test,
+                                      type = args$type),
                      error = function(cond) {
                        return(NA)
                      })
   } else {
-    pred <- tryCatch(predict(fit, newdata = test, probability = probability),
+    pred <- tryCatch(predict(fit, newdata = args$test,
+                             probability = args$probability),
                      error = function(cond) {
                        return(NA)
                      })
@@ -143,18 +143,19 @@ svm_cv_err <- function(parameter1 = NULL, parameter2 = NULL,
   }
 
   ### error measures
-  if (svm_fun == "svm") {
+  if (args$svm_fun == "svm") {
     # binary classification
-    if (is.factor(train[[response]]) && length(levels(train[[response]])) == 2) {
+    if (is.factor(args$train[[args$response]]) &&
+        length(levels(args$train[[args$response]])) == 2) {
       pred <-  attr(pred, "probabilities")[, 2]
     }
-    perf_measures <- err_default(test[, response], pred)
-  } else if (svm_fun == "ksvm") {
-    if (is.factor(train[[response]]) &&
-        length(levels(train[[response]])) == 2) {
-      perf_measures <- err_default(test[, response], pred[, 2])
+    perf_measures <- err_default(args$test[, args$response], pred)
+  } else if (args$svm_fun == "ksvm") {
+    if (is.factor(args$train[[args$response]]) &&
+        length(levels(args$train[[args$response]])) == 2) {
+      perf_measures <- err_default(args$test[, args$response], pred[, 2])
     } else  {
-      perf_measures <- err_default(test[, response], pred)
+      perf_measures <- err_default(args$test[, args$response], pred)
     }
   }
   return(perf_measures)
@@ -229,8 +230,9 @@ svm_cv_err <- function(parameter1 = NULL, parameter2 = NULL,
 #' formula = fo, response = "croptype", rf_fun = "randomForest")
 #' }
 #' @export
-rf_cv_err <- function(parameter1 = NULL, parameter2 = NULL, train = NULL, test = NULL,
-                      response = NULL, formula = NULL, rf_fun = NULL, ...) {
+rf_cv_err <- function(parameter1 = NULL, parameter2 = NULL, train = NULL,
+                      test = NULL, response = NULL, formula = NULL,
+                      rf_fun = NULL, ...) {
 
   if (rf_fun == "rfsrc") {
     args <- list(formula = formula, data = train, ntree = parameter1,
@@ -280,8 +282,8 @@ rf_cv_err <- function(parameter1 = NULL, parameter2 = NULL, train = NULL, test =
 }
 
 #' @title maxent_cv_err
-#' @description Tunes maxent hyperparameters beta_multiplier and
-#' feature_classes using cross-validation with AUROC as error measure
+#' @description Tunes maxent hyperparameters parameter1 and
+#' parameter2 using cross-validation with AUROC as error measure
 #'
 #' @importFrom ROCR prediction performance
 #' @importFrom dismo maxent
@@ -289,10 +291,10 @@ rf_cv_err <- function(parameter1 = NULL, parameter2 = NULL, train = NULL, test =
 #'
 #' @param formula model formula
 #'
-#' @param beta_multiplier optional user-defined vector of 'beta_multiplier'
+#' @param parameter1 optional user-defined vector of 'parameter1'
 #' hyperparameter to tune over. See details.
 #'
-#' @param feature_classes optional user-defined vector of 'feature_classes'
+#' @param parameter2 optional user-defined vector of 'parameter2'
 #' hyperparameter to tune over. See details.
 #'
 #' @param train training data
@@ -312,79 +314,79 @@ rf_cv_err <- function(parameter1 = NULL, parameter2 = NULL, train = NULL, test =
 #' train <- maxent_pred[parti[[1]][[1]]$train, ]
 #' test <- maxent_pred[parti[[1]][[1]]$test, ]
 #'
-#' out <- maxent_cv_err(beta_multiplier = 1,
-#'                      feature_classes = "LQ",
+#' out <- maxent_cv_err(parameter1 = 1,
+#'                      parameter2 = "LQ",
 #'                      train = train, test = test, x = maxent_pred,
 #'                      p = maxent_response, response = "diplo01",
 #'                      absence = TRUE)
 #' }
 #' @export
-maxent_cv_err <- function(beta_multiplier = NULL, feature_classes = NULL,
+maxent_cv_err <- function(parameter1 = NULL, parameter2 = NULL,
                           train = NULL, test = NULL, x = NULL, p = NULL,
                           absence = NULL, ...) {
 
   # account for feature classes
-  if (feature_classes == "L") {
+  if (parameter2 == "L") {
     linear <- TRUE
     quadratic <- FALSE
     product <- FALSE
     threshold <- FALSE
     hinge <- FALSE
-  } else if (feature_classes == "Q") {
+  } else if (parameter2 == "Q") {
     linear <- FALSE
     quadratic <- TRUE
     product <- FALSE
     threshold <- FALSE
     hinge <- FALSE
-  } else if (feature_classes == "H") {
+  } else if (parameter2 == "H") {
     linear <- FALSE
     quadratic <- FALSE
     product <- FALSE
     threshold <- FALSE
     hinge <- TRUE
-  } else if (feature_classes == "T") {
+  } else if (parameter2 == "T") {
     linear <- FALSE
     quadratic <- FALSE
     product <- FALSE
     threshold <- TRUE
     hinge <- FALSE
-  } else if (feature_classes == "LQ") {
+  } else if (parameter2 == "LQ") {
     linear <- TRUE
     quadratic <- TRUE
     product <- FALSE
     threshold <- FALSE
     hinge <- FALSE
-  } else if (feature_classes == "HQ") {
+  } else if (parameter2 == "HQ") {
     linear <- FALSE
     quadratic <- TRUE
     product <- FALSE
     threshold <- FALSE
     hinge <- TRUE
-  } else if (feature_classes == "LQP") {
+  } else if (parameter2 == "LQP") {
     linear <- TRUE
     quadratic <- TRUE
     product <- TRUE
     threshold <- FALSE
     hinge <- FALSE
-  } else if (feature_classes == "LQT") {
+  } else if (parameter2 == "LQT") {
     linear <- TRUE
     quadratic <- TRUE
     product <- FALSE
     threshold <- TRUE
     hinge <- FALSE
-  } else if (feature_classes == "QHP") {
+  } else if (parameter2 == "QHP") {
     linear <- FALSE
     quadratic <- TRUE
     product <- TRUE
     threshold <- FALSE
     hinge <- TRUE
-  } else if (feature_classes == "QHT") {
+  } else if (parameter2 == "QHT") {
     linear <- FALSE
     quadratic <- TRUE
     product <- FALSE
     threshold <- TRUE
     hinge <- TRUE
-  } else if (feature_classes == "QHPT") {
+  } else if (parameter2 == "QHPT") {
     linear <- FALSE
     quadratic <- TRUE
     product <- TRUE
@@ -394,7 +396,7 @@ maxent_cv_err <- function(beta_multiplier = NULL, feature_classes = NULL,
 
   sprintf(paste0("betamultiplier=%s,autofeature=FALSE,",
                  "linear=%s,quadratic=%s,product=%s,threshold=%s,",
-                 "hinge=%s"), beta_multiplier, linear, quadratic, product,
+                 "hinge=%s"), parameter1, linear, quadratic, product,
           threshold, hinge) -> my_args
   str_split(my_args, pattern = ",")[[1]] -> my_args
 

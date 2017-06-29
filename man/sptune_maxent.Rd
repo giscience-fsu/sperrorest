@@ -6,7 +6,8 @@
 \usage{
 sptune_maxent(x = NULL, p = NULL, data = NULL, nfold = NULL,
   partition_fun = NULL, error_measure = NULL, absence = FALSE,
-  beta_multiplier = NULL, feature_classes = NULL, ...)
+  parameter1 = NULL, parameter2 = NULL, tune = FALSE, train = NULL,
+  test = NULL, ...)
 }
 \arguments{
 \item{x}{Predictors. Raster* object or SpatialGridDataFrame, containing
@@ -34,11 +35,11 @@ and 'error' for multiclass classiciation.}
 
 \item{absence}{is the data of type 'presence-absence'?}
 
-\item{beta_multiplier}{optional user-defined vector of 'beta_multiplier'
-hyperparameter to tune over. See details.}
+\item{parameter1}{optional user-defined vector of hyperparameter
+to tune over. See details.}
 
-\item{feature_classes}{optional user-defined vector of 'feature_classes'
-hyperparameter to tune over. See details.}
+\item{parameter2}{optional user-defined vector of hyperparameter
+to tune over. See details.}
 
 \item{...}{additional options passed to \code{partition_fun}.}
 }
