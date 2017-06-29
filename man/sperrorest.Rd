@@ -10,11 +10,10 @@ sperrorest(formula, data, coords = c("x", "y"), model_fun,
   smp_fun = partition_cv, smp_args = list(), train_fun = NULL,
   train_param = NULL, test_fun = NULL, test_param = NULL,
   err_fun = err_default, imp_variables = NULL, tune_args = list(),
-  tune = FALSE, imp_permutations = 1000,
-  importance = !is.null(imp_variables), distance = FALSE,
-  par_args = list(par_mode = "foreach", par_units = NULL, par_option = NULL),
-  do_gc = 1, progress = "all", out_progress = "", benchmark = FALSE,
-  ...)
+  imp_permutations = 1000, importance = !is.null(imp_variables),
+  distance = FALSE, par_args = list(par_mode = "foreach", par_units = NULL,
+  par_option = NULL), do_gc = 1, progress = "all", out_progress = "",
+  benchmark = FALSE, ...)
 }
 \arguments{
 \item{formula}{A formula specifying the variables used by the \code{model}.
@@ -77,10 +76,6 @@ is performed. If \code{importance = TRUE} and \code{imp_variables} ==
 
 \item{tune_args}{Arguments to \link{sptune_svm}, \link{sptune_rf} or
 \link{sptune_maxent}. Only applies if \code{tune = TRUE}.}
-
-\item{tune}{logical (default: \code{FALSE}) Whether to perform internal tuning
-(nested CV) of selected models.
-Currently supported: \link{svm}, \link{ksvm}, \link{randomForest}, \link{rfsrc}, \link{maxent}.}
 
 \item{imp_permutations}{(optional; used if \code{importance = TRUE}).
 Number of permutations used for variable importance assessment.}

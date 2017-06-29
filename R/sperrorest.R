@@ -55,10 +55,6 @@
 #'
 #' @param smp_args (optional) Arguments to be passed to `smp_fun`.
 #'
-#' @param tune logical (default: `FALSE`) Whether to perform internal tuning
-#' (nested CV) of selected models.
-#' Currently supported: [svm], [ksvm], [randomForest], [rfsrc], [maxent].
-#'
 #' @param tune_args Arguments to [sptune_svm], [sptune_rf] or
 #' [sptune_maxent]. Only applies if `tune = TRUE`.
 #'
@@ -270,7 +266,6 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
                        test_param = NULL, err_fun = err_default,
                        imp_variables = NULL,
                        tune_args = list(),
-                       tune = FALSE,
                        imp_permutations = 1000,
                        importance = !is.null(imp_variables), distance = FALSE,
                        par_args = list(par_mode = "foreach", par_units = NULL,
@@ -280,6 +275,10 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
   # if benchmark = TRUE, start clock
   if (benchmark)
     start_time <- Sys.time()
+
+  if (length(tune_args) > 0) {
+    tune <- TRUE
+  }
 
   # Some checks:
   if (missing(model_fun))
