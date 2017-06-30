@@ -85,6 +85,22 @@ test_that("sp_tune_svm works with e1071 package", {
 
 # new tuning_parameters argument Thu Jun 29 14:19:52 2017 ------------------------------
 
+test_that("sp_tune_svm works with e1071 package (1 params)", {
+
+  # ---
+  ## binary classification
+  # ---
+  data(ecuador) # Muenchow et al. (2012), see ?ecuador
+  fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
+
+  out <- sptune_svm(fo, ecuador, accelerate = 8, nfold = 5,
+                    tuning_parameters = list(gamma = seq(1, 10)), tune = T,
+                    partition_fun = "partition_kmeans", svm_fun = "svm",
+                    kernel = "sigmoid", type = "C-classification")
+
+  expect_length(out, 2)
+})
+
 test_that("sp_tune_svm works with e1071 package (2 params)", {
 
   # ---
@@ -130,7 +146,7 @@ test_that("sp_tune_svm works with ksvm package (2 params)", {
 
   out <- sptune_svm(fo, ecuador, accelerate = 8, nfold = 5,
                     tuning_parameters = list(gamma = seq(1, 10),
-                                             C = seq(5,6)), tune = T,
+                                             C = seq(5,6)), tune = F,
                     partition_fun = "partition_kmeans", svm_fun = "ksvm",
                     kernel = "polydot", type = "C-svc")
 
@@ -168,9 +184,9 @@ test_that("sp_tune_svm works with ksvm package (4 params)", {
                     tuning_parameters = list(gamma = seq(1, 10),
                                              degree = c(2, 3),
                                              C = seq(5,6),
-                                             scale = seq(1,2)), tune = T,
+                                             sigma = seq(1,2)), tune = F,
                     partition_fun = "partition_kmeans", svm_fun = "ksvm",
-                    kernel = "polydot", type = "C-svc")
+                    kernel = "besseldot", type = "C-svc")
 
   expect_length(out, 2)
 })
