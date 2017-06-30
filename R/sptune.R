@@ -28,10 +28,12 @@
 #'
 #' @param error_measure which error measure to use for optimization.
 #' Default to 'RMSE' for numeric responses, 'AUROC' for binary classification
-#' and 'error' for multiclass classiciation.
+#' and 'MER' for multiclass classification.
 #'
 #' @param tuning_parameter named list of tuning parameter containing values
 #' to tune over.
+#'
+#' @param tune internal use only. Suppresses console output if set to `TRUE`
 #'
 #' @param kernel the kernel to use.
 #'
@@ -57,7 +59,10 @@
 #' If `parameter1` and `parameter2` are unspecified, tuning will be performed
 #' on hyperparameters 'cost' and 'gamma'.
 #'
-#' `sptune_svm` is parallelized and runs on all possible cores.
+#' `sptune_svm` is parallelized and runs on all available cores.
+#'
+#' `sptune_svm` is used internally in `sperrorest` and performs parameter
+#' tuning on every fold.
 #'
 #' @seealso [plot_hyper_svm]
 #'
@@ -72,39 +77,54 @@
 #'
 #' @examples
 #' \dontrun{
-#' ##------------------------------------------------------------
-#' ## binary classification
-#' ##------------------------------------------------------------
-#' data(ecuador) # Muenchow et al. (2012), see ?ecuador
+#' data(ecuador) #' Muenchow et al. (2012), see ?ecuador
 #' fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
 #'
-#' out <- sptune_svm(fo, ecuador, accelerate = 8, nfold = 5,
+#' ##------------------------------------------------------------
+#' ## 1 parameter (e1071)
+#' ##------------------------------------------------------------
+#'
+#' # no meaningful parameter selection for tuning
+#' out <- sptune_svm(fo, ecuador, nfold = 5,
+#'                   tuning_parameters = list(gamma = seq(1, 10)),
 #'                   partition_fun = "partition_kmeans", svm_fun = "svm",
-#'                   tuning_parameters = list(gamma = seq(1,5),
-#'                   coef0 = seq(1,4)),
 #'                   kernel = "sigmoid", type = "C-classification")
 #'
 #' ##------------------------------------------------------------
-#' ## multiclass classification
-#' ##------------------------------------------------------------
-#' fo <- croptype ~ b82 + b83 + b84 + b85 + b86 + b87 + ndvi01 +
-#'       ndvi02 + ndvi03 + ndvi04
-#' data(maipo)
-#' out <- sptune_svm(fo, maipo, accelerate = 8, nfold = 5,
-#'                   coords = c("utmx", "utmy"),
-#'                   partition_fun = "partition_kmeans",
-#'                   svm_fun = "ksvm", type = "C-svc", kernel = "rbfdot")
-#'
-#' ##------------------------------------------------------------
-#' ## regression
+#' ## 2 parameters (e1071)
 #' ##------------------------------------------------------------
 #'
-#' data(ecuador) # Muenchow et al. (2012), see ?ecuador
-#' fo <- dem ~ slides + slope + hcurv + vcurv + log.carea + cslope
-#'
-#' out <- sptune_svm(fo, ecuador, accelerate = 8, nfold = 5,
+#' # no meaningful parameter selection for tuning
+#' out <- sptune_svm(fo, ecuador, nfold = 5,
+#'                   tuning_parameters = list(gamma = seq(1, 10),
+#'                                            coef0 = c(2, 3)),
 #'                   partition_fun = "partition_kmeans", svm_fun = "svm",
-#'                   kernel = "radial", type = "eps-regression")
+#'                   kernel = "sigmoid", type = "C-classification")
+#'
+#' ##------------------------------------------------------------
+#' ## 3 parameters (e1071)
+#' ##------------------------------------------------------------
+#'
+#' # no meaningful parameter selection for tuning
+#' out <- sptune_svm(fo, ecuador, nfold = 5,
+#'                   tuning_parameters = list(gamma = seq(1, 10),
+#'                                            coef0 = c(2, 3),
+#'                                            cost = seq(5, 6)),
+#'                   partition_fun = "partition_kmeans", svm_fun = "svm",
+#'                   kernel = "sigmoid", type = "C-classification")
+#'
+#' ##------------------------------------------------------------
+#' ## 4 parameters (kernlab)
+#' ##------------------------------------------------------------
+#'
+#' # no meaningful parameter selection for tuning
+#' out <- sptune_svm(fo, ecuador, nfold = 5,
+#'                   tuning_parameters = list(gamma = seq(1, 5),
+#'                                            degree = seq(2, 4),
+#'                                            C = seq(5, 8),
+#'                                            sigma = c(1, 2)),
+#'                   partition_fun = "partition_kmeans", svm_fun = "ksvm",
+#'                   kernel = "besseldot", type = "C-svc")
 #' }
 #' @export
 sptune_svm <- function(formula = NULL, data = NULL, tuning_parameters = list(),
@@ -168,8 +188,13 @@ sptune_svm <- function(formula = NULL, data = NULL, tuning_parameters = list(),
 
   ### Set up variables for loop:
 
+  # for one tuning parameter
+  if (length(names) == 1) {
+    all_comb <- expand.grid(tuning_parameters[[names[1]]])
+    tuning_parameters[[names[1]]] <- all_comb$Var1
+  }
   # for two tuning parameters
-  if (length(names) == 2) {
+  else if (length(names) == 2) {
     all_comb <- expand.grid(tuning_parameters[[names[1]]], tuning_parameters[[names[2]]])
     tuning_parameters[[names[1]]] <- all_comb$Var1
     tuning_parameters[[names[2]]] <- all_comb$Var2
@@ -235,7 +260,10 @@ sptune_svm <- function(formula = NULL, data = NULL, tuning_parameters = list(),
       foreach(i = 1:length(tuning_parameters[[names[1]]]), .packages = (.packages()),
               .errorhandling = "remove", .verbose = FALSE) %dopar% {
 
-                if (length(names) == 2) {
+                if (length(names) == 1) {
+                  tuning_parameters[[names[1]]] <- tuning_parameters_bak[[names[1]]][i]
+                }
+                else if (length(names) == 2) {
                   tuning_parameters[[names[1]]] <- tuning_parameters_bak[[names[1]]][i]
                   tuning_parameters[[names[2]]] <- tuning_parameters_bak[[names[2]]][i]
                 } else if (length(names) == 3) {
@@ -309,7 +337,15 @@ sptune_svm <- function(formula = NULL, data = NULL, tuning_parameters = list(),
       cl <- makeCluster(availableCores())
       plan(cluster, workers = cl)
 
-      if (length(names) == 2) {
+      if (length(names) == 1) {
+        message(sprintf(paste0("Using 'foreach' parallel mode with %s cores on",
+                               " %s combinations."),
+                        availableCores(), length(tuning_parameters[[names[1]]])))
+        message(sprintf(paste0("Unique '%s': %s."),
+                        names[1],
+                        length(unique(tuning_parameters[[names[1]]]))))
+      }
+      else if (length(names) == 2) {
         message(sprintf(paste0("Using 'foreach' parallel mode with %s cores on",
                                " %s combinations."),
                         availableCores(), length(tuning_parameters[[names[1]]])))
@@ -324,6 +360,7 @@ sptune_svm <- function(formula = NULL, data = NULL, tuning_parameters = list(),
                                " %s combinations."),
                         availableCores(), length(tuning_parameters[[names[1]]])))
         message(sprintf(paste0("Unique '%s': %s.",
+                               " Unique '%s': %s.",
                                " Unique '%s': %s."),
                         names[1],
                         length(unique(tuning_parameters[[names[1]]])),
@@ -336,6 +373,8 @@ sptune_svm <- function(formula = NULL, data = NULL, tuning_parameters = list(),
                                " %s combinations."),
                         availableCores(), length(tuning_parameters[[names[1]]])))
         message(sprintf(paste0("Unique '%s': %s.",
+                               " Unique '%s': %s.",
+                               " Unique '%s': %s.",
                                " Unique '%s': %s."),
                         names[1],
                         length(unique(tuning_parameters[[names[1]]])),
@@ -350,6 +389,9 @@ sptune_svm <- function(formula = NULL, data = NULL, tuning_parameters = list(),
                                " %s combinations."),
                         availableCores(), length(tuning_parameters[[names[1]]])))
         message(sprintf(paste0("Unique '%s': %s.",
+                               " Unique '%s': %s.",
+                               " Unique '%s': %s.",
+                               " Unique '%s': %s.",
                                " Unique '%s': %s."),
                         names[1],
                         length(unique(tuning_parameters[[names[1]]])),
@@ -369,65 +411,74 @@ sptune_svm <- function(formula = NULL, data = NULL, tuning_parameters = list(),
     }
 
     foreach(i = 1:length(tuning_parameters[[names[1]]]), .packages = (.packages()),
-            .errorhandling = "remove", .verbose = FALSE) %dopar% {
+            .errorhandling = "remove", .verbose = FALSE,
+            .export = c("tuning_parameters", "names", "tuning_parameters_bak",
+                        "train", "test", "kernel", "type", "response",
+                        "svm_fun", "formula")) %dopar% {
 
-              if (length(names) == 2) {
-                tuning_parameters[[names[1]]] <- tuning_parameters_bak[[names[1]]][i]
-                tuning_parameters[[names[2]]] <- tuning_parameters_bak[[names[2]]][i]
-              } else if (length(names) == 3) {
-                tuning_parameters[[names[1]]] <- tuning_parameters_bak[[names[1]]][i]
-                tuning_parameters[[names[2]]] <- tuning_parameters_bak[[names[2]]][i]
-                tuning_parameters[[names[3]]] <- tuning_parameters_bak[[names[3]]][i]
-              } else if (length(names) == 4) {
-                tuning_parameters[[names[1]]] <- tuning_parameters_bak[[names[1]]][i]
-                tuning_parameters[[names[2]]] <- tuning_parameters_bak[[names[2]]][i]
-                tuning_parameters[[names[3]]] <- tuning_parameters_bak[[names[3]]][i]
-                tuning_parameters[[names[4]]] <- tuning_parameters_bak[[names[4]]][i]
-              } else if (length(names) == 5) {
-                tuning_parameters[[names[1]]] <- tuning_parameters_bak[[names[1]]][i]
-                tuning_parameters[[names[2]]] <- tuning_parameters_bak[[names[2]]][i]
-                tuning_parameters[[names[3]]] <- tuning_parameters_bak[[names[3]]][i]
-                tuning_parameters[[names[4]]] <- tuning_parameters_bak[[names[4]]][i]
-                tuning_parameters[[names[5]]] <- tuning_parameters_bak[[names[5]]][i]
-              }
+                          if (length(names) == 1) {
+                            tuning_parameters[[names[1]]] <- tuning_parameters_bak[[names[1]]][i]
+                          }
+                          else if (length(names) == 2) {
+                            tuning_parameters[[names[1]]] <- tuning_parameters_bak[[names[1]]][i]
+                            tuning_parameters[[names[2]]] <- tuning_parameters_bak[[names[2]]][i]
+                          } else if (length(names) == 3) {
+                            tuning_parameters[[names[1]]] <- tuning_parameters_bak[[names[1]]][i]
+                            tuning_parameters[[names[2]]] <- tuning_parameters_bak[[names[2]]][i]
+                            tuning_parameters[[names[3]]] <- tuning_parameters_bak[[names[3]]][i]
+                          } else if (length(names) == 4) {
+                            tuning_parameters[[names[1]]] <- tuning_parameters_bak[[names[1]]][i]
+                            tuning_parameters[[names[2]]] <- tuning_parameters_bak[[names[2]]][i]
+                            tuning_parameters[[names[3]]] <- tuning_parameters_bak[[names[3]]][i]
+                            tuning_parameters[[names[4]]] <- tuning_parameters_bak[[names[4]]][i]
+                          } else if (length(names) == 5) {
+                            tuning_parameters[[names[1]]] <- tuning_parameters_bak[[names[1]]][i]
+                            tuning_parameters[[names[2]]] <- tuning_parameters_bak[[names[2]]][i]
+                            tuning_parameters[[names[3]]] <- tuning_parameters_bak[[names[3]]][i]
+                            tuning_parameters[[names[4]]] <- tuning_parameters_bak[[names[4]]][i]
+                            tuning_parameters[[names[5]]] <- tuning_parameters_bak[[names[5]]][i]
+                          }
 
-              if (svm_fun == "ksvm" && any(names(tuning_parameters) == "sigma")) {
-                tuning_parameters$kpar <- list()
-                tuning_parameters$kpar[["sigma"]] <- tuning_parameters[["sigma"]]
-                tuning_parameters[["sigma"]] <- NULL
-              } else if (svm_fun == "ksvm" && any(names(tuning_parameters) == "degree")) {
-                tuning_parameters$kpar <- list()
-                tuning_parameters$kpar[["degree"]] <-  tuning_parameters[["degree"]]
-                tuning_parameters[["degree"]] <- NULL
-              } else if (svm_fun == "ksvm" && any(names(tuning_parameters) == "scale")) {
-                tuning_parameters$kpar <- list()
-                tuning_parameters$kpar[["scale"]] <-  tuning_parameters[["scale"]]
-                tuning_parameters[["scale"]] <- NULL
-              } else if (svm_fun == "ksvm" && any(names(tuning_parameters) == "order")) {
-                tuning_parameters$kpar <- list()
-                tuning_parameters$kpar[["order"]] <-  tuning_parameters[["order"]]
-                tuning_parameters[["order"]] <- NULL
-              } else if (svm_fun == "ksvm" && any(names(tuning_parameters) == "length")) {
-                tuning_parameters$kpar <- list()
-                tuning_parameters$kpar[["length"]] <-  tuning_parameters[["length"]]
-                tuning_parameters[["length"]] <- NULL
-              } else if (svm_fun == "ksvm" && any(names(tuning_parameters) == "lambda")) {
-                tuning_parameters$kpar <- list()
-                tuning_parameters$kpar[["lambda"]] <-  tuning_parameters[["lambda"]]
-                tuning_parameters[["lambda"]] <- NULL
-              }
+                          if (svm_fun == "ksvm" && any(names(tuning_parameters) == "sigma")) {
+                            tuning_parameters$kpar <- list()
+                            tuning_parameters$kpar[["sigma"]] <- tuning_parameters[["sigma"]]
+                            tuning_parameters[["sigma"]] <- NULL
+                          } else if (svm_fun == "ksvm" && any(names(tuning_parameters) == "degree")) {
+                            tuning_parameters$kpar <- list()
+                            tuning_parameters$kpar[["degree"]] <-  tuning_parameters[["degree"]]
+                            tuning_parameters[["degree"]] <- NULL
+                          } else if (svm_fun == "ksvm" && any(names(tuning_parameters) == "scale")) {
+                            tuning_parameters$kpar <- list()
+                            tuning_parameters$kpar[["scale"]] <-  tuning_parameters[["scale"]]
+                            tuning_parameters[["scale"]] <- NULL
+                          } else if (svm_fun == "ksvm" && any(names(tuning_parameters) == "order")) {
+                            tuning_parameters$kpar <- list()
+                            tuning_parameters$kpar[["order"]] <-  tuning_parameters[["order"]]
+                            tuning_parameters[["order"]] <- NULL
+                          } else if (svm_fun == "ksvm" && any(names(tuning_parameters) == "length")) {
+                            tuning_parameters$kpar <- list()
+                            tuning_parameters$kpar[["length"]] <-  tuning_parameters[["length"]]
+                            tuning_parameters[["length"]] <- NULL
+                          } else if (svm_fun == "ksvm" && any(names(tuning_parameters) == "lambda")) {
+                            tuning_parameters$kpar <- list()
+                            tuning_parameters$kpar[["lambda"]] <-  tuning_parameters[["lambda"]]
+                            tuning_parameters[["lambda"]] <- NULL
+                          }
 
-              tuning_parameters$train <- train
-              tuning_parameters$test <- test
-              tuning_parameters$type <- type
-              tuning_parameters$kernel <- kernel
-              tuning_parameters$response <- response
-              tuning_parameters$formula <- formula
-              tuning_parameters$svm_fun <- svm_fun
+                          tuning_parameters$train <- train
+                          tuning_parameters$test <- test
+                          tuning_parameters$type <- type
+                          tuning_parameters$kernel <- kernel
+                          tuning_parameters$response <- response
+                          tuning_parameters$formula <- formula
+                          tuning_parameters$svm_fun <- svm_fun
 
-              out <- do.call(svm_cv_err, args = list(tuning_parameters))
-              return(out)
-            } -> perf_measures
+                          out <- do.call(svm_cv_err, args = list(tuning_parameters))
+                          return(out)
+                        } -> perf_measures
+    if (tune == FALSE) {
+      stopCluster(cl)
+    }
   }
 
   if (average_folds == TRUE) {
@@ -441,7 +492,11 @@ sptune_svm <- function(formula = NULL, data = NULL, tuning_parameters = list(),
   }
 
   # append 'parameter1' and 'parameter2' vectors to respective lists
-  if (length(names) == 2) {
+  if (length(names) == 1) {
+    perf_measures %>%
+      map2(.y = tuning_parameters[[names[1]]],
+           .f = ~ plyr::mutate(.x, param1 = .y)) -> runfolds_merged
+  } else if (length(names) == 2) {
     perf_measures %>%
       map2(.y = tuning_parameters[[names[1]]],
            .f = ~ plyr::mutate(.x, param1 = .y)) %>%
@@ -486,7 +541,9 @@ sptune_svm <- function(formula = NULL, data = NULL, tuning_parameters = list(),
   # check for NAs, subset cost and gamma and print message
   if (any(is.na(runfolds_merged))) {
     na_index <- which(is.na(runfolds_merged))
-    if (length(names) == 2) {
+    if (length(names) == 1) {
+      tuning_parameters[[names[1]]] <- tuning_parameters[[names[1]]][-na_index]
+    } else if (length(names) == 2) {
       tuning_parameters[[names[1]]] <- tuning_parameters[[names[1]]][-na_index]
       tuning_parameters[[names[2]]] <- tuning_parameters[[names[1]]][-na_index]
     } else if (length(names) == 3) {
@@ -520,7 +577,9 @@ sptune_svm <- function(formula = NULL, data = NULL, tuning_parameters = list(),
     map(error_measure) %>%
     unlist() -> all_error_measures
 
-  if (length(names) == 2) {
+  if (length(names) == 1) {
+    best_parameter1 <- tuning_parameters[[names[1]]][list_index]
+  } else if (length(names) == 2) {
     best_parameter1 <- tuning_parameters[[names[1]]][list_index]
     best_parameter2 <- tuning_parameters[[names[2]]][list_index]
   } else if (length(names) == 3) {
@@ -542,7 +601,15 @@ sptune_svm <- function(formula = NULL, data = NULL, tuning_parameters = list(),
 
   # output on screen:
 
-  if (length(names) == 2) {
+  if (length(names) == 1) {
+    if (tune == FALSE) {
+      cat(sprintf(paste0("Optimal %s: %s \n",
+                         "best %s: %s\n", sep = ""),
+                  names[[1]], best_parameter1,
+                  error_measure,
+                  runfolds_merged[[list_index]][[error_measure]]))
+    }
+  } else if (length(names) == 2) {
     if (tune == FALSE) {
       cat(sprintf(paste0("Optimal %s: %s \nOptimal %s: %s \n",
                          "best %s: %s\n", sep = ""),
@@ -605,6 +672,33 @@ sptune_svm <- function(formula = NULL, data = NULL, tuning_parameters = list(),
     prob_model <- FALSE
     probability <- FALSE
   }
+
+  if (svm_fun == "ksvm" && any(names(tuning_parameters) == "sigma")) {
+    tuning_parameters$kpar <- list()
+    tuning_parameters$kpar[["sigma"]] <- runfolds_merged[[list_index]][["sigma"]]
+    tuning_parameters[["sigma"]] <- NULL
+  } else if (svm_fun == "ksvm" && any(names(tuning_parameters) == "degree")) {
+    tuning_parameters$kpar <- list()
+    tuning_parameters$kpar[["degree"]] <- runfolds_merged[[list_index]][["degree"]]
+    tuning_parameters[["degree"]] <- NULL
+  } else if (svm_fun == "ksvm" && any(names(tuning_parameters) == "scale")) {
+    tuning_parameters$kpar <- list()
+    tuning_parameters$kpar[["scale"]] <- runfolds_merged[[list_index]][["scale"]]
+    tuning_parameters[["scale"]] <- NULL
+  } else if (svm_fun == "ksvm" && any(names(tuning_parameters) == "order")) {
+    tuning_parameters$kpar <- list()
+    tuning_parameters$kpar[["order"]] <- runfolds_merged[[list_index]][["order"]]
+    tuning_parameters[["order"]] <- NULL
+  } else if (svm_fun == "ksvm" && any(names(tuning_parameters) == "length")) {
+    tuning_parameters$kpar <- list()
+    tuning_parameters$kpar[["length"]] <- runfolds_merged[[list_index]][["length"]]
+    tuning_parameters[["length"]] <- NULL
+  } else if (svm_fun == "ksvm" && any(names(tuning_parameters) == "lambda")) {
+    tuning_parameters$kpar <- list()
+    tuning_parameters$kpar[["lambda"]] <- runfolds_merged[[list_index]][["lambda"]]
+    tuning_parameters[["lambda"]] <- NULL
+  }
+
   # this is needed because of the S3 methods within svm() -> otherwise the
   # default methods gets called and errors. 'formula' needs to come first in
   # the passed list
@@ -621,7 +715,21 @@ sptune_svm <- function(formula = NULL, data = NULL, tuning_parameters = list(),
     fit <- try(do.call(tuning_parameters$svm_fun, args = tuning_parameters))
   }
 
-  if (length(names) == 2) {
+  if (length(names) == 1) {
+    list_out <- list(fit = fit,
+                     tune = list(best_parameter1,
+                                 tuning_parameters[[names[1]]],
+                                 all_error_measures,
+                                 runfolds_merged[[list_index]],
+                                 runfolds_merged))
+    sprintf(paste0("optimal_%s,all_%s,all_error_measures,",
+                   "performances_best_run,performances_all_runs", sep = ""),
+            names[1], names[1]) %>%
+      str_split(",") %>%
+      extract2(1) -> list_names
+    list_out[[2]] <- set_names(list_out[[2]], list_names)
+
+  } else if (length(names) == 2) {
     list_out <- list(fit = fit,
                      tune = list(best_parameter1,
                                  tuning_parameters[[names[1]]],
