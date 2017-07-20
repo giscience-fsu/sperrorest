@@ -103,6 +103,8 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
 
   ### Permutation-based variable importance assessment:
   if (importance == TRUE) {
+    # create undisturbed backup copy of test sample:
+    nd.bak <- nd
 
     # account for possible missing factor levels in test data
     if (any(class(fit) == "lm" | class(fit) == "glmmPQL")) {
@@ -141,6 +143,8 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
         # For each variable:
         for (vnm in imp_variables) {
 
+          # Get undisturbed backup copy of test sample:
+          nd <- nd.bak
           # Permute variable vnm:
           nd[, vnm] <- nd[, vnm][permut]
           # Apply model to perturbed test sample:
