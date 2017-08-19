@@ -55,9 +55,6 @@
 #'
 #' @param smp_args (optional) Arguments to be passed to `smp_fun`.
 #'
-#' @param tune_args Arguments to [sptune_svm], [sptune_rf] or
-#' [sptune_maxent]. Only applies if `tune = TRUE`.
-#'
 #' @param train_fun (optional) A function for resampling or subsampling the
 #' training sample in order to achieve, e.g., uniform sample sizes on all
 #' training sets, or maintaining a certain ratio of positives and negatives
@@ -146,11 +143,6 @@
 #' For the latter and `par_mode = "foreach"`, `par_option`
 #' (default to `multiprocess` and
 #' `cluster`, respectively) can be specified. See [plan] for further details.
-#'
-#' Nested cross-validation can be performed for SVM, RF and Maxent models.
-#' Hyperparameters of the respective model will be tuned on every fold.
-#' See the respective tuning functions [sptune_svm], [sptune_rf] or
-#' [sptune_maxent] for more details on the tuning process.
 #'
 #' @note Custom predict functions passed to `pred_fun`, which consist of
 #' multiple custom defined child functions, must be defined in one function.
@@ -265,7 +257,6 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
                        train_fun = NULL, train_param = NULL, test_fun = NULL,
                        test_param = NULL, err_fun = err_default,
                        imp_variables = NULL,
-                       tune_args = list(),
                        imp_permutations = 1000,
                        importance = !is.null(imp_variables), distance = FALSE,
                        par_args = list(par_mode = "foreach", par_units = NULL,
@@ -275,10 +266,6 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
   # if benchmark = TRUE, start clock
   if (benchmark)
     start_time <- Sys.time()
-
-  if (length(tune_args) > 0) {
-    tune <- TRUE
-  }
 
   # Some checks:
   if (missing(model_fun))
@@ -475,7 +462,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
         my_res <- try(pblapply(cl = par_cl, resamp, function(x)
           runreps(current_sample = x, data = data, par_mode = par_args$par_mode,
                   formula = formula, do_gc = do_gc, imp_one_rep = imp_one_rep,
-                  pred_fun = pred_fun, tune_args = tune_args, tune = tune,
+                  pred_fun = pred_fun,
                   model_args = model_args,
                   model_fun = model_fun,
                   imp_permutations = imp_permutations,
@@ -497,7 +484,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
             runreps(current_sample = x, data = data,
                     par_mode = par_args$par_mode,
                     formula = formula, do_gc = do_gc, imp_one_rep = imp_one_rep,
-                    pred_fun = pred_fun, tune_args = tune_args, tune = tune,
+                    pred_fun = pred_fun,
                     model_args = model_args,
                     model_fun = model_fun,
                     imp_permutations = imp_permutations,
@@ -521,7 +508,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
             runreps(current_sample = x, data = data,
                     par_mode = par_args$par_mode,
                     formula = formula, do_gc = do_gc, imp_one_rep = imp_one_rep,
-                    pred_fun = pred_fun, tune_args = tune_args, tune = tune,
+                    pred_fun = pred_fun,
                     model_args = model_args,
                     model_fun = model_fun,
                     imp_permutations = imp_permutations,
@@ -558,7 +545,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
       my_res <- try(future_lapply(resamp, function(x)
         runreps(current_sample = x, data = data, par_mode = par_args$par_mode,
                 formula = formula, do_gc = do_gc, imp_one_rep = imp_one_rep,
-                pred_fun = pred_fun, tune_args = tune_args, tune = tune,
+                pred_fun = pred_fun,
                 model_args = model_args, model_fun = model_fun,
                 imp_permutations = imp_permutations,
                 imp_variables = imp_variables,
@@ -644,10 +631,10 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
                         try(map(seq_along(resamp[[i]]), function(rep)
                           runfolds(j = rep, data = data,
                                    current_sample = resamp[[i]],
-                                   formula = formula, tune_args = tune_args,
+                                   formula = formula,
                                    par_mode = par_args$par_mode, i = i,
                                    imp_one_rep = imp_one_rep,
-                                   pred_fun = pred_fun, tune = tune,
+                                   pred_fun = pred_fun,
                                    model_args = model_args,
                                    model_fun = model_fun,
                                    imp_permutations = imp_permutations,

@@ -2,8 +2,6 @@
 
 ## Features: 
   * error handling during model fitting & performance evaluation: If a model does not converge for some folds or an error occurs during performance calculation, results of this fold are set to `NA` and a message is printed to the console. `sperrorest()` will continue normally and uses the successful folds to calculate the repetition error. This helps to run CV with many repetitions using models which do not always converge like `maxnet()` or `gamm()` or `svm()`. Also, an object named `not_converged_folds` is exported to the Global Environment showing the total number of non-converged folds.
-  * Spatial tuning functions for Random Forests (`sptune_rf()`), Support Vector Machines (`sptune_svm()`) and Maxent (`sptune_maxent()`)
-  * Plotting functions of spatial tuning results: `plot_hyper_rf()`, `plot_hyper_svm()` and `plot_hyper_maxent()`
 
 # sperrorest 2.0.0 (12-Jun-2017)
 

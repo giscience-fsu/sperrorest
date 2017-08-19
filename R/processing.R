@@ -19,8 +19,7 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
                      pooled_pred_train = NULL, response = NULL, progress = NULL,
                      is_factor_prediction = NULL, pooled_pred_test = NULL,
                      coords = NULL, test_fun = NULL, imp_one_rep = NULL,
-                     do_gc = NULL, test_param = NULL, train_param = NULL,
-                     tune_args = NULL, tune = NULL) {
+                     do_gc = NULL, test_param = NULL, train_param = NULL) {
   if (importance == FALSE) {
     if (par_mode == "foreach" | par_mode == "sequential") {
       if (progress == "TRUE" | progress == "all") {
@@ -44,34 +43,10 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
 
   # tuning of ML models here
 
-  if (tune == TRUE) {
-    tune_args$formula <- formula
-    tune_args$tune <- tune
-    tune_args$train <- nd_train
-    tune_args$test <- nd_test
-
-    if (tune_args$model_fun == "ksvm" | tune_args$model_fun == "svm") {
-      tune_args$svm_fun <- tune_args$model_fun
-
-      fit <- tryCatch(do.call(sptune_svm, args = tune_args)$fit,
-                      error = function(cond) {
-                        return(NA)
-                      })
-    } else if (tune_args$model_fun == "randomForest" |
-               tune_args$model_fun == "rfsrc") {
-      tune_args$rf_fun <- tune_args$model_fun
-
-      fit <- tryCatch(do.call(sptune_rf, args = tune_args)$fit,
-                      error = function(cond) {
-                        return(NA)
-                      })
-    }
-  } else {
-    # we do not see the error message, so returning none
-    fit <- tryCatch(do.call(model_fun, args = margs), error = function(cond) {
-      return(NA)
-    })
-  }
+  # we do not see the error message, so returning none
+  fit <- tryCatch(do.call(model_fun, args = margs), error = function(cond) {
+    return(NA)
+  })
 
   # error handling for model fitting (e.g. maxent)
   # we need the first condition to handle S4 objects. They do not work with
@@ -283,7 +258,7 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
 # runreps function for lapply()
 runreps <- function(current_sample = NULL, data = NULL, formula = NULL,
                     model_args = NULL, par_cl = NULL, do_gc = NULL,
-                    imp_one_rep = NULL, tune_args = NULL, tune = NULL,
+                    imp_one_rep = NULL,
                     model_fun = NULL, pred_fun = NULL, imp_variables = NULL,
                     imp_permutations = NULL, err_fun = NULL, train_fun = NULL,
                     importance = NULL, current_res = NULL,
@@ -327,7 +302,6 @@ runreps <- function(current_sample = NULL, data = NULL, formula = NULL,
              coords = coords, progress = progress,
              pooled_obs_train = pooled_obs_train,
              pooled_obs_test = pooled_obs_test,
-             tune = tune, tune_args = tune_args,
              err_fun = err_fun)) -> runfolds_list
 
   # merge sublists of each fold into one list
