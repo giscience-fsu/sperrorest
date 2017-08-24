@@ -15,7 +15,8 @@
 #' @import future
 #' @import doFuture
 #' @import rpart
-#' @importFrom utils packageVersion
+#' @importFrom foreach %dopar% foreach
+#' @importFrom utils packageVersion tail
 #' @importFrom purrr walk map flatten_dbl
 #' @importFrom stringr str_replace_all
 #'
