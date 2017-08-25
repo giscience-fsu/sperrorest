@@ -3,7 +3,7 @@ context("sperrorest.R")
 Sys.setenv(R_TESTS = "")
 
 pacman::p_load(sperrorest, testthat, rpart, MASS, foreach, doFuture, future,
-               pbmcapply, magrittr)
+               pbmcapply, magrittr, e1071)
 
 # par_mode = "foreach" Mon Feb  6 23:24:11 2017 --------------------------
 
