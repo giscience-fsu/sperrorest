@@ -81,7 +81,7 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
   # Calculate error measures on training sample:
 
   if (any(class(nd_train) == "tbl")) {
-    nd <- as.data.frame(nd_train) # nocov
+    nd_test <- as.data.frame(nd_train) # nocov
   }
   current_res[[j]]$train <- tryCatch(err_fun(nd_train[, response], pred_train),
                                      error = function(cond) {
@@ -110,7 +110,7 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
   pooled_pred_train <- c(pooled_pred_train, pred_train)
 
   if (!is.null(test_fun)) {
-    nd_test <- test_fun(data = nd, param = test_param) # nocov
+    nd_test <- test_fun(data = nd_test, param = test_param) # nocov
   }
   # Create a 'backup' copy for variable importance assessment:
   if (importance == TRUE) {
@@ -173,14 +173,17 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
   ### Permutation-based variable importance assessment:
   if (importance == TRUE) {
 
+    # Get undisturbed backup copy of test sample:
+    nd_test <- nd_bak
+
     # account for possible missing factor levels in test data
     if (any(class(fit) == "lm" | class(fit) == "glmmPQL")) {
-      nd <- remove_missing_levels(fit, nd)
+      nd_test <- remove_missing_levels(fit, nd_test)
     }
 
     # remove NAs in data.frame if levels are missing
-    nd %>%
-      na.omit() -> nd
+    nd_test %>%
+      na.omit() -> nd_test
 
     # does this ever happen??
     if (is.null(current_res[[j]]$test)) { # nocov start
@@ -205,15 +208,18 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
           }
         }
         # Permutation indices:
-        permut <- sample(1:nrow(nd), replace = FALSE)
+        permut <- sample(1:nrow(nd_test), replace = FALSE)
 
         # For each variable:
         for (vnm in imp_variables) {
 
+          # Get undisturbed backup copy of test sample:
+          nd_test <- nd_bak
+
           # Permute variable vnm:
-          nd[, vnm] <- nd[, vnm][permut]
+          nd_test[, vnm] <- nd_test[, vnm][permut]
           # Apply model to perturbed test sample:
-          pargs <- c(list(object = fit, newdata = nd), pred_args)
+          pargs <- c(list(object = fit, newdata = nd_test), pred_args)
           if (is.null(pred_fun)) {
             pred_test <- do.call(predict, args = pargs)
           } else {
@@ -222,7 +228,7 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
           rm(pargs)
 
           # Calculate variable importance:
-          permut_err <- err_fun(nd[, response], pred_test)
+          permut_err <- err_fun(nd_test[, response], pred_test)
           imp_temp[[vnm]][[cnt]] <- as.list(unlist(current_res[[j]]$test) -
                                               unlist(permut_err))
 
@@ -232,7 +238,7 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
       current_impo[[j]] <- as.data.frame(t(sapply(imp_temp, function(y)
         sapply(as.data.frame(t(sapply(y, as.data.frame))), function(x)
           mean(unlist(x))))))
-      rm(nd_bak, nd)  # better safe than sorry...
+      rm(nd_bak, nd_test)  # better safe than sorry...
     }
   }
 
