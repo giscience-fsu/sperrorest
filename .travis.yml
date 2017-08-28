@@ -44,7 +44,7 @@ matrix:
         - jimhester/covr
         - hadley/testthat
       after_success:
-        - Rscript -e 'covr::codecov(quiet=FALSE)'
+        - travis_wait 40 Rscript -e 'covr::codecov(quiet=FALSE)'
       env: NB='w/ covr' ## Just a label
     - os: linux
       r: release
