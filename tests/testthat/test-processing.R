@@ -1,6 +1,6 @@
 context("processing.R")
 
-pacman::p_load(sperrorest, rpart, MASS, tidyverse)
+pacman::p_load(sperrorest, rpart, MASS, tibble, purrr)
 
 # runfolds Sun May 21 22:58:39 2017 ------------------------------
 

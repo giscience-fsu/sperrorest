@@ -632,6 +632,7 @@ test_that("sperrorest() when missing factor levels in train data", {
 
 test_that("sperrorest() when missing factor levels in train data", {
 
+  skip_on_cran()
   skip_on_travis()
   skip_on_appveyor()
 
