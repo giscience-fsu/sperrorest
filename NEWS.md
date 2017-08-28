@@ -1,7 +1,14 @@
-# sperrorest 2.0.0.9000 (dev)
+# sperrorest 2.1.0 (28-Aug-2017)
 
 ## Features: 
-  * error handling during model fitting & performance evaluation: If a model does not converge for some folds or an error occurs during performance calculation, results of this fold are set to `NA` and a message is printed to the console. `sperrorest()` will continue normally and uses the successful folds to calculate the repetition error. This helps to run CV with many repetitions using models which do not always converge like `maxnet()` or `gamm()` or `svm()`. Also, an object named `not_converged_folds` is exported to the Global Environment showing the total number of non-converged folds.
+  * error handling during model fitting & performance evaluation: If a model does not converge for some folds or an error occurs during performance calculation, results of this fold are set to `NA` and a message is printed to the console. `sperrorest()` will continue normally and uses the successful folds to calculate the repetition error. This helps to run CV with many repetitions using models which do not always converge like `maxnet()`, `gamm()` or `svm()`. Also, an object named `not_converged_folds` is exported to the Global Environment showing the total number of non-converged folds.
+  
+  
+# sperrorest 2.0.1 (20-Jul-2017)
+
+Bugfixes:
+  * Fixes a bug which caused equal importance of all predictors when performing permutation-based variable importance assessment
+
 
 # sperrorest 2.0.0 (12-Jun-2017)
 
