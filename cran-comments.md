@@ -6,11 +6,7 @@
 
 ## R CMD check results
 
-0 errors | 0 warnings | 1 notes
-
-Found the following assignments to the global environment:
-File ‘sperrorest/R/sperrorest.R’:
-  assign("not_converged_folds", not_converged_folds, envir = .GlobalEnv)
+0 errors | 0 warnings | 0 notes
 
 ## Reverse dependencies
 
