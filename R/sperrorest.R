@@ -802,7 +802,6 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
     cat(sprintf("%s folds of %s total folds (%s rep * %s folds) did not converge.",
         not_converged_folds, smp_args$repetition * smp_args$nfold,
         smp_args$repetition, smp_args$nfold))
-    assign("not_converged_folds", not_converged_folds, envir = .GlobalEnv)
   }
 
   return(res)
