@@ -1,8 +1,13 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
+Deprecation warning
+===================
+
+The main functions of `sperrorest` have been integrated into [mlr](https://github.com/mlr-org/mlr). Review is still ongoing. Once it is available in the CRAN version of `mlr` we will let you know. There will be no active development of `sperrorest` anymore. We recommend to use `mlr` for all future (spatial) cross-validation work. We will provide an tutorial for spatial data in the [mlr-tutorial](http://mlr-org.github.io/mlr-tutorial/devel/html/) soon.
+
 #### General
 
-[![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active) [![DOI](https://zenodo.org/badge/69967610.svg)](https://zenodo.org/badge/latestdoi/69967610)
+[![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](http://www.repostatus.org/badges/latest/inactive.svg)](http://www.repostatus.org/#inactive) [![DOI](https://zenodo.org/badge/69967610.svg)](https://zenodo.org/badge/latestdoi/69967610)
 
 | Resource:     | CRAN                                                                                                                                                                       | Travis CI                                                                                                                                                 | Appveyor                                                                                                                                                                       |
 |---------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
