@@ -30,8 +30,14 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
 
   # Create training sample:
   nd_train <- data[current_sample[[j]]$train, ]
-  if (!is.null(train_fun))
-    nd_train <- train_fun(data = nd_train, param = train_param)
+  if (!is.null(train_fun)) {
+    nd_train_sel <- train_fun(data = nd_train, param = train_param)
+    nd_train <- nd_train[nd_train_sel, ]
+
+    cat("Presence/absence ratio of response in training data:")
+    print(table(nd_train$slides))
+  }
+
   # Create test sample:
   nd_test <- data[current_sample[[j]]$test, ]
 
@@ -81,7 +87,7 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
   # Calculate error measures on training sample:
 
   if (any(class(nd_train) == "tbl")) {
-    nd_test <- as.data.frame(nd_train) # nocov
+    nd_train <- as.data.frame(nd_train) # nocov
   }
   current_res[[j]]$train <- tryCatch(err_fun(nd_train[, response], pred_train),
                                      error = function(cond) {
@@ -110,8 +116,13 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
   pooled_pred_train <- c(pooled_pred_train, pred_train)
 
   if (!is.null(test_fun)) {
-    nd_test <- test_fun(data = nd_test, param = test_param) # nocov
+    nd_test_sel <- test_fun(data = nd_test, param = test_param)
+    nd_test <- nd_test[nd_test_sel, ]
+
+    cat("Presence/absence ratio of response test data:")
+    print(table(nd_test$slides))
   }
+
   # Create a 'backup' copy for variable importance assessment:
   if (importance == TRUE) {
     nd_bak <- nd_test
@@ -264,7 +275,7 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
 # runreps function for lapply()
 runreps <- function(current_sample = NULL, data = NULL, formula = NULL,
                     model_args = NULL, par_cl = NULL, do_gc = NULL,
-                    imp_one_rep = NULL,
+                    imp_one_rep = NULL, train_param = NULL, test_param = NULL,
                     model_fun = NULL, pred_fun = NULL, imp_variables = NULL,
                     imp_permutations = NULL, err_fun = NULL, train_fun = NULL,
                     importance = NULL, current_res = NULL,

@@ -474,6 +474,10 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
                   pred_args = pred_args, response = response, par_cl = par_cl,
                   coords = coords, progress = progress,
                   pooled_obs_train = pooled_obs_train,
+                  train_fun = train_fun,
+                  train_param = train_param,
+                  test_fun = test_fun,
+                  test_param = test_param,
                   pooled_obs_test = pooled_obs_test, err_fun = err_fun)))
       } else {
         # not provided as an option to the user -> pbmclapply is faster
@@ -496,6 +500,10 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
                     pred_args = pred_args, response = response, par_cl = par_cl,
                     coords = coords, progress = progress,
                     pooled_obs_train = pooled_obs_train,
+                    train_fun = train_fun,
+                    train_param = train_param,
+                    test_fun = test_fun,
+                    test_param = test_param,
                     pooled_obs_test = pooled_obs_test, err_fun = err_fun)))
           if (my_res == "NULL") {
             stop(paste0("No output was received from sperrorest.\n",
@@ -520,6 +528,10 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
                     pred_args = pred_args, response = response, par_cl = par_cl,
                     coords = coords, progress = progress,
                     pooled_obs_train = pooled_obs_train,
+                    train_fun = train_fun,
+                    train_param = train_param,
+                    test_fun = test_fun,
+                    test_param = test_param,
                     pooled_obs_test = pooled_obs_test, err_fun = err_fun)))
           # check if run was sufficient
           if (length(my_res) > 1 && my_res == "NULL") {
@@ -556,6 +568,10 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
                 pred_args = pred_args, response = response, par_cl = par_cl,
                 coords = coords, progress = progress,
                 pooled_obs_train = pooled_obs_train,
+                train_fun = train_fun,
+                train_param = train_param,
+                test_fun = test_fun,
+                test_param = test_param,
                 pooled_obs_test = pooled_obs_test, err_fun = err_fun)))
     }
   }
@@ -648,6 +664,10 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
                                    coords = coords, progress = progress,
                                    pooled_obs_train = pooled_obs_train,
                                    pooled_obs_test = pooled_obs_test,
+                                   train_fun = train_fun,
+                                   train_param = train_param,
+                                   test_fun = test_fun,
+                                   test_param = test_param,
                                    err_fun = err_fun))) -> runfolds_list
 
                         # merge sublists of each fold into one list
