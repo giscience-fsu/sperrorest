@@ -60,7 +60,8 @@ remove_missing_levels <- function(fit, test_data) {
 
     map(fit$contrasts, function(x) names(unmatrix(x))) %>%
       unlist() -> factor_levels
-    factor_levels %>% str_split(":", simplify = TRUE) %>%
+    factor_levels %>%
+      str_split(":", simplify = TRUE) %>%
       extract(, 1) -> factor_levels
 
     model_factors <- as.data.frame(cbind(factors, factor_levels))

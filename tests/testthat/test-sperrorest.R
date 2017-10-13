@@ -43,7 +43,7 @@ test_that("output type (= list) for different logical combinations of
 
             data(maipo)
 
-            out <- sperrorest(fo, data = maipo, coords = c("utmx","utmy"),
+            out <- sperrorest(fo, data = maipo, coords = c("utmx", "utmy"),
                               model_fun = lda,
                               pred_fun = lda_predfun,
                               smp_fun = partition_cv,
@@ -71,7 +71,7 @@ test_that("output length of list is correct for par_mode = 'foreach' on rpart
 
             # Non-spatial 5-repeated 10-fold cross-validation:
             mypred_rpart <- function(object, newdata) predict(object,
-                                                              newdata)[,2]
+                                                              newdata)[, 2]
 
             out <- sperrorest(data = ecuador, formula = fo,
                               model_fun = rpart,
@@ -85,33 +85,6 @@ test_that("output length of list is correct for par_mode = 'foreach' on rpart
                                               par_units = 2))
 
             expect_equal(length(out$error_fold[[1]]), 2)
-          })
-
-test_that("output length of list is correct for error_rep = TRUE and
-          error_fold  = TRUE for par_mode = 'foreach' on svm example", {
-
-            data(ecuador)
-            fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
-
-            svm_predfun <- function(object, newdata) {
-              pred <- predict(object, newdata = newdata, probability = TRUE)
-              pred <- attr(pred, "probabilities")[, 2]
-            }
-
-            par.nsp.res <- sperrorest(data = ecuador, formula = fo,
-                                      model_fun = svm,
-                                      model_args = list(cost = 10000, gamma = 0.0001,
-                                                        kernel = "sigmoid",
-                                                        probability = TRUE),
-                                      pred_fun = svm_predfun,
-                                      progress = TRUE,
-                                      smp_fun = partition_cv,
-                                      smp_args = list(repetition = 1:2,
-                                                      nfold = 2),
-                                      par_args = list(par_mode = "foreach"),
-                                      error_rep = TRUE, error_fold = TRUE)
-
-            expect_equal(length(par.nsp.res$error_fold[[1]]), 2)
           })
 
 # variable importance Wed Feb  8 21:59:03 2017
@@ -187,6 +160,27 @@ test_that("sperrorest() when pred_fun = NULL", {
   expect_equal(class(out$importance[[1]][[1]]), "data.frame")
 })
 
+test_that("sperrorest correctly updates resampling object when using a
+          sub-sample", {
+
+  data(ecuador)
+
+  fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
+  out <- sperrorest(data = ecuador, formula = fo,
+                    model_fun = glm,
+                    model_args = list(family = binomial),
+                    par_args = list(par_mode = "foreach"),
+                    test_fun = resample_strat_uniform,
+                    test_param = list(strat = "slides", nstrat = Inf),
+                    train_fun = resample_strat_uniform,
+                    train_param = list(strat = "slides", nstrat = Inf),
+                    smp_fun = partition_cv,
+                    smp_args = list(repetition = 1:2, nfold = 4),
+                    importance = FALSE)
+
+  expect_lt(length(out[["represampling"]][["1"]][["1"]][["test"]]), 150)
+})
+
 # par_mode = "future" Mon Feb  6 23:25:08 2017 ------------------------------
 
 
@@ -211,7 +205,7 @@ test_that("output type (= list) for different logical combinations of
               }
 
               pred <- predict(object, newdata = newdata)$class
-              if (!is.null(fac)) pred <- majority_filter(pred, newdata[,fac])
+              if (!is.null(fac)) pred <- majority_filter(pred, newdata[, fac])
               return(pred)
             }
 
@@ -225,7 +219,7 @@ test_that("output type (= list) for different logical combinations of
               ndwi01 + ndwi02 + ndwi03 + ndwi04 + ndwi05 + ndwi06 + ndwi07 +
               ndwi08
 
-            out <- sperrorest(fo, data = maipo, coords = c("utmx","utmy"),
+            out <- sperrorest(fo, data = maipo, coords = c("utmx", "utmy"),
                               model_fun = lda,
                               pred_fun = lda_predfun,
                               smp_fun = partition_cv,
@@ -262,7 +256,7 @@ test_that("do.try argument", {
     }
 
     pred <- predict(object, newdata = newdata)$class
-    if (!is.null(fac)) pred <- majority_filter(pred, newdata[,fac])
+    if (!is.null(fac)) pred <- majority_filter(pred, newdata[, fac])
     return(pred)
   }
 
@@ -276,7 +270,7 @@ test_that("do.try argument", {
     ndwi08
 
   # err.rep = TRUE, err.fold = TRUE
-  out <- sperrorest(fo, data = maipo, coords = c("utmx","utmy"),
+  out <- sperrorest(fo, data = maipo, coords = c("utmx", "utmy"),
                     model_fun = lda,
                     pred_fun = lda_predfun,
                     smp_fun = partition_cv,
@@ -320,6 +314,27 @@ test_that("output length of list is correct for par_mode = 'future' on rpart
 
             expect_equal(length(out$error_fold[[1]]), 2)
           })
+
+test_that("sperrorest correctly updates resampling object when using
+          a sub-sample", {
+
+  data(ecuador)
+
+  fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
+  out <- sperrorest(data = ecuador, formula = fo,
+                    model_fun = glm,
+                    model_args = list(family = binomial),
+                    par_args = list(par_mode = "apply"),
+                    test_fun = resample_strat_uniform,
+                    test_param = list(strat = "slides", nstrat = Inf),
+                    train_fun = resample_strat_uniform,
+                    train_param = list(strat = "slides", nstrat = Inf),
+                    smp_fun = partition_cv,
+                    smp_args = list(repetition = 1:2, nfold = 4),
+                    importance = FALSE)
+
+  expect_lt(length(out[["represampling"]][["1"]][["1"]][["test"]]), 150)
+})
 
 # par_mode = "apply" variable importance Tue Feb 21 22:15:41 2017 --------------
 
@@ -405,7 +420,7 @@ test_that("partition_factor_cv works (LDA)", {
     }
 
     pred <- predict(object, newdata = newdata)$class
-    if (!is.null(fac)) pred <- majority_filter(pred, newdata[,fac])
+    if (!is.null(fac)) pred <- majority_filter(pred, newdata[, fac])
     return(pred)
   }
 
@@ -415,7 +430,7 @@ test_that("partition_factor_cv works (LDA)", {
   # Construct a formula:
   fo <- as.formula(paste("croptype ~", paste(predictors, collapse = "+")))
 
-  res_lda_sp_par <- sperrorest(fo, data = maipo, coords = c("utmx","utmy"),
+  res_lda_sp_par <- sperrorest(fo, data = maipo, coords = c("utmx", "utmy"),
                                model_fun = lda,
                                pred_fun = lda_predfun,
                                pred_args = list(fac = "field"),
@@ -427,6 +442,27 @@ test_that("partition_factor_cv works (LDA)", {
                                error_rep = TRUE, error_fold = TRUE,
                                progress = "TRUE", benchmark = TRUE)
 
+})
+
+test_that("sperrorest correctly updates resampling object when using
+          a sub-sample", {
+
+  data(ecuador)
+
+  fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
+  out <- sperrorest(data = ecuador, formula = fo,
+                    model_fun = glm,
+                    model_args = list(family = binomial),
+                    par_args = list(par_mode = "apply"),
+                    test_fun = resample_strat_uniform,
+                    test_param = list(strat = "slides", nstrat = Inf),
+                    train_fun = resample_strat_uniform,
+                    train_param = list(strat = "slides", nstrat = Inf),
+                    smp_fun = partition_kmeans,
+                    smp_args = list(repetition = 1:2, nfold = 4),
+                    importance = FALSE)
+
+  expect_length(out[["represampling"]][["1"]][["1"]][["test"]], 136)
 })
 
 # par_mode = "sequential" Mon Feb  6 23:24:11 2017 --------------------------
@@ -466,7 +502,7 @@ test_that("output type (= list) for different logical combinations of error_rep
 
             data(maipo)
 
-            out <- sperrorest(fo, data = maipo, coords = c("utmx","utmy"),
+            out <- sperrorest(fo, data = maipo, coords = c("utmx", "utmy"),
                               model_fun = lda,
                               pred_fun = lda_predfun,
                               smp_fun = partition_cv,
@@ -496,7 +532,7 @@ test_that("output length of list is correct for error_rep = TRUE and
 
             # Non-spatial 5-repeated 10-fold cross-validation:
             mypred_rpart <- function(object, newdata) predict(object,
-                                                              newdata)[,2]
+                                                              newdata)[, 2]
             out <- sperrorest(data = ecuador, formula = fo,
                               model_fun = rpart,
                               model_args = list(control = ctrl),
@@ -636,7 +672,7 @@ test_that("sperrorest() when missing factor levels in train data", {
   skip_on_travis()
   skip_on_appveyor()
 
-  readRDS("/Users/pjs/Servers/GIServer/home/shares/data/LIFE/mod/survey_data/data-clean.rda") %>%
+  readRDS("/Users/pjs/Servers/GIServer/home/shares/data/LIFE/mod/survey_data/data-clean.rda") %>% # nolint
     as_tibble() -> df
   fo <- diplo01 ~ temp + p_sum + r_sum + elevation + slope + hail + age +
     ph + lithology + soil
@@ -653,4 +689,25 @@ test_that("sperrorest() when missing factor levels in train data", {
   summary.impo <- summary(nspres$importance)
   # check for train.auroc for binary response
   expect_equal(names(nspres$error_rep)[[1]], "train.auroc")
+})
+
+test_that("sperrorest correctly updates resampling object when
+          using a sub-sample", {
+
+  data(ecuador)
+
+  fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
+  out <- sperrorest(data = ecuador, formula = fo,
+                    model_fun = glm,
+                    model_args = list(family = binomial),
+                    par_args = list(par_mode = "sequential"),
+                    test_fun = resample_strat_uniform,
+                    test_param = list(strat = "slides", nstrat = Inf),
+                    train_fun = resample_strat_uniform,
+                    train_param = list(strat = "slides", nstrat = Inf),
+                    smp_fun = partition_cv,
+                    smp_args = list(repetition = 1:2, nfold = 4),
+                    importance = FALSE)
+
+  expect_lt(length(out[["represampling"]][["1"]][["1"]][["test"]]), 150)
 })

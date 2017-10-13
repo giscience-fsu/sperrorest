@@ -81,8 +81,8 @@ resample_strat_uniform <- function(data, param = list(strat = "class",
     sel <- c(sel, wh)
   }
 
-  # this enables that we can adjust the correct indices within sperrorest so that
-  # the resulting resampling object correctly shows the used indices
+  # this enables that we can adjust the correct indices within sperrorest so
+  # that the resulting resampling object correctly shows the used indices
   if (sys.call() == "train_fun(data = nd_train, param = train_param)" |
       sys.call() == "test_fun(data = nd_test, param = test_param)") {
     return(sel)
@@ -162,7 +162,8 @@ resample_uniform <- function(data, param = list(n = Inf, replace = FALSE)) {
 #' @export
 resample_factor <- function(data, param = list(fac = "class", n = Inf,
                                                replace = FALSE)) {
-  if (is.null(param$fac)) { # nocov start
+  # nocov start
+  if (is.null(param$fac)) {
     param$fac <- "class"
   }
   if (is.null(param$replace)) {

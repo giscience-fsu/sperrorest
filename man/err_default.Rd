@@ -29,8 +29,8 @@ MAD (\link{mad}), median, interquartile range (\link{IQR})
 of residuals}
 }
 \description{
-Calculate a variety of accuracy measures from observations and predictions
-of numerical and categorical response variables.
+Calculate a variety of accuracy measures from observations
+and predictions of numerical and categorical response variables.
 }
 \note{
 \code{NA} values are currently not handled by this function,

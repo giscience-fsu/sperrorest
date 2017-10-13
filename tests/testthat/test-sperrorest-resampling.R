@@ -20,7 +20,7 @@ test_that("partition_cv.strat() output is of correct length", {
   skip_on_cran()
 
   data(ecuador)
-  parti <- partition_cv_strat(ecuador, strat = 'slides', nfold = 5,
+  parti <- partition_cv_strat(ecuador, strat = "slides", nfold = 5,
                               repetition = 1)
   expect_equal(length(parti[[1]]), 5)
 })
@@ -34,7 +34,7 @@ test_that("partition_factor() output is of correct length", {
   data(ecuador)
   breaks <- quantile(ecuador$dem, seq(0, 1, length = 6))
   ecuador$zclass <- cut(ecuador$dem, breaks, include.lowest = TRUE)
-  parti <- partition_factor(ecuador, fac = 'zclass')
+  parti <- partition_factor(ecuador, fac = "zclass")
   expect_equal(length(parti[[1]]), 5)
 })
 
@@ -46,7 +46,7 @@ test_that("partition_factor_cv() output is of correct length", {
 
   breaks <- quantile(ecuador$dem, seq(0, 1, length = 6))
   ecuador$zclass <- cut(ecuador$dem, breaks, include.lowest = TRUE)
-  parti <- partition_factor_cv(ecuador, fac = 'zclass', nfold = 5)
+  parti <- partition_factor_cv(ecuador, fac = "zclass", nfold = 5)
   expect_equal(length(parti[[1]]), 5)
 })
 
@@ -128,7 +128,7 @@ test_that("represampling_tile_bootstrap() output is of correct length()", {
   skip_on_cran()
 
   data(ecuador)
-  parti <- represampling_tile_bootstrap(ecuador, nsplit = c(4,2),
+  parti <- represampling_tile_bootstrap(ecuador, nsplit = c(4, 2),
                                         reassign = FALSE)
   expect_equal(length(parti[[1]][[1]]), 2)
 })
@@ -140,7 +140,7 @@ test_that("represampling_kmeans_bootstrap() output is of correct length()", {
   skip_on_cran()
 
   data(ecuador)
-  parti <- represampling_kmeans_bootstrap(ecuador, nsplit = c(4,2),
+  parti <- represampling_kmeans_bootstrap(ecuador, nsplit = c(4, 2),
                                           reassign = FALSE,
                                           nfold = 5)
   expect_equal(length(parti[[1]][[1]]), 2)
@@ -169,5 +169,3 @@ test_that("represampling_disc_bootstrap() output is of correct length()", {
 #   plot(resamp, ecuador)
 #   expect_equal(length(p[[1]][[1]]), 2)
 # })
-
-

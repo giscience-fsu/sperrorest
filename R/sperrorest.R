@@ -323,8 +323,9 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
                   "'error_fold'"))
     }
     # > v2.0.0
-    if (class(par_args$par_mode) == "numeric") { # nocov start
-      stop("'par_mode' has to be specified using an explicit parallel mode name.")
+    # nocov start
+    if (class(par_args$par_mode) == "numeric") {
+      stop("'par_mode' has to be specified using an explicit parallel mode name.") # nolint
     }
     if (any(names(dots_args) == "error.fold") |
         any(names(dots_args) == "error.rep") |
@@ -404,7 +405,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
 
   # account for unspecified number of cores
   if (is.null(par_args$par_units)) {
-    par_args$par_units <- availableCores()
+    par_args$par_units <- availableCores() # nolint
   }
 
   ### par_mode = "apply" (pbapply) -------
@@ -431,7 +432,9 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
       #   })
       #   NULL
       # })
-    } else { # nocov end
+
+      # nocov end
+    } else {
       RNGkind("L'Ecuyer-CMRG")
       set.seed(1234567)
       # mc.reset.stream() #set up RNG stream to obtain reproducible results
@@ -458,7 +461,8 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
     if (par_args$par_mode == "apply" | par_args$par_mode == "apply-mclapply") {
       if (.Platform$OS.type == "Windows") {
 
-        message(sprintf("Using 'parApply' parallel mode with %s cores.", # nocov start
+        # nocov start
+        message(sprintf("Using 'parApply' parallel mode with %s cores.",
                         par_args$par_units))
         my_res <- try(pblapply(cl = par_cl, resamp, function(x)
           runreps(current_sample = x, data = data, par_mode = par_args$par_mode,
@@ -549,10 +553,10 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
 
     if (par_args$par_mode == "future") {
       if (!is.null(par_args$par_option)) {
-        plan(par_args$par_option, workers = par_args$par_units) # nocov
+        plan(par_args$par_option, workers = par_args$par_units) # nocov # nolint
       } else {
         par_args$par_option <- "multiprocess"
-        plan(par_args$par_option, workers = par_args$par_units)
+        plan(par_args$par_option, workers = par_args$par_units) # nolint
       }
 
       message(sprintf("Using parallel framework 'future' with 'future_lapply'",
@@ -600,7 +604,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
       out_progress <- paste0(getwd(), "/sperrorest_progress.txt") # nocov
     }
 
-    registerDoFuture()
+    registerDoFuture() # nolint
 
     par_args$par_option <- "cluster"
 
@@ -609,19 +613,19 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
     if (!par_args$par_mode == "sequential" &&
         par_args$par_mode == "foreach") {
 
-      cl <- makeCluster(par_args$par_units, outfile = out_progress, ...)
-      plan(cluster, workers = cl)
+      cl <- makeCluster(par_args$par_units, outfile = out_progress, ...) # nolint
+      plan(cluster, workers = cl) # nolint
 
       message(sprintf(paste0("Using 'foreach' parallel mode with %s cores and",
                              " '%s' option."),
                       par_args$par_units, par_args$par_option))
       if (.Platform$OS.type == "Windows") {
-        message(paste0("Please see 'sperrorest_progress' in your current", # nocov
-                       " working directory for progress output on Windows.")) # nocov
+        message(paste0("Please see 'sperrorest_progress' in your current", # nocov # nolint
+                       " working directory for progress output on Windows.")) # nocov # nolint
       }
     }
     if (par_args$par_mode == "sequential") {
-      plan(sequential)
+      plan(sequential) # nolint
       message(sprintf("Using 'foreach' sequential mode."))
     }
 
@@ -631,14 +635,14 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
                       .errorhandling = "remove", .combine = "comb",
                       .multicombine = TRUE, .verbose = FALSE) %dopar% {
 
-                        pooled_obs_train <- pooled_pred_train <- c()
-                        pooled_obs_test <- pooled_pred_test <- c()
+                        pooled_obs_train <- pooled_pred_train <- c() # nolint
+                        pooled_obs_test <- pooled_pred_test <- c() # nolint
 
                         current_res <- NULL
-                        current_impo <- resamp[[i]]
+                        current_impo <- resamp[[i]] # nolint
                         current_pooled_error <- NULL
 
-                        current_res <- map(resamp[[i]], unclass)
+                        current_res <- map(resamp[[i]], unclass) # nolint
                         class(current_res) <- "sperroresterror"
 
                         environment(runfolds) <- environment()
@@ -743,12 +747,12 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
                         result <- list(error = runfolds_merged$current_res,
                                        pooled_error = current_pooled_error,
                                        importance = impo_only,
-                                       not_converged_folds = runfolds_merged$not_converged_folds,
+                                       not_converged_folds = runfolds_merged$not_converged_folds, # nolint
                                        resampling = runfolds_merged$resampling)
                         return(list(result))
                       }
     if (par_args$par_mode == "foreach") {
-      on.exit(stopCluster(cl))
+      on.exit(stopCluster(cl)) # nolint
     }
   }
 
@@ -759,16 +763,20 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
     # to repetitions
     my_res <- split(my_res[[1]], 1:length(resamp))
 
-    # overwrite resamp object with possibly altered resample object from runfolds
-    # this applies if a custom test_fun or train_fun with a sub-resampling method is used
+    # overwrite resamp object with possibly altered resample object from
+    # runfolds
+    # this applies if a custom test_fun or train_fun with a sub-resampling
+    # method is used
     for (i in 1:length(resamp)) {
       for (j in 1:length(resamp[[1]])) {
         resamp[[i]][[j]] <- my_res[[i]][[5]][[j]][[j]]
       }
     }
   } else {
-    # overwrite resamp object with possibly altered resample object from runfolds
-    # this applies if a custom test_fun or train_fun with a sub-resampling method is used
+    # overwrite resamp object with possibly altered resample object from
+    # runfolds
+    # this applies if a custom test_fun or train_fun with a sub-resampling
+    # method is used
     for (i in 1:length(resamp)) {
       for (j in 1:length(resamp[[1]])) {
         resamp[[i]][[j]] <- my_res[[i]][["resampling"]][[j]][[j]]
@@ -779,7 +787,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
   # check if any rep is NA in all folds and if, remove entry
   # this happens e.g. in maxent
 
-  check_na <- map(my_res, function(x) all(is.na(x)))
+  check_na <- map(my_res, function(x) all(is.na(x))) # nolint
   check_na_flat <- unlist(check_na)
 
   if (any(check_na_flat) == TRUE) {
@@ -801,7 +809,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
     sum() -> not_converged_folds
 
   # transfer results of lapply() to respective data objects
-  my_res_mod <- transfer_parallel_output(my_res, res, impo, pooled_error)
+  my_res_mod <- transfer_parallel_output(my_res, res, impo, pooled_error) # nolint
 
   pooled_error <- as.data.frame(my_res_mod$pooled_error)
   rownames(pooled_error) <- NULL
@@ -837,7 +845,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
       smp_args$repetition <- tail(smp_args$repetition, n = 1)
     }
     # print counter
-    cat(sprintf("%s folds of %s total folds (%s rep * %s folds) did not converge.",
+    cat(sprintf("%s folds of %s total folds (%s rep * %s folds) did not converge.", # nolint
         not_converged_folds, smp_args$repetition * smp_args$nfold,
         smp_args$repetition, smp_args$nfold))
   }

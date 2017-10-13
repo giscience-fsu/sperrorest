@@ -1,7 +1,7 @@
 #' @title Default error function
 #'
-#' @description Calculate a variety of accuracy measures from observations and predictions
-#' of numerical and categorical response variables.
+#' @description Calculate a variety of accuracy measures from observations
+#'  and predictions of numerical and categorical response variables.
 #'
 #' @name err_default
 #'
@@ -67,7 +67,9 @@ err_default <- function(obs, pred) {
   }
 
   # remove NAs in both obs and pred
-  if (any(is.na(pred))) { # nocov start
+
+  # nocov start
+  if (any(is.na(pred))) {
     index_na <- which(pred %in% NA)
     obs <- obs[-index_na]
     pred <- pred[-index_na] # nocov end
@@ -88,7 +90,9 @@ err_default <- function(obs, pred) {
       pred <- factor(pred, levels = levels(obs))
       err <- list(error = mean(obs != pred), accuracy = mean(obs == pred))
       # binary classification without probabilities
-      if (nlevels(obs) == 2) { # nocov start
+
+      # nocov start
+      if (nlevels(obs) == 2) {
         npos <- sum(obs == levels(obs)[2])
         nneg <- sum(obs == levels(obs)[1])
         ntruepos <- sum((obs == levels(obs)[2]) & (pred == levels(obs)[2])) # nolint
@@ -119,8 +123,8 @@ err_default <- function(obs, pred) {
       if (!is.vector(pred) && !is.matrix(pred)) {
         pred <- as.numeric(pred)
       }
-      predobj <- prediction(pred, obs)
-      auroc <- performance(predobj, measure = "auc")@y.values[[1]]
+      predobj <- prediction(pred, obs) # nolint
+      auroc <- performance(predobj, measure = "auc")@y.values[[1]] # nolint
       err <- list(auroc = auroc)
 
       pos <- levels(obs)[2]
@@ -171,7 +175,7 @@ err_default <- function(obs, pred) {
   } else {
     # Regression problem:
     err <- list(bias = mean(obs - pred), stddev = sd(obs - pred),
-                rmse = sqrt(mean((obs - pred)^2)), mad = mad(obs - pred),
+                rmse = sqrt(mean((obs - pred) ^ 2)), mad = mad(obs - pred), # nolint
                 median = median(obs - pred), iqr = IQR(obs - pred,
                                                        na.rm = TRUE))
   }

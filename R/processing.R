@@ -59,7 +59,7 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
   # we need the first condition to handle S4 objects. They do not work with
   # is.na()
   if (class(fit)[1] == "logical") {
-    message(sprintf(paste0("\n'sperrorest()': Non-convergence during model fit.",
+    message(sprintf(paste0("\n'sperrorest()': Non-convergence during model fit.", #nolint
                            " Setting results of",
                            " Repetition %s Fold %s to NA."),
                     i, j
@@ -130,7 +130,7 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
 
   # account for possible missing factor levels in test data
   if (any(class(fit) == "lm" | class(fit) == "glmmPQL")) {
-    nd_test <- remove_missing_levels(fit, nd_test)
+    nd_test <- remove_missing_levels(fit, nd_test) # nolint
   }
 
   # remove NAs in data.frame if levels are missing
@@ -190,7 +190,7 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
 
     # account for possible missing factor levels in test data
     if (any(class(fit) == "lm" | class(fit) == "glmmPQL")) {
-      nd_test <- remove_missing_levels(fit, nd_test)
+      nd_test <- remove_missing_levels(fit, nd_test) # nolint
     }
 
     # remove NAs in data.frame if levels are missing
@@ -198,7 +198,8 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
       na.omit() -> nd_test
 
     # does this ever happen??
-    if (is.null(current_res[[j]]$test)) { # nocov start
+    # nocov start
+    if (is.null(current_res[[j]]$test)) {
       current_impo[[j]] <- c()
       if (!progress == FALSE) {
         # cat(date(), "-- skipping variable importance\n")
@@ -334,7 +335,8 @@ runreps <- function(current_sample = NULL, data = NULL, formula = NULL,
 
   # temporary workaround
   # only applies if all fold results of a rep are NA
-  # then is_factor_prediction is not set within runfolds and we need to set it here
+  # then is_factor_prediction is not set within runfolds and we need to set
+  # it here
   # unsure if is_factor_prediction is needed at all or if we can set it to
   # TRUE permanently
   # if (is.null(is_factor_prediction)) {
@@ -393,7 +395,7 @@ runreps <- function(current_sample = NULL, data = NULL, formula = NULL,
     gc() # nocov
   } # end for each fold
 
-  if ((do_gc >= 1) & (do_gc < 2)) {
+  if ((do_gc >= 1) & (do_gc < 2)) { # nolint
     gc() # nocov
   }
 

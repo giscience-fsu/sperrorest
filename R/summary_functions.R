@@ -48,9 +48,12 @@
 #' @seealso [sperrorest]
 #'
 #' @export
+
+# nolint start
 summary.sperroresterror <- function(object, level = 0, pooled = TRUE,
                                     na.rm = TRUE, ...) {
   err <- unclass(object)
+  # nolint end
   if (pooled) {
     if (level <= 2) {
       err <- lapply(err, function(x) t(sapply(x, function(y)
@@ -109,7 +112,9 @@ summary.sperroresterror <- function(object, level = 0, pooled = TRUE,
 #' @name summary.sperrorestreperror
 #' @method summary sperrorestreperror
 #' @export
+# nolint start
 summary.sperrorestreperror <- function(object, level = 0, na.rm = TRUE, ...) {
+  # nolint end
   class(object) <- NULL
   object <- as.data.frame(object)
   if (level <= 0) {
@@ -137,8 +142,10 @@ summary.sperrorestreperror <- function(object, level = 0, na.rm = TRUE, ...) {
 #' @return a list or data.frame, depending on the `level` of aggregation
 #'
 #' @export
+# nolint start
 summary.sperrorestimportance <- function(object, level = 0, na.rm = TRUE,
                                          which = NULL, ...) {
+  # nolint end
   arrdim <- c(length(object), length(object[[1]]), dim(object[[1]][[1]]))
   arrdimnames <- list(names(object), names(object[[1]]),
                       rownames(object[[1]][[1]]), colnames(object[[1]][[1]]))
@@ -158,7 +165,9 @@ summary.sperrorestimportance <- function(object, level = 0, na.rm = TRUE,
                         median = apply(arr, c(2, 3), median,
                                        na.rm = na.rm),
                         IQR = apply(arr, c(2, 3), IQR, na.rm = na.rm))
-    } else { # when does this happen?
+    }
+    # when does this happen?
+    else {
       arr <- arr[, , which] # nocov start
       arr <- data.frame(mean = apply(arr, 2, mean, na.rm = na.rm),
                         sd = apply(arr, 2, sd, na.rm = na.rm),
@@ -246,6 +255,3 @@ print.sperrorestbenchmarks <- function(x, ...) {
 print.sperrorestpackageversion <- function(x, ...) {
   print(summary(x)) # nocov
 }
-
-
-

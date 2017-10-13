@@ -238,7 +238,7 @@ test_that("is_factor_prediction object for classification models", {
 
     majority_filter <- function(x, fac) {
       for (lev in levels(fac)) {
-        x[ fac == lev ] <- majority(x[ fac == lev ])
+        x[fac == lev] <- majority(x[fac == lev])
       }
       x
     }
@@ -260,7 +260,7 @@ test_that("is_factor_prediction object for classification models", {
   data(maipo)
 
   # error_rep = TRUE, error_fold = TRUE
-  out <- sperrorest(fo, data = maipo, coords = c("utmx","utmy"),
+  out <- sperrorest(fo, data = maipo, coords = c("utmx", "utmy"),
                     model_fun = lda,
                     pred_fun = lda_predfun,
                     par_args = list(par_mode = "foreach",

@@ -298,7 +298,9 @@ get_small_tiles <- function(tile, min_n = NULL, min_frac = 0, ignore = c()) {
 #' @name tile_neighbors
 #'
 #' @export
-tile_neighbors <- function(nm, tileset, iterate = 0, diagonal = FALSE) { # nocov start
+
+# nocov start
+tile_neighbors <- function(nm, tileset, iterate = 0, diagonal = FALSE) {
   if (missing(tileset)) {
     if (is.factor(nm)) {
       tileset <- levels(nm)
@@ -467,7 +469,7 @@ as.resampling.factor <- function(object, ...) {
 #' @method as.resampling list
 #' @export
 as.resampling.list <- function(object, ...) {
-  stopifnot(validate.resampling(object))
+  stopifnot(validate.resampling(object)) # nolint
   class(object) <- "resampling"
   return(object)
 }
@@ -505,7 +507,9 @@ is.resampling <- function(x, ...) inherits(x, "resampling") # nocov
 #' @name print.resampling
 #' @method print resampling
 #' @export
-print.resampling <- function(x, ...) { # nocov start
+
+# nocov start
+print.resampling <- function(x, ...) {
   cat("\nSample sizes in resampling object with", length(x), "folds:\n")
   print(as.data.frame(t(sapply(x, function(y) sapply(y, length)))))
   cat("\n")
@@ -572,8 +576,9 @@ as.represampling <- function(object, ...) {
 #' @method as.represampling list
 #' @export
 as.represampling.list <- function(object, ...) {
-  valid <- sapply(object, validate.resampling)
-  if (any(!valid)) { # nocov start
+  valid <- sapply(object, validate.resampling) # nolint
+  # nocov start
+  if (any(!valid)) {
     msg <- paste("cannot coerce to 'represampling' object: invalid list
                  elements number\n   ",
                  paste(which(!valid), collapse = " "))
@@ -588,7 +593,9 @@ as.represampling.list <- function(object, ...) {
 #' @name print.represampling
 #' @method print represampling
 #' @export
-print.represampling <- function(x, ...) { # nocov start
+
+# nocov start
+print.represampling <- function(x, ...) {
   txt <- paste("Replicated Selection Object (r=", length(x), ")", sep = "")
   cat("\n", txt, "\n", sep = "")
   cat(paste(rep("-", nchar(txt)), collapse = ""), "\n\n")
@@ -629,7 +636,9 @@ summary.represampling <- function(object, ...) {
 #' @name summary.resampling
 #' @method summary resampling
 #' @export
-summary.resampling <- function(object, ...) { # nocov start
+
+# nocov start
+summary.resampling <- function(object, ...) {
   as.data.frame(t(sapply(object, function(y)
     data.frame(n.train = length(y$train),
                n.test = length(y$test)))))
