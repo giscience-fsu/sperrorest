@@ -505,6 +505,8 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
                     test_fun = test_fun,
                     test_param = test_param,
                     pooled_obs_test = pooled_obs_test, err_fun = err_fun)))
+
+
           if (my_res == "NULL") {
             stop(paste0("No output was received from sperrorest.\n",
                         "If you are on macOS either run R in 'Vanilla' mode or",
@@ -676,7 +678,6 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
                         runfolds_merged <- do.call(Map, c(f = list,
                                                           runfolds_list))
 
-
                         if (importance == TRUE) {
                           # subset fold result to importance results only
                           impo_only <- runfolds_merged[6][[1]]
@@ -742,7 +743,8 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
                         result <- list(error = runfolds_merged$current_res,
                                        pooled_error = current_pooled_error,
                                        importance = impo_only,
-                                       not_converged_folds = runfolds_merged$not_converged_folds)
+                                       not_converged_folds = runfolds_merged$not_converged_folds,
+                                       resampling = runfolds_merged$resampling)
                         return(list(result))
                       }
     if (par_args$par_mode == "foreach") {
@@ -756,6 +758,22 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
     # split combined lists from foreach output into sublists referring
     # to repetitions
     my_res <- split(my_res[[1]], 1:length(resamp))
+
+    # overwrite resamp object with possibly altered resample object from runfolds
+    # this applies if a custom test_fun or train_fun with a sub-resampling method is used
+    for (i in 1:length(resamp)) {
+      for (j in 1:length(resamp[[1]])) {
+        resamp[[i]][[j]] <- my_res[[i]][[5]][[j]][[j]]
+      }
+    }
+  } else {
+    # overwrite resamp object with possibly altered resample object from runfolds
+    # this applies if a custom test_fun or train_fun with a sub-resampling method is used
+    for (i in 1:length(resamp)) {
+      for (j in 1:length(resamp[[1]])) {
+        resamp[[i]][[j]] <- my_res[[i]][["resampling"]][[j]][[j]]
+      }
+    }
   }
 
   # check if any rep is NA in all folds and if, remove entry
