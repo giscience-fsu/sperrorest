@@ -324,7 +324,7 @@ test_that("sperrorest correctly updates resampling object when using
   out <- sperrorest(data = ecuador, formula = fo,
                     model_fun = glm,
                     model_args = list(family = binomial),
-                    par_args = list(par_mode = "apply"),
+                    par_args = list(par_mode = "future"),
                     test_fun = resample_strat_uniform,
                     test_param = list(strat = "slides", nstrat = Inf),
                     train_fun = resample_strat_uniform,
@@ -444,26 +444,29 @@ test_that("partition_factor_cv works (LDA)", {
 
 })
 
-test_that("sperrorest correctly updates resampling object when using
-          a sub-sample", {
+test_that("sperrorest correctly updates resampling object when
+          using a sub-sample", {
 
-  data(ecuador)
+            data(ecuador)
 
-  fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
-  out <- sperrorest(data = ecuador, formula = fo,
-                    model_fun = glm,
-                    model_args = list(family = binomial),
-                    par_args = list(par_mode = "apply"),
-                    test_fun = resample_strat_uniform,
-                    test_param = list(strat = "slides", nstrat = Inf),
-                    train_fun = resample_strat_uniform,
-                    train_param = list(strat = "slides", nstrat = Inf),
-                    smp_fun = partition_kmeans,
-                    smp_args = list(repetition = 1:2, nfold = 4),
-                    importance = FALSE)
+            fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
+            out <- sperrorest(data = ecuador, formula = fo,
+                              model_fun = glm,
+                              model_args = list(family = binomial),
+                              par_args = list(par_mode = "apply"),
+                              test_fun = resample_strat_uniform,
+                              test_param = list(strat = "slides",
+                                                nstrat = Inf),
+                              train_fun = resample_strat_uniform,
+                              train_param = list(strat = "slides",
+                                                 nstrat = Inf),
+                              smp_fun = partition_cv,
+                              smp_args = list(repetition = 1:2, nfold = 4),
+                              importance = FALSE)
 
-  expect_length(out[["represampling"]][["1"]][["1"]][["test"]], 136)
-})
+            expect_lt(length(out[["represampling"]][["1"]][["1"]][["test"]]),
+                      150)
+          })
 
 # par_mode = "sequential" Mon Feb  6 23:24:11 2017 --------------------------
 
