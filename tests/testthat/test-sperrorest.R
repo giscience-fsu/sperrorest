@@ -164,6 +164,7 @@ test_that("sperrorest correctly updates resampling object when using a
           sub-sample", {
 
   data(ecuador)
+            skip_on_cran()
 
   fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
   out <- sperrorest(data = ecuador, formula = fo,
@@ -319,6 +320,7 @@ test_that("sperrorest correctly updates resampling object when using
           a sub-sample", {
 
   data(ecuador)
+            skip_on_cran()
 
   fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
   out <- sperrorest(data = ecuador, formula = fo,
@@ -448,6 +450,7 @@ test_that("sperrorest correctly updates resampling object when
           using a sub-sample", {
 
             data(ecuador)
+            skip_on_cran()
 
             fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
             out <- sperrorest(data = ecuador, formula = fo,
@@ -697,7 +700,8 @@ test_that("sperrorest() when missing factor levels in train data", {
 test_that("sperrorest correctly updates resampling object when
           using a sub-sample", {
 
-  data(ecuador)
+            data(ecuador)
+            skip_on_cran()
 
   fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
   out <- sperrorest(data = ecuador, formula = fo,
