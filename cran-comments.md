@@ -1,5 +1,5 @@
 ## Test environments
-* local macOS 10.12.6 installation, R 3.4.1
+* local Arch Linux installation, R 3.4.2
 * ubuntu 14.04 (on travis-ci), R 3.3.3, R 3.4.1, R-devel
 * OSX 10.11.6, Xcode 7.3.1 (on travis-ci), R 3.3.3, R 3.4.1
 * win-builder (devel and release)
