@@ -3,12 +3,12 @@
 
 # Deprecation warning
 
-The main functions of `sperrorest` have been integrated into
-[mlr](https://github.com/mlr-org/mlr). Review is still ongoing. Once it
-is available in the CRAN version of `mlr` we will let you know. There
-will be no active development of `sperrorest` anymore. We recommend to
-use `mlr` for all future (spatial) cross-validation work. We will
-provide an tutorial for spatial data in the
+`partition_kmeans()`has been integrated into
+[mlr](https://github.com/mlr-org/mlr) (see
+[e865e4](https://github.com/mlr-org/mlr/commit/e865e491dc2062b14ebeb9d5314cec2532c1bc2a)).
+`sperrorest` is currently not actively developed. We recommend to use
+`mlr` for all future (spatial) cross-validation work. We will provide an
+tutorial for spatial data in the
 [mlr-tutorial](http://mlr-org.github.io/mlr-tutorial/devel/html/) soon.
 
 #### General
