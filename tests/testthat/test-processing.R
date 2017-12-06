@@ -118,7 +118,7 @@ test_that("runfolds works on rpart example", {
   ctrl <- rpart.control(cp = 0.005) # show the effects of overfitting
 
   # Non-spatial 5-repeated 10-fold cross-validation:
-  mypred_rpart <- function(object, newdata) predict(object, newdata)[,2]
+  mypred_rpart <- function(object, newdata) predict(object, newdata)[, 2]
 
   runfolds_single <- runfolds(j = 1, data = ecuador,
                               current_sample = current_sample,

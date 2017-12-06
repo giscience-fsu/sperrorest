@@ -60,7 +60,7 @@ resample_strat_uniform <- function(data, param = list(strat = "class",
     strat <- param$strat # nocov
   }
   if (!is.factor(strat)) {
-    stop(paste0("'strat' must either be a vector of factor type, or the name", # nocov
+    stop(paste0("'strat' must either be a vector of factor type, or the name", # nocov # nolint
                 " of a factor variable in 'data'")) # nocov
   }
   # Each factor level must have at least one sample, otherwise sampling within

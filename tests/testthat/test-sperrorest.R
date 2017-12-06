@@ -200,7 +200,7 @@ test_that("output type (= list) for different logical combinations of
 
               majority_filter <- function(x, fac) {
                 for (lev in levels(fac)) {
-                  x[ fac == lev ] <- majority(x[ fac == lev ])
+                  x[fac == lev] <- majority(x[fac == lev])
                 }
                 x
               }
@@ -251,7 +251,7 @@ test_that("do.try argument", {
 
     majority_filter <- function(x, fac) {
       for (lev in levels(fac)) {
-        x[ fac == lev ] <- majority(x[ fac == lev ])
+        x[fac == lev] <- majority(x[fac == lev])
       }
       x
     }
@@ -416,7 +416,7 @@ test_that("partition_factor_cv works (LDA)", {
 
     majority_filter <- function(x, fac) {
       for (lev in levels(fac)) {
-        x[ fac == lev ] <- majority(x[ fac == lev ])
+        x[fac == lev] <- majority(x[fac == lev])
       }
       x
     }

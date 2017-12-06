@@ -41,7 +41,7 @@ dataset_distance <- function(d1, d2, x_name = "x", y_name = "y", fun = mean,
                              method = "euclidean", ...) {
   method <- tolower(method)
   if (method != "euclidean") {
-    if (method == "euclidian") { # nocov start
+    if (method == "euclidian") { # nocov start # nolint
       warning("correct spelling is 'Euclidean', not 'Euclidian'")
       method <- "euclidean"
     }

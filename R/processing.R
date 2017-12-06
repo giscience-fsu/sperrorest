@@ -28,15 +28,15 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
     }
   }
 
-  # append FID to data to enable tracking of observations
-  data$FID <- seq(1:nrow(data))
+  # append fid to data to enable tracking of observations
+  data$fid <- seq(1:nrow(data))
 
   # Create training sample:
   nd_train <- data[current_sample[[j]]$train, ]
   if (!is.null(train_fun)) {
     nd_train_sel <- train_fun(data = nd_train, param = train_param)
     nd_train <- nd_train[nd_train_sel, ]
-    current_sample[[j]]$train <- nd_train$FID
+    current_sample[[j]]$train <- nd_train$fid
   }
 
   # Create test sample:
@@ -120,7 +120,7 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
   if (!is.null(test_fun)) {
     nd_test_sel <- test_fun(data = nd_test, param = test_param)
     nd_test <- nd_test[nd_test_sel, ]
-    current_sample[[j]]$test <- nd_test$FID
+    current_sample[[j]]$test <- nd_test$fid
   }
 
   # Create a 'backup' copy for variable importance assessment:
