@@ -1,3 +1,8 @@
+# sperrorest 2.1.3 (08-Dec-2017)
+
+## Minor
+  * update CITATION file
+
 # sperrorest 2.1.1 (15-Oct-2017)
 
 ## Bugfixes:
