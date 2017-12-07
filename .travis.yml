@@ -35,6 +35,8 @@ matrix:
       r: release
       r_github_packages:
         - hadley/testthat
+      apt_packages:
+        - pandoc-citeproc
       before_deploy: R -q -e 'tic::before_deploy();remotes::install_github("pat-s/pkgdown")'
       deploy:
           provider: script
