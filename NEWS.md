@@ -1,3 +1,8 @@
+# sperrorest 2.1.4 (12-Feb-2018)
+
+## Minor
+  * import `future_lapply` from `future.apply` instead of `future`
+
 # sperrorest 2.1.3 (08-Dec-2017)
 
 ## Minor

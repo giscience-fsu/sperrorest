@@ -12,7 +12,8 @@
 #' @import magrittr
 #' @import pbmcapply
 #' @import parallel
-#' @import future
+#' @importFrom future plan availableCores cluster sequential
+#' @importFrom future.apply future_lapply
 #' @import doFuture
 #' @import rpart
 #' @importFrom foreach %dopar% foreach
@@ -561,7 +562,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
 
       message(sprintf("Using parallel framework 'future' with 'future_lapply'",
                       "and '%s' option.", par_args$par_option))
-      my_res <- try(future_lapply(resamp, function(x)
+      my_res <- try(future.apply::future_lapply(resamp, function(x)
         runreps(current_sample = x, data = data, par_mode = par_args$par_mode,
                 formula = formula, do_gc = do_gc, imp_one_rep = imp_one_rep,
                 pred_fun = pred_fun,
