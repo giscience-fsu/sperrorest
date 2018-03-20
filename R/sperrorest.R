@@ -244,7 +244,7 @@
 #'                   model_args = list(family = "binomial"),
 #'                   pred_fun = predict,
 #'                   pred_args = list(type = "response"),
-#'                   smp_fun = partition_cv,
+#'                   smp_fun = partition_kmeans,
 #'                   smp_args = list(repetition = 1:2, nfold = 4),
 #'                   par_args = list(par_mode = "future"),
 #'                   importance = TRUE, imp_permutations = 10)
