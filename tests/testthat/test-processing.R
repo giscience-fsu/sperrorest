@@ -9,10 +9,7 @@ test_that("runfolds works on missing factor levels in
 
             skip("internal use")
 
-            readRDS(paste0("/Users/pjs/Servers/GIServer/home/shares/data/LIFE",
-                           "/mod/survey_data/data-clean.rda")) %>%
-              as_tibble() %>%
-              as.data.frame() -> df
+            df <- readRDS("inst/testfiles/pathogen_data.rds")
             fo <- diplo01 ~ temp + p_sum + r_sum + elevation + slope + hail +
               age + ph + lithology + soil
 
@@ -241,10 +238,7 @@ test_that("runfolds works on missing factor levels in
 
             skip("internal use")
 
-            readRDS(paste0("/Users/pjs/Servers/GIServer/home/shares/data/LIFE",
-                           "/mod/survey_data/data-clean.rda")) %>%
-              as_tibble() %>%
-              as.data.frame() -> df
+            df <- readRDS("inst/testfiles/pathogen_data.rds")
             fo <- diplo01 ~ temp + p_sum + r_sum + elevation + slope + hail +
               age + ph + lithology + soil
 
