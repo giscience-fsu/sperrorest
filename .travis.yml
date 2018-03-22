@@ -1,17 +1,7 @@
-#----------------------------------------------------------------
-# Travis-CI configuration for R packages
-#
-# REFERENCES:
-# * Travis CI: https://docs.travis-ci.com/user/languages/r
-# * covr: https://github.com/jimhester/covr
-#
-# Validate your .travis.yml file at http://lint.travis-ci.org/
-#----------------------------------------------------------------
 language: r
 sudo: false
 dist: trusty
 cache: packages
-warnings_are_errors: false
 latex: false
 
 addons:
@@ -22,11 +12,7 @@ addons:
       - libgdal-dev
       - libudunits2-dev
 
-env:
-  global:
-    - _R_CHECK_FORCE_SUGGESTS_=0
-
-# DO NOT CHANGE THE CODE BELOW
+# These steps apply to all matrix jobs unless defined differently in tic.R
 before_install: R -q -e 'install.packages("remotes"); remotes::install_github("ropenscilabs/tic"); tic::prepare_all_stages(); tic::before_install()'
 install: R -q -e 'tic::install()'
 after_install: R -q -e 'tic::after_install()'
@@ -34,7 +20,6 @@ before_script: R -q -e 'tic::before_script()'
 script: R -q -e 'tic::script()'
 after_success: R -q -e 'tic::after_success()'
 after_failure: R -q -e 'tic::after_failure()'
-# DO NOT CHANGE THE CODE ABOVE
 
 matrix:
   fast_finish: true
