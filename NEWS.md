@@ -1,3 +1,9 @@
+# sperrorest 2.1.5 (20-Mar-2018)
+
+## Bugfixes
+  * Updated error message displayed to the user if `err_fun()` throws an error during performance calculation.
+    An exemplary case would be a binary classification in which only one level of the response exists in the test data (due to spatial partitioning).
+
 # sperrorest 2.1.4 (12-Feb-2018)
 
 ## Minor
@@ -10,34 +16,33 @@
 
 # sperrorest 2.1.1 (15-Oct-2017)
 
-## Bugfixes:
-  * `train_fun` and `test_fun` are now handled correctly and eventual sub-sampling is correctly reflected to the resulting 'resampling' object 
-  
-  
+## Bugfixes
+  * `train_fun` and `test_fun` are now handled correctly and eventual sub-sampling is correctly reflected to the resulting 'resampling' object
+
 # sperrorest 2.1.0 (25-Sep-2017)
 
-## Features: 
+## Features
   * error handling during model fitting & performance evaluation: If a model does not converge for some folds or an error occurs during performance calculation, results of this fold are set to `NA` and a message is printed to the console. `sperrorest()` will continue normally and uses the successful folds to calculate the repetition error. This helps to run CV with many repetitions using models which do not always converge like `maxnet()`, `gamm()` or `svm()`. 
   
-## Bugfixes:
+## Bugfixes
   * Size of example data set `ecuador` has been adjusted to avoid exact duplicates of partitions when using `partition_kmeans()`. 
   
 
 # sperrorest 2.0.1 (20-Jul-2017)
 
-## Bugfixes:
+## Bugfixes
   * Fixes a bug which caused equal importance of all predictors when performing permutation-based variable importance assessment
 
 
 # sperrorest 2.0.0 (12-Jun-2017)
 
-## Major:
+## Major
   * integration of `parsperrorest()` into `sperrorest()`. 
   * by default, `sperrorest()` now runs in parallel using all available cores. 
   * `runfolds()` and `runreps()` are now doing the heavy lifting in the background. All modes are now running on the same code base. Before, all parallel modes were running on different code implementations. 
   * function and argument name changes to 'snake_case'
   
-## Features:
+## Features
   * new (parallel) modes: 
     * `apply`: calls `pbmclapply()` on Unix and `pbapply()` on Windows.
     * `future`: calls `future_lapply()` with various `future` options (`multiprocess`, `multicore`, etc.). 
@@ -48,19 +53,19 @@
   * New vignette `sperrorest::parallel-modes` comparing the various parallel modes.
   * New vignette `sperrorest::custom-pred-and-model-functions` explaining why and how custom defined model and predict functions are needed for some model setups.
     
-## Misc:
+## Misc
   * Limit workers to number of repetitions if number of cores > number of repetitions. This ensures that no unnecessary workers are started and increases robustness of parallel execuction.
   * documentation improvements.
   * `do_try` argument has been removed.
   * `error.fold`, `error.rep` and `err.train` arguments have been removed because they are all calculated by default now.
 
-## Bugfixes:
+## Bugfixes
   * partial matching of arguments
   * account for factor levels only present in test data but missing in training data. Previously, `sperrorest` errored during the predict step when this case occured. Now, this is accounted for and an informative message is given. 
 
 # sperrorest 1.0.0 (08-Mar-2017)
 
-## New features:
+## New features
   * add `parsperrorest()`: This function lets you exexute `sperrorest()` in parallel. It includes two modes (`par.mode = 1` and `par.mode = 2`) which use different   parallelization approaches in the background. See `?parsperrorest()` for more details.
   
   * add `partition.factor.cv()`: This resampling method enables partitioning based 
@@ -82,7 +87,7 @@ Changes to functions:
            4. benchmarks
            5. package.version  
 
-## Package related:
+## Package related
   * add package NEWS
   
   * add package vignette -> `vignette("sperrorest-vignette", package = "sperrorest")`
