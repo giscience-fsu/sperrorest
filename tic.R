@@ -12,23 +12,13 @@ if (Sys.getenv("id_rsa") != "") {
   get_stage("deploy") %>%
     add_step(step_build_pkgdown()) %>%
     add_step(step_push_deploy(orphan = TRUE, path = "docs", branch = "gh-pages"))
-} else if (Sys.getenv("NB" == "w/ lintr")) {
-  
-  get_stage("script") %>% 
-    add_step(step_rcmdcheck(args = c("--no-build-vignettes", "--no-codoc", 
-                                     "--no-examples", "--no-tests", 
-                                     "--no-manual", "--ignore-vignettes")))
-  
-  get_stage("after_success") %>% 
-    step_run_code(lintr::lint_package(linters = with_defaults(commented_code_linter = NULL, 
-                                                              closed_curly_linter = closed_curly_linter(allow_single_line = TRUE), 
-                                                              open_curly_linter = open_curly_linter(allow_single_line = TRUE))))
 } else if (Sys.getenv("NB" == "w/ covr") | Sys.getenv("NB" == "w/ lintr")) {
   
+  get_stage("install") %>% 
+    step_run_code(print("skip"))
+  
   get_stage("script") %>% 
-    add_step(step_rcmdcheck(args = c("--no-build-vignettes", "--no-codoc", 
-                                     "--no-examples", "--no-tests", 
-                                     "--no-manual", "--ignore-vignettes")))
+    step_run_code(print("skip"))
   
   if (Sys.getenv("NB" == "w/ lintr")) {
     

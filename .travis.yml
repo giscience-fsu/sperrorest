@@ -37,6 +37,10 @@ after_failure: R -q -e 'tic::after_failure()'
 # DO NOT CHANGE THE CODE ABOVE
 
 matrix:
+  fast_finish: true
+  allow_failures:
+    - env: NB='w/ lintr'
+    - env: NB='w/ covr'
   include:
     - os: linux
       r: oldrel
