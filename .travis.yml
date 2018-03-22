@@ -26,13 +26,7 @@ matrix:
     - env: NB='w/ covr'
   include:
     - os: linux
-      r: oldrel
-      install: R -q -e 'tic::install()'
-      after_install: R -q -e 'tic::after_install()'
-      before_script: R -q -e 'tic::before_script()'
-      script: R -q -e 'tic::script()'
-    - os: linux
-      r: release
+      r: devel
       install: R -q -e 'tic::install()'
       after_install: R -q -e 'tic::after_install()'
       before_script: R -q -e 'tic::before_script()'
@@ -44,29 +38,17 @@ matrix:
           on:
             all_branches: true
       after_deploy: R -q -e 'tic::after_deploy()'
-    - os: linux
+    - os: osx
       r: devel
       install: R -q -e 'tic::install()'
       after_install: R -q -e 'tic::after_install()'
       before_script: R -q -e 'tic::before_script()'
       script: R -q -e 'tic::script()'
-    - os: osx
-      r: oldrel
-      install: R -q -e 'tic::install()'
-      after_install: R -q -e 'tic::after_install()'
-      before_script: R -q -e 'tic::before_script()'
-      script: R -q -e 'tic::script()'
-    - os: osx
-      r: release
-      install: R -q -e 'tic::install()'
-      after_install: R -q -e 'tic::after_install()'
-      before_script: R -q -e 'tic::before_script()'
-      script: R -q -e 'tic::script()'
     - os: linux
-      r: release
+      r: devel
       env: NB='w/ covr' 
     - os: linux
-      r: release
+      r: devel
       env: NB='w/ lintr'
 
 notifications:
