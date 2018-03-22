@@ -16,13 +16,8 @@ addons:
 
 # These steps apply to all matrix jobs unless defined differently in tic.R
 before_install: 
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install ccache && brew tap osgeo/osgeo4mac && brew install gdal2 && brew link --force gdal2; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install ccache && brew tap osgeo/osgeo4mac && brew install gdal2 && brew link --overwrite --force gdal2; fi
   - R -q -e 'install.packages("remotes"); remotes::install_github("ropenscilabs/tic"); tic::prepare_all_stages(); tic::before_install()'
-install: R -q -e 'tic::install()'
-after_install: R -q -e 'tic::after_install()'
-before_script: R -q -e 'tic::before_script()'
-script: R -q -e 'tic::script()'
-after_failure: R -q -e 'tic::after_failure()'
 
 matrix:
   fast_finish: true
@@ -32,8 +27,16 @@ matrix:
   include:
     - os: linux
       r: oldrel
+      install: R -q -e 'tic::install()'
+      after_install: R -q -e 'tic::after_install()'
+      before_script: R -q -e 'tic::before_script()'
+      script: R -q -e 'tic::script()'
     - os: linux
       r: release
+      install: R -q -e 'tic::install()'
+      after_install: R -q -e 'tic::after_install()'
+      before_script: R -q -e 'tic::before_script()'
+      script: R -q -e 'tic::script()'
       before_deploy: R -q -e 'tic::before_deploy()'
       deploy:
           provider: script
@@ -41,19 +44,30 @@ matrix:
           on:
             all_branches: true
       after_deploy: R -q -e 'tic::after_deploy()'
-      after_script: R -q -e 'tic::after_script()'
     - os: linux
       r: devel
+      install: R -q -e 'tic::install()'
+      after_install: R -q -e 'tic::after_install()'
+      before_script: R -q -e 'tic::before_script()'
+      script: R -q -e 'tic::script()'
     - os: osx
       r: oldrel
+      install: R -q -e 'tic::install()'
+      after_install: R -q -e 'tic::after_install()'
+      before_script: R -q -e 'tic::before_script()'
+      script: R -q -e 'tic::script()'
     - os: osx
       r: release
+      install: R -q -e 'tic::install()'
+      after_install: R -q -e 'tic::after_install()'
+      before_script: R -q -e 'tic::before_script()'
+      script: R -q -e 'tic::script()'
     - os: linux
       r: release
-      env: NB='w/ covr' ## Just a label
+      env: NB='w/ covr' 
     - os: linux
       r: release
-      env: NB='w/ lintr' ## Just a label
+      env: NB='w/ lintr'
 
 notifications:
   slack: giscience-fsu:fIBUkXTIX9Jz70o1gIwiATYE#sperrorest
