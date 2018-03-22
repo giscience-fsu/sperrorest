@@ -1,4 +1,6 @@
-add_package_checks()
+if (Sys.getenv("NB" =! "w/ covr") | Sys.getenv("NB" =! "w/ lintr")) {
+  add_package_checks()
+}
 
 if (Sys.getenv("id_rsa") != "") {
 
