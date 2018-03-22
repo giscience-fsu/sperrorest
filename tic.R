@@ -8,8 +8,36 @@ if (Sys.getenv("id_rsa") != "") {
   # - `Sys.getenv("TRAVIS_EVENT_TYPE") == "cron"`: Only for Travis cron jobs
   get_stage("before_deploy") %>%
     add_step(step_setup_ssh())
-
+  
   get_stage("deploy") %>%
     add_step(step_build_pkgdown()) %>%
     add_step(step_push_deploy(orphan = TRUE, path = "docs", branch = "gh-pages"))
-}
+} else if (Sys.getenv("NB" == "w/ lintr")) {
+  
+  get_stage("script") %>% 
+    add_step(step_rcmdcheck(args = c("--no-build-vignettes", "--no-codoc", 
+                                     "--no-examples", "--no-tests", 
+                                     "--no-manual", "--ignore-vignettes")))
+  
+  get_stage("after_success") %>% 
+    step_run_code(lintr::lint_package(linters = with_defaults(commented_code_linter = NULL, 
+                                                              closed_curly_linter = closed_curly_linter(allow_single_line = TRUE), 
+                                                              open_curly_linter = open_curly_linter(allow_single_line = TRUE))))
+} else if (Sys.getenv("NB" == "w/ covr") | Sys.getenv("NB" == "w/ lintr")) {
+  
+  get_stage("script") %>% 
+    add_step(step_rcmdcheck(args = c("--no-build-vignettes", "--no-codoc", 
+                                     "--no-examples", "--no-tests", 
+                                     "--no-manual", "--ignore-vignettes")))
+  
+  if (Sys.getenv("NB" == "w/ lintr")) {
+    
+    get_stage("after_success") %>% 
+      step_run_code(lintr::lint_package(linters = with_defaults(commented_code_linter = NULL, 
+                                                                closed_curly_linter = closed_curly_linter(allow_single_line = TRUE), 
+                                                                open_curly_linter = open_curly_linter(allow_single_line = TRUE))))
+  } else {
+    get_stage("after_success") %>% 
+      step_run_code(covr::codecov(quiet=FALSE))
+    }
+  }
