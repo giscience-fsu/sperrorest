@@ -15,12 +15,6 @@ if (Sys.getenv("id_rsa") != "") {
 
 if (Sys.getenv("NB") == "w/ covr" | Sys.getenv("NB") == "w/ lintr") {
   
-  get_stage("install") %>% 
-    step_run_code(print("skip"))
-  
-  get_stage("script") %>% 
-    step_run_code(print("skip"))
-  
   if (Sys.getenv("NB") == "w/ lintr") {
     
     get_stage("after_success") %>% 
