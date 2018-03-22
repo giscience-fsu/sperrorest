@@ -1,7 +1,7 @@
 ## Test environments
-* local Kubuntu, R 3.4.3
-* ubuntu 14.04 (on travis-ci), R 3.4.1, R 3.4.2, R-devel
-* OSX 10.12, Xcode 8.3 (on travis-ci), R 3.4.1, R 3.4.2
+* local Antergos Installation, R 3.4.4
+* ubuntu 14.04 (on travis-ci), R 3.4.3, R 3.4.4, R-devel
+* OSX 10.12, Xcode 8.3 (on travis-ci), R 3.4.3, R 3.4.4
 * win-builder (devel and release)
 
 ## R CMD check results
