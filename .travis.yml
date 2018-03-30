@@ -36,7 +36,10 @@ matrix:
           provider: script
           script: R -q -e 'tic::deploy()'
           on:
-            all_branches: true
+            branch: master
+            condition:
+               - $TRAVIS_PULL_REQUEST = false
+               - $TRAVIS_EVENT_TYPE != cron
       after_deploy: R -q -e 'tic::after_deploy()'
     - os: osx
       r: release
