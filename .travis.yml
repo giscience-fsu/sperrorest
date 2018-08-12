@@ -1,7 +1,7 @@
 language: r
 sudo: false
 dist: trusty
-cache: 
+cache:
   - packages
   - ccache
 latex: false
@@ -15,8 +15,8 @@ addons:
       - libudunits2-dev
 
 # These steps apply to all matrix jobs unless defined differently in tic.R
-before_install: 
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install ccache && brew tap osgeo/osgeo4mac && brew install gdal2 && brew link --overwrite --force gdal2; fi
+before_install:
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew unlink python && brew install ccache && brew tap osgeo/osgeo4mac && brew install gdal2 && brew link --overwrite --force gdal2; fi
   - R -q -e 'install.packages("remotes"); remotes::install_github("ropenscilabs/tic"); tic::prepare_all_stages(); tic::before_install()'
 
 matrix:
@@ -49,7 +49,7 @@ matrix:
       script: R -q -e 'tic::script()'
     - os: linux
       r: devel
-      env: NB='w/ covr' 
+      env: NB='w/ covr'
     - os: linux
       r: devel
       env: NB='w/ lintr'
