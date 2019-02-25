@@ -343,6 +343,7 @@ test_that("sperrorest correctly updates resampling object when using
 test_that("par_mode = 'apply' works with var.imp", {
 
   skip_on_cran()
+  skip_on_travis()
 
   data(ecuador) # Muenchow et al. (2012), see ?ecuador
   fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
