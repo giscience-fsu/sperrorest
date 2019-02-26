@@ -1,55 +1,28 @@
-
-# Deprecation warning
-
-`partition_kmeans()` has been integrated into
-[mlr](https://github.com/mlr-org/mlr) (see
-[2ebd2f](https://github.com/mlr-org/mlr/commit/2ebd2f29bb8adcf5f865ca3a6b579c71ca96c072)).
-`sperrorest` is currently not actively developed. We recommend to use
-[mlr](https://github.com/mlr-org/mlr) for all future (spatial)
-cross-validation work.
-
 #### General
 
-[![Project Status: Active – The project has reached a stable, usable
-state and is being actively
-developed.](http://www.repostatus.org/badges/latest/inactive.svg)](http://www.repostatus.org/#inactive)
-[![DOI](https://zenodo.org/badge/69967610.svg)](https://zenodo.org/badge/latestdoi/69967610)
+[![Build Status](https://travis-ci.org/pat-s/sperrorest.svg?branch=master)](https://travis-ci.org/pat-s/sperrorest)
+[![CRAN](https://www.r-pkg.org/badges/version/sperrorest)](https://cran.r-project.org/package=sperrorest)
+[![lifecycle](https://img.shields.io/badge/lifecycle-retired-blue.svg)](https://www.tidyverse.org/lifecycle/#retired)
+[![codecov](https://codecov.io/gh/pat-s/sperrorest/branch/master/graph/badge.svg)](https://codecov.io/gh/pat-s/sperrorest)    |    
 
-| Resource:     | CRAN                                                                                                                                                                       | Travis CI                                                                                                                                                    | Appveyor                                                                                                                                                                          |
-| ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| *Platforms:*  | *Multiple*                                                                                                                                                                 | *Linux & macOS*                                                                                                                                              | *Windows*                                                                                                                                                                         |
-| R CMD check   | <a href="https://cran.r-project.org/web/checks/check_results_sperrorest.html"><img border="0" src="http://www.r-pkg.org/badges/version/sperrorest" alt="CRAN version"></a> | <a href="https://travis-ci.org/pat-s/sperrorest"><img src="https://travis-ci.org/pat-s/sperrorest.svg?branch=master" alt="Build status"></a>                 | <a href="https://ci.appveyor.com/project/pat-s/sperrorest"><img src="https://ci.appveyor.com/api/projects/status/n4679ihnaixx86xv/branch/master?svg=true" alt="Build status"></a> |
-| Test coverage |                                                                                                                                                                            | <a href="https://codecov.io/gh/pat-s/sperrorest"><img src="https://codecov.io/gh/pat-s/sperrorest/branch/master/graph/badge.svg" alt="Coverage Status"/></a> |                                                                                                                                                                                   |
-
-#### CRAN
-
-[![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/sperrorest)](https://cran.r-project.org/package=sperrorest)
-[![Downloads](https://cranlogs.r-pkg.org/badges/sperrorest?color=brightgreen)](https://www.r-pkg.org/pkg/sperrorest)
-![](https://cranlogs.r-pkg.org/badges/grand-total/sperrorest)
+`sperrorest` is currently not actively developed.
+We recommend to use [mlr](https://github.com/mlr-org/mlr) for all future (spatial) cross-validation work.
 
 # Description
 
 *Spatial Error Estimation and Variable Importance*
 
 This package implements spatial error estimation and permutation-based
-spatial variable importance using different spatial cross-validation and
-spatial block bootstrap methods. To cite `sperrorest` in publications,
-reference the paper by @Brenning2012. To see the package in action,
-please check [the
-vignette](https://pat-s.github.io/sperrorest/articles/spatial-modeling-use-case.html).
+spatial variable importance using different spatial cross-validation
+and spatial block bootstrap methods. 
+To cite `sperrorest` in publications,
+reference the paper by @Brenning2012. 
+To see the package in action, please check [the vignette](https://pat-s.github.io/sperrorest/articles/spatial-modeling-use-case.html).
 
 ## Installation
 
-Get the released version from CRAN:
-
-``` r
+```r
 install.packages("sperrorest")
-```
-
-Or the development version from Github:
-
-``` r
-devtools::install_github("pat-s/sperrorest")
 ```
 
 # References
