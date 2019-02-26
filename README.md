@@ -1,5 +1,3 @@
-#### General
-
 [![Build Status](https://travis-ci.org/pat-s/sperrorest.svg?branch=master)](https://travis-ci.org/pat-s/sperrorest)
 [![CRAN](https://www.r-pkg.org/badges/version/sperrorest)](https://cran.r-project.org/package=sperrorest)
 [![lifecycle](https://img.shields.io/badge/lifecycle-retired-blue.svg)](https://www.tidyverse.org/lifecycle/#retired)
