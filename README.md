@@ -3,8 +3,7 @@
 [![Build Status](https://travis-ci.org/pat-s/sperrorest.svg?branch=master)](https://travis-ci.org/pat-s/sperrorest)
 [![CRAN](https://www.r-pkg.org/badges/version/sperrorest)](https://cran.r-project.org/package=sperrorest)
 [![lifecycle](https://img.shields.io/badge/lifecycle-retired-blue.svg)](https://www.tidyverse.org/lifecycle/#retired)
-[![codecov](https://codecov.io/gh/pat-s/sperrorest/branch/master/graph/badge.svg)](https://codecov.io/gh/pat-s/sperrorest)    |    
-
+[![codecov](https://codecov.io/gh/pat-s/sperrorest/branch/master/graph/badge.svg)](https://codecov.io/gh/pat-s/sperrorest)    
 `sperrorest` is currently not actively developed.
 We recommend to use [mlr](https://github.com/mlr-org/mlr) for all future (spatial) cross-validation work.
 
