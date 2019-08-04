@@ -4,6 +4,13 @@ dist: xenial
 cache: packages
 latex: false
 
+addons:
+  apt:
+    sources:
+      - sourceline: 'ppa:ubuntugis/ubuntugis-unstable'
+    packages:
+      - libgdal-dev
+
 # DO NOT CHANGE THE CODE BELOW
 before_install:
   - R -q -e 'if (!requireNamespace("remotes", quietly = TRUE)) install.packages("remotes")'
