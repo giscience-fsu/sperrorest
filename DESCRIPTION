@@ -1,57 +1,63 @@
-Package: sperrorest
 Type: Package
-Title: Perform Spatial Error Estimation and Variable Importance in Parallel
-Description: Implements spatial error estimation and 
-   permutation-based variable importance measures for predictive models using 
-   spatial cross-validation and spatial block bootstrap.
+Package: sperrorest
+Title: Perform Spatial Error Estimation and Variable Importance
+    in Parallel
 Version: 2.1.5
 Date: 2018-03-26
-Authors@R: c(
-      person("Alexander", "Brenning",
-        email = "alexander.brenning@uni-jena.de",
-        role = c("aut", "cre"),
-        comment = c(ORCID = '0000-0001-6640-679X')),
-      person("Patrick", "Schratz",
-        email = "patrick.schratz@gmail.com", 
-        role = c("aut"),
-        comment = c(ORCID = '0000-0003-0748-6624')),
-      person("Tobias", "Herrmann", 
-        email = "herrmann.tobias89@gmail.com",
-        role = "aut",
-        comment = c(ORCID = '0000-0001-9768-0708'))  
-      )
+Authors@R: 
+    c(person(given = "Alexander",
+             family = "Brenning",
+             role = c("aut", "cre"),
+             email = "alexander.brenning@uni-jena.de",
+             comment = c(ORCID = "0000-0001-6640-679X")),
+      person(given = "Patrick",
+             family = "Schratz",
+             role = "aut",
+             email = "patrick.schratz@gmail.com",
+             comment = c(ORCID = "0000-0003-0748-6624")),
+      person(given = "Tobias",
+             family = "Herrmann",
+             role = "aut",
+             email = "herrmann.tobias89@gmail.com",
+             comment = c(ORCID = "0000-0001-9768-0708")))
+Description: Implements spatial error estimation and
+    permutation-based variable importance measures for predictive models
+    using spatial cross-validation and spatial block bootstrap.
+License: GPL-3
+URL: https://github.com/pat-s/sperrorest
 BugReports: https://github.com/pat-s/sperrorest/issues
 Depends:
     R (>= 2.10)
-Suggests:
-    ipred,
-    nnet,
-    RSAGA,
-    knitr, 
-    testthat,
-    pacman,
-    rmarkdown
 Imports:
-    pbapply,
-    pbmcapply,
-    magrittr,
-    future.apply,
-    future,
     doFuture,
     foreach,
-    ROCR,
-    parallel,
-    graphics, 
-    stats,
-    rpart,
-    purrr,
-    stringr, 
+    future,
+    future.apply,
     gdata,
-    glue
-License: GPL-3
+    glue,
+    graphics,
+    magrittr,
+    parallel,
+    pbapply,
+    pbmcapply,
+    purrr,
+    ROCR,
+    rpart,
+    stats,
+    stringr
+Suggests:
+    ipred,
+    knitr,
+    nnet,
+    pacman,
+    rmarkdown,
+    RSAGA,
+    testthat
+VignetteBuilder: 
+    knitr
+ByteCompile: true
+Encoding: UTF-8
 LazyData: true
 LazyLoad: yes
-ByteCompile: true
-RoxygenNote: 6.0.1
 Roxygen: list(markdown = TRUE)
-VignetteBuilder: knitr
+RoxygenNote: 6.0.1
