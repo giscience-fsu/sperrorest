@@ -541,7 +541,7 @@ sperrorest <- function(formula, data, coords = c("x", "y"),
                     test_param = test_param,
                     pooled_obs_test = pooled_obs_test, err_fun = err_fun)))
           # check if run was sufficient
-          if (length(my_res) > 1 && my_res == "NULL") {
+          if (length(my_res) > 1 && all(my_res == "NULL")) {
             stop(paste0("No output was received from sperrorest.\n", # nocov start # nolint
                         "If you are on macOS either run R in 'Vanilla' mode or",
                         " use another parallel mode.")) # nocov end
