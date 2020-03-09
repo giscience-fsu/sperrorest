@@ -28,7 +28,6 @@
 #' @examples
 #' df <- data.frame(x = rnorm(100), y = rnorm(100))
 #' dataset_distance(df, df) # == 0
-#'
 #' @export
 #'
 #' @name dataset_distance
@@ -51,8 +50,8 @@ dataset_distance <- function(d1, d2, x_name = "x", y_name = "y", fun = mean,
   }
   di <- rep(NA, nrow(d1))
   for (i in 1:nrow(d1)) {
-    di[i] <- min(sqrt((d2[, x_name] - d1[i, x_name]) ^ 2 + # nolint
-                        (d2[, y_name] - d1[i, y_name]) ^ 2)) # nolint
+    di[i] <- min(sqrt((d2[, x_name] - d1[i, x_name])^2 + # nolint
+      (d2[, y_name] - d1[i, y_name])^2)) # nolint
   }
   if (!is.null(fun)) {
     di <- fun(di, ...)
@@ -88,7 +87,7 @@ dataset_distance <- function(d1, d2, x_name = "x", y_name = "y", fun = mean,
 #' [resampling]
 #'
 #' @examples
-#' data(ecuador) # Muenchow et al. (2012), see ?ecuador
+#' # Muenchow et al. (2012), see ?ecuador
 #' nsp.parti <- partition_cv(ecuador)
 #' sp.parti <- partition_kmeans(ecuador)
 #' nsp.parti <- add.distance(nsp.parti, ecuador)
@@ -98,7 +97,6 @@ dataset_distance <- function(d1, d2, x_name = "x", y_name = "y", fun = mean,
 #' # spatial partitioning: more substantial distance, depending on number of
 #' # folds etc.
 #' sp.parti[[1]][[1]]$distance
-#'
 #' @export
 add.distance <- function(object, ...) UseMethod("add.distance") # nolint
 
@@ -110,8 +108,9 @@ add.distance <- function(object, ...) UseMethod("add.distance") # nolint
 add.distance.resampling <- function(object, data, coords = c("x", "y"), ...) { # nolint
   for (j in 1:length(object)) {
     test_dist <- dataset_distance(data[object[[j]]$test, coords],
-                                  data[object[[j]]$train, coords],
-                                  x_name = coords[1], y_name = coords[2], ...)
+      data[object[[j]]$train, coords],
+      x_name = coords[1], y_name = coords[2], ...
+    )
     object[[j]]$distance <- test_dist
   }
   return(object)
@@ -145,7 +144,7 @@ add.distance.represampling <- function(object, ...) { # nolint
 #' vector of length 2
 #'
 #' @examples
-#' tnm <- as.tilename(c(2,3))
+#' tnm <- as.tilename(c(2, 3))
 #' tnm # 'X2:Y3'
 #' as.numeric(tnm) # c(2,3)
 #' @seealso [partition_tiles], [represampling],
@@ -233,17 +232,21 @@ print.tilename <- function(x, ...) {
 #' @seealso [partition_tiles], [tilename]
 #'
 #' @examples
-#' data(ecuador) # Muenchow et al. (2012), see ?ecuador
+#' # Muenchow et al. (2012), see ?ecuador
 #' # Rectangular partitioning without removal of small tiles:
-#' parti <- partition_tiles(ecuador, nsplit = c(10,10), reassign = FALSE)
+#' parti <- partition_tiles(ecuador, nsplit = c(10, 10), reassign = FALSE)
 #' summary(parti)
 #' length(parti[[1]])
 #' # Same in factor format for the application of get_small_tiles:
-#' parti_fac <- partition_tiles(ecuador, nsplit = c(10, 10), reassign = FALSE,
-#'                              return_factor = TRUE)
+#' parti_fac <- partition_tiles(ecuador,
+#'   nsplit = c(10, 10), reassign = FALSE,
+#'   return_factor = TRUE
+#' )
 #' get_small_tiles(parti_fac[[1]], min_n = 20) # tiles with less than 20 samples
-#' parti2 <- partition_tiles(ecuador, nsplit = c(10, 10), reassign = TRUE,
-#'                           min_n = 20, min_frac = 0)
+#' parti2 <- partition_tiles(ecuador,
+#'   nsplit = c(10, 10), reassign = TRUE,
+#'   min_n = 20, min_frac = 0
+#' )
 #' length(parti2[[1]]) # < length(parti[[1]])
 #' @export
 get_small_tiles <- function(tile, min_n = NULL, min_frac = 0, ignore = c()) {
@@ -255,8 +258,10 @@ get_small_tiles <- function(tile, min_n = NULL, min_frac = 0, ignore = c()) {
   # Find the small ones:
   small_tile <- rep(FALSE, n_tiles)
   if (is.null(min_n) & is.null(min_frac)) {
-    stop(paste0("either 'min_n' or 'min_frac' must be specified in", # nocov
-         " 'get_small_tiles'")) # nocov
+    stop(paste0(
+      "either 'min_n' or 'min_frac' must be specified in", # nocov
+      " 'get_small_tiles'"
+    )) # nocov
   }
   if (!is.null(min_n)) {
     small_tile <- small_tile | (n_tile < min_n)
@@ -279,7 +284,7 @@ get_small_tiles <- function(tile, min_n = NULL, min_frac = 0, ignore = c()) {
   }
   small_tile <- factor(small_tile, levels = levels(tile))
   return(small_tile)
-  }
+}
 
 #' Determine the names of neighbouring tiles in a rectangular pattern
 #'
@@ -336,9 +341,11 @@ tile_neighbors <- function(nm, tileset, iterate = 0, diagonal = FALSE) {
     if (!any(nbr %in% tileset) & (iterate > 0)) {
       nbrs <- c()
       for (a.nbr in nbr) {
-        nbrs <- c(nbrs, tile_neighbors(nm = a.nbr,
-                                       tileset = tileset,
-                                       iterate = iterate - 1))
+        nbrs <- c(nbrs, tile_neighbors(
+          nm = a.nbr,
+          tileset = tileset,
+          iterate = iterate - 1
+        ))
       }
       nbr <- nbrs
       nbr <- nbr[nbr != nm]
@@ -399,10 +406,10 @@ tile_neighbors <- function(nm, tileset, iterate = 0, diagonal = FALSE) {
 #' successful.
 #'
 #' @examples
-#' data(ecuador) # Muenchow et al. (2012), see ?ecuador
+#' # Muenchow et al. (2012), see ?ecuador
 #'
 #' # Partitioning by elevation classes in 200 m steps:
-#' parti <- factor( as.character( floor( ecuador$dem / 200 ) ) )
+#' parti <- factor(as.character(floor(ecuador$dem / 200)))
 #' smp <- as.resampling(parti)
 #' summary(smp)
 #' # Compare:
@@ -412,18 +419,17 @@ tile_neighbors <- function(nm, tileset, iterate = 0, diagonal = FALSE) {
 #' parti <- partition_cv(ecuador)
 #' parti <- parti[[1]] # the first (and only) resampling object in parti
 #' # data corresponding to the test sample of the first fold:
-#' str( ecuador[ parti[[1]]$test , ])
+#' str(ecuador[parti[[1]]$test, ])
 #' # the corresponding training sample - larger:
-#' str( ecuador[ parti[[1]]$train , ])
+#' str(ecuador[parti[[1]]$train, ])
 #'
 #' # Bootstrap training sets, out-of-bag test sets:
 #' parti <- represampling_bootstrap(ecuador, oob = TRUE)
 #' parti <- parti[[1]] # the first (and only) resampling object in parti
 #' # out-of-bag test sample: approx. one-third of nrow(ecuador):
-#' str( ecuador[ parti[[1]]$test , ])
+#' str(ecuador[parti[[1]]$test, ])
 #' # bootstrap training sample: same size as nrow(ecuador):
-#' str( ecuador[ parti[[1]]$train , ])
-#'
+#' str(ecuador[parti[[1]]$train, ])
 #' @seealso [represampling], [partition_cv],
 #' [partition_kmeans], [represampling_bootstrap], etc.
 #'
@@ -453,11 +459,12 @@ as.resampling.default <- function(object, ...) {
 #' @method as.resampling factor
 #' @export
 as.resampling.factor <- function(object, ...) {
-  object <- factor(object)  # drop empty leve
+  object <- factor(object) # drop empty leve
 
   # Turn factor levels into test sets, one after the other:
-  resampling <- lapply(levels(object), function(x, spl)
-    list(train = which(spl != x), test = which(spl == x)), spl = object)
+  resampling <- lapply(levels(object), function(x, spl) {
+    list(train = which(spl != x), test = which(spl == x))
+  }, spl = object)
   # result is a list with nlevels (object) levels
   names(resampling) <- levels(object)
   class(resampling) <- "resampling"
@@ -550,9 +557,9 @@ print.resampling <- function(x, ...) {
 #' [represampling_disc_bootstrap], etc.
 #'
 #' @examples
-#' data(ecuador) # Muenchow et al. (2012), see ?ecuador
+#' # Muenchow et al. (2012), see ?ecuador
 #' # Partitioning by elevation classes in 200 m steps:
-#' fac <- factor( as.character( floor( ecuador$dem / 300 ) ) )
+#' fac <- factor(as.character(floor(ecuador$dem / 300)))
 #' summary(fac)
 #' parti <- as.resampling(fac)
 #' # a list of lists specifying sets of training and test sets,
@@ -579,9 +586,11 @@ as.represampling.list <- function(object, ...) {
   valid <- sapply(object, validate.resampling) # nolint
   # nocov start
   if (any(!valid)) {
-    msg <- paste("cannot coerce to 'represampling' object: invalid list
+    msg <- paste(
+      "cannot coerce to 'represampling' object: invalid list
                  elements number\n   ",
-                 paste(which(!valid), collapse = " "))
+      paste(which(!valid), collapse = " ")
+    )
     stop(msg) # nocov end
   }
   object <- lapply(object, as.resampling) # nolint
@@ -627,9 +636,14 @@ is_represampling <- function(object) inherits(object, "represampling") # nocov
 #'
 #' @export
 summary.represampling <- function(object, ...) {
-  lapply(object, function(x) as.data.frame(t(sapply(x, function(y)
-    data.frame(n.train = length(y$train),
-               n.test = length(y$test))))))
+  lapply(object, function(x) {
+    as.data.frame(t(sapply(x, function(y) {
+      data.frame(
+        n.train = length(y$train),
+        n.test = length(y$test)
+      )
+    })))
+  })
 }
 
 #' @rdname summary.represampling
@@ -639,7 +653,10 @@ summary.represampling <- function(object, ...) {
 
 # nocov start
 summary.resampling <- function(object, ...) {
-  as.data.frame(t(sapply(object, function(y)
-    data.frame(n.train = length(y$train),
-               n.test = length(y$test)))))
+  as.data.frame(t(sapply(object, function(y) {
+    data.frame(
+      n.train = length(y$train),
+      n.test = length(y$test)
+    )
+  })))
 } # nocov end

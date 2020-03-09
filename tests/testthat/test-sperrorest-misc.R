@@ -5,7 +5,6 @@ library(sperrorest)
 # dataset_distance Sat Jun  3 14:41:05 2017 ------------------------------
 
 test_that("dataset_distance works correctly", {
-
   skip_on_cran()
 
   df <- data.frame(x = rnorm(100), y = rnorm(100))
@@ -16,7 +15,6 @@ test_that("dataset_distance works correctly", {
 # add.distance Sat Jun  3 14:45:34 2017 ------------------------------
 
 test_that("add.distance works correctly", {
-
   skip_on_cran()
 
   data(ecuador) # Muenchow et al. (2012), see ?ecuador

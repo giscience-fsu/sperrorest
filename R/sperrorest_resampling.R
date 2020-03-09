@@ -49,9 +49,9 @@
 #' resamp <- partition_cv(ecuador, nfold = 5, repetition = 5)
 #' # plot(resamp, ecuador)
 #' # first repetition, second fold, test set indices:
-#' idx <- resamp[['1']][[2]]$test
+#' idx <- resamp[["1"]][[2]]$test
 #' # test sample used in this particular repetition and fold:
-#' ecuador[idx , ]
+#' ecuador[idx, ]
 #' @export
 partition_cv <- function(data, coords = c("x", "y"), nfold = 10, repetition = 1,
                          seed1 = NULL, return_factor = FALSE) {
@@ -66,7 +66,8 @@ partition_cv <- function(data, coords = c("x", "y"), nfold = 10, repetition = 1,
       set.seed(seed1 + cnt) # nocov
     }
     resampler <- sample(rep(sample(nfold), length = nrow(data)),
-                        size = nrow(data))
+      size = nrow(data)
+    )
     resampler <- factor(resampler)
     if (!return_factor) {
       resampler <- as.resampling(resampler) # nolint
@@ -108,15 +109,17 @@ partition_cv <- function(data, coords = c("x", "y"), nfold = 10, repetition = 1,
 #'
 #' @examples
 #' data(ecuador)
-#' parti <- partition_cv_strat(ecuador, strat = 'slides', nfold = 5,
-#' repetition = 1)
-#' idx <- parti[['1']][[1]]$train
-#' mean(ecuador$slides[idx] == 'TRUE') / mean(ecuador$slides == 'TRUE')
+#' parti <- partition_cv_strat(ecuador,
+#'   strat = "slides", nfold = 5,
+#'   repetition = 1
+#' )
+#' idx <- parti[["1"]][[1]]$train
+#' mean(ecuador$slides[idx] == "TRUE") / mean(ecuador$slides == "TRUE")
 #' # always == 1
 #' # Non-stratified cross-validation:
 #' parti <- partition_cv(ecuador, nfold = 5, repetition = 1)
-#' idx <- parti[['1']][[1]]$train
-#' mean(ecuador$slides[idx] == 'TRUE') / mean(ecuador$slides == 'TRUE')
+#' idx <- parti[["1"]][[1]]$train
+#' mean(ecuador$slides[idx] == "TRUE") / mean(ecuador$slides == "TRUE")
 #' # close to 1 because of large sample size, but with some random variation
 #' @export
 #' @noMd
@@ -191,7 +194,7 @@ partition_cv_strat <- function(data, coords = c("x", "y"), nfold = 10,
 #' breaks <- quantile(ecuador$dem, seq(0, 1, length = 6))
 #' ecuador$zclass <- cut(ecuador$dem, breaks, include.lowest = TRUE)
 #' summary(ecuador$zclass)
-#' parti <- partition_factor(ecuador, fac = 'zclass')
+#' parti <- partition_factor(ecuador, fac = "zclass")
 #' # plot(parti,ecuador)
 #' summary(parti)
 #' @export
@@ -274,7 +277,8 @@ partition_factor_cv <- function(data, coords = c("x", "y"), fac, nfold = 10,
       set.seed(seed1 + cnt) # nocov
     }
     fac_resampler <- sample(rep(sample(nfold), length = nlevels(fac)),
-                            size = nlevels(fac))
+      size = nlevels(fac)
+    )
     names(fac_resampler) <- levels(fac)
     resampler <- factor(fac_resampler[fac])
     if (!return_factor) {
@@ -369,18 +373,22 @@ partition_factor_cv <- function(data, coords = c("x", "y"), fac, nfold = 10,
 #' data(ecuador)
 #' parti <- partition_tiles(ecuador, nsplit = c(4, 3), reassign = FALSE)
 #' # plot(parti,ecuador)
-#' summary(parti) # tile A4 has only 55 samples
+#' # tile A4 has only 55 samples
 #' # same partitioning, but now merge tiles with less than 100 samples to
 #' # adjacent tiles:
-#' parti2 <- partition_tiles(ecuador, nsplit = c(4,3), reassign = TRUE,
-#' min_n = 100)
+#' parti2 <- partition_tiles(ecuador,
+#'   nsplit = c(4, 3), reassign = TRUE,
+#'   min_n = 100
+#' )
 #' # plot(parti2,ecuador)
 #' summary(parti2)
 #' # tile B4 (in 'parti') was smaller than A3, therefore A4 was merged with B4,
 #' # not with A3
 #' # now with random rotation and offset, and tiles of 2000 m length:
-#' parti3 <- partition_tiles(ecuador, dsplit = 2000, offset = 'random',
-#' rotation = 'random', reassign = TRUE, min_n = 100)
+#' parti3 <- partition_tiles(ecuador,
+#'   dsplit = 2000, offset = "random",
+#'   rotation = "random", reassign = TRUE, min_n = 100
+#' )
 #' # plot(parti3, ecuador)
 #' summary(parti3)
 #' @export
@@ -405,7 +413,9 @@ partition_tiles <- function(data, coords = c("x", "y"), dsplit = NULL,
 
   if (!is.null(nsplit)) {
     stopifnot(is.numeric(nsplit) && length(nsplit) <= 2)
-  } else stopifnot(is.numeric(dsplit) && length(dsplit) <= 2)
+  } else {
+    stopifnot(is.numeric(dsplit) && length(dsplit) <= 2)
+  }
 
   # Prepare rotation angles, if applicable:
   rotation <- match.arg(rotation)
@@ -560,10 +570,12 @@ partition_tiles <- function(data, coords = c("x", "y"), dsplit = NULL,
         # Merge small tiles with neighbors:
         ignore <- c()
         # Repeat until no small tiles are left:
-        while ((length(s_tiles) > 0) & (length(levels(tile)) > 1)) { #nolint
+        while ((length(s_tiles) > 0) & (length(levels(tile)) > 1)) { # nolint
           # Start with smallest small tile:
-          nbrs <- tile_neighbors(s_tiles[1], tileset = levels(tile),
-                                 iterate = iterate)
+          nbrs <- tile_neighbors(s_tiles[1],
+            tileset = levels(tile),
+            iterate = iterate
+          )
           if (length(nbrs) == 0) {
             ignore <- c(ignore, as.character(s_tiles[1]))
           } else {
@@ -574,8 +586,10 @@ partition_tiles <- function(data, coords = c("x", "y"), dsplit = NULL,
             tile <- factor(as.character(tile))
           }
           # Update small tiles list:
-          s_tiles <- get_small_tiles(tile, min_n = min_n, min_frac = min_frac,
-                                     ignore = ignore)
+          s_tiles <- get_small_tiles(tile,
+            min_n = min_n, min_frac = min_frac,
+            ignore = ignore
+          )
         }
       } else {
         # Just eliminate small tiles:
@@ -591,7 +605,7 @@ partition_tiles <- function(data, coords = c("x", "y"), dsplit = NULL,
   }
 
   if (!return_factor) {
-    resampling <- as.represampling(resampling) #nolint
+    resampling <- as.represampling(resampling) # nolint
   }
 
   return(resampling)
@@ -657,7 +671,6 @@ partition_tiles <- function(data, coords = c("x", "y"), dsplit = NULL,
 #' data(ecuador)
 #' resamp <- partition_kmeans(ecuador, nfold = 5, repetition = 2)
 #' # plot(resamp, ecuador)
-#'
 #' @export
 partition_kmeans <- function(data, coords = c("x", "y"), nfold = 10,
                              repetition = 1, seed1 = NULL,
@@ -681,7 +694,7 @@ partition_kmeans <- function(data, coords = c("x", "y"), nfold = 10,
     }
     kmgini <- function(x) {
       p <- x$size / sum(x$size)
-      return(1 - sum(p ^ 2))
+      return(1 - sum(p^2))
     }
     km <- kms[[which.max(sapply(kms, kmgini))]]
     # To do: add more meaningful selection criteria such as minimum number of
@@ -768,8 +781,10 @@ partition_kmeans <- function(data, coords = c("x", "y"), nfold = 10,
 #'
 #' @examples
 #' data(ecuador)
-#' parti <- partition_disc(ecuador, radius = 200, buffer = 200,
-#'                         ndisc = 5, repetition = 1:2)
+#' parti <- partition_disc(ecuador,
+#'   radius = 200, buffer = 200,
+#'   ndisc = 5, repetition = 1:2
+#' )
 #' # plot(parti,ecuador)
 #' summary(parti)
 #'
@@ -807,15 +822,17 @@ partition_disc <- function(data, coords = c("x", "y"), radius, buffer = NULL,
     if (ndisc == nrow(data)) {
       index <- c(1:nrow(data)) # nocov
     } else {
-      index <- sample.int(nrow(data), size = ndisc, replace = replace,
-                          prob = prob)
+      index <- sample.int(nrow(data),
+        size = ndisc, replace = replace,
+        prob = prob
+      )
     }
 
     res <- list()
     for (i in index) {
       if (!is.null(buffer) | radius >= 0) {
-        di <- sqrt((data[, coords[1]] - data[i, coords[1]]) ^ 2 + # nolint
-                     (data[, coords[2]] - data[i, coords[2]]) ^ 2) # nolint
+        di <- sqrt((data[, coords[1]] - data[i, coords[1]])^2 + # nolint
+          (data[, coords[2]] - data[i, coords[2]])^2) # nolint
       }
       train_sel <- numeric()
       if (radius >= 0) {
@@ -836,17 +853,19 @@ partition_disc <- function(data, coords = c("x", "y"), radius, buffer = NULL,
         }
       }
       if (return_train & (length(train_sel) == 0)) {
-        warning(paste0("empty training set in 'partition_disc': 'buffer'", # nocov  #nolint
-                " and/or 'radius' too large?")) # nocov
+        warning(paste0(
+          "empty training set in 'partition_disc': 'buffer'", # nocov  #nolint
+          " and/or 'radius' too large?"
+        )) # nocov
       }
       res[[as.character(i)]] <- list(train = train_sel, test = test_sel)
-      }
+    }
     resample[[as.character(cnt)]] <- res
   }
   repres <- as.represampling(resample) # nolint
 
   return(repres)
-  }
+}
 
 
 #' @rdname partition_disc
@@ -855,8 +874,10 @@ partition_disc <- function(data, coords = c("x", "y"), radius, buffer = NULL,
 #'
 #' @export
 partition_loo <- function(data, ndisc = nrow(data), replace = FALSE, ...) {
-  partition_disc(data = data, radius = -1, ndisc = ndisc,
-                 replace = replace, ...)
+  partition_disc(
+    data = data, radius = -1, ndisc = ndisc,
+    replace = replace, ...
+  )
 }
 
 #' Non-spatial bootstrap resampling
@@ -909,8 +930,10 @@ represampling_bootstrap <- function(data, coords = c("x", "y"),
       # test set = independently drawn bootstrap sample
       test <- sample(nrow(data), nboot, replace = TRUE)
     }
-    resample[[as.character(cnt)]] <- list(`1` = list(train = train,
-                                                     test = test))
+    resample[[as.character(cnt)]] <- list(`1` = list(
+      train = train,
+      test = test
+    ))
   }
   return(as.represampling(resample)) # nolint
 }
@@ -959,18 +982,22 @@ represampling_bootstrap <- function(data, coords = c("x", "y"),
 #' # a dummy example for demonstration, performing bootstrap
 #' # at the level of an arbitrary factor variable:
 #' parti <- represampling_factor_bootstrap(ecuador,
-#'                                        factor(floor(ecuador$dem / 100)),
-#'                                        oob = TRUE)
+#'   factor(floor(ecuador$dem / 100)),
+#'   oob = TRUE
+#' )
 #' # plot(parti,ecuador)
 #' # using the factor bootstrap for a non-overlapping block bootstrap
 #' # (see also represampling_tile_bootstrap):
-#' fac <- partition_tiles(ecuador, return_factor = TRUE, repetition = c(1:3),
-#'                        dsplit = 500, min_n = 200, rotation = 'random',
-#'                        offset = 'random')
-#' parti <- represampling_factor_bootstrap(ecuador, fac, oob = TRUE,
-#' repetition = c(1:3))
+#' fac <- partition_tiles(ecuador,
+#'   return_factor = TRUE, repetition = c(1:3),
+#'   dsplit = 500, min_n = 200, rotation = "random",
+#'   offset = "random"
+#' )
+#' parti <- represampling_factor_bootstrap(ecuador, fac,
+#'   oob = TRUE,
+#'   repetition = c(1:3)
+#' )
 #' # plot(parti, ecuador)
-#'
 #' @export
 represampling_factor_bootstrap <- function(data, fac, repetition = 1,
                                            nboot = -1,
@@ -1034,13 +1061,19 @@ represampling_factor_bootstrap <- function(data, fac, repetition = 1,
     }
     # Turn factor levels into indices:
     train <- unlist(sapply(train, function(x) which(the_fac != x)),
-                    use.names = FALSE)
+      use.names = FALSE
+    )
     test <- unlist(sapply(test, function(x) which(the_fac == x)),
-                   use.names = FALSE)
+      use.names = FALSE
+    )
     # Compile training and test indices into a resampling object:
-    resample[[as.character(cnt)]] <- as.resampling(list(`1` =
-                                                          list(train = train,
-                                                               test = test)))
+    resample[[as.character(cnt)]] <- as.resampling(list(
+      `1` =
+        list(
+          train = train,
+          test = test
+        )
+    ))
   }
 
   resample <- as.represampling(resample) # nolint
@@ -1069,13 +1102,17 @@ represampling_tile_bootstrap <- function(data, coords = c("x", "y"),
     repetition <- seq(1, repetition, by = 1)
   }
 
-  parti <- partition_tiles(data = data, coords = coords,
-                           repetition = repetition,
-                           seed1 = seed1, return_factor = TRUE, ...)
-  repres <- represampling_factor_bootstrap(data = data, fac = parti,
-                                           repetition = repetition,
-                                           seed1 = seed1, nboot = nboot,
-                                           oob = oob)
+  parti <- partition_tiles(
+    data = data, coords = coords,
+    repetition = repetition,
+    seed1 = seed1, return_factor = TRUE, ...
+  )
+  repres <- represampling_factor_bootstrap(
+    data = data, fac = parti,
+    repetition = repetition,
+    seed1 = seed1, nboot = nboot,
+    oob = oob
+  )
   return(repres)
 }
 
@@ -1103,13 +1140,17 @@ represampling_kmeans_bootstrap <- function(data, coords = c("x", "y"),
     repetition <- seq(1, repetition, by = 1)
   }
 
-  parti <- partition_tiles(data = data, coords = coords,
-                           repetition = repetition,
-                           seed1 = seed1, return_factor = TRUE, ...)
-  repres <- represampling_factor_bootstrap(data = data, fac = parti,
-                                           repetition = repetition,
-                                           seed1 = seed1, nboot = nboot,
-                                           oob = oob)
+  parti <- partition_tiles(
+    data = data, coords = coords,
+    repetition = repetition,
+    seed1 = seed1, return_factor = TRUE, ...
+  )
+  repres <- represampling_factor_bootstrap(
+    data = data, fac = parti,
+    repetition = repetition,
+    seed1 = seed1, nboot = nboot,
+    oob = oob
+  )
   return(repres)
 }
 
@@ -1142,18 +1183,21 @@ represampling_kmeans_bootstrap <- function(data, coords = c("x", "y"),
 #' @examples
 #' data(ecuador)
 #' # Overlapping disc bootstrap:
-#' parti <-  represampling_disc_bootstrap(ecuador, radius = 200, nboot = 20,
-#' oob = FALSE)
+#' parti <- represampling_disc_bootstrap(ecuador,
+#'   radius = 200, nboot = 20,
+#'   oob = FALSE
+#' )
 #' # plot(parti, ecuador)
 #' # Note that a 'buffer' argument would make no difference because boostrap
 #' # sets of discs are drawn independently for the training and test sample.
 #' #
 #' # Overlapping disc bootstrap for training sample, out-of-bag sample as test
 #' # sample:
-#' parti <-  represampling_disc_bootstrap(ecuador, radius = 200, buffer = 200,
-#'                                       nboot = 10, oob = TRUE)
+#' parti <- represampling_disc_bootstrap(ecuador,
+#'   radius = 200, buffer = 200,
+#'   nboot = 10, oob = TRUE
+#' )
 #' # plot(parti,ecuador)
-#'
 #' @export
 represampling_disc_bootstrap <- function(data, coords = c("x", "y"), nboot,
                                          repetition = 1,
@@ -1177,13 +1221,15 @@ represampling_disc_bootstrap <- function(data, coords = c("x", "y"), nboot,
       if (!is.null(seed1)) {
         set.seed(seed1 + cnt)
       }
-      train <- partition_disc(data = data, coords = coords,
-                              repetition = c(1:nboot[1]),
-                              replace = TRUE, ndisc = 1, seed1 = NULL,
-                              return_train = TRUE, ...)
+      train <- partition_disc(
+        data = data, coords = coords,
+        repetition = c(1:nboot[1]),
+        replace = TRUE, ndisc = 1, seed1 = NULL,
+        return_train = TRUE, ...
+      )
       test <- c(1:nrow(data))
       for (i in 1:nboot[1]) {
-        test <- test[test %in% train[[i]][[1]]$train]  # yes, $train!
+        test <- test[test %in% train[[i]][[1]]$train] # yes, $train!
         train[[i]][[1]]$train <- NULL
       }
       if (length(test) == 0) {
@@ -1191,27 +1237,35 @@ represampling_disc_bootstrap <- function(data, coords = c("x", "y"), nboot,
                 and/or 'radius' and/or 'nboot' too large?")
       }
       train <- unname(unlist(train))
-      resample[[as.character(cnt)]] <- list(`1` = list(train = train,
-                                                       test = test))
-      } # nocov end
+      resample[[as.character(cnt)]] <- list(`1` = list(
+        train = train,
+        test = test
+      ))
+    } # nocov end
   } else {
     resample <- list()
     for (cnt in repetition) {
       if (!is.null(seed1)) {
         set.seed(seed1 + cnt) # nocov
       }
-      train <- partition_disc(data = data, coords = coords,
-                              repetition = c(1:nboot[1]),
-                              seed1 = NULL, replace = TRUE, ndisc = 1,
-                              return_train = FALSE, ...)
+      train <- partition_disc(
+        data = data, coords = coords,
+        repetition = c(1:nboot[1]),
+        seed1 = NULL, replace = TRUE, ndisc = 1,
+        return_train = FALSE, ...
+      )
       train <- unname(unlist(train))
-      test <- partition_disc(data = data, coords = coords,
-                             repetition = c(1:nboot[2]),
-                             seed1 = NULL, replace = TRUE, ndisc = 1,
-                             return_train = FALSE, ...)
+      test <- partition_disc(
+        data = data, coords = coords,
+        repetition = c(1:nboot[2]),
+        seed1 = NULL, replace = TRUE, ndisc = 1,
+        return_train = FALSE, ...
+      )
       test <- unname(unlist(test))
-      resample[[as.character(cnt)]] <- list(`1` = list(train = train,
-                                                       test = test))
+      resample[[as.character(cnt)]] <- list(`1` = list(
+        train = train,
+        test = test
+      ))
     }
   }
 
@@ -1256,7 +1310,6 @@ represampling_disc_bootstrap <- function(data, coords = c("x", "y"), nboot,
 #' # spatial cross-validation using k-means clustering:
 #' resamp <- partition_kmeans(ecuador, nfold = 5, repetition = 1:2)
 #' # plot(resamp, ecuador)
-#'
 #' @export
 plot.represampling <- function(x, data, coords = c("x", "y"), pch = "+",
                                wiggle_sd = 0, ...) {
@@ -1278,24 +1331,28 @@ plot.represampling <- function(x, data, coords = c("x", "y"), pch = "+",
             Trying anyway...")
   }
   op <- par(no.readonly = TRUE)
-  par(mfrow = c(nr, nc), mar = c(2, 2, 3, 0.5), mgp = c(2, 0.7, 0), tcl = -0.3,
-      cex = 0.5)
+  par(
+    mfrow = c(nr, nc), mar = c(2, 2, 3, 0.5), mgp = c(2, 0.7, 0), tcl = -0.3,
+    cex = 0.5
+  )
   for (i in 1:length(resample)) {
     for (j in 1:length(resample[[i]])) {
       seltrain <- resample[[i]][[j]]$train
       seltest <- resample[[i]][[j]]$test
       main <- paste("Repetition ", names(resample)[i], ", Fold ", j)
-      plot(data[, coords[1]], data[, coords[2]], pch = ".", type = "n",
-           main = main,
-           xlab = "", ylab = "", ...)  # xlab=coords[1], ylab=coords[2])
+      plot(data[, coords[1]], data[, coords[2]],
+        pch = ".", type = "n",
+        main = main,
+        xlab = "", ylab = "", ...
+      ) # xlab=coords[1], ylab=coords[2])
       wxtrain <- rnorm(length(seltrain), sd = wiggle_sd)
       wytrain <- rnorm(length(seltrain), sd = wiggle_sd)
       wxtest <- rnorm(length(seltest), sd = wiggle_sd)
       # wytest <- rnorm(length(seltest), sd = wiggle_sd)
       points(data[seltrain, coords[1]] + wxtrain, data[seltrain, coords[2]] +
-               wytrain, pch = pch)
+        wytrain, pch = pch)
       points(data[seltest, coords[1]] + wxtest, data[seltest, coords[2]] +
-               wxtest, pch = pch, col = "red")
+        wxtest, pch = pch, col = "red")
     }
   }
   par(op)

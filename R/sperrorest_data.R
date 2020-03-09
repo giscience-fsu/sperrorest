@@ -33,9 +33,9 @@
 #' library(rpart)
 #' ctrl <- rpart.control(cp = 0.02)
 #' fit <- rpart(slides ~ dem + slope + hcurv + vcurv +
-#'    log.carea + cslope, data = ecuador, control = ctrl)
+#'   log.carea + cslope, data = ecuador, control = ctrl)
 #' par(xpd = TRUE)
-#' plot(fit, compress = TRUE, main = 'Muenchows landslide data set')
+#' plot(fit, compress = TRUE, main = "Muenchows landslide data set")
 #' text(fit, use.n = TRUE)
 NULL
 

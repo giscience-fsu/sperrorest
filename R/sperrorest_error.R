@@ -35,13 +35,12 @@
 #' @examples
 #' obs <- rnorm(1000)
 #' # Two mock (soft) classification examples:
-#' err_default( obs > 0, rnorm(1000) ) # just noise
-#' err_default( obs > 0, obs + rnorm(1000) ) # some discrimination
+#' err_default(obs > 0, rnorm(1000)) # just noise
+#' err_default(obs > 0, obs + rnorm(1000)) # some discrimination
 #' # Three mock regression examples:
-#' err_default( obs, rnorm(1000) ) # just noise, but no bias
-#' err_default( obs, obs + rnorm(1000) ) # some association, no bias
-#' err_default( obs, obs + 1 ) # perfect correlation, but with bias
-#'
+#' err_default(obs, rnorm(1000)) # just noise, but no bias
+#' err_default(obs, obs + rnorm(1000)) # some association, no bias
+#' err_default(obs, obs + 1) # perfect correlation, but with bias
 #' @export
 err_default <- function(obs, pred) {
   # The following wrapper functions are used in order to avoid warning messages:
@@ -107,7 +106,9 @@ err_default <- function(obs, pred) {
         pexp <- (npos / n) * (npospred / n) + (nneg / n) * (nnegpred / n)
         if (pexp == 1) {
           err$kappa <- NA
-        } else err$kappa <- (err$accuracy - pexp) / (1 - pexp) # nocov end
+        } else {
+          err$kappa <- (err$accuracy - pexp) / (1 - pexp)
+        } # nocov end
       }
     } else {
 
@@ -151,33 +152,60 @@ err_default <- function(obs, pred) {
         thrs <- seq(min(pred) + 1e-04, max(pred) + 1e-04, length = 500)
       }
 
-      thr <- mmax(thrs[sapply(thrs, function(x) tpr(obs == pos, pred, npos,
-                                                    x) >= 0.7)])
+      thr <- mmax(thrs[sapply(thrs, function(x) {
+        tpr(
+          obs == pos, pred, npos,
+          x
+        ) >= 0.7
+      })])
       err$fpr70 <- fpr(obs == pos, pred, nneg, thr)
-      thr <- mmax(thrs[sapply(thrs, function(x) tpr(obs == pos, pred, npos,
-                                                    x) >= 0.8)])
+      thr <- mmax(thrs[sapply(thrs, function(x) {
+        tpr(
+          obs == pos, pred, npos,
+          x
+        ) >= 0.8
+      })])
       err$fpr80 <- fpr(obs == pos, pred, nneg, thr)
-      thr <- mmax(thrs[sapply(thrs, function(x) tpr(obs == pos, pred, npos,
-                                                    x) >= 0.9)])
+      thr <- mmax(thrs[sapply(thrs, function(x) {
+        tpr(
+          obs == pos, pred, npos,
+          x
+        ) >= 0.9
+      })])
       err$fpr90 <- fpr(obs == pos, pred, nneg, thr)
 
-      thr <- mmin(thrs[sapply(thrs, function(x) fpr(obs == pos, pred, nneg,
-                                                    x) <= 0.2)])
+      thr <- mmin(thrs[sapply(thrs, function(x) {
+        fpr(
+          obs == pos, pred, nneg,
+          x
+        ) <= 0.2
+      })])
       err$tpr80 <- tpr(obs == pos, pred, npos, thr)
-      thr <- mmin(thrs[sapply(thrs, function(x) fpr(obs == pos, pred, nneg,
-                                                    x) <= 0.1)])
+      thr <- mmin(thrs[sapply(thrs, function(x) {
+        fpr(
+          obs == pos, pred, nneg,
+          x
+        ) <= 0.1
+      })])
       err$tpr90 <- tpr(obs == pos, pred, npos, thr)
-      thr <- mmin(thrs[sapply(thrs, function(x) fpr(obs == pos, pred, nneg,
-                                                    x) <= 0.05)])
+      thr <- mmin(thrs[sapply(thrs, function(x) {
+        fpr(
+          obs == pos, pred, nneg,
+          x
+        ) <= 0.05
+      })])
       err$tpr95 <- tpr(obs == pos, pred, npos, thr)
     }
     err$events <- sum(obs == levels(obs)[2])
   } else {
     # Regression problem:
-    err <- list(bias = mean(obs - pred), stddev = sd(obs - pred),
-                rmse = sqrt(mean((obs - pred) ^ 2)), mad = mad(obs - pred), # nolint
-                median = median(obs - pred), iqr = IQR(obs - pred,
-                                                       na.rm = TRUE))
+    err <- list(
+      bias = mean(obs - pred), stddev = sd(obs - pred),
+      rmse = sqrt(mean((obs - pred)^2)), mad = mad(obs - pred), # nolint
+      median = median(obs - pred), iqr = IQR(obs - pred,
+        na.rm = TRUE
+      )
+    )
   }
   # Number of observations available:
   err$count <- length(obs)

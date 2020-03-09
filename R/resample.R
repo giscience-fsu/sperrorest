@@ -23,20 +23,25 @@
 #' @examples
 #' data(ecuador) # Muenchow et al. (2012), see ?ecuador
 #' d <- resample_strat_uniform(ecuador,
-#'                             param = list(strat = 'slides', nstrat = 100))
+#'   param = list(strat = "slides", nstrat = 100)
+#' )
 #' nrow(d) # == 200
-#' sum(d$slides == 'TRUE') # == 100
-#'
+#' sum(d$slides == "TRUE") # == 100
 #' @export
-resample_strat_uniform <- function(data, param = list(strat = "class",
-                                                      nstrat = Inf,
-                                                      replace = FALSE)) {
+resample_strat_uniform <- function(data, param = list(
+                                     strat = "class",
+                                     nstrat = Inf,
+                                     replace = FALSE
+                                   )) {
   # Old version:
   if (!is.null(param$response)) {
-    warning(paste0("'param$response' argument in 'resample_strat_uniform' ", # nocov # nolint
-                   "renamed to 'strat';\n modify your code accordingly")) # nocov # nolint
-    if (is.null(param$strat)) # nocov
-      param$strat <- param$response # nocov
+    warning(paste0(
+      "'param$response' argument in 'resample_strat_uniform' ", # nocov # nolint
+      "renamed to 'strat';\n modify your code accordingly"
+    )) # nocov # nolint
+    if (is.null(param$strat)) { # nocov
+      param$strat <- param$response
+    } # nocov
   }
 
   # Use defaults if not specified:
@@ -60,8 +65,10 @@ resample_strat_uniform <- function(data, param = list(strat = "class",
     strat <- param$strat # nocov
   }
   if (!is.factor(strat)) {
-    stop(paste0("'strat' must either be a vector of factor type, or the name", # nocov # nolint
-                " of a factor variable in 'data'")) # nocov
+    stop(paste0(
+      "'strat' must either be a vector of factor type, or the name", # nocov # nolint
+      " of a factor variable in 'data'"
+    )) # nocov
   }
   # Each factor level must have at least one sample, otherwise sampling within
   # this level is impossible:
@@ -76,15 +83,17 @@ resample_strat_uniform <- function(data, param = list(strat = "class",
   # Uniform sampling within each stratum:
   sel <- c()
   for (lev in levels(strat)) {
-    wh <- sample(which(strat == lev), size = param$nstrat,
-                 replace = param$replace)
+    wh <- sample(which(strat == lev),
+      size = param$nstrat,
+      replace = param$replace
+    )
     sel <- c(sel, wh)
   }
 
   # this enables that we can adjust the correct indices within sperrorest so
   # that the resulting resampling object correctly shows the used indices
   if (sys.call() == "train_fun(data = nd_train, param = train_param)" |
-      sys.call() == "test_fun(data = nd_test, param = test_param)") {
+    sys.call() == "test_fun(data = nd_test, param = test_param)") {
     return(sel)
   } else {
     return(data[sel, ])
@@ -113,11 +122,10 @@ resample_strat_uniform <- function(data, param = list(strat = "class",
 #' @seealso [resample_strat_uniform()], [sample()]
 #'
 #' @examples
-#' data(ecuador) # Muenchow et al. (2012), see ?ecuador
-#' d <- resample_uniform(ecuador, param = list(strat = 'slides', n = 200))
-#' nrow(d) # == 200
-#' sum(d$slides == 'TRUE')
-#'
+#' # Muenchow et al. (2012), see ?ecuador
+#' d <- resample_uniform(ecuador, param = list(strat = "slides", n = 200))
+#' # == 200
+#' sum(d$slides == "TRUE")
 #' @export
 resample_uniform <- function(data, param = list(n = Inf, replace = FALSE)) {
   # Apply defaults if missing from parameter list:
@@ -160,8 +168,10 @@ resample_uniform <- function(data, param = list(n = Inf, replace = FALSE)) {
 #' @seealso [resample_strat_uniform()], [sample()]
 #'
 #' @export
-resample_factor <- function(data, param = list(fac = "class", n = Inf,
-                                               replace = FALSE)) {
+resample_factor <- function(data, param = list(
+                              fac = "class", n = Inf,
+                              replace = FALSE
+                            )) {
   # nocov start
   if (is.null(param$fac)) {
     param$fac <- "class"
@@ -176,8 +186,10 @@ resample_factor <- function(data, param = list(fac = "class", n = Inf,
     fac <- param$fac
   }
   if (!is.factor(fac)) {
-    stop(paste0("'fac' must either be a vector of factor type, or the name of",
-                "a factor variable in 'data'."))
+    stop(paste0(
+      "'fac' must either be a vector of factor type, or the name of",
+      "a factor variable in 'data'."
+    ))
   }
   fac <- factor(fac)
   if (is.null(param$n) || is.infinite(param$n)) {

@@ -17,8 +17,10 @@ transfer_parallel_output <- function(my_res = NULL, res = NULL, impo = NULL,
     }
   }
 
-  return(list(pooled_error = pooled_error, impo = impo,
-              res = res))
+  return(list(
+    pooled_error = pooled_error, impo = impo,
+    res = res
+  ))
 }
 
 #' @title remove_missing_levels
@@ -51,8 +53,10 @@ remove_missing_levels <- function(fit, test_data) {
   # account for it
   if (any(class(fit) == "glmmPQL")) {
     # Obtain factor predictors in the model and their levels
-    factors <- (gsub("[-^0-9]|as.factor|\\(|\\)", "",
-                     names(unlist(fit$contrasts))))
+    factors <- (gsub(
+      "[-^0-9]|as.factor|\\(|\\)", "",
+      names(unlist(fit$contrasts))
+    ))
     # do nothing if no factors are present
     if (length(factors) == 0) {
       return(test_data)
@@ -67,8 +71,10 @@ remove_missing_levels <- function(fit, test_data) {
     model_factors <- as.data.frame(cbind(factors, factor_levels))
   } else {
     # Obtain factor predictors in the model and their levels
-    factors <- (gsub("[-^0-9]|as.factor|\\(|\\)", "",
-                     names(unlist(fit$xlevels))))
+    factors <- (gsub(
+      "[-^0-9]|as.factor|\\(|\\)", "",
+      names(unlist(fit$xlevels))
+    ))
     # do nothing if no factors are present
     if (length(factors) == 0) {
       return(test_data)
@@ -87,7 +93,8 @@ remove_missing_levels <- function(fit, test_data) {
 
   for (i in 1:length(predictors)) {
     found <- test_data[, predictors[i]] %in% model_factors[
-      model_factors$factors == predictors[i], ]$factor_levels
+      model_factors$factors == predictors[i],
+    ]$factor_levels
     if (any(!found)) {
       # track which variable
       var <- predictors[i]
@@ -97,10 +104,14 @@ remove_missing_levels <- function(fit, test_data) {
       test_data %>%
         droplevels() -> test_data
       # issue warning to console
-      message(sprintf(paste0("\n'sperrorest()': Setting missing levels in",
-                             " '%s', only present in test data but missing ",
-                             "in train data, to 'NA'."),
-                      var))
+      message(sprintf(
+        paste0(
+          "\n'sperrorest()': Setting missing levels in",
+          " '%s', only present in test data but missing ",
+          "in train data, to 'NA'."
+        ),
+        var
+      ))
     }
   }
   return(test_data) # nocov end
