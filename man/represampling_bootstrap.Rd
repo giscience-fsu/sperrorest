@@ -4,8 +4,14 @@
 \alias{represampling_bootstrap}
 \title{Non-spatial bootstrap resampling}
 \usage{
-represampling_bootstrap(data, coords = c("x", "y"), nboot = nrow(data),
-  repetition = 1, seed1 = NULL, oob = FALSE)
+represampling_bootstrap(
+  data,
+  coords = c("x", "y"),
+  nboot = nrow(data),
+  repetition = 1,
+  seed1 = NULL,
+  oob = FALSE
+)
 }
 \arguments{
 \item{data}{\code{data.frame} containing at least the columns specified

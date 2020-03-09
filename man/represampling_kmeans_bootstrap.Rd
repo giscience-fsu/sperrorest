@@ -4,8 +4,16 @@
 \alias{represampling_kmeans_bootstrap}
 \title{Spatial block bootstrap at the level of spatial k-means clusters}
 \usage{
-represampling_kmeans_bootstrap(data, coords = c("x", "y"), repetition = 1,
-  nfold = 10, nboot = nfold, seed1 = NULL, oob = FALSE, ...)
+represampling_kmeans_bootstrap(
+  data,
+  coords = c("x", "y"),
+  repetition = 1,
+  nfold = 10,
+  nboot = nfold,
+  seed1 = NULL,
+  oob = FALSE,
+  ...
+)
 }
 \arguments{
 \item{data}{\code{data.frame} containing at least the columns specified

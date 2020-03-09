@@ -4,8 +4,10 @@
 \alias{resample_strat_uniform}
 \title{Draw stratified random sample}
 \usage{
-resample_strat_uniform(data, param = list(strat = "class", nstrat = Inf,
-  replace = FALSE))
+resample_strat_uniform(
+  data,
+  param = list(strat = "class", nstrat = Inf, replace = FALSE)
+)
 }
 \arguments{
 \item{data}{a \code{data.frame}, rows represent samples}

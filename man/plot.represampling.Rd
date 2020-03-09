@@ -5,8 +5,7 @@
 \alias{plot.resampling}
 \title{Plot spatial resampling objects}
 \usage{
-\method{plot}{represampling}(x, data, coords = c("x", "y"), pch = "+",
-  wiggle_sd = 0, ...)
+\method{plot}{represampling}(x, data, coords = c("x", "y"), pch = "+", wiggle_sd = 0, ...)
 
 \method{plot}{resampling}(x, ...)
 }

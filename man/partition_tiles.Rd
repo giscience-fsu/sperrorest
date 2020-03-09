@@ -4,11 +4,23 @@
 \alias{partition_tiles}
 \title{Partition the study area into rectangular tiles}
 \usage{
-partition_tiles(data, coords = c("x", "y"), dsplit = NULL, nsplit = NULL,
-  rotation = c("none", "random", "user"), user_rotation, offset = c("none",
-  "random", "user"), user_offset, reassign = TRUE, min_frac = 0.025,
-  min_n = 5, iterate = 1, return_factor = FALSE, repetition = 1,
-  seed1 = NULL)
+partition_tiles(
+  data,
+  coords = c("x", "y"),
+  dsplit = NULL,
+  nsplit = NULL,
+  rotation = c("none", "random", "user"),
+  user_rotation,
+  offset = c("none", "random", "user"),
+  user_offset,
+  reassign = TRUE,
+  min_frac = 0.025,
+  min_n = 5,
+  iterate = 1,
+  return_factor = FALSE,
+  repetition = 1,
+  seed1 = NULL
+)
 }
 \arguments{
 \item{data}{\code{data.frame} containing at least the columns specified
@@ -96,7 +108,7 @@ Default parameter settings may change in future releases.
 This function, especially the rotation and shifting part of it and the
 algorithm for cleaning up small tiles is still a bit experimental.
 Use with caution.
-For non-zero offsets (\code{offset!='none')}), the number of tiles may
+For non-zero offsets (\verb{offset!='none')}), the number of tiles may
 actually be greater than \code{nsplit[1]*nsplit[2]} because of fractional
 tiles lurking into the study region. \code{reassign=TRUE} with suitable
 thresholds is therefore recommended for non-zero (including random) offsets.

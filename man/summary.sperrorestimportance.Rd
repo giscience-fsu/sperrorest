@@ -4,8 +4,7 @@
 \alias{summary.sperrorestimportance}
 \title{Summarize variable importance statistics obtained by \code{sperrorest}}
 \usage{
-\method{summary}{sperrorestimportance}(object, level = 0, na.rm = TRUE,
-  which = NULL, ...)
+\method{summary}{sperrorestimportance}(object, level = 0, na.rm = TRUE, which = NULL, ...)
 }
 \arguments{
 \item{object}{\code{sperrorestimportance} object calculated by

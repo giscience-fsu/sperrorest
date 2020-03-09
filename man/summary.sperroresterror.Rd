@@ -4,8 +4,7 @@
 \alias{summary.sperroresterror}
 \title{Summarize error statistics obtained by \code{sperrorest}}
 \usage{
-\method{summary}{sperroresterror}(object, level = 0, pooled = TRUE,
-  na.rm = TRUE, ...)
+\method{summary}{sperroresterror}(object, level = 0, pooled = TRUE, na.rm = TRUE, ...)
 }
 \arguments{
 \item{object}{\code{sperroresterror} resp. \code{sperrorestcombinederror}

@@ -4,8 +4,15 @@
 \alias{partition_cv_strat}
 \title{Partition the data for a stratified (non-spatial) cross-validation}
 \usage{
-partition_cv_strat(data, coords = c("x", "y"), nfold = 10,
-  return_factor = FALSE, repetition = 1, seed1 = NULL, strat)
+partition_cv_strat(
+  data,
+  coords = c("x", "y"),
+  nfold = 10,
+  return_factor = FALSE,
+  repetition = 1,
+  seed1 = NULL,
+  strat
+)
 }
 \arguments{
 \item{data}{\code{data.frame} containing at least the columns specified

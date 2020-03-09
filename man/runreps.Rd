@@ -4,16 +4,38 @@
 \alias{runreps}
 \title{runreps}
 \usage{
-runreps(current_sample = NULL, data = NULL, formula = NULL,
-  model_args = NULL, par_cl = NULL, do_gc = NULL, imp_one_rep = NULL,
-  model_fun = NULL, pred_fun = NULL, imp_variables = NULL,
-  imp_permutations = NULL, err_fun = NULL, importance = NULL,
-  current_res = NULL, current_impo = NULL, pred_args = NULL,
-  progress = NULL, pooled_obs_train = NULL, pooled_obs_test = NULL,
-  pooled_pred_train = NULL, response = NULL, is_factor_prediction = NULL,
-  pooled_pred_test = NULL, test_fun = NULL, test_param = NULL,
-  train_fun = NULL, train_param = NULL, coords = NULL, par_mode = NULL,
-  i = NULL)
+runreps(
+  current_sample = NULL,
+  data = NULL,
+  formula = NULL,
+  model_args = NULL,
+  par_cl = NULL,
+  do_gc = NULL,
+  imp_one_rep = NULL,
+  model_fun = NULL,
+  pred_fun = NULL,
+  imp_variables = NULL,
+  imp_permutations = NULL,
+  err_fun = NULL,
+  importance = NULL,
+  current_res = NULL,
+  current_impo = NULL,
+  pred_args = NULL,
+  progress = NULL,
+  pooled_obs_train = NULL,
+  pooled_obs_test = NULL,
+  pooled_pred_train = NULL,
+  response = NULL,
+  is_factor_prediction = NULL,
+  pooled_pred_test = NULL,
+  test_fun = NULL,
+  test_param = NULL,
+  train_fun = NULL,
+  train_param = NULL,
+  coords = NULL,
+  par_mode = NULL,
+  i = NULL
+)
 }
 \description{
 Runs model fitting, error estimation and variable importance

@@ -5,8 +5,13 @@
 \title{Partition the data for a (non-spatial) leave-one-factor-out cross-validation
 based on a given, fixed partitioning}
 \usage{
-partition_factor(data, coords = c("x", "y"), fac, return_factor = FALSE,
-  repetition = 1)
+partition_factor(
+  data,
+  coords = c("x", "y"),
+  fac,
+  return_factor = FALSE,
+  repetition = 1
+)
 }
 \arguments{
 \item{data}{\code{data.frame} containing at least the columns specified

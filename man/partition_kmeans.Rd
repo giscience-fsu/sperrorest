@@ -4,9 +4,17 @@
 \alias{partition_kmeans}
 \title{Partition samples spatially using k-means clustering of the coordinates}
 \usage{
-partition_kmeans(data, coords = c("x", "y"), nfold = 10, repetition = 1,
-  seed1 = NULL, return_factor = FALSE, balancing_steps = 1,
-  order_clusters = TRUE, ...)
+partition_kmeans(
+  data,
+  coords = c("x", "y"),
+  nfold = 10,
+  repetition = 1,
+  seed1 = NULL,
+  return_factor = FALSE,
+  balancing_steps = 1,
+  order_clusters = TRUE,
+  ...
+)
 }
 \arguments{
 \item{data}{\code{data.frame} containing at least the columns specified
@@ -33,7 +41,7 @@ to initialize the random number generator before sampling from the data set.}
 other \code{sperrorest} functions), return a \code{list} containing factor
 vectors (see Value)}
 
-\item{balancing_steps}{if \code{> 1}, perform \code{nfold}-means clustering
+\item{balancing_steps}{if \verb{> 1}, perform \code{nfold}-means clustering
 \code{balancing_steps} times, and pick the clustering that minimizes the Gini
 index of the sample size distribution among the partitions. The idea is that
 'degenerate' partitions will be avoided, but this also has the side effect of

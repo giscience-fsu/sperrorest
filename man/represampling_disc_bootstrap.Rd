@@ -4,8 +4,15 @@
 \alias{represampling_disc_bootstrap}
 \title{Overlapping spatial block bootstrap using circular blocks}
 \usage{
-represampling_disc_bootstrap(data, coords = c("x", "y"), nboot,
-  repetition = 1, seed1 = NULL, oob = FALSE, ...)
+represampling_disc_bootstrap(
+  data,
+  coords = c("x", "y"),
+  nboot,
+  repetition = 1,
+  seed1 = NULL,
+  oob = FALSE,
+  ...
+)
 }
 \arguments{
 \item{data}{\code{data.frame} containing at least the columns specified

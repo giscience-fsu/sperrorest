@@ -4,16 +4,39 @@
 \alias{runfolds}
 \title{runfolds}
 \usage{
-runfolds(j = NULL, current_sample = NULL, data = NULL, i = NULL,
-  formula = NULL, model_args = NULL, par_cl = NULL, par_mode = NULL,
-  model_fun = NULL, pred_fun = NULL, imp_variables = NULL,
-  imp_permutations = NULL, err_fun = NULL, train_fun = NULL,
-  importance = NULL, current_res = NULL, current_impo = NULL,
-  pred_args = NULL, pooled_obs_train = NULL, pooled_obs_test = NULL,
-  pooled_pred_train = NULL, response = NULL, progress = NULL,
-  is_factor_prediction = NULL, pooled_pred_test = NULL, coords = NULL,
-  test_fun = NULL, imp_one_rep = NULL, do_gc = NULL, test_param = NULL,
-  train_param = NULL)
+runfolds(
+  j = NULL,
+  current_sample = NULL,
+  data = NULL,
+  i = NULL,
+  formula = NULL,
+  model_args = NULL,
+  par_cl = NULL,
+  par_mode = NULL,
+  model_fun = NULL,
+  pred_fun = NULL,
+  imp_variables = NULL,
+  imp_permutations = NULL,
+  err_fun = NULL,
+  train_fun = NULL,
+  importance = NULL,
+  current_res = NULL,
+  current_impo = NULL,
+  pred_args = NULL,
+  pooled_obs_train = NULL,
+  pooled_obs_test = NULL,
+  pooled_pred_train = NULL,
+  response = NULL,
+  progress = NULL,
+  is_factor_prediction = NULL,
+  pooled_pred_test = NULL,
+  coords = NULL,
+  test_fun = NULL,
+  imp_one_rep = NULL,
+  do_gc = NULL,
+  test_param = NULL,
+  train_param = NULL
+)
 }
 \description{
 Runs model fitting, error estimation and variable importance

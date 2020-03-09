@@ -26,7 +26,7 @@ by \code{coords}}
 \value{
 A \link{resampling} or \link{represampling} object
 containing an additional.
-\code{$distance} component in each \link{resampling} object.
+\verb{$distance} component in each \link{resampling} object.
 The \code{distance} component is a single numeric value indicating, for
 each \code{train} / \code{test} pair, the (by default, mean)
 nearest-neighbour distance between the two sets.
@@ -36,7 +36,7 @@ Add distance information to resampling objects
 }
 \details{
 Nearest-neighbour distances are calculated for each sample in the
-test set. These \code{nrow(???$test)} nearest-neighbour distances are then
+test set. These \verb{nrow(???$test)} nearest-neighbour distances are then
 averaged. Aggregation methods other than \code{mean} can be chosen using
 the \code{fun} argument, which will be passed on to
 \link{dataset_distance}.

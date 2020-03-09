@@ -1,11 +1,16 @@
-[![Build Status](https://travis-ci.org/pat-s/sperrorest.svg?branch=master)](https://travis-ci.org/pat-s/sperrorest)
+# sperrorest
+
+<!-- badges: start -->
+[![R CMD Check via {tic}](https://img.shields.io/github/workflow/status/giscience-fsu/sperrorest/R%20CMD%20Check%20via%20%7Btic%7D?logo=github&label=R%20CMD%20Check%20via%20{tic}&style=flat-square)](https://github.com/giscience-fsu/sperrorest/actions)
 [![CRAN](https://www.r-pkg.org/badges/version/sperrorest)](https://cran.r-project.org/package=sperrorest)
 [![lifecycle](https://img.shields.io/badge/lifecycle-retired-blue.svg)](https://www.tidyverse.org/lifecycle/#retired)
-[![codecov](https://codecov.io/gh/pat-s/sperrorest/branch/master/graph/badge.svg)](https://codecov.io/gh/pat-s/sperrorest)    
+[![codecov](https://codecov.io/gh/giscience-fsu/sperrorest/branch/master/graph/badge.svg)](https://codecov.io/gh/giscience-fsu/sperrorest)
+<!-- badges: end -->
+
 `sperrorest` is currently not actively developed.
 We recommend to use [mlr](https://github.com/mlr-org/mlr) for all future (spatial) cross-validation work.
 
-# Description
+## Description
 
 *Spatial Error Estimation and Variable Importance*
 
@@ -22,7 +27,7 @@ To see the package in action, please check [the vignette](https://pat-s.github.i
 install.packages("sperrorest")
 ```
 
-# References
+## References
 
 <div id="refs" class="references">
 

@@ -5,9 +5,18 @@
 \alias{partition_loo}
 \title{Leave-one-disc-out cross-validation and leave-one-out cross-validation}
 \usage{
-partition_disc(data, coords = c("x", "y"), radius, buffer = NULL,
-  ndisc = nrow(data), seed1 = NULL, return_train = TRUE, prob = NULL,
-  replace = FALSE, repetition = 1)
+partition_disc(
+  data,
+  coords = c("x", "y"),
+  radius,
+  buffer = NULL,
+  ndisc = nrow(data),
+  seed1 = NULL,
+  return_train = TRUE,
+  prob = NULL,
+  replace = FALSE,
+  repetition = 1
+)
 
 partition_loo(data, ndisc = nrow(data), replace = FALSE, ...)
 }
@@ -42,7 +51,7 @@ if \code{TRUE}, also the training area.}
 without replacement?}
 
 \item{repetition}{see \code{partition_cv}; however,
-see Note below: \code{repetition} should normally be \code{= 1} in this function.}
+see Note below: \code{repetition} should normally be \verb{= 1} in this function.}
 
 \item{...}{arguments to be passed to \code{partition_disc}}
 }

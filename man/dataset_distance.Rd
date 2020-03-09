@@ -4,8 +4,15 @@
 \alias{dataset_distance}
 \title{Calculate mean nearest-neighbour distance between point datasets}
 \usage{
-dataset_distance(d1, d2, x_name = "x", y_name = "y", fun = mean,
-  method = "euclidean", ...)
+dataset_distance(
+  d1,
+  d2,
+  x_name = "x",
+  y_name = "y",
+  fun = mean,
+  method = "euclidean",
+  ...
+)
 }
 \arguments{
 \item{d1}{a \code{data.frame} with (at least) columns with names given by

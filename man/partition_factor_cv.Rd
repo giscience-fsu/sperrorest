@@ -5,8 +5,15 @@
 \title{Partition the data for a (non-spatial) k-fold cross-validation at the group
 level}
 \usage{
-partition_factor_cv(data, coords = c("x", "y"), fac, nfold = 10,
-  repetition = 1, seed1 = NULL, return_factor = FALSE)
+partition_factor_cv(
+  data,
+  coords = c("x", "y"),
+  fac,
+  nfold = 10,
+  repetition = 1,
+  seed1 = NULL,
+  return_factor = FALSE
+)
 }
 \arguments{
 \item{data}{\code{data.frame} containing at least the columns specified

@@ -4,8 +4,14 @@
 \alias{partition_cv}
 \title{Partition the data for a (non-spatial) cross-validation}
 \usage{
-partition_cv(data, coords = c("x", "y"), nfold = 10, repetition = 1,
-  seed1 = NULL, return_factor = FALSE)
+partition_cv(
+  data,
+  coords = c("x", "y"),
+  nfold = 10,
+  repetition = 1,
+  seed1 = NULL,
+  return_factor = FALSE
+)
 }
 \arguments{
 \item{data}{\code{data.frame} containing at least the columns specified

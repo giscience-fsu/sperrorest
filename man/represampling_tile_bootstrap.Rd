@@ -4,8 +4,15 @@
 \alias{represampling_tile_bootstrap}
 \title{Spatial block bootstrap using rectangular blocks}
 \usage{
-represampling_tile_bootstrap(data, coords = c("x", "y"), repetition = 1,
-  nboot = -1, seed1 = NULL, oob = FALSE, ...)
+represampling_tile_bootstrap(
+  data,
+  coords = c("x", "y"),
+  repetition = 1,
+  nboot = -1,
+  seed1 = NULL,
+  oob = FALSE,
+  ...
+)
 }
 \arguments{
 \item{data}{\code{data.frame} containing at least the columns specified
