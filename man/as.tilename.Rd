@@ -40,7 +40,7 @@ form \code{'X2:Y7'} as used by \link{partition_tiles} and
 \link{represampling_tile_bootstrap}.
 }
 \examples{
-tnm <- as.tilename(c(2,3))
+tnm <- as.tilename(c(2, 3))
 tnm # 'X2:Y3'
 as.numeric(tnm) # c(2,3)
 }

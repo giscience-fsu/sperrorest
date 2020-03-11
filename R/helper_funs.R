@@ -27,8 +27,6 @@ transfer_parallel_output <- function(my_res = NULL, res = NULL, impo = NULL,
 #' @description Accounts for missing factor levels present only in test data
 #' but not in train data by setting values to NA
 #'
-#' @import magrittr
-#' @importFrom gdata unmatrix
 #' @importFrom stringr str_split
 #'
 #' @param fit fitted model on training data
@@ -39,15 +37,21 @@ transfer_parallel_output <- function(my_res = NULL, res = NULL, impo = NULL,
 #'
 #' @keywords internal
 #'
+#' @examples
+#' foo <- data.frame(
+#'   response = rnorm(3),
+#'   predictor = as.factor(c("A", "B", "C"))
+#' )
+#' model <- lm(response ~ predictor, foo)
+#' foo.new <- data.frame(predictor = as.factor(c("A", "B", "C", "D")))
+#' predict(model, newdata = remove_missing_levels(fit = model, test_data = foo.new))
 #' @export
 remove_missing_levels <- function(fit, test_data) {
 
   # https://stackoverflow.com/a/39495480/4185785
 
   # drop empty factor levels in test data
-  test_data %>%
-    droplevels() %>%
-    as.data.frame() -> test_data
+  test_data <- as.data.frame(droplevels(test_data))
 
   # 'fit' object structure of 'lm' and 'glmmPQL' is different so we need to
   # account for it
@@ -62,11 +66,9 @@ remove_missing_levels <- function(fit, test_data) {
       return(test_data)
     }
 
-    map(fit$contrasts, function(x) names(unmatrix(x))) %>%
-      unlist() -> factor_levels
-    factor_levels %>%
-      str_split(":", simplify = TRUE) %>%
-      extract(, 1) -> factor_levels
+    factor_levels <- unlist(lapply(fit$contrasts, function(x) names(unmatrix(x))))
+
+    factor_levels <- str_split(factor_levels, ":", simplify = TRUE)[, 1]
 
     model_factors <- as.data.frame(cbind(factors, factor_levels))
   } else {
@@ -101,8 +103,7 @@ remove_missing_levels <- function(fit, test_data) {
       # set to NA
       test_data[!found, predictors[i]] <- NA
       # drop empty factor levels in test data
-      test_data %>%
-        droplevels() -> test_data
+      test_data <- droplevels(test_data)
       # issue warning to console
       message(sprintf(
         paste0(
@@ -115,4 +116,26 @@ remove_missing_levels <- function(fit, test_data) {
     }
   }
   return(test_data) # nocov end
+}
+
+# copied from gdata::unmatrix to save a pkg dependency
+unmatrix <- function(x, byrow = FALSE) {
+  rnames <- rownames(x)
+  cnames <- colnames(x)
+  if (is.null(rnames)) {
+    rnames <- paste("r", 1:nrow(x), sep = "")
+  }
+  if (is.null(cnames)) {
+    cnames <- paste("c", 1:ncol(x), sep = "")
+  }
+  nmat <- outer(rnames, cnames, paste, sep = ":")
+  if (byrow) {
+    vlist <- c(t(x))
+    names(vlist) <- c(t(nmat))
+  }
+  else {
+    vlist <- c(x)
+    names(vlist) <- c(nmat)
+  }
+  return(vlist)
 }

@@ -38,7 +38,7 @@ to initialize the random number generator before sampling from the data set.}
 
 \item{return_factor}{if \code{FALSE} (default), return a
 \link{represampling} object; if \code{TRUE} (used internally by
-other \code{sperrorest} functions), return a \code{list} containing factor
+other {sperrorest} functions), return a \code{list} containing factor
 vectors (see Value)}
 
 \item{balancing_steps}{if \verb{> 1}, perform \code{nfold}-means clustering
@@ -70,7 +70,6 @@ Default parameter settings may change in future releases.
 data(ecuador)
 resamp <- partition_kmeans(ecuador, nfold = 5, repetition = 2)
 # plot(resamp, ecuador)
-
 }
 \references{
 Brenning, A., Long, S., & Fieguth, P. (2012).

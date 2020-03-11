@@ -42,7 +42,7 @@ the \code{fun} argument, which will be passed on to
 \link{dataset_distance}.
 }
 \examples{
-data(ecuador) # Muenchow et al. (2012), see ?ecuador
+# Muenchow et al. (2012), see ?ecuador
 nsp.parti <- partition_cv(ecuador)
 sp.parti <- partition_kmeans(ecuador)
 nsp.parti <- add.distance(nsp.parti, ecuador)
@@ -52,7 +52,6 @@ nsp.parti[[1]][[1]]$distance
 # spatial partitioning: more substantial distance, depending on number of
 # folds etc.
 sp.parti[[1]][[1]]$distance
-
 }
 \seealso{
 \link{dataset_distance} \link{represampling}

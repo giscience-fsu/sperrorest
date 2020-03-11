@@ -34,7 +34,7 @@ to initialize the random number generator before sampling from the data set.}
 
 \item{return_factor}{if \code{FALSE} (default), return a
 \link{represampling} object; if \code{TRUE} (used internally by
-other \code{sperrorest} functions), return a \code{list} containing factor
+other {sperrorest} functions), return a \code{list} containing factor
 vectors (see Value)}
 }
 \value{
@@ -67,9 +67,9 @@ data(ecuador)
 resamp <- partition_cv(ecuador, nfold = 5, repetition = 5)
 # plot(resamp, ecuador)
 # first repetition, second fold, test set indices:
-idx <- resamp[['1']][[2]]$test
+idx <- resamp[["1"]][[2]]$test
 # test sample used in this particular repetition and fold:
-ecuador[idx , ]
+ecuador[idx, ]
 }
 \seealso{
 \link{sperrorest}, \link{represampling}

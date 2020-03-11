@@ -20,7 +20,7 @@
 #' to initialize the random number generator before sampling from the data set.
 #' @param return_factor if `FALSE` (default), return a
 #' [represampling] object; if `TRUE` (used internally by
-#' other `sperrorest` functions), return a `list` containing factor
+#' other {sperrorest} functions), return a `list` containing factor
 #' vectors (see Value)
 #'
 #' @details This function does not actually perform a cross-validation
@@ -84,28 +84,28 @@ partition_cv <- function(data, coords = c("x", "y"), nfold = 10, repetition = 1,
 
 #' Partition the data for a stratified (non-spatial) cross-validation
 #'
-#' \code{partition_cv_strat} creates a set of sample indices corresponding
+#' `partition_cv_strat` creates a set of sample indices corresponding
 #' to cross-validation test and training sets.
 #'
 #' @name partition_cv_strat
 #' @inheritParams partition_cv
 #'
-#' @param coords vector of length 2 defining the variables in \code{data} that
+#' @param coords vector of length 2 defining the variables in `data` that
 #' contain the x and y coordinates of sample locations
-#' @param strat character: column in \code{data} containing a factor variable
+#' @param strat character: column in `data` containing a factor variable
 #' over which the partitioning should be stratified; or factor vector of length
-#' \code{nrow(data)}: variable over which to stratify
+#' `nrow(data)`: variable over which to stratify
 #'
-#' @return A \code{\link{represampling}} object, see also
-#' \code{\link{partition_cv}}. \code{partition_strat_cv}, however,
-#' stratified with respect to the variable \code{data[,strat]};
+#' @return A [represampling()] object, see also
+#' [partition_cv()]. `partition_strat_cv`, however,
+#' stratified with respect to the variable `data[,strat]`;
 #' i.e., cross-validation partitioning is done within each set
-#' \code{data[data[,strat]==i,]} (\code{i} in \code{levels(data[, strat])}), and
-#' the \code{i}th folds of all levels are combined into one cross-validation
+#' `data[data[,strat]==i,]` (`i` in `levels(data[, strat])`), and
+#' the `i`th folds of all levels are combined into one cross-validation
 #' fold.
 #'
-#' @seealso \code{\link{sperrorest}}, \code{\link{as.resampling}},
-#' \code{\link{resample_strat_uniform}}
+#' @seealso [sperrorest()], [as.resampling()],
+#' [resample_strat_uniform()]
 #'
 #' @examples
 #' data(ecuador)
@@ -621,7 +621,7 @@ partition_tiles <- function(data, coords = c("x", "y"), dsplit = NULL,
 #' Partition samples spatially using k-means clustering of the coordinates
 #'
 #' `partition_kmeans` divides the study area into irregularly shaped
-#' spatial partitions based on \emph{k}-means ([kmeans]) clustering
+#' spatial partitions based on *k*-means ([kmeans]) clustering
 #' of spatial coordinates.
 #'
 #' @inheritParams partition_cv
@@ -631,8 +631,8 @@ partition_tiles <- function(data, coords = c("x", "y"), dsplit = NULL,
 #' @param coords vector of length 2 defining the variables in `data` that
 #' contain the x and y coordinates of sample locations.
 #'
-#' @param nfold number of cross-validation folds, i.e. parameter \emph{k} in
-#' \emph{k}-means clustering.
+#' @param nfold number of cross-validation folds, i.e. parameter *k* in
+#' *k*-means clustering.
 #'
 #' @param balancing_steps if `> 1`, perform `nfold`-means clustering
 #' `balancing_steps` times, and pick the clustering that minimizes the Gini
@@ -961,8 +961,8 @@ represampling_bootstrap <- function(data, coords = c("x", "y"),
 #' bootstrap training sample (`nboot[1]`) and the test sample
 #' (`nboot[2]`); `nboot[2]` is ignored (with a warning) if
 #' `oob = TRUE`. A value of `-1` will be substituted with the number
-#' of levels of the factor variable, corresponding to an \emph{n} out of
-#' \emph{n} bootstrap at the grouping level defined by `fac`.
+#' of levels of the factor variable, corresponding to an *n* out of
+#' *n* bootstrap at the grouping level defined by `fac`.
 #'
 #' @param oob if `TRUE`, the test sample will be the out-of-bag sample;
 #' if `FALSE` (default), the test sample is an independently drawn
@@ -1177,7 +1177,7 @@ represampling_kmeans_bootstrap <- function(data, coords = c("x", "y"),
 #' see example below
 #'
 #' @note Performs `nboot` out of `nrow(data)` resampling of circular
-#' discs. This is an \emph{overlapping} spatial block bootstrap where the
+#' discs. This is an *overlapping* spatial block bootstrap where the
 #' blocks are circular.
 #'
 #' @examples

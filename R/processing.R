@@ -3,10 +3,7 @@
 #' on fold level
 #'
 #' @importFrom stats na.omit
-#' @importFrom glue glue
-#'
 #' @keywords internal
-#' @importFrom purrr map
 #' @importFrom stringr str_replace_all
 #' @export
 
@@ -21,13 +18,13 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
                      is_factor_prediction = NULL, pooled_pred_test = NULL,
                      coords = NULL, test_fun = NULL, imp_one_rep = NULL,
                      do_gc = NULL, test_param = NULL, train_param = NULL) {
-  if (importance == FALSE) {
-    if (par_mode == "foreach" | par_mode == "sequential") {
-      if (progress == "TRUE" | progress == "all") {
-        cat(date(), "Repetition", i, "- Fold", j, "\n")
-      }
-    }
+  if (importance == FALSE && progress == TRUE | progress == "fold") {
+    cat(date(), "Repetition", i, "- Fold", j, "\n")
   }
+
+  # set global variables for R CMD Check
+  fold_number = NULL
+  repetition_number = NULL
 
   # append fid to data to enable tracking of observations
   data$fid <- seq(1:nrow(data))
@@ -146,8 +143,7 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
   }
 
   # remove NAs in data.frame if levels are missing
-  nd_test %>%
-    na.omit() -> nd_test
+  nd_test <- na.omit(nd_test)
 
   # Apply model to test sample:
   pargs <- c(list(object = fit, newdata = nd_test), pred_args)
@@ -159,7 +155,7 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
   rm(pargs)
 
   # Calculate error measures on test sample:
-  if (any(class(nd_test) == "tbl")) {
+  if (inherits(nd_test, "tbl")) {
     nd_test <- as.data.frame(nd_test) # nocov
   }
   current_res[[j]]$test <- tryCatch(err_fun(nd_test[, response], pred_test),
@@ -171,15 +167,18 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
   # check if err_fun() errored and provide informative error message
   if (is.na(current_res[[j]]$test[1])) {
 
-    message(glue("err_fun(): Error in error estimation.",
-      " Setting performance for repetition {repetition_number}",
-      " fold {fold_number} to NA.\n",
-      " Classification: This most likely happens if the response of",
-      " the test data does not contain all levels (due to spatial partitioning)",
-      " and AUROC is used as the error measure.",
-      " Try using a different number of folds or error measure.",
-      fold_number = j,
-      repetition_number = i
+    message(sprintf(
+      paste0(
+        "err_fun(): Error in error estimation.",
+        " Setting performance for repetition %s",
+        " fold %s to NA.\n",
+        " Classification: This most likely happens if the response of",
+        " the test data does not contain all levels (due to spatial partitioning)",
+        " and AUROC is used as the error measure.",
+        " Try using a different number of folds or error measure."
+      ),
+      fold_number,
+      repetition_number
     ))
 
     is_factor_prediction <<- is.factor(pred_test)
@@ -215,8 +214,7 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
     }
 
     # remove NAs in data.frame if levels are missing
-    nd_test %>%
-      na.omit() -> nd_test
+    nd_test = na.omit(nd_test)
 
     # does this ever happen??
     # nocov start
@@ -333,12 +331,11 @@ runreps <- function(current_sample = NULL, data = NULL, formula = NULL,
   # defined until here
   environment(runfolds) <- environment()
 
-  if (par_mode == "foreach" | par_mode == "sequential" &&
-    progress == TRUE | progress == "rep") {
+  if (progress == TRUE | progress == "rep") {
     cat(date(), "Repetition", i, "\n") # nocov
   }
 
-  map(seq_along(current_sample), function(rep) {
+  lapply(seq_along(current_sample), function(rep) {
     runfolds(
       j = rep, data = data, current_sample = current_sample,
       formula = formula, par_mode = par_mode, pred_fun = pred_fun,
@@ -419,19 +416,15 @@ runreps <- function(current_sample = NULL, data = NULL, formula = NULL,
     pooled_only$pooled_pred_train
   )
 
-  list(
+  current_pooled_error <- t(unlist(list(
     train = pooled_error_train,
     test = err_fun(
       pooled_only$pooled_obs_test,
       pooled_only$pooled_pred_test
     )
-  ) %>%
-    unlist() %>%
-    t() -> current_pooled_error
+  )))
 
-  current_pooled_error %>%
-    colnames() %>%
-    str_replace_all("[.]", "_") -> names
+  names <- str_replace_all(colnames(current_pooled_error), "[.]", "_")
   colnames(current_pooled_error) <- names
 
   if (do_gc >= 2) {

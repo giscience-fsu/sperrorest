@@ -49,9 +49,9 @@ while coercing its elements to \link{resampling} objects.
 Some validity checks are performed.
 }
 \examples{
-data(ecuador) # Muenchow et al. (2012), see ?ecuador
+# Muenchow et al. (2012), see ?ecuador
 # Partitioning by elevation classes in 200 m steps:
-fac <- factor( as.character( floor( ecuador$dem / 300 ) ) )
+fac <- factor(as.character(floor(ecuador$dem / 300)))
 summary(fac)
 parti <- as.resampling(fac)
 # a list of lists specifying sets of training and test sets,

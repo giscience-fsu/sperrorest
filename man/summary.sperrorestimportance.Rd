@@ -2,7 +2,7 @@
 % Please edit documentation in R/summary_functions.R
 \name{summary.sperrorestimportance}
 \alias{summary.sperrorestimportance}
-\title{Summarize variable importance statistics obtained by \code{sperrorest}}
+\title{Summarize variable importance statistics obtained by {sperrorest}}
 \usage{
 \method{summary}{sperrorestimportance}(object, level = 0, na.rm = TRUE, which = NULL, ...)
 }

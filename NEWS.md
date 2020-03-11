@@ -1,7 +1,18 @@
-# sperrorest 2.1.5.9000
+# sperrorest 3.0.0
 
-- Internal changes only.
+## Breaking
 
+- All parallel modes got removed in favor of using parallelism via package {future}.
+  This simplifies usage a lot and helps simplyifing future maintenance.
+  Also it gives users the freedom to choose the parallel backend on their own.
+- `sperrorest()` run sequentially by default again rather than in parallel.
+
+## Package infrastructure
+
+- Removed the following packages from Imports: {glue}, {purrr}, {doFuture}, {gdata}, {magrittr}, {parallel}, {pbapply}, {pbmcapply}, {foreach}
+- Moved the following packages from Imports to Suggests: {rpart}
+- Removed the following packages from Suggests: {pacman}, {ipred}
+- THe "spatial-use-case" vignette now runs and is not read-only anymore.
 
 # sperrorest 2.1.5 (20-Mar-2018)
 
@@ -66,7 +77,7 @@
 
 ## Bugfixes
   * partial matching of arguments
-  * account for factor levels only present in test data but missing in training data. Previously, `sperrorest` errored during the predict step when this case occured. Now, this is accounted for and an informative message is given. 
+  * account for factor levels only present in test data but missing in training data. Previously, {sperrorest} errored during the predict step when this case occured. Now, this is accounted for and an informative message is given. 
 
 # sperrorest 1.0.0 (08-Mar-2017)
 
@@ -81,11 +92,11 @@
   * `sperrorest()` and `parsperrorest()`: Add `benchmark` item to returned object giving information about execution time, used cores and other system details. 
   
 Changes to functions: 
-  * `sperrorest`(): Change argument naming. `err.unpooled` is now `error.fold` and `err.pooled` is now `error.rep`
+  * {sperrorest}(): Change argument naming. `err.unpooled` is now `error.fold` and `err.pooled` is now `error.rep`
   
   * `sperrorest()` and `parsperrorest()`: Change order and naming of returned object
       - class `sperrorestpoolederror` is now `sperrorestreperror`
-      - returned `sperrorest` list is now ordered as follows: 
+      - returned {sperrorest} list is now ordered as follows: 
            1. error.rep
            2. error.fold
            3. importance
@@ -99,7 +110,7 @@ Changes to functions:
   
   * package is now ByteCompiled
   
-  * Github repo of `sperrorest` now at 
+  * Github repo of {sperrorest} now at 
   [https://github.com/pat-s/sperrorest/](https://github.com/pat-s/sperrorest/)
   
 # sperrorest 0.2-1 (19 June 2012)

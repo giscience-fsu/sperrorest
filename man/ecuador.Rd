@@ -4,8 +4,10 @@
 \name{ecuador}
 \alias{ecuador}
 \title{J. Muenchow's Ecuador landslide data set}
-\format{a \code{data.frame} with point samples of landslide and
-non-landslide locations in a study area in the Andes of southern Ecuador.}
+\format{
+a \code{data.frame} with point samples of landslide and
+non-landslide locations in a study area in the Andes of southern Ecuador.
+}
 \description{
 Data set created by Jannes Muenchow, University of Erlangen-Nuremberg,
 Germany.
@@ -21,9 +23,9 @@ str(ecuador)
 library(rpart)
 ctrl <- rpart.control(cp = 0.02)
 fit <- rpart(slides ~ dem + slope + hcurv + vcurv +
-   log.carea + cslope, data = ecuador, control = ctrl)
+  log.carea + cslope, data = ecuador, control = ctrl)
 par(xpd = TRUE)
-plot(fit, compress = TRUE, main = 'Muenchows landslide data set')
+plot(fit, compress = TRUE, main = "Muenchows landslide data set")
 text(fit, use.n = TRUE)
 }
 \references{

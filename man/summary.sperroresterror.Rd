@@ -2,7 +2,7 @@
 % Please edit documentation in R/summary_functions.R
 \name{summary.sperroresterror}
 \alias{summary.sperroresterror}
-\title{Summarize error statistics obtained by \code{sperrorest}}
+\title{Summarize error statistics obtained by {sperrorest}}
 \usage{
 \method{summary}{sperroresterror}(object, level = 0, pooled = TRUE, na.rm = TRUE, ...)
 }

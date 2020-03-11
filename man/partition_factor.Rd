@@ -26,7 +26,7 @@ to be used for defining training and test samples.}
 
 \item{return_factor}{if \code{FALSE} (default), return a
 \link{represampling} object; if \code{TRUE} (used internally by
-other \code{sperrorest} functions), return a \code{list} containing factor
+other {sperrorest} functions), return a \code{list} containing factor
 vectors (see Value)}
 
 \item{repetition}{numeric vector: cross-validation repetitions
@@ -54,7 +54,7 @@ data(ecuador)
 breaks <- quantile(ecuador$dem, seq(0, 1, length = 6))
 ecuador$zclass <- cut(ecuador$dem, breaks, include.lowest = TRUE)
 summary(ecuador$zclass)
-parti <- partition_factor(ecuador, fac = 'zclass')
+parti <- partition_factor(ecuador, fac = "zclass")
 # plot(parti,ecuador)
 summary(parti)
 }

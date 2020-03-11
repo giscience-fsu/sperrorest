@@ -124,8 +124,8 @@ err_default <- function(obs, pred) {
       if (!is.vector(pred) && !is.matrix(pred)) {
         pred <- as.numeric(pred)
       }
-      predobj <- prediction(pred, obs) # nolint
-      auroc <- performance(predobj, measure = "auc")@y.values[[1]] # nolint
+      predobj <- ROCR::prediction(pred, obs) # nolint
+      auroc <- ROCR::performance(predobj, measure = "auc")@y.values[[1]] # nolint
       err <- list(auroc = auroc)
 
       pos <- levels(obs)[2]

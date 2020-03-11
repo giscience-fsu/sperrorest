@@ -1,4 +1,4 @@
-#' Summarize error statistics obtained by `sperrorest`
+#' Summarize error statistics obtained by {sperrorest}
 #'
 #' `summary.sperroresterror` calculates mean, standard deviation,
 #' median etc. of the calculated error measures at the specified level
@@ -6,11 +6,9 @@
 #' `summary.sperrorestreperror` does the same with the pooled error,
 #' at the overall or repetition level.
 #'
-#' @import rpart
 #' @importFrom stats IQR kmeans mad median predict
 #' rnorm runif sd terms weighted.mean
 #' @importFrom graphics par plot points
-#' @importFrom ROCR performance prediction
 #' @name summary.sperroresterror
 #' @method summary sperroresterror
 #'
@@ -152,7 +150,7 @@ summary.sperrorestreperror <- function(object, level = 0, na.rm = TRUE, ...) {
   return(object)
 }
 
-#' Summarize variable importance statistics obtained by `sperrorest`
+#' Summarize variable importance statistics obtained by {sperrorest}
 #'
 #' `summary.sperrorestimportance` calculated mean, standard deviation,
 #' median etc. of the calculated error measures at the specified level
