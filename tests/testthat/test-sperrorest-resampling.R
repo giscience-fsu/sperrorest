@@ -1,11 +1,8 @@
 context("sperrorest-resampling.R")
 
-library(sperrorest)
-
 # partition_cv() Mon Feb  6 21:57:08 2017 ------------------------------
 
 test_that("partition_cv() output is of correct length", {
-  skip_on_cran()
 
   data(ecuador)
   resamp <- partition_cv(ecuador, nfold = 5, repetition = 1:1)
@@ -15,7 +12,6 @@ test_that("partition_cv() output is of correct length", {
 # partition_cv.strat Mon Feb  6 21:58:20 2017 ------------------------------
 
 test_that("partition_cv.strat() output is of correct length", {
-  skip_on_cran()
 
   data(ecuador)
   parti <- partition_cv_strat(ecuador,
@@ -28,7 +24,6 @@ test_that("partition_cv.strat() output is of correct length", {
 # partition_factor() Mon Feb  6 22:01:05 2017 ------------------------------
 
 test_that("partition_factor() output is of correct length", {
-  skip_on_cran()
 
   data(ecuador)
   breaks <- quantile(ecuador$dem, seq(0, 1, length = 6))
@@ -40,7 +35,6 @@ test_that("partition_factor() output is of correct length", {
 # partition_factor_cv() Mon Feb  6 22:05:11 2017 ------------------------------
 
 test_that("partition_factor_cv() output is of correct length", {
-  skip_on_cran()
 
   breaks <- quantile(ecuador$dem, seq(0, 1, length = 6))
   ecuador$zclass <- cut(ecuador$dem, breaks, include.lowest = TRUE)
@@ -51,7 +45,6 @@ test_that("partition_factor_cv() output is of correct length", {
 # partition_tiles() Mon Feb  6 22:15:15 2017 ------------------------------
 
 test_that("partition_tiles() output is of correct length", {
-  skip_on_cran()
 
   data(ecuador)
   parti <- partition_tiles(ecuador, nsplit = c(4, 2), reassign = FALSE)
@@ -61,7 +54,6 @@ test_that("partition_tiles() output is of correct length", {
 # partition_kmeans() Mon Feb  6 22:21:09 2017 ------------------------------
 
 test_that("partition_kmeans() output is of correct length", {
-  skip_on_cran()
 
   data(ecuador)
   resamp <- partition_kmeans(ecuador, nfold = 5, repetition = 1:1)
@@ -71,7 +63,6 @@ test_that("partition_kmeans() output is of correct length", {
 # partition_disc() Mon Feb  6 22:22:34 2017 ------------------------------
 
 test_that("partition_disc() output is of correct length", {
-  skip_on_cran()
 
   data(ecuador)
   parti <- partition_disc(ecuador,
@@ -84,7 +75,6 @@ test_that("partition_disc() output is of correct length", {
 # partition_loo() Mon Feb  6 22:22:34 2017 ------------------------------
 
 test_that("partition_loo() output is of correct length", {
-  skip_on_cran()
 
   data(ecuador)
   parti <- partition_loo(ecuador,
@@ -97,13 +87,11 @@ test_that("partition_loo() output is of correct length", {
 # represampling_bootstrap() Mon Feb  6 22:29:03 2017 ---------------------------
 
 test_that("represampling_bootstrap() output is of correct length()", {
-  skip_on_cran()
 
   data(ecuador)
   parti <- represampling_bootstrap(ecuador, repetition = 1)
   expect_equal(length(parti[[1]][[1]]), 2)
 })
-
 
 # represampling_factor_bootstrap() Mon Feb  6 22:36:10 2017 --------------------
 
@@ -121,7 +109,6 @@ test_that("represampling_factor_bootstrap() output is of correct length()", {
 # represampling_tile_bootstrap() Mon Feb  6 22:39:26 2017 ----------------------
 
 test_that("represampling_tile_bootstrap() output is of correct length()", {
-  skip_on_cran()
 
   data(ecuador)
   parti <- represampling_tile_bootstrap(ecuador,
@@ -134,7 +121,6 @@ test_that("represampling_tile_bootstrap() output is of correct length()", {
 # represampling_kmeans_bootstrap() Mon Feb  6 22:44:53 2017 --------------------
 
 test_that("represampling_kmeans_bootstrap() output is of correct length()", {
-  skip_on_cran()
 
   data(ecuador)
   parti <- represampling_kmeans_bootstrap(ecuador,
@@ -148,7 +134,6 @@ test_that("represampling_kmeans_bootstrap() output is of correct length()", {
 # represampling_disc_bootstrap() Mon Feb  6 22:52:28 2017 ----------------------
 
 test_that("represampling_disc_bootstrap() output is of correct length()", {
-  skip_on_cran()
 
   data(ecuador)
   parti <- represampling_disc_bootstrap(ecuador,

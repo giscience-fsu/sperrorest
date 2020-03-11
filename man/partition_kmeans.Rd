@@ -70,7 +70,6 @@ Default parameter settings may change in future releases.
 data(ecuador)
 resamp <- partition_kmeans(ecuador, nfold = 5, repetition = 2)
 # plot(resamp, ecuador)
-
 }
 \references{
 Brenning, A., Long, S., & Fieguth, P. (2012).

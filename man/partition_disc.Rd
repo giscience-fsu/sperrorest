@@ -80,8 +80,10 @@ would fall within the test area disc.
 }
 \examples{
 data(ecuador)
-parti <- partition_disc(ecuador, radius = 200, buffer = 200,
-                        ndisc = 5, repetition = 1:2)
+parti <- partition_disc(ecuador,
+  radius = 200, buffer = 200,
+  ndisc = 5, repetition = 1:2
+)
 # plot(parti,ecuador)
 summary(parti)
 

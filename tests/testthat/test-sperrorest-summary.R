@@ -1,28 +1,22 @@
 context("sperrorest-summary.R")
 
-Sys.setenv(R_TESTS = "")
-
-pacman::p_load(sperrorest, rpart, testthat, MASS)
+library("MASS")
+library("rpart")
 
 # sperrorest() binary response Wed Feb  8 21:40:49 2017 ------------------------
 
 test_that("sperrorest() produces correct output for binary response", {
-  skip_on_cran()
-
   data(ecuador) # Muenchow et al. (2012), see ?ecuador
   fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
 
-  nspres <- sperrorest(
+  nspres <- suppressWarnings(sperrorest(
     data = ecuador, formula = fo,
     model_fun = glm, model_args = list(family = "binomial"),
     pred_fun = predict, pred_args = list(type = "response"),
-    par_args = list(
-      par_mode = "foreach",
-      par_units = 2
-    ),
     smp_fun = partition_cv,
-    smp_args = list(repetition = 1:2, nfold = 2)
-  )
+    smp_args = list(repetition = 1:2, nfold = 2),
+    progress = FALSE
+  ))
   summary_rep <- summary(nspres$error_rep)
   summary_fold <- summary(nspres$error_fold)
   summary_resampling <- summary(nspres$represampling)
@@ -39,8 +33,6 @@ test_that("sperrorest() produces correct output for binary response", {
 # sperorrest() continuous response Wed Feb  8 22:19:57 2017 --------------------
 
 test_that("sperrorest() produces correct output for binary response", {
-  skip_on_cran()
-
   data(ecuador) # Muenchow et al. (2012), see ?ecuador
   fo <- slope ~ hcurv + vcurv + log.carea + cslope
 
@@ -50,12 +42,9 @@ test_that("sperrorest() produces correct output for binary response", {
     pred_fun = predict,
     smp_fun = partition_cv,
     smp_args = list(repetition = 1:2, nfold = 2),
-    par_args = list(
-      par_mode = "foreach",
-      par_units = 2
-    ),
     benchmark = TRUE,
-    importance = TRUE, imp_permutations = 2
+    importance = TRUE, imp_permutations = 2,
+    progress = FALSE
   )
   summary_rep <- summary(nspres$error_rep)
   summary_fold <- summary(nspres$error_fold)
@@ -75,8 +64,6 @@ test_that("sperrorest() produces correct output for binary response", {
 # pred_fun = NULL response Wed Feb  8 22:19:57 2017 ----------------------------
 
 test_that("sperrorest() produces correct output for binary response", {
-  skip_on_cran()
-
   data(ecuador) # Muenchow et al. (2012), see ?ecuador
   fo <- slope ~ hcurv + vcurv + log.carea + cslope
 
@@ -85,11 +72,8 @@ test_that("sperrorest() produces correct output for binary response", {
     model_fun = glm,
     smp_fun = partition_cv,
     smp_args = list(repetition = 1:2, nfold = 2),
-    par_args = list(
-      par_mode = "foreach",
-      par_units = 2
-    ),
-    importance = TRUE, imp_permutations = 2
+    importance = TRUE, imp_permutations = 2,
+    progress = FALSE
   )
 
   expect_equal(length(nspres$error_rep[[1]]), 2) # reps
@@ -99,8 +83,6 @@ test_that("sperrorest() produces correct output for binary response", {
 
 test_that("summary.sperroresterror() produces correct output for binary
           response", {
-  skip_on_cran()
-
   data(ecuador) # Muenchow et al. (2012), see ?ecuador
   fo <- slope ~ hcurv + vcurv + log.carea + cslope
 
@@ -109,11 +91,8 @@ test_that("summary.sperroresterror() produces correct output for binary
     model_fun = glm,
     pred_fun = predict,
     smp_fun = partition_cv,
-    par_args = list(
-      par_mode = "foreach",
-      par_units = 2
-    ),
-    smp_args = list(repetition = 1:2, nfold = 2)
+    smp_args = list(repetition = 1:2, nfold = 2),
+    progress = FALSE
   )
 
   summary_rep1 <- summary(nspres$error_rep, pooled = FALSE)
@@ -129,8 +108,6 @@ test_that("summary.sperroresterror() produces correct output for binary
 
 test_that("summary.sperroresterror() with pooled = FALSE produces correct
           output for binary response", {
-  skip_on_cran()
-
   data(ecuador) # Muenchow et al. (2012), see ?ecuador
   fo <- slope ~ hcurv + vcurv + log.carea + cslope
 
@@ -139,12 +116,9 @@ test_that("summary.sperroresterror() with pooled = FALSE produces correct
     model_fun = glm,
     pred_fun = predict,
     smp_fun = partition_cv,
-    par_args = list(
-      par_mode = "foreach",
-      par_units = 2
-    ),
     smp_args = list(repetition = 1:2, nfold = 2),
-    importance = TRUE, imp_permutations = 2
+    importance = TRUE, imp_permutations = 2,
+    progress = FALSE
   )
 
   summary_imp <- summary(nspres$importance)
@@ -164,7 +138,8 @@ test_that("deprecated args", {
     pred_fun = predict,
     smp_fun = partition_cv,
     smp_args = list(repetition = 1:2, nfold = 2),
-    predfun = NULL
+    predfun = NULL,
+    progress = FALSE
   ))
 
   expect_error(sperrorest(
@@ -173,7 +148,8 @@ test_that("deprecated args", {
     pred_fun = predict,
     smp_fun = partition_cv,
     smp_args = list(repetition = 1:2, nfold = 2),
-    silent = NULL
+    silent = NULL,
+    progress = FALSE
   ))
 
   expect_error(sperrorest(
@@ -182,7 +158,8 @@ test_that("deprecated args", {
     pred_fun = predict,
     smp_fun = partition_cv,
     smp_args = list(repetition = 1:2, nfold = 2),
-    err.pooled = NULL
+    err.pooled = NULL,
+    progress = FALSE
   ))
   expect_error(sperrorest(
     data = ecuador, formula = fo,
@@ -190,7 +167,8 @@ test_that("deprecated args", {
     pred_fun = predict,
     smp_fun = partition_cv,
     smp_args = list(repetition = 1:2, nfold = 2),
-    err.unpooled = NULL
+    err.unpooled = NULL,
+    progress = FALSE
   ))
 })
 
@@ -200,26 +178,23 @@ test_that("deprecated args", {
 
 test_that("sperrorest() produces correct output for binary response for
           non-default arguments", {
-  skip_on_cran()
-
   data(ecuador) # Muenchow et al. (2012), see ?ecuador
   fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
 
-  nspres <- sperrorest(
-    data = ecuador, formula = fo,
-    model_fun = glm,
-    model_args = list(family = "binomial"),
-    pred_fun = predict,
-    pred_args = list(type = "response"),
-    par_args = list(
-      par_mode = "foreach",
-      par_units = 2
-    ),
-    smp_fun = partition_cv,
-    smp_args = list(repetition = 1:2, nfold = 2),
-    benchmark = F,
-    importance = TRUE, imp_permutations = 2,
-    do_gc = 2
+  nspres <- suppressWarnings(
+    sperrorest(
+      data = ecuador, formula = fo,
+      model_fun = glm,
+      model_args = list(family = "binomial"),
+      pred_fun = predict,
+      pred_args = list(type = "response"),
+      smp_fun = partition_cv,
+      smp_args = list(repetition = 1:2, nfold = 2),
+      benchmark = FALSE,
+      importance = TRUE, imp_permutations = 2,
+      do_gc = 2,
+      progress = FALSE
+    )
   )
 
   expect_equal(length(nspres$error_rep[[1]]), 2) # reps
@@ -240,13 +215,10 @@ test_that("summary.sperrorest() works correctly", {
     data = ecuador, formula = fo,
     model_fun = glm,
     pred_fun = predict,
-    par_args = list(
-      par_mode = "foreach",
-      par_units = 2
-    ),
     smp_fun = partition_cv,
     smp_args = list(repetition = 1:2, nfold = 2),
-    importance = T, imp_permutations = 2, benchmark = T
+    importance = TRUE, imp_permutations = 2, benchmark = TRUE,
+    progress = FALSE
   )
 
   smry_out <- summary(out)
@@ -291,10 +263,6 @@ test_that("is_factor_prediction object for classification models", {
     data = maipo, coords = c("utmx", "utmy"),
     model_fun = lda,
     pred_fun = lda_predfun,
-    par_args = list(
-      par_mode = "foreach",
-      par_units = 2
-    ),
     smp_fun = partition_cv,
     smp_args = list(repetition = 1:2, nfold = 2),
     benchmark = FALSE, progress = FALSE

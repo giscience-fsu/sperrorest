@@ -15,52 +15,63 @@ vignette: >
 ---
 ```{r, echo=FALSE, cache=FALSE, results='hide'}
 library(knitr)
-opts_chunk$set(cache = FALSE,
-               eval = FALSE, 
-               fig.align = "center",
-               collapse = TRUE,
-               fig.width = 4,
-               fig.height = 5)
+opts_chunk$set(
+  cache = FALSE,
+  eval = FALSE,
+  fig.align = "center",
+  collapse = TRUE,
+  fig.width = 4,
+  fig.height = 5
+)
 opts_knit$set(width = 125)
 options(digits = 3)
 ```
 
-# Introduction
+## Introduction
 
-Geospatial data scientists often make use of a variety of statistical and machine learning techniques for spatial prediction in applications such as landslide susceptibility modeling [@Goetz2015] or habitat modeling [@Knudby2010]. Novel and often more flexible techniques promise improved predictive performances as they are better able to represent nonlinear relationships or higher-order interactions between predictors than less flexible linear models.
+Geospatial data scientists often make use of a variety of statistical and machine learning techniques for spatial prediction in applications such as landslide susceptibility modeling [@Goetz2015] or habitat modeling [@Knudby2010]. 
+Novel and often more flexible techniques promise improved predictive performances as they are better able to represent nonlinear relationships or higher-order interactions between predictors than less flexible linear models.
 
-Nevertheless, this increased flexibility comes with the risk of possible over-fitting to the training data. Since nearby spatial observations often tend to be more similar than distant ones, traditional random cross-validation is unable to detect this over-fitting whenever spatial observations are close to each other (e.g. @Brenning2005). Spatial cross-validation addresses this by resampling the data not completely randomly, but using larger spatial regions. In some cases, spatial data is grouped, e.g. in remotely-sensed land use mapping grid cells belonging to the same field share the same management procedures and cultivation history, making them more similar to each other than to pixels from other fields with the same crop type.
+Nevertheless, this increased flexibility comes with the risk of possible over-fitting to the training data. Since nearby spatial observations often tend to be more similar than distant ones, traditional random cross-validation is unable to detect this over-fitting whenever spatial observations are close to each other (e.g. @Brenning2005). 
+Spatial cross-validation addresses this by resampling the data not completely randomly, but using larger spatial regions. 
+In some cases, spatial data is grouped, e.g. in remotely-sensed land use mapping grid cells belonging to the same field share the same management procedures and cultivation history, making them more similar to each other than to pixels from other fields with the same crop type.
 
-This package provides a customizable toolkit for cross-validation (and bootstrap) estimation using a variety of spatial resampling schemes. More so, this toolkit can even be extended to spatio-temporal data or other complex data structures. This vignette will walk you through a simple case study, crop classification in central Chile [@Pena2015].
+This package provides a customizable toolkit for cross-validation (and bootstrap) estimation using a variety of spatial resampling schemes. 
+More so, this toolkit can even be extended to spatio-temporal data or other complex data structures. This vignette will walk you through a simple case study, crop classification in central Chile [@Pena2015].
 
-This vignette is based on code that Alex Brenning developed for his course on 'Environmental Statistics and GeoComputation' that he teaches in the [Geographic Information Science Master's program](http://www.geographie.uni-jena.de/Studium/Studierende/Studiengänge/Master+of+Science+Geoinformatik+.html) at Friedrich Schiller University Jena, Germany. Please take a look at our program and spread the word! 
+This vignette is based on code that Alex Brenning developed for his course on 'Environmental Statistics and GeoComputation' that he teaches in the [Geographic Information Science Master's program](http://www.geographie.uni-jena.de/Studium/Studierende/Studiengänge/Master+of+Science+Geoinformatik+.html) at Friedrich Schiller University Jena, Germany. 
+Please take a look at our program and spread the word! 
 
-# Data and Packages
+## Data and Packages
 
-As a case study we will carry out a supervised classification analysis using remotely-sensed data to predict fruit-tree crop types in central Chile. This data set is a subsample of data from [@Pena2015].
+As a case study we will carry out a supervised classification analysis using remotely-sensed data to predict fruit-tree crop types in central Chile.
+This data set is a subsample of data from [@Pena2015].
 
 ```{r, message=FALSE}
-library(pacman)
-p_load(sperrorest)
+library("sperrorest")
 ```
 
 ```{r}
 data("maipo", package = "sperrorest")
 ```
 
-The remote-sensing predictor variables were derived from an image times series consisting of eight Landsat images acquired throughout the (southern hemisphere) growing season. The data set includes the following variables:
+The remote-sensing predictor variables were derived from an image times series consisting of eight Landsat images acquired throughout the (southern hemisphere) growing season.
+The data set includes the following variables:
 
-**Response**  
-- `croptype`: response variable (factor) with 4 levels: ground truth information  
+**Response**
 
-**Predictors**  
-- `b`[12-87]: spectral data, e.g. b82 = image date #8, spectral band #2  
-- `ndvi`[01-08]: Normalized Difference Vegetation Index, e.g. #8 = image date #8  
-- `ndwi`[01-08]: Normalized Difference Water Index, e.g. #8 = image date #8  
+- `croptype`: response variable (factor) with 4 levels: ground truth information
 
-**Others**  
-- `field`: field identifier (grouping variable - not to be used as predictor)  
-- `utmx`, `utmy`: x/y location; not to be used as predictors  
+**Predictors**
+
+- `b`[12-87]: spectral data, e.g. b82 = image date #8, spectral band #2 
+- `ndvi`[01-08]: Normalized Difference Vegetation Index, e.g. #8 = image date #8
+- `ndwi`[01-08]: Normalized Difference Water Index, e.g. #8 = image date #8
+
+**Others**
+
+- `field`: field identifier (grouping variable - not to be used as predictor)
+- `utmx`, `utmy`: x/y location; not to be used as predictors
 
 All but the first four variables of the data set are predictors; their names are used to construct a formula object:
 
@@ -70,20 +81,24 @@ predictors <- colnames(maipo)[5:ncol(maipo)]
 fo <- as.formula(paste("croptype ~", paste(predictors, collapse = "+")))
 ```
 
-# Modeling
+## Modeling
 
-Here we will take a look at a few classification methods with varying degrees of computational complexity and flexibility. This should give you an idea of how different models are handled by `sperrorest`, depending on the characteristics of their fitting and prediction methods. Please refer to [@James2013] for background information on the models used here.
+Here we will take a look at a few classification methods with varying degrees of computational complexity and flexibility.
+This should give you an idea of how different models are handled by {sperrorest}, depending on the characteristics of their fitting and prediction methods.
+Please refer to [@James2013] for background information on the models used here.
 
-## Linear Discriminant Analysis (LDA)
+### Linear Discriminant Analysis (LDA)
 
-LDA is simple and fast, and often performs surprisingly well if the problem at hand is 'linear enough'. As a start, let's fit a model with all predictors and using all available data:
+LDA is simple and fast, and often performs surprisingly well if the problem at hand is 'linear enough'.
+As a start, let's fit a model with all predictors and using all available data:
 
 ```{r}
-p_load(MASS)
+library(MASS)
 fit <- lda(fo, data = maipo)
 ```
 
 Predict the croptype with the fitted model and calculate the misclassification error rate (MER) on the training sample:
+
 ```{r}
 pred <- predict(fit, newdata = maipo)$class
 mean(pred != maipo$croptype)
@@ -93,9 +108,11 @@ mean(pred != maipo$croptype)
 ## [1] 0.0437
 ```
 
-But remember that this result is over-optimistic because we are re-using the training sample for model evaluation. We will soon show you how to do better with cross-validation.
+But remember that this result is over-optimistic because we are re-using the training sample for model evaluation.
+We will soon show you how to do better with cross-validation.
 
 We can also take a look at the confusion matrix but again, this result is overly optimistic:
+
 ```{r}
 table(pred = pred, obs = maipo$croptype)
 ```
@@ -111,10 +128,11 @@ table(pred = pred, obs = maipo$croptype)
 
 ## Classification Tree
 
-Classification and regression trees (CART) take a completely different approach---they are based on yes/no questions in the predictor variables and can be referred to as a binary partitioning technique. Fit a model with all predictors and default settings:
+Classification and regression trees (CART) take a completely different approach---they are based on yes/no questions in the predictor variables and can be referred to as a binary partitioning technique. 
+Fit a model with all predictors and default settings:
 
 ```{r, message=FALSE}
-p_load(rpart)
+library("rpart")
 ```
 
 ```{r}
@@ -127,6 +145,7 @@ fit <- rpart(fo, data = maipo)
 ```
 
 Again, predict the croptype with the fitted model and calculate the average MER:
+
 ```{r}
 pred <- predict(fit, newdata = maipo, type = "class")
 mean(pred != maipo$croptype)
@@ -151,12 +170,14 @@ table(pred = pred, obs = maipo$croptype)
 ##   crop4   100   227   116  2950
 ```
 
-## RandomForest 
+### RandomForest
 
-Bagging, bundling and random forests build upon the CART technique by fitting many trees on bootstrap resamples of the original data set [@Breiman1996] [@Breiman2001] [@Hothorn2005]. They differ in that random forest also samples from the predictors, and bundling adds an ancillary classifier for improved classification. We will use the nowadays widely used `randomForest()` here.
+Bagging, bundling and random forests build upon the CART technique by fitting many trees on bootstrap resamples of the original data set [@Breiman1996] [@Breiman2001] [@Hothorn2005]. 
+They differ in that random forest also samples from the predictors, and bundling adds an ancillary classifier for improved classification. 
+We will use the nowadays widely used `randomForest()` here.
 
 ```{r, message=FALSE}
-p_load(randomForest)
+library("randomForest")
 ```
 
 ```{r}
@@ -181,8 +202,8 @@ fit
 ## crop4     7     5     3  3165     0.00472
 ```
 
+Let's take a look at the  MER achieved on the training sample:
 
-Let's take a look at the  MER achieved on the training sample: 
 ```{r}
 pred <- predict(fit, newdata = maipo, type = "class")
 mean(pred != maipo$croptype)
@@ -191,7 +212,6 @@ mean(pred != maipo$croptype)
 ```
 ## [1] 0
 ```
-
 
 ```{r}
 table(pred = pred, obs = maipo$croptype)
@@ -206,53 +226,64 @@ table(pred = pred, obs = maipo$croptype)
 ##   crop4     0     0     0  3180
 ```
 
-Isn't this amazing? Only one grid cell is misclassified by the bagging classifier! Even the OOB (out-of-bag) estimate of the error rate is < 1%.  
+Isn't this amazing? 
+Only one grid cell is misclassified by the bagging classifier! 
+Even the OOB (out-of-bag) estimate of the error rate is < 1%.
 Too good to be true? We'll see...
 
-# Cross-Validation Estimation of Predictive Performance
+## Cross-Validation Estimation of Predictive Performance
 
-Of course we can't take the MER on the training set too seriously---it is biased. But we've heard of cross-validation, in which disjoint subsets are used for model training and testing. Let's use `sperrorest` for cross-validation.
+Of course we can't take the MER on the training set too seriously---it is biased.
+But we've heard of cross-validation, in which disjoint subsets are used for model training and testing.
+Let's use {sperrorest} for cross-validation.
 
-Also, at this point we should highlight that the observations in this data set are pixels, and multiple grid cells belong to the same field. In a predictive situation, and when field boundaries are known (as is the case here), we would want to predict the same class for all grid cells that belong to the same field. Here we will use a majority filter. This filter ensures that the final predicted class type of every field is the most often predicted croptype within one field. 
+Also, at this point we should highlight that the observations in this data set are pixels, and multiple grid cells belong to the same field.
+In a predictive situation, and when field boundaries are known (as is the case here), we would want to predict the same class for all grid cells that belong to the same field. Here we will use a majority filter. 
+This filter ensures that the final predicted class type of every field is the most often predicted croptype within one field. 
 
-## Linear Discriminant Analysis (LDA)
+### Linear Discriminant Analysis (LDA)
 
-First, we need to create a wrapper predict method for LDA for `sperrorest()`. This is necessary in order to accomodate the majority filter, and also because class predictions from `lda`'s predict method are hidden in the `$class` component of the returned object.
+First, we need to create a wrapper predict method for LDA for `sperrorest()`.
+This is necessary in order to accomodate the majority filter, and also because class predictions from `lda`'s predict method are hidden in the `$class` component of the returned object.
 
 ```{r}
 lda_predfun <- function(object, newdata, fac = NULL) {
-  
-  p_load(nnet)
+
+  library(nnet)
   majority <- function(x) {
     levels(x)[which.is.max(table(x))]
   }
-  
+
   majority_filter <- function(x, fac) {
     for (lev in levels(fac)) {
       x[fac == lev] <- majority(x[fac == lev])
     }
     x
   }
-  
+
   pred <- predict(object, newdata = newdata)$class
-  if (!is.null(fac)) pred <- majority_filter(pred, newdata[, fac]) 
+  if (!is.null(fac)) pred <- majority_filter(pred, newdata[, fac])
   return(pred)
 }
 ```
 
-To ensure that custom predict-functions will work with `sperrorest()`, we need to wrap all custom functions in one single function. Otherwise, `sperrorest()` might fail during execution.
+To ensure that custom predict-functions will work with `sperrorest()`, we need to wrap all custom functions in one single function.
+Otherwise, `sperrorest()` might fail during execution.
 
-Finally, we can run `sperrorest()` with a non-spatial sampling setting (`partition_cv()`). In this example we use a '100 repetitions - 5 folds' setup to reduce the influence of random partitioning.
+Finally, we can run `sperrorest()` with a non-spatial sampling setting (`partition_cv()`).
+In this example we use a '100 repetitions - 5 folds' setup to reduce the influence of random partitioning.
 
 ```{r}
-res_lda_nsp <- sperrorest(fo, data = maipo, coords = c("utmx","utmy"), 
-                          model_fun = lda,
-                          pred_fun = lda_predfun, 
-                          pred_args = list(fac = "field"),
-                          smp_fun = partition_cv, 
-                          smp_args = list(repetition = 1:100, nfold = 5),
-                          error_rep = TRUE, error_fold = TRUE,
-                          progress = FALSE)
+res_lda_nsp <- sperrorest(fo,
+  data = maipo, coords = c("utmx", "utmy"),
+  model_fun = lda,
+  pred_fun = lda_predfun,
+  pred_args = list(fac = "field"),
+  smp_fun = partition_cv,
+  smp_args = list(repetition = 1:100, nfold = 5),
+  error_rep = TRUE, error_fold = TRUE,
+  progress = FALSE
+)
 ```
 
 ```{r}
@@ -271,20 +302,24 @@ summary(res_lda_nsp$error_rep)
 ## test_count     7.71e+03 0.000 7.71e+03 0.000
 ```
 
-To run a spatial cross-validation at the field level, we can use `partition_factor_cv()` as the sampling function. Since we are using 5 folds, we get a coarse 80/20 split of our data. 80% will be used for training, 20% for testing our trained model.
+To run a spatial cross-validation at the field level, we can use `partition_factor_cv()` as the sampling function.
+Since we are using 5 folds, we get a coarse 80/20 split of our data.
+80% will be used for training, 20% for testing our trained model.
 
-To take a look where our training and tests sets will be partitioned on each fold, we can plot them. The red colored points represent the test set in each fold, the black colored points the training set. Note that because we plotted over 7000 points, overplotting occurs and since the red crosses are plotted after the black ones, it seems visually that way more than ~20% of red points exist than it is really the case. 
+To take a look where our training and tests sets will be partitioned on each fold, we can plot them.
+The red colored points represent the test set in each fold, the black colored points the training set.
+Note that because we plotted over 7000 points, overplotting occurs and since the red crosses are plotted after the black ones, it seems visually that way more than ~20% of red points exist than it is really the case. 
 
 ```{r , echo = FALSE}
 png(filename = "../inst/figure/resamp-plot.png", width = 7, height = 3, units = "in", res = 90)
 resamp <- partition_factor_cv(maipo, nfold = 5, repetition = 1:1, fac = "field")
-plot(resamp, maipo, coords = c("utmx","utmy"))
+plot(resamp, maipo, coords = c("utmx", "utmy"))
 dev.off()
 ```
 
 ```{r }
 resamp <- partition_factor_cv(maipo, nfold = 5, repetition = 1:1, fac = "field")
-plot(resamp, maipo, coords = c("utmx","utmy"))
+plot(resamp, maipo, coords = c("utmx", "utmy"))
 ```
 
 ![](https://raw.githubusercontent.com/pat-s/sperrorest/master/man/figures/resamp-plot.png)
@@ -292,14 +327,16 @@ plot(resamp, maipo, coords = c("utmx","utmy"))
 Subsequently, we have to specify the location of the fields (`fac = "field"`) in the prediction arguments (`pred_args`) and sampling arguments (`smp_args`) in `sperrorest()`.
 
 ```{r sperro-lda}
-res_lda_sp <- sperrorest(fo, data = maipo, coords = c("utmx","utmy"), 
-                         model_fun = lda,
-                         pred_fun = lda_predfun, 
-                         pred_args = list(fac = "field"),
-                         smp_fun = partition_factor_cv,
-                         smp_args = list(fac = "field", repetition = 1:50, nfold = 5),
-                         error_rep = TRUE, error_fold = TRUE, 
-                         benchmark = TRUE, progress = FALSE)
+res_lda_sp <- sperrorest(fo,
+  data = maipo, coords = c("utmx", "utmy"),
+  model_fun = lda,
+  pred_fun = lda_predfun,
+  pred_args = list(fac = "field"),
+  smp_fun = partition_factor_cv,
+  smp_args = list(fac = "field", repetition = 1:50, nfold = 5),
+  error_rep = TRUE, error_fold = TRUE,
+  benchmark = TRUE, progress = FALSE
+)
 res_lda_sp$benchmark$runtime_performance
 ```
 
@@ -319,58 +356,27 @@ summary(res_lda_sp$error_rep)
 ## test_count     7.71e+03 0.00000 7.71e+03 0.00000
 ```
 
-<!-- In order to speed up the calculation on a multicore CPU, we can use `sperrorest()`. Here an example using two cores: -->
-<!-- ```{r} -->
-
-<!-- #### läuft nicht, da 'out.of.bounds' error wenn partition_factor_cv + custom pred_fun -->
-
-<!-- res_lda_sp.par <- sperrorest(fo, data = maipo, coords = c("utmx","utmy"), -->
-<!--                                 model_fun = lda, -->
-<!--                                 pred_fun = lda_predfun, -->
-<!--                                 pred_args = list(fac = "field"), -->
-<!--                                 smp_fun = partition_factor_cv, -->
-<!--                                 smp_args = list(fac = "field", repetition = 1:6, nfold = 5), -->
-<!--                                 par.args = list(par_units = 2, par_mode = 2), -->
-<!--                                 error_rep = TRUE, error_fold = TRUE, -->
-<!--                                 benchmark = TRUE) -->
-<!-- res_lda_sp.par$benchmark$runtime_performance -->
-<!-- ``` -->
-
-
-<!-- ```{r} -->
-<!-- res.lda.par <- sperrorest(fo, data = maipo, coords = c("utmx","utmy"),  -->
-<!--                                model_fun = lda, -->
-<!--                                pred_fun = lda_predfun,  -->
-<!--                                pred_args = list(fac = "field"), -->
-<!--                                smp_fun = partition_cv, -->
-<!--                                smp_args = list(repetition = 1:6, nfold = 5), -->
-<!--                                par.args = list(par_units = 2, par_mode = 2), -->
-<!--                                error_rep = TRUE, error_fold = TRUE, -->
-<!--                                benchmark = TRUE) -->
-<!-- res.lda.par$benchmark$runtime_performance -->
-<!-- ``` -->
-
-## RandomForest
+### RandomForest
 
 In the case of Random Forest, the customized `pred_fun` looks as follows; it is only required because of the majority filter, without it, we could just omit the `pred_fun` and `pred_args` arguments below. 
 
 ```{r def-rf-predfun}
 rf_predfun <- function(object, newdata, fac = NULL) {
-  
-  p_load(nnet)
+
+  library(nnet)
   majority <- function(x) {
     levels(x)[which.is.max(table(x))]
   }
-  
+
   majority_filter <- function(x, fac) {
     for (lev in levels(fac)) {
       x[fac == lev] <- majority(x[fac == lev])
     }
     x
   }
-  
+
   pred <- predict(object, newdata = newdata)
-  if (!is.null(fac)) pred <- majority_filter(pred, newdata[,fac]) 
+  if (!is.null(fac)) pred <- majority_filter(pred, newdata[, fac])
   return(pred)
 }
 ```
@@ -378,15 +384,19 @@ rf_predfun <- function(object, newdata, fac = NULL) {
 Running `sperrorest()` takes some time here (Test machine: 3,2 Ghz Intel I-5 with 4 physical cores). 
 
 ```{r sperro-rf}
-res_rf_sp <- sperrorest(fo, data = maipo, coords = c("utmx","utmy"), 
-                        model_fun = randomForest,
-                        pred_fun = rf_predfun,
-                        pred_args = list(fac = "field"),
-                        smp_fun = partition_factor_cv,
-                        smp_args = list(fac = "field",
-                                        repetition = 1:50, nfold = 5),
-                        error_rep = TRUE, error_fold = TRUE,
-                        benchmark = TRUE, progress = 2)
+res_rf_sp <- sperrorest(fo,
+  data = maipo, coords = c("utmx", "utmy"),
+  model_fun = randomForest,
+  pred_fun = rf_predfun,
+  pred_args = list(fac = "field"),
+  smp_fun = partition_factor_cv,
+  smp_args = list(
+    fac = "field",
+    repetition = 1:50, nfold = 5
+  ),
+  error_rep = TRUE, error_fold = TRUE,
+  benchmark = TRUE, progress = 2
+)
 ```
 
 ```
@@ -464,16 +474,17 @@ summary(res_rf_sp$error_rep$test_accuracy)
 ##   0.890   0.907   0.913   0.913   0.917   0.937
 ```
 
-What a surprise! RandomForest classification isn't that good after all, if we acknowledge that in 'real life' we wouldn't be making predictions in situations where the class membership of other grid cells in the same field is known in the training stage. So spatial dependence does matter.
+What a surprise! RandomForest classification isn't that good after all, if we acknowledge that in 'real life' we wouldn't be making predictions in situations where the class membership of other grid cells in the same field is known in the training stage.
+So spatial dependence does matter.
 
-# Usage Advices
+## Usage Advices
 
-Given all the different sampling functions and the required custom predict functions (e.g. `rf_predfun()`) in this example, you might be a little confused which function to use for your use case.  
-If you want to do a "normal", i.e. **non-spatial cross-validation** we recommend to use `partition_cv()` as `smp_fun` in `sperrorest()`. 
-If you want to perform a **spatial cross-validation** (and you do not have a grouping structure like fields in this example), `partition_kmeans()` takes care of spatial partitioning. 
-In most cases you can simply use the generic `predict()` method for your model (= skip this argument in `sperrorest()`). Check our "custom model and predict functions" vignette for more information on cases where adjustments are needed.
+Given all the different sampling functions and the required custom predict functions (e.g. `rf_predfun()`) in this example, you might be a little confused which function to use for your use case.
+If you want to do a "normal", i.e. **non-spatial cross-validation** we recommend to use `partition_cv()` as `smp_fun` in `sperrorest()`.
+If you want to perform a **spatial cross-validation** (and you do not have a grouping structure like fields in this example), `partition_kmeans()` takes care of spatial partitioning.
+In most cases you can simply use the generic `predict()` method for your model (= skip this argument in `sperrorest()`).
+Check our "custom model and predict functions" vignette for more information on cases where adjustments are needed.
 
-For further questions/issues, please open an issue at our [Github repo](https://github.com/pat-s/sperrorest).
+For further questions/issues, please open an issue at our [Github repo](https://github.com/giscience-fsu/sperrorest).
 
-
-# References
+## References

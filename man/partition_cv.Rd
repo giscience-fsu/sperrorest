@@ -67,9 +67,9 @@ data(ecuador)
 resamp <- partition_cv(ecuador, nfold = 5, repetition = 5)
 # plot(resamp, ecuador)
 # first repetition, second fold, test set indices:
-idx <- resamp[['1']][[2]]$test
+idx <- resamp[["1"]][[2]]$test
 # test sample used in this particular repetition and fold:
-ecuador[idx , ]
+ecuador[idx, ]
 }
 \seealso{
 \link{sperrorest}, \link{represampling}

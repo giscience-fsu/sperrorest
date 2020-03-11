@@ -51,7 +51,6 @@ is applied to this vector.
 \examples{
 df <- data.frame(x = rnorm(100), y = rnorm(100))
 dataset_distance(df, df) # == 0
-
 }
 \seealso{
 \link{add.distance}

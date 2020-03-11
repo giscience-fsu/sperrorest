@@ -1,6 +1,7 @@
 context("processing.R")
 
-pacman::p_load(sperrorest, rpart, MASS, tibble, purrr)
+library("rpart")
+library("MASS")
 
 # runfolds Sun May 21 22:58:39 2017 ------------------------------
 
@@ -17,7 +18,7 @@ test_that("runfolds works on missing factor levels in
 
   runfolds(
     j = 1, data = df, current_sample = current_sample,
-    formula = fo, par_mode = "sequential",
+    formula = fo,
     model_args = list(family = "binomial"),
     model_fun = glm,
     importance = TRUE,
@@ -25,7 +26,7 @@ test_that("runfolds works on missing factor levels in
     imp_variables = c("lithology"),
     current_res = current_res,
     pred_args = list(type = "response"),
-    response = "diplo01", par_cl = 2,
+    response = "diplo01",
     coords = c("x", "y"), progress = 1,
     pooled_obs_train = c(),
     pooled_obs_test = c(),
@@ -56,7 +57,7 @@ test_that("runfolds works on glm example", {
       "cslope"
     ),
     importance = TRUE, current_res = current_res,
-    pred_args = list(type = "response"), response = "slides", par_cl = 2,
+    pred_args = list(type = "response"), response = "slides",
     coords = c("x", "y"), progress = 1, pooled_obs_train = c(),
     pooled_obs_test = c(), err_fun = err_default
   ) -> runfolds_single
@@ -94,13 +95,13 @@ test_that("runfolds works on LDA example", {
   runfolds_single <- runfolds(
     j = 1, data = maipo,
     current_sample = current_sample,
-    formula = fo, par_mode = "foreach",
+    formula = fo,
     model_fun = lda,
     pred_fun = lda_predfun,
     pred_args = list(fac = "field"),
     importance = FALSE,
     current_res = current_sample,
-    response = "croptype", par_cl = 2,
+    response = "croptype",
     coords = c("x", "y"), progress = 1,
     pooled_obs_train = c(),
     pooled_obs_test = c(), err_fun = err_default
@@ -135,7 +136,7 @@ test_that("runfolds works on rpart example", {
     ),
     importance = TRUE,
     current_res = current_res,
-    response = "slides", par_cl = 2,
+    response = "slides",
     coords = c("x", "y"), progress = 1,
     pooled_obs_train = c(),
     pooled_obs_test = c(), err_fun = err_default
@@ -180,11 +181,11 @@ test_that("runreps works on lda example", {
   runreps_res <- lapply(current_sample, function(x) {
     runreps(
       current_sample = x, data = maipo,
-      formula = fo, par_mode = "apply", pred_fun = lda_predfun,
+      formula = fo, pred_fun = lda_predfun,
       model_fun = lda,
       do_gc = 1,
       importance = FALSE, current_res = current_res,
-      pred_args = list(fac = "field"), response = "croptype", par_cl = 2,
+      pred_args = list(fac = "field"), response = "croptype",
       coords = c("x", "y"), progress = 1, pooled_obs_train = c(),
       pooled_obs_test = c(), err_fun = err_default
     )
@@ -214,7 +215,6 @@ test_that("runreps works on glm example", {
       ),
       importance = TRUE, current_res = current_res,
       pred_args = list(type = "response"), response = "slides",
-      par_cl = 2,
       coords = c("x", "y"), progress = 1, pooled_obs_train = c(),
       pooled_obs_test = c(), err_fun = err_default
     )
@@ -242,7 +242,7 @@ test_that("runreps works on rpart example", {
         "log.carea", "cslope"
       ),
       importance = TRUE, current_res = current_res,
-      response = "slides", par_cl = 2,
+      response = "slides",
       coords = c("x", "y"), progress = 1, pooled_obs_train = c(),
       pooled_obs_test = c(), err_fun = err_default
     )
@@ -263,7 +263,7 @@ test_that("runfolds works on missing factor levels in
   runreps_res <- lapply(current_sample, function(x) {
     runreps(
       current_sample = x, do_gc = 1,
-      formula = fo, par_mode = "sequential", data = df,
+      formula = fo, data = df,
       model_args = list(family = "binomial"),
       model_fun = glm,
       importance = TRUE,
@@ -271,7 +271,6 @@ test_that("runfolds works on missing factor levels in
       imp_permutations = 2,
       current_res = current_res,
       pred_args = list(type = "response"), response = "diplo01",
-      par_cl = 2,
       coords = c("x", "y"), progress = 1,
       pooled_obs_train = c(),
       pooled_obs_test = c(), err_fun = err_default

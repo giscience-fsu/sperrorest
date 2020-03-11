@@ -46,5 +46,4 @@ resamp <- partition_cv(ecuador, nfold = 5, repetition = 1:2)
 # spatial cross-validation using k-means clustering:
 resamp <- partition_kmeans(ecuador, nfold = 5, repetition = 1:2)
 # plot(resamp, ecuador)
-
 }
