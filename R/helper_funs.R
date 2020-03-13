@@ -44,7 +44,8 @@ transfer_parallel_output <- function(my_res = NULL, res = NULL, impo = NULL,
 #' )
 #' model <- lm(response ~ predictor, foo)
 #' foo.new <- data.frame(predictor = as.factor(c("A", "B", "C", "D")))
-#' predict(model, newdata = remove_missing_levels(fit = model, test_data = foo.new))
+#' predict(model, newdata = remove_missing_levels(fit = model,
+#'   test_data = foo.new))
 #' @export
 remove_missing_levels <- function(fit, test_data) {
 
@@ -66,7 +67,7 @@ remove_missing_levels <- function(fit, test_data) {
       return(test_data)
     }
 
-    factor_levels <- unlist(lapply(fit$contrasts, function(x) names(unmatrix(x))))
+    factor_levels <- unlist(lapply(fit$contrasts, function(x) names(unmatrix(x)))) #nolint
 
     factor_levels <- str_split(factor_levels, ":", simplify = TRUE)[, 1]
 
@@ -93,7 +94,7 @@ remove_missing_levels <- function(fit, test_data) {
   # For each factor predictor in your data, if the level is not in the model,
   # set the value to NA
 
-  for (i in 1:length(predictors)) {
+  for (i in seq_len(predictors)) {
     found <- test_data[, predictors[i]] %in% model_factors[
       model_factors$factors == predictors[i],
     ]$factor_levels
@@ -123,10 +124,10 @@ unmatrix <- function(x, byrow = FALSE) {
   rnames <- rownames(x)
   cnames <- colnames(x)
   if (is.null(rnames)) {
-    rnames <- paste("r", 1:nrow(x), sep = "")
+    rnames <- paste("r", seq_len(x), sep = "")
   }
   if (is.null(cnames)) {
-    cnames <- paste("c", 1:ncol(x), sep = "")
+    cnames <- paste("c", seq_len(x), sep = "")
   }
   nmat <- outer(rnames, cnames, paste, sep = ":")
   if (byrow) {

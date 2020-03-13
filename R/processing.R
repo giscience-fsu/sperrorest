@@ -23,11 +23,11 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
   }
 
   # set global variables for R CMD Check
-  fold_number = NULL
-  repetition_number = NULL
+  fold_number <- NULL
+  repetition_number <- NULL
 
   # append fid to data to enable tracking of observations
-  data$fid <- seq(1:nrow(data))
+  data$fid <- seq(seq_len(data))
 
   # Create training sample:
   nd_train <- data[current_sample[[j]]$train, ]
@@ -55,7 +55,7 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
 
   # error handling for model fitting (e.g. maxent)
   # we need the first condition to handle S4 objects. They do not work with
-  # is.na()
+  # is.na
   if (class(fit)[1] == "logical") {
     message(sprintf(
       paste0(
@@ -173,7 +173,7 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
         " Setting performance for repetition %s",
         " fold %s to NA.\n",
         " Classification: This most likely happens if the response of",
-        " the test data does not contain all levels (due to spatial partitioning)",
+        " the test data does not contain all levels (due to spatial partitioning)", #nolint
         " and AUROC is used as the error measure.",
         " Try using a different number of folds or error measure."
       ),
@@ -214,18 +214,18 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
     }
 
     # remove NAs in data.frame if levels are missing
-    nd_test = na.omit(nd_test)
+    nd_test <- na.omit(nd_test)
 
     # does this ever happen??
     # nocov start
     if (is.null(current_res[[j]]$test)) {
       current_impo[[j]] <- c()
       if (!progress == FALSE) {
-        # cat(date(), "-- skipping variable importance\n")
+        cat(date(), "-- skipping variable importance\n")
       } # nocov end
     } else {
       if (!progress == FALSE) {
-        # cat(date(), "-- Variable importance\n")
+        cat(date(), "-- Variable importance\n")
       }
       imp_temp <- imp_one_rep
 
@@ -234,7 +234,6 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
         # Some output on screen:
         if (progress == "all" | progress == TRUE & (cnt > 1)) {
           if (log10(cnt) == floor(log10(cnt))) {
-            # cat(date(), "   ", cnt, "\n")
             cat(
               date(), "Repetition", i, "- Fold", j,
               "- permutation-count:", cnt, "\n"
@@ -242,7 +241,7 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
           }
         }
         # Permutation indices:
-        permut <- sample(1:nrow(nd_test), replace = FALSE)
+        permut <- sample(seq_len(nd_test), replace = FALSE)
 
         # For each variable:
         for (vnm in imp_variables) {
@@ -360,15 +359,6 @@ runreps <- function(current_sample = NULL, data = NULL, formula = NULL,
   # http://stackoverflow.com/questions/43963683/r-flexible-passing-of-sublists-to-following-function # nolint
   runfolds_merged <- do.call(Map, c(f = list, runfolds_list))
 
-  # temporary workaround
-  # only applies if all fold results of a rep are NA
-  # then is_factor_prediction is not set within runfolds and we need to set
-  # it here
-  # unsure if is_factor_prediction is needed at all or if we can set it to
-  # TRUE permanently
-  # if (is.null(is_factor_prediction)) {
-  #   is_factor_prediction <- TRUE
-  # }
   if (all(is.na(runfolds_merged$pooled_obs_train))) {
     return(list(
       error = NA,

@@ -129,7 +129,6 @@ err_default <- function(obs, pred) {
       err <- list(auroc = auroc)
 
       pos <- levels(obs)[2]
-      # neg <- levels(obs)[1] # not in use
 
       err$error <- mean((obs == pos) != (pred >= 0.5), na.rm = TRUE) # nolint
       err$accuracy <- 1 - err$error

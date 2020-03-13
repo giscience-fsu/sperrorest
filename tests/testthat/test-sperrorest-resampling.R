@@ -142,15 +142,3 @@ test_that("represampling_disc_bootstrap() output is of correct length()", {
   )
   expect_equal(length(parti[[1]][[1]]), 2)
 })
-
-# plot.represampling() Mon Feb  6 22:54:18 2017 ------------------------------
-# possible option to test base plots:
-# http://stackoverflow.com/a/30286668/4185785
-
-# test_that("plot.represampling is adjusting to repetitions", {
-#   data(ecuador)
-#   resamp <- partition_cv(ecuador, nfold = 1, repetition = 1:2)
-#   p <- recordPlot()
-#   plot(resamp, ecuador)
-#   expect_equal(length(p[[1]][[1]]), 2)
-# })

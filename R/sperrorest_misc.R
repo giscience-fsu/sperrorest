@@ -49,7 +49,7 @@ dataset_distance <- function(d1, d2, x_name = "x", y_name = "y", fun = mean,
     } # nocov end
   }
   di <- rep(NA, nrow(d1))
-  for (i in 1:nrow(d1)) {
+  for (i in seq_len(d1)) {
     di[i] <- min(sqrt((d2[, x_name] - d1[i, x_name])^2 + # nolint
       (d2[, y_name] - d1[i, y_name])^2)) # nolint
   }
@@ -106,7 +106,7 @@ add.distance <- function(object, ...) UseMethod("add.distance") # nolint
 #' @method add.distance resampling
 #' @export
 add.distance.resampling <- function(object, data, coords = c("x", "y"), ...) { # nolint
-  for (j in 1:length(object)) {
+  for (j in seq_len(object)) {
     test_dist <- dataset_distance(data[object[[j]]$test, coords],
       data[object[[j]]$train, coords],
       x_name = coords[1], y_name = coords[2], ...
@@ -151,7 +151,7 @@ add.distance.represampling <- function(object, ...) { # nolint
 #' [represampling_tile_bootstrap]
 #'
 #' @export
-as.tilename <- function(x, ...) UseMethod("as.tilename")
+as.tilename <- function(x, ...) UseMethod("as.tilename") #nolint
 
 #' @rdname as.tilename
 #' @name as.tilename_numeric
@@ -436,7 +436,7 @@ tile_neighbors <- function(nm, tileset, iterate = 0, diagonal = FALSE) {
 #' @aliases as.resampling resampling
 #'
 #' @export
-as.resampling <- function(object, ...) {
+as.resampling <- function(object, ...) { #nolint
   if (inherits(object, "resampling")) {
     return(object)
   }
@@ -488,7 +488,7 @@ validate.resampling <- function(object) { # nolint
   if (!is.list(object)) {
     return(FALSE) # nocov
   }
-  for (i in 1:length(object)) {
+  for (i in seq_len(object)) {
     if (!is.list(object[[i]])) {
       return(FALSE) # nocov
     }
@@ -508,7 +508,7 @@ validate.resampling <- function(object) { # nolint
 #' @rdname as.resampling
 #' @name is.resampling
 #' @export
-is.resampling <- function(x, ...) inherits(x, "resampling") # nocov
+is.resampling <- function(x, ...) inherits(x, "resampling") # nocov #nolint
 
 #' @rdname as.resampling
 #' @name print.resampling
@@ -568,7 +568,7 @@ print.resampling <- function(x, ...) {
 #' summary(parti)
 #' @aliases as.represampling represampling
 #' @export
-as.represampling <- function(object, ...) {
+as.represampling <- function(object, ...) { #nolint
   if (inherits(object, "represampling")) {
     object # nocov
   }
@@ -608,7 +608,7 @@ print.represampling <- function(x, ...) {
   txt <- paste("Replicated Selection Object (r=", length(x), ")", sep = "")
   cat("\n", txt, "\n", sep = "")
   cat(paste(rep("-", nchar(txt)), collapse = ""), "\n\n")
-  for (i in 1:length(x)) {
+  for (i in seq_len(x)) {
     print(x[[i]])
   }
 } # nocov end

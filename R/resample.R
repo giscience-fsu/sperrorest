@@ -54,9 +54,6 @@ resample_strat_uniform <- function(data, param = list(
   if (is.null(param$replace)) {
     param$replace <- FALSE
   }
-  # if (param$nstrat == Inf) {
-  #   param$nstrat <- as.factor(rep(1, nrow(data)))
-  # }
 
   stopifnot((length(param$strat) == 1) | (length(param$strat) == nrow(data))) # nolint
   if (length(param$strat == 1)) {

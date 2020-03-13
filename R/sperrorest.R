@@ -373,45 +373,33 @@ sperrorest <- function(formula,
 
   ### format parallel outputs ----
 
-  # if (args$mode == "foreach" | args$mode == "sequential") {
-  # split combined lists from foreach output into sublists referring
-  # to repetitions
-  # my_res <- split(my_res[[1]], 1:length(resamp))
-
   # overwrite resamp object with possibly altered resample object from
   # runfolds
   # this applies if a custom test_fun or train_fun with a sub-resampling
   # method is used
-  # for (i in 1:length(resamp)) {
-  #   for (j in 1:length(resamp[[1]])) {
-  #     resamp[[i]][[j]] <- my_res[[i]][[5]][[j]][[j]]
-  #   }
-  # }
-  # } else {
-  # overwrite resamp object with possibly altered resample object from
-  # runfolds
-  # this applies if a custom test_fun or train_fun with a sub-resampling
-  # method is used
-  for (i in 1:length(resamp)) {
-    for (j in 1:length(resamp[[1]])) {
+  for (i in seq_len(resamp)) {
+    for (j in seq_len(resamp[[1]])) {
       resamp[[i]][[j]] <- my_res[[i]][["resampling"]][[j]][[j]]
     }
   }
 
   # check if any rep is NA in all folds and if, remove entry
-  # this happens e.g. in maxent
+  # this happens e.g. in maxent #nolint
 
   check_na <- lapply(my_res, function(x) all(is.na(x))) # nolint
   check_na_flat <- unlist(check_na)
 
   if (any(check_na_flat) == TRUE) {
-    check_na <- as.numeric(which(lapply(my_res, function(x) all(is.na(x))) == "TRUE"))
+    check_na <- as.numeric(which(lapply(my_res, function(x) {
+      all(is.na(x))
+    }) == "TRUE"))
 
     my_res <- my_res[-check_na]
+
   }
 
   # assign names to sublists - otherwise `transfer_parallel_output` doesn't work
-  for (i in 1:length(my_res)) {
+  for (i in seq_len(my_res)) {
     names(my_res[[i]]) <- c(
       "error", "pooled_error", "importance",
       "non-converged-folds"

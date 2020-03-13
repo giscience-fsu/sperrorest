@@ -802,11 +802,7 @@ partition_disc <- function(data, coords = c("x", "y"), radius, buffer = NULL,
   }
 
   posbuf <- buffer
-  if (is.null(buffer)) {
-    # pospuf <- 0
-  } else {
-    stopifnot(buffer >= 0)
-  }
+  stopifnot(buffer >= 0)
 
   if (replace == FALSE & ndisc > nrow(data)) {
     stop("partition_disc: ndisc must be > nrow(data) if replace=FALSE") # nocov
@@ -820,7 +816,7 @@ partition_disc <- function(data, coords = c("x", "y"), radius, buffer = NULL,
       set.seed(seed1 + cnt) # nocov
     }
     if (ndisc == nrow(data)) {
-      index <- c(1:nrow(data)) # nocov
+      index <- c(seq_len(data)) # nocov
     } else {
       index <- sample.int(nrow(data),
         size = ndisc, replace = replace,
@@ -846,7 +842,7 @@ partition_disc <- function(data, coords = c("x", "y"), radius, buffer = NULL,
         test_sel <- i
         if (return_train) {
           if (is.null(buffer)) {
-            train_sel <- c(1:nrow(data))[-i] # nocov
+            train_sel <- c(seq_len(data))[-i] # nocov
           } else {
             train_sel <- which(di > posbuf)
           }
@@ -925,7 +921,7 @@ represampling_bootstrap <- function(data, coords = c("x", "y"),
     train <- sample(nrow(data), nboot, replace = TRUE)
     if (oob) {
       # test set = out of bag sample:
-      test <- c(1:nrow(data))[!(c(1:nrow(data)) %in% train)] # nocov
+      test <- c(seq_len(data))[!(c(seq_len(data)) %in% train)] # nocov
     } else {
       # test set = independently drawn bootstrap sample
       test <- sample(nrow(data), nboot, replace = TRUE)
@@ -1227,7 +1223,7 @@ represampling_disc_bootstrap <- function(data, coords = c("x", "y"), nboot,
         replace = TRUE, ndisc = 1, seed1 = NULL,
         return_train = TRUE, ...
       )
-      test <- c(1:nrow(data))
+      test <- c(seq_len(data))
       for (i in 1:nboot[1]) {
         test <- test[test %in% train[[i]][[1]]$train] # yes, $train!
         train[[i]][[1]]$train <- NULL
@@ -1335,8 +1331,8 @@ plot.represampling <- function(x, data, coords = c("x", "y"), pch = "+",
     mfrow = c(nr, nc), mar = c(2, 2, 3, 0.5), mgp = c(2, 0.7, 0), tcl = -0.3,
     cex = 0.5
   )
-  for (i in 1:length(resample)) {
-    for (j in 1:length(resample[[i]])) {
+  for (i in seq_len(resample)) {
+    for (j in seq_len(resample[[i]])) {
       seltrain <- resample[[i]][[j]]$train
       seltest <- resample[[i]][[j]]$test
       main <- paste("Repetition ", names(resample)[i], ", Fold ", j)
@@ -1348,7 +1344,6 @@ plot.represampling <- function(x, data, coords = c("x", "y"), pch = "+",
       wxtrain <- rnorm(length(seltrain), sd = wiggle_sd)
       wytrain <- rnorm(length(seltrain), sd = wiggle_sd)
       wxtest <- rnorm(length(seltest), sd = wiggle_sd)
-      # wytest <- rnorm(length(seltest), sd = wiggle_sd)
       points(data[seltrain, coords[1]] + wxtrain, data[seltrain, coords[2]] +
         wytrain, pch = pch)
       points(data[seltest, coords[1]] + wxtest, data[seltest, coords[2]] +
