@@ -215,27 +215,6 @@ boxplot(smry,
   main = "Training vs. test, nonspatial vs. spatial",
   ylab = "Area under the ROC curve"
 )
-
-## ------------------------------------------------------------
-## Logistic regression example (glm) using partition_kmeans
-## and permutation based variable importance
-## ------------------------------------------------------------
-
-data(ecuador)
-fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
-
-out <- sperrorest(
-  data = ecuador, formula = fo,
-  model_fun = glm,
-  model_args = list(family = "binomial"),
-  pred_fun = predict,
-  pred_args = list(type = "response"),
-  smp_fun = partition_kmeans,
-  smp_args = list(repetition = 1:2, nfold = 3),
-  importance = TRUE, imp_permutations = 5
-)
-summary(out$error_rep)
-summary(out$importance)
 }
 \references{
 Brenning, A. 2012. Spatial cross-validation and bootstrap for
