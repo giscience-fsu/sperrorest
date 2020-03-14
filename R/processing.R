@@ -21,13 +21,12 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
   if (importance == FALSE && progress == TRUE | progress == "fold") {
     cat(date(), "Repetition", i, "- Fold", j, "\n")
   }
-
   # set global variables for R CMD Check
   fold_number <- NULL
   repetition_number <- NULL
 
   # append fid to data to enable tracking of observations
-  data$fid <- seq(seq_len(data))
+  data$fid <- seq(1:nrow(data)) # nolint
 
   # Create training sample:
   nd_train <- data[current_sample[[j]]$train, ]
@@ -173,7 +172,7 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
         " Setting performance for repetition %s",
         " fold %s to NA.\n",
         " Classification: This most likely happens if the response of",
-        " the test data does not contain all levels (due to spatial partitioning)", #nolint
+        " the test data does not contain all levels (due to spatial partitioning)", # nolint
         " and AUROC is used as the error measure.",
         " Try using a different number of folds or error measure."
       ),
@@ -241,7 +240,7 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
           }
         }
         # Permutation indices:
-        permut <- sample(seq_len(nd_test), replace = FALSE)
+        permut <- sample(seq_along(nd_test), replace = FALSE)
 
         # For each variable:
         for (vnm in imp_variables) {

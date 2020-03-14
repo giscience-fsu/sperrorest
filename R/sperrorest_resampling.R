@@ -816,7 +816,7 @@ partition_disc <- function(data, coords = c("x", "y"), radius, buffer = NULL,
       set.seed(seed1 + cnt) # nocov
     }
     if (ndisc == nrow(data)) {
-      index <- c(seq_len(data)) # nocov
+      index <- c(seq_along(data)) # nocov
     } else {
       index <- sample.int(nrow(data),
         size = ndisc, replace = replace,
@@ -842,7 +842,7 @@ partition_disc <- function(data, coords = c("x", "y"), radius, buffer = NULL,
         test_sel <- i
         if (return_train) {
           if (is.null(buffer)) {
-            train_sel <- c(seq_len(data))[-i] # nocov
+            train_sel <- c(seq_along(data))[-i] # nocov
           } else {
             train_sel <- which(di > posbuf)
           }
@@ -921,7 +921,7 @@ represampling_bootstrap <- function(data, coords = c("x", "y"),
     train <- sample(nrow(data), nboot, replace = TRUE)
     if (oob) {
       # test set = out of bag sample:
-      test <- c(seq_len(data))[!(c(seq_len(data)) %in% train)] # nocov
+      test <- c(seq_along(data))[!(c(seq_along(data)) %in% train)] # nocov
     } else {
       # test set = independently drawn bootstrap sample
       test <- sample(nrow(data), nboot, replace = TRUE)
@@ -1223,7 +1223,7 @@ represampling_disc_bootstrap <- function(data, coords = c("x", "y"), nboot,
         replace = TRUE, ndisc = 1, seed1 = NULL,
         return_train = TRUE, ...
       )
-      test <- c(seq_len(data))
+      test <- c(seq_along(data))
       for (i in 1:nboot[1]) {
         test <- test[test %in% train[[i]][[1]]$train] # yes, $train!
         train[[i]][[1]]$train <- NULL
@@ -1331,8 +1331,8 @@ plot.represampling <- function(x, data, coords = c("x", "y"), pch = "+",
     mfrow = c(nr, nc), mar = c(2, 2, 3, 0.5), mgp = c(2, 0.7, 0), tcl = -0.3,
     cex = 0.5
   )
-  for (i in seq_len(resample)) {
-    for (j in seq_len(resample[[i]])) {
+  for (i in seq_along(resample)) {
+    for (j in seq_along(resample[[i]])) {
       seltrain <- resample[[i]][[j]]$train
       seltest <- resample[[i]][[j]]$test
       main <- paste("Repetition ", names(resample)[i], ", Fold ", j)

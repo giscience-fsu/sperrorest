@@ -177,8 +177,8 @@ summary.sperrorestimportance <- function(object, level = 0, na.rm = TRUE,
     rownames(object[[1]][[1]]), colnames(object[[1]][[1]])
   )
   arr <- array(NA, dim = arrdim, dimnames = arrdimnames)
-  for (i in seq_len(object)) {
-    for (j in seq_len(object[[i]])) {
+  for (i in seq_along(object)) {
+    for (j in seq_along(object[[i]])) {
       arr[i, j, , ] <- as.matrix(object[[i]][[j]])
     }
   }

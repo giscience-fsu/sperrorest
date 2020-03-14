@@ -25,6 +25,9 @@ foo <- data.frame(
 )
 model <- lm(response ~ predictor, foo)
 foo.new <- data.frame(predictor = as.factor(c("A", "B", "C", "D")))
-predict(model, newdata = remove_missing_levels(fit = model, test_data = foo.new))
+predict(model, newdata = remove_missing_levels(
+  fit = model,
+  test_data = foo.new
+))
 }
 \keyword{internal}

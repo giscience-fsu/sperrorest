@@ -349,23 +349,30 @@ sperrorest <- function(formula,
 
   my_res <- future.apply::future_lapply(resamp, function(x) {
     runreps(
-      current_sample = x, data = data,
-      formula = formula, do_gc = do_gc, imp_one_rep = imp_one_rep,
+      current_sample = x,
+      data = data,
+      formula = formula,
+      response = response,
+      do_gc = do_gc,
+      imp_one_rep = imp_one_rep,
       pred_fun = pred_fun,
-      model_args = model_args, model_fun = model_fun,
+      model_args = model_args,
+      model_fun = model_fun,
       imp_permutations = imp_permutations,
       imp_variables = imp_variables,
       is_factor_prediction = is_factor_prediction,
       importance = importance,
       current_res = current_res,
-      pred_args = pred_args, response = response,
-      coords = coords, progress = progress,
+      pred_args = pred_args,
+      coords = coords,
+      progress = progress,
       pooled_obs_train = pooled_obs_train,
       train_fun = train_fun,
       train_param = train_param,
       test_fun = test_fun,
       test_param = test_param,
-      pooled_obs_test = pooled_obs_test, err_fun = err_fun
+      pooled_obs_test = pooled_obs_test,
+      err_fun = err_fun
     )
   },
   future.seed = TRUE
@@ -377,8 +384,8 @@ sperrorest <- function(formula,
   # runfolds
   # this applies if a custom test_fun or train_fun with a sub-resampling
   # method is used
-  for (i in seq_len(resamp)) {
-    for (j in seq_len(resamp[[1]])) {
+  for (i in seq_along(resamp)) {
+    for (j in seq_along(resamp[[1]])) {
       resamp[[i]][[j]] <- my_res[[i]][["resampling"]][[j]][[j]]
     }
   }
@@ -399,7 +406,7 @@ sperrorest <- function(formula,
   }
 
   # assign names to sublists - otherwise `transfer_parallel_output` doesn't work
-  for (i in seq_len(my_res)) {
+  for (i in seq_along(my_res)) {
     names(my_res[[i]]) <- c(
       "error", "pooled_error", "importance",
       "non-converged-folds"
