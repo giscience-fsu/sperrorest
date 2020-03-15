@@ -237,7 +237,7 @@ To take a look where our training and tests sets will be partitioned on each fol
 The red colored points represent the test set in each fold, the black colored points the training set.
 Note that because we plotted over 7000 points, overplotting occurs and since the red crosses are plotted after the black ones, it seems visually that way more than ~20% of red points exist than it is really the case. 
 
-```{r }
+```{r fig.width=7, fig.asp=0.5}
 resamp <- partition_factor_cv(maipo, nfold = 5, repetition = 1:1, fac = "field")
 plot(resamp, maipo, coords = c("utmx", "utmy"))
 ```
