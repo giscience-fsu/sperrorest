@@ -20,8 +20,16 @@ To see the package in action, please check the vignette ["Spatial Modeling Use C
 
 ## Installation
 
+CRAN release version
+
 ```r
 install.packages("sperrorest")
+```
+
+Development version
+
+```r
+remotes::install_github("giscience-fsu/sperrorest")
 ```
 
 ## References
