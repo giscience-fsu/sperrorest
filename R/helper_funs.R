@@ -2,7 +2,9 @@
 #' @description transfers output of parallel calls to runreps
 #' @keywords internal
 #' @export
-transfer_parallel_output <- function(my_res = NULL, res = NULL, impo = NULL,
+transfer_parallel_output <- function(my_res = NULL,
+                                     res = NULL,
+                                     impo = NULL,
                                      pooled_error = NULL) {
 
   for (i in seq_along(my_res)) {
@@ -49,7 +51,8 @@ transfer_parallel_output <- function(my_res = NULL, res = NULL, impo = NULL,
 #'   test_data = foo.new
 #' ))
 #' @export
-remove_missing_levels <- function(fit, test_data) {
+remove_missing_levels <- function(fit,
+                                  test_data) {
 
   # https://stackoverflow.com/a/39495480/4185785
 
@@ -122,7 +125,8 @@ remove_missing_levels <- function(fit, test_data) {
 }
 
 # copied from gdata::unmatrix to save a pkg dependency
-unmatrix <- function(x, byrow = FALSE) {
+unmatrix <- function(x,
+                     byrow = FALSE) {
   rnames <- rownames(x)
   cnames <- colnames(x)
   if (is.null(rnames)) {

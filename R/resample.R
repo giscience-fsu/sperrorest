@@ -1,22 +1,22 @@
-#' Draw stratified random sample
+#' @title Draw stratified random sample
 #'
-#' `resample_strat_uniform` draws a stratified random sample
-#' (with or without replacement) from the samples in `data`.
-#' Stratification is over the levels of `data[, param$response]`.
-#' The same number of samples is drawn within each level.
+#' @description `resample_strat_uniform` draws a stratified random sample (with
+#'   or without replacement) from the samples in `data`. Stratification is over
+#'   the levels of `data[, param$response]`. The same number of samples is drawn
+#'   within each level.
 #'
 #' @param data a `data.frame`, rows represent samples
-#' @param param a list with the following components: `strat` is either
-#' the name of a factor variable in `data` that defines the stratification
-#'  levels, or a vector of type factor and length `nrow(data)`;
-#'  `n` is a numeric value specifying the size of the subsample;
-#'  `replace` determines if sampling is with or without replacement
+#' @param param a list with the following components: `strat` is either the name
+#'   of a factor variable in `data` that defines the stratification levels, or a
+#'   vector of type factor and length `nrow(data)`; `n` is a numeric value
+#'   specifying the size of the subsample; `replace` determines if sampling is
+#'   with or without replacement
 #'
 #' @return a `data.frame` containing a subset of the rows of `data`.
 #'
 #' @details If `param$replace=FALSE`, a subsample of size
-#' `min(param$n,nrow(data))` will be drawn from `data`.
-#' If `param$replace=TRUE`, the size of the subsample is `param$n`.
+#' `min(param$n,nrow(data))` will be drawn from `data`. If `param$replace=TRUE`,
+#' the size of the subsample is `param$n`.
 #'
 #' @seealso [resample_uniform()], [sample()]
 #'
@@ -28,7 +28,8 @@
 #' nrow(d) # == 200
 #' sum(d$slides == "TRUE") # == 100
 #' @export
-resample_strat_uniform <- function(data, param = list(
+resample_strat_uniform <- function(data,
+                                   param = list(
                                      strat = "class",
                                      nstrat = Inf,
                                      replace = FALSE
@@ -55,7 +56,8 @@ resample_strat_uniform <- function(data, param = list(
     param$replace <- FALSE
   }
 
-  stopifnot((length(param$strat) == 1) | (length(param$strat) == nrow(data))) # nolint
+  stopifnot((length(param$strat) == 1) ||
+    (length(param$strat) == nrow(data)))
   if (length(param$strat == 1)) {
     strat <- data[, param$strat]
   } else {
@@ -98,23 +100,21 @@ resample_strat_uniform <- function(data, param = list(
 }
 # To do: allow nstrat to be a named vector
 
-#' Draw uniform random (sub)sample
+#' @title Draw uniform random (sub)sample
 #'
-#' `resample_uniform` draws a random (sub)sample
-#' (with or without replacement) from the samples in `data`.
-#'
+#' @description `resample_uniform` draws a random (sub)sample (with or without
+#' replacement) from the samples in `data`.
 #'
 #' @param data a `data.frame`, rows represent samples
-#'
-#' @param param a list with the following components: `n` is a numeric
-#' value specifying the size of the subsample; `replace` determines if
-#' sampling is with or without replacement
+#' @param param a list with the following components: `n` is a numeric value
+#'   specifying the size of the subsample; `replace` determines if sampling is
+#'   with or without replacement
 #'
 #' @return a `data.frame` containing a subset of the rows of `data`.
 #'
 #' @details If `param$replace=FALSE`, a subsample of size
-#' `min(param$n,nrow(data))` will be drawn from `data`.
-#' If `param$replace=TRUE`, the size of the subsample is `param$n`.
+#'   `min(param$n,nrow(data))` will be drawn from `data`. If
+#'   `param$replace=TRUE`, the size of the subsample is `param$n`.
 #'
 #' @seealso [resample_strat_uniform()], [sample()]
 #'
@@ -124,7 +124,8 @@ resample_strat_uniform <- function(data, param = list(
 #' # == 200
 #' sum(d$slides == "TRUE")
 #' @export
-resample_uniform <- function(data, param = list(n = Inf, replace = FALSE)) {
+resample_uniform <- function(data,
+                             param = list(n = Inf, replace = FALSE)) {
   # Apply defaults if missing from parameter list:
   if (is.null(param$n)) {
     param$n <- Inf # nocov
@@ -143,30 +144,31 @@ resample_uniform <- function(data, param = list(n = Inf, replace = FALSE)) {
   return(data[sel, ])
 }
 
-#' Draw uniform random (sub)sample at the group level
+#' @title Draw uniform random (sub)sample at the group level
 #'
-#' `resample_factor` draws a random (sub)sample
-#' (with or without replacement) of the groups or clusters identified by
-#' the `fac` argument.
+#' @description `resample_factor` draws a random (sub)sample (with or without
+#'   replacement) of the groups or clusters identified by the `fac` argument.
 #'
 #' @param data a `data.frame`, rows represent samples
-#' @param param a list with the following components: `fac` is a factor
-#' variable of length `nrow(data)` or the name of a factor variable
-#' in `data`; `n` is a numeric value specifying the size of the
-#' subsample (in terms of groups, not observations); `replace` determines
-#' if resampling of groups is to be done with or without replacement.
+#' @param param a list with the following components: `fac` is a factor variable
+#'   of length `nrow(data)` or the name of a factor variable in `data`; `n` is a
+#'   numeric value specifying the size of the subsample (in terms of groups, not
+#'   observations); `replace` determines if resampling of groups is to be done
+#'   with or without replacement.
 #'
 #' @return a `data.frame` containing a subset of the rows of `data`.
 #'
 #' @details If `param$replace=FALSE`, a subsample of
-#' `min(param$n,nlevel(data[,fac]))` groups will be drawn from `data`.
-#' If `param$replace=TRUE`, the number of groups to be drawn is `param$n`.
+#'   `min(param$n,nlevel(data[,fac]))` groups will be drawn from `data`. If
+#'   `param$replace=TRUE`, the number of groups to be drawn is `param$n`.
 #'
 #' @seealso [resample_strat_uniform()], [sample()]
 #'
 #' @export
-resample_factor <- function(data, param = list(
-                              fac = "class", n = Inf,
+resample_factor <- function(data,
+                            param = list(
+                              fac = "class",
+                              n = Inf,
                               replace = FALSE
                             )) {
   # nocov start
@@ -176,7 +178,8 @@ resample_factor <- function(data, param = list(
   if (is.null(param$replace)) {
     param$replace <- FALSE
   }
-  stopifnot((length(param$fac) == 1) || (length(param$fac) == nrow(data))) # nolint
+  stopifnot((length(param$fac) == 1) ||
+    (length(param$fac) == nrow(data)))
   if (length(param$fac == 1)) {
     fac <- data[, param$fac]
   } else {

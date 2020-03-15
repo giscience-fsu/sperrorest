@@ -1,23 +1,43 @@
 #' @title runfolds
-#' @description Runs model fitting, error estimation and variable importance
-#' on fold level
+#' @description Runs model fitting, error estimation and variable importance on
+#'   fold level
 #'
 #' @importFrom stats na.omit
 #' @keywords internal
 #' @importFrom stringr str_replace_all
 #' @export
+runfolds <- function(j = NULL,
+                     current_sample = NULL,
+                     data = NULL,
+                     i = NULL,
+                     formula = NULL,
+                     model_args = NULL,
+                     par_cl = NULL,
+                     par_mode = NULL,
+                     model_fun = NULL,
+                     pred_fun = NULL,
+                     imp_variables = NULL,
+                     imp_permutations = NULL,
+                     err_fun = NULL,
+                     train_fun = NULL,
+                     importance = NULL,
+                     current_res = NULL,
+                     current_impo = NULL,
+                     pred_args = NULL,
+                     pooled_obs_train = NULL,
+                     pooled_obs_test = NULL,
+                     pooled_pred_train = NULL,
+                     response = NULL,
+                     progress = NULL,
+                     is_factor_prediction = NULL,
+                     pooled_pred_test = NULL,
+                     coords = NULL,
+                     test_fun = NULL,
+                     imp_one_rep = NULL,
+                     do_gc = NULL,
+                     test_param = NULL,
+                     train_param = NULL) {
 
-runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
-                     formula = NULL, model_args = NULL, par_cl = NULL,
-                     par_mode = NULL, model_fun = NULL, pred_fun = NULL,
-                     imp_variables = NULL, imp_permutations = NULL,
-                     err_fun = NULL, train_fun = NULL, importance = NULL,
-                     current_res = NULL, current_impo = NULL, pred_args = NULL,
-                     pooled_obs_train = NULL, pooled_obs_test = NULL,
-                     pooled_pred_train = NULL, response = NULL, progress = NULL,
-                     is_factor_prediction = NULL, pooled_pred_test = NULL,
-                     coords = NULL, test_fun = NULL, imp_one_rep = NULL,
-                     do_gc = NULL, test_param = NULL, train_param = NULL) {
   if (importance == FALSE && progress == TRUE | progress == "fold") {
     cat(date(), "Repetition", i, "- Fold", j, "\n")
   }
@@ -48,7 +68,8 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
   # tuning of ML models here
 
   # we do not see the error message, so returning none
-  fit <- tryCatch(do.call(model_fun, args = margs), error = function(cond) {
+  fit <- tryCatch(do.call(model_fun, args = margs),
+                  error = function(cond) {
     return(NA)
   })
 
@@ -172,7 +193,8 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
         " Setting performance for repetition %s",
         " fold %s to NA.\n",
         " Classification: This most likely happens if the response of",
-        " the test data does not contain all levels (due to spatial partitioning)", # nolint
+        " the test data does not contain all levels",
+        " (due to spatial partitioning)",
         " and AUROC is used as the error measure.",
         " Try using a different number of folds or error measure."
       ),
@@ -240,7 +262,7 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
           }
         }
         # Permutation indices:
-        permut <- sample(seq_along(nd_test), replace = FALSE)
+        permut <- sample(seq_len(nrow(nd_test)), replace = FALSE)
 
         # For each variable:
         for (vnm in imp_variables) {
@@ -299,19 +321,36 @@ runfolds <- function(j = NULL, current_sample = NULL, data = NULL, i = NULL,
 #'
 
 # runreps function for lapply()
-runreps <- function(current_sample = NULL, data = NULL, formula = NULL,
-                    model_args = NULL, par_cl = NULL, do_gc = NULL,
+runreps <- function(current_sample = NULL,
+                    data = NULL,
+                    formula = NULL,
+                    model_args = NULL,
+                    par_cl = NULL,
+                    do_gc = NULL,
                     imp_one_rep = NULL,
-                    model_fun = NULL, pred_fun = NULL, imp_variables = NULL,
-                    imp_permutations = NULL, err_fun = NULL,
-                    importance = NULL, current_res = NULL,
-                    current_impo = NULL, pred_args = NULL, progress = NULL,
-                    pooled_obs_train = NULL, pooled_obs_test = NULL,
-                    pooled_pred_train = NULL, response = NULL,
-                    is_factor_prediction = NULL, pooled_pred_test = NULL,
-                    test_fun = NULL, test_param = NULL,
-                    train_fun = NULL, train_param = NULL,
-                    coords = NULL, par_mode = NULL, i = NULL) {
+                    model_fun = NULL,
+                    pred_fun = NULL,
+                    imp_variables = NULL,
+                    imp_permutations = NULL,
+                    err_fun = NULL,
+                    importance = NULL,
+                    current_res = NULL,
+                    current_impo = NULL,
+                    pred_args = NULL,
+                    progress = NULL,
+                    pooled_obs_train = NULL,
+                    pooled_obs_test = NULL,
+                    pooled_pred_train = NULL,
+                    response = NULL,
+                    is_factor_prediction = NULL,
+                    pooled_pred_test = NULL,
+                    test_fun = NULL,
+                    test_param = NULL,
+                    train_fun = NULL,
+                    train_param = NULL,
+                    coords = NULL,
+                    par_mode = NULL,
+                    i = NULL) {
 
   # output data structures
   current_res <- NULL
@@ -335,20 +374,30 @@ runreps <- function(current_sample = NULL, data = NULL, formula = NULL,
 
   lapply(seq_along(current_sample), function(rep) {
     runfolds(
-      j = rep, data = data, current_sample = current_sample,
-      formula = formula, par_mode = par_mode, pred_fun = pred_fun,
-      model_args = model_args, model_fun = model_fun,
+      j = rep,
+      data = data,
+      current_sample = current_sample,
+      formula = formula,
+      par_mode = par_mode,
+      pred_fun = pred_fun,
+      model_args = model_args,
+      model_fun = model_fun,
       imp_permutations = imp_permutations,
       imp_variables = imp_variables,
       is_factor_prediction = is_factor_prediction,
       importance = importance,
       current_res = current_res,
-      pred_args = pred_args, response = response, par_cl = par_cl,
-      coords = coords, progress = progress,
+      pred_args = pred_args,
+      response = response,
+      par_cl = par_cl,
+      coords = coords,
+      progress = progress,
       pooled_obs_train = pooled_obs_train,
       pooled_obs_test = pooled_obs_test,
-      test_fun = test_fun, test_param = test_param,
-      train_fun = train_fun, train_param = train_param,
+      test_fun = test_fun,
+      test_param = test_param,
+      train_fun = train_fun,
+      train_param = train_param,
       err_fun = err_fun
     )
   }) -> runfolds_list
@@ -432,7 +481,8 @@ runreps <- function(current_sample = NULL, data = NULL, formula = NULL,
 
   return(list(
     error = runfolds_merged$current_res,
-    pooled_error = current_pooled_error, importance = impo_only,
+    pooled_error = current_pooled_error,
+    importance = impo_only,
     not_converged_folds = runfolds_merged$not_converged_folds,
     resampling = runfolds_merged$resampling
   ))

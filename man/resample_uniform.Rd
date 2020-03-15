@@ -9,21 +9,21 @@ resample_uniform(data, param = list(n = Inf, replace = FALSE))
 \arguments{
 \item{data}{a \code{data.frame}, rows represent samples}
 
-\item{param}{a list with the following components: \code{n} is a numeric
-value specifying the size of the subsample; \code{replace} determines if
-sampling is with or without replacement}
+\item{param}{a list with the following components: \code{n} is a numeric value
+specifying the size of the subsample; \code{replace} determines if sampling is
+with or without replacement}
 }
 \value{
 a \code{data.frame} containing a subset of the rows of \code{data}.
 }
 \description{
-\code{resample_uniform} draws a random (sub)sample
-(with or without replacement) from the samples in \code{data}.
+\code{resample_uniform} draws a random (sub)sample (with or without
+replacement) from the samples in \code{data}.
 }
 \details{
 If \code{param$replace=FALSE}, a subsample of size
-\code{min(param$n,nrow(data))} will be drawn from \code{data}.
-If \code{param$replace=TRUE}, the size of the subsample is \code{param$n}.
+\code{min(param$n,nrow(data))} will be drawn from \code{data}. If
+\code{param$replace=TRUE}, the size of the subsample is \code{param$n}.
 }
 \examples{
 # Muenchow et al. (2012), see ?ecuador

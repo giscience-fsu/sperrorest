@@ -9,24 +9,23 @@ resample_factor(data, param = list(fac = "class", n = Inf, replace = FALSE))
 \arguments{
 \item{data}{a \code{data.frame}, rows represent samples}
 
-\item{param}{a list with the following components: \code{fac} is a factor
-variable of length \code{nrow(data)} or the name of a factor variable
-in \code{data}; \code{n} is a numeric value specifying the size of the
-subsample (in terms of groups, not observations); \code{replace} determines
-if resampling of groups is to be done with or without replacement.}
+\item{param}{a list with the following components: \code{fac} is a factor variable
+of length \code{nrow(data)} or the name of a factor variable in \code{data}; \code{n} is a
+numeric value specifying the size of the subsample (in terms of groups, not
+observations); \code{replace} determines if resampling of groups is to be done
+with or without replacement.}
 }
 \value{
 a \code{data.frame} containing a subset of the rows of \code{data}.
 }
 \description{
-\code{resample_factor} draws a random (sub)sample
-(with or without replacement) of the groups or clusters identified by
-the \code{fac} argument.
+\code{resample_factor} draws a random (sub)sample (with or without
+replacement) of the groups or clusters identified by the \code{fac} argument.
 }
 \details{
 If \code{param$replace=FALSE}, a subsample of
-\code{min(param$n,nlevel(data[,fac]))} groups will be drawn from \code{data}.
-If \code{param$replace=TRUE}, the number of groups to be drawn is \code{param$n}.
+\code{min(param$n,nlevel(data[,fac]))} groups will be drawn from \code{data}. If
+\code{param$replace=TRUE}, the number of groups to be drawn is \code{param$n}.
 }
 \seealso{
 \code{\link[=resample_strat_uniform]{resample_strat_uniform()}}, \code{\link[=sample]{sample()}}

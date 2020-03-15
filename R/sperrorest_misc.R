@@ -49,7 +49,7 @@ dataset_distance <- function(d1, d2, x_name = "x", y_name = "y", fun = mean,
     } # nocov end
   }
   di <- rep(NA, nrow(d1))
-  for (i in seq_along(d1)) {
+  for (i in seq_len(nrow(d1))) {
     di[i] <- min(sqrt((d2[, x_name] - d1[i, x_name])^2 + # nolint
       (d2[, y_name] - d1[i, y_name])^2)) # nolint
   }

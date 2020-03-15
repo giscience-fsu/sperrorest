@@ -39,7 +39,7 @@ runfolds(
 )
 }
 \description{
-Runs model fitting, error estimation and variable importance
-on fold level
+Runs model fitting, error estimation and variable importance on
+fold level
 }
 \keyword{internal}
