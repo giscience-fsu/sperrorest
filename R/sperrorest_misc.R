@@ -509,7 +509,9 @@ validate.resampling <- function(object) { # nolint
 #' @name is.resampling
 #' @export
 is.resampling <- function(x, # nocov #nolint
-                          ...) inherits(x, "resampling")
+                          ...) {
+  inherits(x, "resampling")
+}
 
 #' @rdname as.resampling
 #' @name print.resampling
@@ -525,23 +527,23 @@ print.resampling <- function(x,
 } # nocov end
 
 
-#'@title Resampling objects with repetition, i.e. sets of partitionings or
+#' @title Resampling objects with repetition, i.e. sets of partitionings or
 #'  boostrap samples
 #'
-#'@description Functions for handling `represampling` objects, i.e. `list`s of
+#' @description Functions for handling `represampling` objects, i.e. `list`s of
 #'  [resampling] objects.
 #'
-#'@param object object of class `represampling`, or a list to be coerced to this
+#' @param object object of class `represampling`, or a list to be coerced to this
 #'  class.
-#'@param x object of class `represampling`.
-#'@param ... currently not used.
+#' @param x object of class `represampling`.
+#' @param ... currently not used.
 #'
-#'@name as.represampling
+#' @name as.represampling
 #'
-#'@return `as.represampling` methods return an object of class `represampling`
+#' @return `as.represampling` methods return an object of class `represampling`
 #'  with the contents of `object`.
 #'
-#'@details `represampling` objects are (names) lists of [resampling] objects.
+#' @details `represampling` objects are (names) lists of [resampling] objects.
 #'  Such objects are typically created by [partition_cv], [partition_kmeans],
 #'  [represampling_disc_bootstrap] and related functions.
 #'
@@ -553,7 +555,7 @@ print.resampling <- function(x,
 #'  coercing its elements to [resampling] objects. Some validity checks are
 #'  performed.
 #'
-#'@seealso [resampling], [partition_cv], [partition_kmeans],
+#' @seealso [resampling], [partition_cv], [partition_kmeans],
 #'  [represampling_disc_bootstrap], etc.
 #'
 #' @examples
