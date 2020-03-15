@@ -7,8 +7,11 @@
 [![codecov](https://codecov.io/gh/giscience-fsu/sperrorest/branch/master/graph/badge.svg)](https://codecov.io/gh/giscience-fsu/sperrorest)
 <!-- badges: end -->
 
-{sperrorest} is currently not actively developed.
-We recommend to use [mlr3spatiotempcv](https://github.com/mlr-org/mlr3spatiotempcv) for all future (spatial) cross-validation projects.
+{sperrorest} is not actively developed.
+Alternatives for spatial cross-validation in R:
+
+- [mlr3spatiotempcv](https://github.com/mlr-org/mlr3spatiotempcv)
+- [blockCV](https://github.com/rvalavi/blockCV)
 
 ## Description
 
