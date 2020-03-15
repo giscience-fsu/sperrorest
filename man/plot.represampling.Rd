@@ -21,15 +21,15 @@ contain the x and y coordinates of sample locations.}
 \item{pch}{point symbol (to be passed to \link{points}).}
 
 \item{wiggle_sd}{'wiggle' the point locations in x and y direction to avoid
-overplotting of samples drawn multiple times by bootstrap methods;
-this is a standard deviation (in the units of the x/y coordinates) of a
-normal distribution and defaults to 0 (no wiggling).}
+overplotting of samples drawn multiple times by bootstrap methods; this is
+a standard deviation (in the units of the x/y coordinates) of a normal
+distribution and defaults to 0 (no wiggling).}
 
 \item{...}{additional arguments to \link{plot}.}
 }
 \description{
-\code{plot.represampling} displays the partitions or samples corresponding
-arising from the resampling of a data set.
+\code{plot.represampling} displays the partitions or samples
+corresponding arising from the resampling of a data set.
 }
 \note{
 This function is not intended for samples obtained by resampling with
