@@ -6,24 +6,28 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Perform spatial error estimation and variable importance assessment
-in parallel — sperrorest • sperrorest</title>
+<title>Perform spatial error estimation and variable importance assessment in
+parallel — sperrorest • sperrorest</title>
+
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/cosmo/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
 
-<!-- sticky kit -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
+<!-- headroom.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -31,14 +35,15 @@ in parallel — sperrorest • sperrorest</title>
 
 
 
-<meta property="og:title" content="Perform spatial error estimation and variable importance assessment
-in parallel — sperrorest" />
 
+<meta property="og:title" content="Perform spatial error estimation and variable importance assessment in
+parallel — sperrorest" />
 <meta property="og:description" content="sperrorest is a flexible interface for multiple types of
-parallelized spatial and non-spatial cross-validation
-and bootstrap error estimation and parallelized permutation-based
-assessment of spatial variable importance." />
+parallelized spatial and non-spatial cross-validation and bootstrap error
+estimation and parallelized permutation-based assessment of spatial variable
+importance." />
 <meta name="twitter:card" content="summary" />
+
 
 
 
@@ -50,6 +55,7 @@ assessment of spatial variable importance." />
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
+
 
 
   </head>
@@ -68,7 +74,7 @@ assessment of spatial variable importance." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sperrorest</a>
-        <span class="version label label-info" data-toggle="tooltip" data-placement="bottom" title="Version">2.1.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.0.0</span>
       </span>
     </div>
 
@@ -76,7 +82,7 @@ assessment of spatial variable importance." />
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fa fa-home fa-lg"></span>
+    <span class="fas fa fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -94,9 +100,6 @@ assessment of spatial variable importance." />
       <a href="../articles/custom-pred-and-model-functions.html">Custom Predict and Model Functions</a>
     </li>
     <li>
-      <a href="../articles/parallel-modes.html">Parallel Modes of `sperrorest`</a>
-    </li>
-    <li>
       <a href="../articles/spatial-modeling-use-case.html">Spatial Modeling Using Statistical Learning Techniques</a>
     </li>
   </ul>
@@ -105,9 +108,13 @@ assessment of spatial variable importance." />
   <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
-        
+        <li>
+  <a href="https://github.com/giscience-fsu/sperrorest">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
       </ul>
       
     </div><!--/.nav-collapse -->
@@ -115,53 +122,65 @@ assessment of spatial variable importance." />
 </div><!--/.navbar -->
 
       
+
       </header>
 
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Perform spatial error estimation and variable importance assessment
-in parallel</h1>
-    
+    <h1>Perform spatial error estimation and variable importance assessment in
+parallel</h1>
+    <small class="dont-index">Source: <a href='https://github.com/giscience-fsu/sperrorest/blob/master/R/sperrorest.R'><code>R/sperrorest.R</code></a></small>
     <div class="hidden name"><code>sperrorest.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    
-    <p><code>sperrorest</code> is a flexible interface for multiple types of
-parallelized spatial and non-spatial cross-validation
-and bootstrap error estimation and parallelized permutation-based
-assessment of spatial variable importance.</p>
-    
+    <p>sperrorest is a flexible interface for multiple types of
+parallelized spatial and non-spatial cross-validation and bootstrap error
+estimation and parallelized permutation-based assessment of spatial variable
+importance.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>sperrorest</span>(<span class='no'>formula</span>, <span class='no'>data</span>, <span class='kw'>coords</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"x"</span>, <span class='st'>"y"</span>), <span class='no'>model_fun</span>,
-  <span class='kw'>model_args</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>(), <span class='kw'>pred_fun</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>pred_args</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>(),
-  <span class='kw'>smp_fun</span> <span class='kw'>=</span> <span class='no'>partition_cv</span>, <span class='kw'>smp_args</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>(), <span class='kw'>train_fun</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>train_param</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>test_fun</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>test_param</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>err_fun</span> <span class='kw'>=</span> <span class='no'>err_default</span>, <span class='kw'>imp_variables</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>imp_permutations</span> <span class='kw'>=</span> <span class='fl'>1000</span>,
-  <span class='kw'>importance</span> <span class='kw'>=</span> !<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/NULL'>is.null</a></span>(<span class='no'>imp_variables</span>), <span class='kw'>distance</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>par_args</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>(<span class='kw'>par_mode</span> <span class='kw'>=</span> <span class='st'>"foreach"</span>, <span class='kw'>par_units</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>par_option</span> <span class='kw'>=</span> <span class='kw'>NULL</span>),
-  <span class='kw'>do_gc</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>progress</span> <span class='kw'>=</span> <span class='st'>"all"</span>, <span class='kw'>out_progress</span> <span class='kw'>=</span> <span class='st'>""</span>, <span class='kw'>benchmark</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='no'>...</span>)</pre>
-    
+    <pre class="usage"><span class='fu'>sperrorest</span>(
+  <span class='no'>formula</span>,
+  <span class='no'>data</span>,
+  <span class='kw'>coords</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"x"</span>, <span class='st'>"y"</span>),
+  <span class='no'>model_fun</span>,
+  <span class='kw'>model_args</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(),
+  <span class='kw'>pred_fun</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>pred_args</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(),
+  <span class='kw'>smp_fun</span> <span class='kw'>=</span> <span class='no'>partition_cv</span>,
+  <span class='kw'>smp_args</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(),
+  <span class='kw'>train_fun</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>train_param</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>test_fun</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>test_param</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>err_fun</span> <span class='kw'>=</span> <span class='no'>err_default</span>,
+  <span class='kw'>imp_variables</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>imp_permutations</span> <span class='kw'>=</span> <span class='fl'>1000</span>,
+  <span class='kw'>importance</span> <span class='kw'>=</span> !<span class='fu'><a href='https://rdrr.io/r/base/NULL.html'>is.null</a></span>(<span class='no'>imp_variables</span>),
+  <span class='kw'>distance</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>do_gc</span> <span class='kw'>=</span> <span class='fl'>1</span>,
+  <span class='kw'>progress</span> <span class='kw'>=</span> <span class='st'>"all"</span>,
+  <span class='kw'>benchmark</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
+)</pre>
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>formula</th>
-      <td><p>A formula specifying the variables used by the <code>model</code>.
-Only simple formulas without interactions or nonlinear terms should
-be used, e.g. <code>y~x1+x2+x3</code> but not <code>y~x1*x2+log(x3)</code>.
-Formulas involving interaction and nonlinear terms may possibly work
-for error estimation but not for variable importance assessment,
-but should be used with caution.</p></td>
+      <td><p>A formula specifying the variables used by the <code>model</code>. Only
+simple formulas without interactions or nonlinear terms should be used,
+e.g. <code>y~x1+x2+x3</code> but not <code>y~x1*x2+log(x3)</code>. Formulas involving interaction
+and nonlinear terms may possibly work for error estimation but not for
+variable importance assessment, but should be used with caution.</p></td>
     </tr>
     <tr>
       <th>data</th>
-      <td><p>a <code>data.frame</code> with predictor and response variables.
-Training and test samples will be drawn from this data set by <code>train_fun</code>
-and <code>test_fun</code>, respectively.</p></td>
+      <td><p>a <code>data.frame</code> with predictor and response variables. Training
+and test samples will be drawn from this data set by <code>train_fun</code> and
+<code>test_fun</code>, respectively.</p></td>
     </tr>
     <tr>
       <th>coords</th>
@@ -170,34 +189,32 @@ contain the x and y coordinates of sample locations.</p></td>
     </tr>
     <tr>
       <th>model_fun</th>
-      <td><p>Function that fits a predictive model, such as <code>glm</code>
-or <code>rpart</code>. The function must accept at least two arguments, the first
-one being a formula and the second a data.frame with the learning sample.</p></td>
+      <td><p>Function that fits a predictive model, such as <code>glm</code> or
+<code>rpart</code>. The function must accept at least two arguments, the first one
+being a formula and the second a data.frame with the learning sample.</p></td>
     </tr>
     <tr>
       <th>model_args</th>
-      <td><p>Arguments to be passed to <code>model_fun</code>
-(in addition to the <code>formula</code> and <code>data</code> argument,
-which are provided by <code>sperrorest</code>)</p></td>
+      <td><p>Arguments to be passed to <code>model_fun</code> (in addition to the
+<code>formula</code> and <code>data</code> argument, which are provided by sperrorest)</p></td>
     </tr>
     <tr>
       <th>pred_fun</th>
-      <td><p>Prediction function for a fitted model object created
-by <code>model</code>. Must accept at least two arguments: the fitted
-<code>object</code> and a <code>data.frame</code> <code>newdata</code> with data
-on which to predict the outcome.</p></td>
+      <td><p>Prediction function for a fitted model object created by
+<code>model</code>. Must accept at least two arguments: the fitted <code>object</code> and a
+<code>data.frame</code> <code>newdata</code> with data on which to predict the outcome.</p></td>
     </tr>
     <tr>
       <th>pred_args</th>
       <td><p>(optional) Arguments to <code>pred_fun</code> (in addition to the
-fitted model object and the <code>newdata</code> argument,
-which are provided by <code>sperrorest</code>).</p></td>
+fitted model object and the <code>newdata</code> argument, which are provided by
+sperrorest).</p></td>
     </tr>
     <tr>
       <th>smp_fun</th>
-      <td><p>A function for sampling training and test sets from
-<code>data</code>. E.g. <a href='partition_kmeans.html'>partition_kmeans</a> for
-spatial cross-validation using spatial <em>k</em>-means clustering.</p></td>
+      <td><p>A function for sampling training and test sets from <code>data</code>.
+E.g. <a href='partition_kmeans.html'>partition_kmeans</a> for spatial cross-validation using spatial
+<em>k</em>-means clustering.</p></td>
     </tr>
     <tr>
       <th>smp_args</th>
@@ -207,9 +224,8 @@ spatial cross-validation using spatial <em>k</em>-means clustering.</p></td>
       <th>train_fun</th>
       <td><p>(optional) A function for resampling or subsampling the
 training sample in order to achieve, e.g., uniform sample sizes on all
-training sets, or maintaining a certain ratio of positives and negatives
-in training sets.
-E.g. <a href='resample_uniform.html'>resample_uniform</a> or <a href='resample_strat_uniform.html'>resample_strat_uniform</a>.</p></td>
+training sets, or maintaining a certain ratio of positives and negatives in
+training sets. E.g. <a href='resample_uniform.html'>resample_uniform</a> or <a href='resample_strat_uniform.html'>resample_strat_uniform</a>.</p></td>
     </tr>
     <tr>
       <th>train_param</th>
@@ -226,20 +242,20 @@ E.g. <a href='resample_uniform.html'>resample_uniform</a> or <a href='resample_s
     <tr>
       <th>err_fun</th>
       <td><p>A function that calculates selected error measures from the
-known responses in <code>data</code> and the model predictions delivered
-by <code>pred_fun</code>. E.g. <a href='err_default.html'>err_default</a> (the default).</p></td>
+known responses in <code>data</code> and the model predictions delivered by
+<code>pred_fun</code>. E.g. <a href='err_default.html'>err_default</a> (the default).</p></td>
     </tr>
     <tr>
       <th>imp_variables</th>
-      <td><p>(optional; used if <code>importance = TRUE</code>).
-Variables for which permutation-based variable importance assessment
-is performed. If <code>importance = TRUE</code> and <code>imp_variables</code> ==
-<code>NULL</code>, all variables in <code>formula</code> will be used.</p></td>
+      <td><p>(optional; used if <code>importance = TRUE</code>). Variables for
+which permutation-based variable importance assessment is performed. If
+<code>importance = TRUE</code> and <code>imp_variables</code> == <code>NULL</code>, all variables in
+<code>formula</code> will be used.</p></td>
     </tr>
     <tr>
       <th>imp_permutations</th>
-      <td><p>(optional; used if <code>importance = TRUE</code>).
-Number of permutations used for variable importance assessment.</p></td>
+      <td><p>(optional; used if <code>importance = TRUE</code>). Number of
+permutations used for variable importance assessment.</p></td>
     </tr>
     <tr>
       <th>importance</th>
@@ -248,90 +264,62 @@ variable importance assessment?</p></td>
     </tr>
     <tr>
       <th>distance</th>
-      <td><p>logical (default: <code>FALSE</code>): if <code>TRUE</code>, calculate
-mean nearest-neighbour distances from test samples to training samples using
+      <td><p>logical (default: <code>FALSE</code>): if <code>TRUE</code>, calculate mean
+nearest-neighbour distances from test samples to training samples using
 <a href='add.distance.html'>add.distance.represampling</a>.</p></td>
-    </tr>
-    <tr>
-      <th>par_args</th>
-      <td><p>list of parallelization parameters:</p><ul>
-<li><p><code>par_mode</code>: the parallelization mode. See details.</p></li>
-<li><p><code>par_units</code>: the number of parallel processing units.</p></li>
-<li><p><code>par_option</code>: optional future settings for <code>par_mode = "future"</code> or
-<code>par_mode = "foreach"</code>.</p></li>
-</ul></td>
     </tr>
     <tr>
       <th>do_gc</th>
       <td><p>numeric (default: 1): defines frequency of memory garbage
-collection by calling <a href='https://www.rdocumentation.org/packages/base/topics/gc'>gc</a>; if <code>&lt; 1</code>, no garbage collection;
-if <code>&gt;= 1</code>, run a <a href='https://www.rdocumentation.org/packages/base/topics/gc'>gc</a> after each repetition;
-if <code>&gt;= 2</code>, after each fold.</p></td>
+collection by calling <a href='https://rdrr.io/r/base/gc.html'>gc</a>; if <code>&lt; 1</code>, no garbage collection; if <code>&gt;= 1</code>, run
+a <a href='https://rdrr.io/r/base/gc.html'>gc</a> after each repetition; if <code>&gt;= 2</code>, after each fold.</p></td>
     </tr>
     <tr>
       <th>progress</th>
       <td><p>character (default: <code>all</code>): Whether to show progress
 information (if possible). Default shows repetition, fold and (if enabled)
-variable importance progress for <code>par_mode = "foreach"</code> or
-<code>par_mode = "sequential"</code>.
-Set to <code>"rep"</code> for repetition information only or <code>FALSE</code> for no progress
-information.</p></td>
-    </tr>
-    <tr>
-      <th>out_progress</th>
-      <td><p>only used if <code>par_mode = foreach</code>: Write progress
-output to a file instead of console output.
-The default (<code>''</code>) results in console output for Unix-systems and
-file output ('sperrorest.progress.txt') in the current working directory
-for Windows systems. No console output is possible on Windows systems.</p></td>
+variable importance progress. Set to <code>"rep"</code> for repetition information
+only or <code>FALSE</code> for no progress information.</p></td>
     </tr>
     <tr>
       <th>benchmark</th>
-      <td><p>(optional) logical (default: <code>FALSE</code>): if <code>TRUE</code>,
-perform benchmarking and return <code>sperrorestbenchmark</code> object.</p></td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td><p>Further options passed to makeCluster for
-<code>par_mode = "foreach"</code>.</p></td>
+      <td><p>(optional) logical (default: <code>FALSE</code>): if <code>TRUE</code>, perform
+benchmarking and return <code>sperrorestbenchmark</code> object.</p></td>
     </tr>
     </table>
-    
+
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A list (object of class <code>sperrorest</code>) with (up to) six components:</p>
-<dt>error_rep</dt><dd><p>a <code>sperrorestreperror</code> object containing
-predictive performances at the repetition level</p></dd>
-<dt>error_fold</dt><dd><p>a <code>sperroresterror</code> object containing predictive
-performances at the fold level</p></dd>
-<dt>represampling</dt><dd><p>a <code><a href='as.represampling.html'>represampling()</a></code> object</p></dd>
-<dt>importance</dt><dd><p>a <code>sperrorestimportance</code> object containing
-permutation-based variable importances at the fold level</p></dd>
-<dt>benchmark</dt><dd><p>a <code>sperrorestbenchmark</code> object containing
+    <p>A list (object of class sperrorest) with (up to) six components:</p><ul>
+<li><p>error_rep: <code>sperrorestreperror</code> containing
+predictive performances at the repetition level</p></li>
+<li><p>error_fold: <code>sperroresterror</code> object containing predictive
+performances at the fold level</p></li>
+<li><p>represampling: <a href='as.represampling.html'>represampling</a> object</p></li>
+<li><p>importance: <code>sperrorestimportance</code> object containing
+permutation-based variable importances at the fold level</p></li>
+<li><p>benchmark: <code>sperrorestbenchmark</code> object containing
 information on the system the code is running on, starting and
-finishing times, number of available CPU cores, parallelization mode,
-number of parallel units, and runtime performance</p></dd>
-<dt>package_version</dt><dd><p>a <code>sperrorestpackageversion</code> object containing
-information about the <code>sperrorest</code> package version</p></dd>
+finishing times, number of available CPU cores and runtime performance</p></li>
+<li><p>package_version: <code>sperrorestpackageversion</code> object containing
+information about the sperrorest package version</p></li>
+</ul>
 
-    
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>By default <code>sperrorest</code> runs in parallel on all cores using
-<code>foreach</code> with the future backend. If this is not desired, specify
-<code>par_units</code> in <code>par_args</code> or set <code>par_mode = "sequential"</code>.</p>
-<p>Available parallelization modes include <code>par_mode = "apply"</code>
-(calls pbmclapply on Unix, parApply on Windows) and
-<code>future</code> (future_lapply).
-For the latter and <code>par_mode = "foreach"</code>, <code>par_option</code>
-(default to <code>multiprocess</code> and
-<code>cluster</code>, respectively) can be specified. See plan for further details.</p>
-    
-    <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
-
     <p>Custom predict functions passed to <code>pred_fun</code>, which consist of
-multiple custom defined child functions, must be defined in one function.</p>
+multiple child functions, must be defined in one function.</p>
+    <h2 class="hasAnchor" id="parallelization"><a class="anchor" href="#parallelization"></a>Parallelization</h2>
+
     
+
+
+<p>Running in parallel is supported via package <a href='https://CRAN.R-project.org/package=future'><span class="pkg">future</span></a>.
+Have a look at <code>vignette("future-1-overview", package = "future")</code>.
+In short: Choose a backend and specify the amount of workers, then call
+<code>sperrorest()</code> as usual. Example:<div class="r"></p><pre>future::plan(future.callr::callr, workers = 2)
+sperrorest()
+</pre><p></div></p>
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
     <p>Brenning, A. 2012. Spatial cross-validation and bootstrap for
@@ -354,102 +342,221 @@ yield prediction in Precision Agriculture. In Advances in Intelligent
 Data Analysis IX, Proceedings, 9th International Symposium,
 IDA 2010, Tucson, AZ, USA, 19-21 May 2010.
 Lecture Notes in Computer Science, 6065 LNCS: 184-195.</p>
-    
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><span class='co'># NOT RUN {</span>
-<span class='co'>##------------------------------------------------------------</span>
+    <pre class="examples"><div class='input'>
+<span class='co'>## ------------------------------------------------------------</span>
 <span class='co'>## Classification tree example using non-spatial partitioning</span>
-<span class='co'>## setup and default parallel mode ("foreach")</span>
-<span class='co'>##------------------------------------------------------------</span>
+<span class='co'>## ------------------------------------------------------------</span>
 
-<span class='fu'><a href='https://www.rdocumentation.org/packages/utils/topics/data'>data</a></span>(<span class='no'>ecuador</span>) <span class='co'># Muenchow et al. (2012), see ?ecuador</span>
+<span class='co'># Muenchow et al. (2012), see ?ecuador</span>
 <span class='no'>fo</span> <span class='kw'>&lt;-</span> <span class='no'>slides</span> ~ <span class='no'>dem</span> + <span class='no'>slope</span> + <span class='no'>hcurv</span> + <span class='no'>vcurv</span> + <span class='no'>log.carea</span> + <span class='no'>cslope</span>
 
-<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/library'>library</a></span>(<span class='no'>rpart</span>)
-<span class='no'>mypred_part</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>object</span>, <span class='no'>newdata</span>) <span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/predict'>predict</a></span>(<span class='no'>object</span>, <span class='no'>newdata</span>)[, <span class='fl'>2</span>]
-<span class='no'>ctrl</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/rpart/topics/rpart.control'>rpart.control</a></span>(<span class='kw'>cp</span> <span class='kw'>=</span> <span class='fl'>0.005</span>) <span class='co'># show the effects of overfitting</span>
-<span class='no'>fit</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/rpart/topics/rpart'>rpart</a></span>(<span class='no'>fo</span>, <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>ecuador</span>, <span class='kw'>control</span> <span class='kw'>=</span> <span class='no'>ctrl</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>rpart</span>)
+<span class='no'>mypred_part</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>object</span>, <span class='no'>newdata</span>) <span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span>(<span class='no'>object</span>, <span class='no'>newdata</span>)[, <span class='fl'>2</span>]
+<span class='no'>ctrl</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/rpart/man/rpart.control.html'>rpart.control</a></span>(<span class='kw'>cp</span> <span class='kw'>=</span> <span class='fl'>0.005</span>) <span class='co'># show the effects of overfitting</span>
+<span class='co'># show the effects of overfitting</span>
+<span class='no'>fit</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/rpart/man/rpart.html'>rpart</a></span>(<span class='no'>fo</span>, <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>ecuador</span>, <span class='kw'>control</span> <span class='kw'>=</span> <span class='no'>ctrl</span>)
 
-<span class='co'>### Non-spatial 5-repeated 10-fold cross-validation:</span>
-<span class='no'>mypred_part</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>object</span>, <span class='no'>newdata</span>) <span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/predict'>predict</a></span>(<span class='no'>object</span>, <span class='no'>newdata</span>)[, <span class='fl'>2</span>]
-<span class='no'>par_nsp_res</span> <span class='kw'>&lt;-</span> <span class='fu'>sperrorest</span>(<span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>ecuador</span>, <span class='kw'>formula</span> <span class='kw'>=</span> <span class='no'>fo</span>,
-                          <span class='kw'>model_fun</span> <span class='kw'>=</span> <span class='no'>rpart</span>,
-                          <span class='kw'>model_args</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>(<span class='kw'>control</span> <span class='kw'>=</span> <span class='no'>ctrl</span>),
-                          <span class='kw'>pred_fun</span> <span class='kw'>=</span> <span class='no'>mypred_part</span>,
-                          <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-                          <span class='kw'>smp_fun</span> <span class='kw'>=</span> <span class='no'>partition_cv</span>,
-                          <span class='kw'>smp_args</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>(<span class='kw'>repetition</span> <span class='kw'>=</span> <span class='fl'>1</span>:<span class='fl'>5</span>, <span class='kw'>nfold</span> <span class='kw'>=</span> <span class='fl'>10</span>))
-<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/summary'>summary</a></span>(<span class='no'>par_nsp_res</span>$<span class='no'>error_rep</span>)
-<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/summary'>summary</a></span>(<span class='no'>par_nsp_res</span>$<span class='no'>error_fold</span>)
-<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/summary'>summary</a></span>(<span class='no'>par_nsp_res</span>$<span class='no'>represampling</span>)
-<span class='co'># plot(par_nsp_res$represampling, ecuador)</span>
+<span class='co'>### Non-spatial cross-validation:</span>
+<span class='no'>mypred_part</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>object</span>, <span class='no'>newdata</span>) <span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span>(<span class='no'>object</span>, <span class='no'>newdata</span>)[, <span class='fl'>2</span>]
+<span class='no'>nsp_res</span> <span class='kw'>&lt;-</span> <span class='fu'>sperrorest</span>(
+  <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>ecuador</span>, <span class='kw'>formula</span> <span class='kw'>=</span> <span class='no'>fo</span>,
+  <span class='kw'>model_fun</span> <span class='kw'>=</span> <span class='no'>rpart</span>,
+  <span class='kw'>model_args</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>control</span> <span class='kw'>=</span> <span class='no'>ctrl</span>),
+  <span class='kw'>pred_fun</span> <span class='kw'>=</span> <span class='no'>mypred_part</span>,
+  <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>smp_fun</span> <span class='kw'>=</span> <span class='no'>partition_cv</span>,
+  <span class='kw'>smp_args</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>repetition</span> <span class='kw'>=</span> <span class='fl'>1</span>:<span class='fl'>2</span>, <span class='kw'>nfold</span> <span class='kw'>=</span> <span class='fl'>3</span>)
+)</div><div class='output co'>#&gt; Sun Mar 15 17:14:30 2020 Repetition 
+#&gt; Sun Mar 15 17:14:30 2020 Repetition - Fold 1 
+#&gt; Sun Mar 15 17:14:30 2020 Repetition - Fold 2 
+#&gt; Sun Mar 15 17:14:30 2020 Repetition - Fold 3 
+#&gt; Sun Mar 15 17:14:31 2020 Repetition 
+#&gt; Sun Mar 15 17:14:31 2020 Repetition - Fold 1 
+#&gt; Sun Mar 15 17:14:31 2020 Repetition - Fold 2 
+#&gt; Sun Mar 15 17:14:31 2020 Repetition - Fold 3 </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>nsp_res</span>$<span class='no'>error_rep</span>)</div><div class='output co'>#&gt;                           mean           sd       median          IQR
+#&gt; train_auroc          0.8243307 0.0125941070    0.8243307 0.0089053785
+#&gt; train_error          0.1950732 0.0009415536    0.1950732 0.0006657790
+#&gt; train_accuracy       0.8049268 0.0009415536    0.8049268 0.0006657790
+#&gt; train_sensitivity    0.8925000 0.0007071068    0.8925000 0.0005000000
+#&gt; train_specificity    0.6304781 0.0014085792    0.6304781 0.0009960159
+#&gt; train_fpr70          0.2161355 0.0239458472    0.2161355 0.0169322709
+#&gt; train_fpr80          0.2828685 0.0169029509    0.2828685 0.0119521912
+#&gt; train_fpr90          0.3954183 0.0098600547    0.3954183 0.0069721116
+#&gt; train_tpr80          0.6205000 0.1195010460    0.6205000 0.0845000000
+#&gt; train_tpr90          0.3920000 0.0466690476    0.3920000 0.0330000000
+#&gt; train_tpr95          0.2615000 0.0615182900    0.2615000 0.0435000000
+#&gt; train_events      1000.0000000 0.0000000000 1000.0000000 0.0000000000
+#&gt; train_count       1502.0000000 0.0000000000 1502.0000000 0.0000000000
+#&gt; test_auroc           0.6028904 0.0139590203    0.6028904 0.0098705179
+#&gt; test_error           0.3608522 0.0207141800    0.3608522 0.0146471372
+#&gt; test_accuracy        0.6391478 0.0207141800    0.6391478 0.0146471372
+#&gt; test_sensitivity     0.7630000 0.0296984848    0.7630000 0.0210000000
+#&gt; test_specificity     0.3924303 0.0028171585    0.3924303 0.0019920319
+#&gt; test_fpr70           0.5159363 0.0478916943    0.5159363 0.0338645418
+#&gt; test_fpr80           0.6573705 0.0281715849    0.6573705 0.0199203187
+#&gt; test_fpr90           0.8107570 0.0309887434    0.8107570 0.0219123506
+#&gt; test_tpr80           0.2640000 0.0028284271    0.2640000 0.0020000000
+#&gt; test_tpr90           0.1480000 0.0141421356    0.1480000 0.0100000000
+#&gt; test_tpr95           0.0840000 0.0339411255    0.0840000 0.0240000000
+#&gt; test_events        500.0000000 0.0000000000  500.0000000 0.0000000000
+#&gt; test_count         751.0000000 0.0000000000  751.0000000 0.0000000000</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>nsp_res</span>$<span class='no'>error_fold</span>)</div><div class='output co'>#&gt;                           mean         sd      median        IQR
+#&gt; train.auroc         0.82011298 0.02776312   0.8263439 0.03078675
+#&gt; train.error         0.19507319 0.02176863   0.1956088 0.03343313
+#&gt; train.accuracy      0.80492681 0.02176863   0.8043912 0.03343313
+#&gt; train.sensitivity   0.89226267 0.02023471   0.8849737 0.01928846
+#&gt; train.specificity   0.63033654 0.04817174   0.6236699 0.03708201
+#&gt; train.fpr70         0.24704750 0.06326727   0.2489265 0.06831165
+#&gt; train.fpr80         0.29439122 0.05123823   0.3001055 0.06303427
+#&gt; train.fpr90         0.42018580 0.06222256   0.4184876 0.09726333
+#&gt; train.tpr80         0.54233791 0.14358433   0.5049551 0.19640841
+#&gt; train.tpr90         0.34197810 0.07278519   0.3453330 0.10373618
+#&gt; train.tpr95         0.21497801 0.09150267   0.2139608 0.12298731
+#&gt; train.events      333.33333333 6.94742158 333.5000000 7.00000000
+#&gt; train.count       500.66666667 0.51639778 501.0000000 0.75000000
+#&gt; test.auroc          0.60420696 0.04575682   0.5879650 0.06205671
+#&gt; test.error          0.36082072 0.05142120   0.3673147 0.06334263
+#&gt; test.accuracy       0.63917928 0.05142120   0.6326853 0.06334263
+#&gt; test.sensitivity    0.76189031 0.05396171   0.7654321 0.08608755
+#&gt; test.specificity    0.39271148 0.05962676   0.3755319 0.08068593
+#&gt; test.fpr70          0.55020923 0.07473376   0.5547167 0.08712012
+#&gt; test.fpr80          0.66880106 0.10545046   0.6583126 0.12346097
+#&gt; test.fpr90          0.83582852 0.09361168   0.8443182 0.10791762
+#&gt; test.tpr80          0.23545398 0.03839331   0.2388245 0.05537170
+#&gt; test.tpr90          0.11221033 0.08595134   0.1050429 0.05965687
+#&gt; test.tpr95          0.07681264 0.04020856   0.0889523 0.02610701
+#&gt; test.events       166.66666667 6.94742158 166.5000000 7.00000000
+#&gt; test.count        250.33333333 0.51639778 250.0000000 0.75000000
+#&gt; distance           -1.00000000 0.00000000  -1.0000000 0.00000000</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>nsp_res</span>$<span class='no'>represampling</span>)</div><div class='output co'>#&gt; $`1`
+#&gt;   n.train n.test
+#&gt; 1     500    251
+#&gt; 2     501    250
+#&gt; 3     501    250
+#&gt; 
+#&gt; $`2`
+#&gt;   n.train n.test
+#&gt; 1     501    250
+#&gt; 2     500    251
+#&gt; 3     501    250
+#&gt; </div><div class='input'><span class='co'># plot(nsp_res$represampling, ecuador)</span>
 
-<span class='co'>### Spatial 5-repeated 10-fold spatial cross-validation:</span>
-<span class='no'>par_sp_res</span> <span class='kw'>&lt;-</span> <span class='fu'>sperrorest</span>(<span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>ecuador</span>, <span class='kw'>formula</span> <span class='kw'>=</span> <span class='no'>fo</span>,
-                         <span class='kw'>model_fun</span> <span class='kw'>=</span> <span class='no'>rpart</span>,
-                         <span class='kw'>model_args</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>(<span class='kw'>control</span> <span class='kw'>=</span> <span class='no'>ctrl</span>),
-                         <span class='kw'>pred_fun</span> <span class='kw'>=</span> <span class='no'>mypred_part</span>,
-                         <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-                         <span class='kw'>smp_fun</span> <span class='kw'>=</span> <span class='no'>partition_kmeans</span>,
-                         <span class='kw'>smp_args</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>(<span class='kw'>repetition</span> <span class='kw'>=</span> <span class='fl'>1</span>:<span class='fl'>5</span>, <span class='kw'>nfold</span> <span class='kw'>=</span> <span class='fl'>10</span>))
-<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/summary'>summary</a></span>(<span class='no'>par_sp_res</span>$<span class='no'>error_rep</span>)
-<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/summary'>summary</a></span>(<span class='no'>par_sp_res</span>$<span class='no'>error_fold</span>)
-<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/summary'>summary</a></span>(<span class='no'>par_sp_res</span>$<span class='no'>represampling</span>)
-<span class='co'># plot(par_sp_res$represampling, ecuador)</span>
+<span class='co'>### Spatial cross-validation:</span>
+<span class='no'>sp_res</span> <span class='kw'>&lt;-</span> <span class='fu'>sperrorest</span>(
+  <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>ecuador</span>, <span class='kw'>formula</span> <span class='kw'>=</span> <span class='no'>fo</span>,
+  <span class='kw'>model_fun</span> <span class='kw'>=</span> <span class='no'>rpart</span>,
+  <span class='kw'>model_args</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>control</span> <span class='kw'>=</span> <span class='no'>ctrl</span>),
+  <span class='kw'>pred_fun</span> <span class='kw'>=</span> <span class='no'>mypred_part</span>,
+  <span class='kw'>progress</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>smp_fun</span> <span class='kw'>=</span> <span class='no'>partition_kmeans</span>,
+  <span class='kw'>smp_args</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>repetition</span> <span class='kw'>=</span> <span class='fl'>1</span>:<span class='fl'>2</span>, <span class='kw'>nfold</span> <span class='kw'>=</span> <span class='fl'>3</span>)
+)</div><div class='output co'>#&gt; Sun Mar 15 17:14:31 2020 Repetition 
+#&gt; Sun Mar 15 17:14:31 2020 Repetition - Fold 1 
+#&gt; Sun Mar 15 17:14:31 2020 Repetition - Fold 2 
+#&gt; Sun Mar 15 17:14:31 2020 Repetition - Fold 3 
+#&gt; Sun Mar 15 17:14:31 2020 Repetition 
+#&gt; Sun Mar 15 17:14:31 2020 Repetition - Fold 1 
+#&gt; Sun Mar 15 17:14:31 2020 Repetition - Fold 2 
+#&gt; Sun Mar 15 17:14:31 2020 Repetition - Fold 3 </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>sp_res</span>$<span class='no'>error_rep</span>)</div><div class='output co'>#&gt;                           mean sd       median IQR
+#&gt; train_auroc          0.8596096  0    0.8596096   0
+#&gt; train_error          0.1804261  0    0.1804261   0
+#&gt; train_accuracy       0.8195739  0    0.8195739   0
+#&gt; train_sensitivity    0.8970000  0    0.8970000   0
+#&gt; train_specificity    0.6653386  0    0.6653386   0
+#&gt; train_fpr70          0.1633466  0    0.1633466   0
+#&gt; train_fpr80          0.2290837  0    0.2290837   0
+#&gt; train_fpr90          0.3466135  0    0.3466135   0
+#&gt; train_tpr80          0.7740000  0    0.7740000   0
+#&gt; train_tpr90          0.5320000  0    0.5320000   0
+#&gt; train_tpr95          0.2830000  0    0.2830000   0
+#&gt; train_events      1000.0000000  0 1000.0000000   0
+#&gt; train_count       1502.0000000  0 1502.0000000   0
+#&gt; test_auroc           0.4856972  0    0.4856972   0
+#&gt; test_error           0.4926764  0    0.4926764   0
+#&gt; test_accuracy        0.5073236  0    0.5073236   0
+#&gt; test_sensitivity     0.5240000  0    0.5240000   0
+#&gt; test_specificity     0.4741036  0    0.4741036   0
+#&gt; test_fpr70           0.7091633  0    0.7091633   0
+#&gt; test_fpr80           0.9282869  0    0.9282869   0
+#&gt; test_fpr90           0.9282869  0    0.9282869   0
+#&gt; test_tpr80           0.1640000  0    0.1640000   0
+#&gt; test_tpr90           0.1040000  0    0.1040000   0
+#&gt; test_tpr95           0.0520000  0    0.0520000   0
+#&gt; test_events        500.0000000  0  500.0000000   0
+#&gt; test_count         751.0000000  0  751.0000000   0</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>sp_res</span>$<span class='no'>error_fold</span>)</div><div class='output co'>#&gt;                           mean          sd      median          IQR
+#&gt; train.auroc         0.85746860  0.01344957   0.8616441   0.02189372
+#&gt; train.error         0.18118523  0.01386149   0.1809745   0.02324481
+#&gt; train.accuracy      0.81881477  0.01386149   0.8190255   0.02324481
+#&gt; train.sensitivity   0.89517275  0.02572003   0.8981818   0.04295632
+#&gt; train.specificity   0.66590587  0.02628511   0.6794872   0.04039695
+#&gt; train.fpr70         0.17270680  0.01700203   0.1724138   0.02851073
+#&gt; train.fpr80         0.25899595  0.02213544   0.2628205   0.03678829
+#&gt; train.fpr90         0.37418008  0.04490680   0.3589744   0.07267442
+#&gt; train.tpr80         0.74550182  0.03479968   0.7331288   0.05610390
+#&gt; train.tpr90         0.47415691  0.06572210   0.4846626   0.10937116
+#&gt; train.tpr95         0.27116823  0.08600720   0.2423313   0.13928913
+#&gt; train.events      333.33333333 55.74465595 326.0000000  93.00000000
+#&gt; train.count       500.66666667 63.53791519 498.0000000 106.50000000
+#&gt; test.auroc          0.51254985  0.05070154   0.4893801   0.07952378
+#&gt; test.error          0.47282007  0.09752171   0.4426877   0.15879565
+#&gt; test.accuracy       0.52717993  0.09752171   0.5573123   0.15879565
+#&gt; test.sensitivity    0.58619754  0.24786480   0.6954023   0.39072607
+#&gt; test.specificity    0.45636358  0.21782564   0.3896104   0.35486342
+#&gt; test.fpr70          0.75476378  0.13365230   0.7721519   0.22300068
+#&gt; test.fpr80          0.78029943  0.12573893   0.8227848   0.20352016
+#&gt; test.fpr90          0.94262180  0.02584851   0.9480519   0.04277149
+#&gt; test.tpr80          0.20735607  0.03274369   0.2177778   0.05321782
+#&gt; test.tpr90          0.09922714  0.07202823   0.1022222   0.12073233
+#&gt; test.tpr95          0.05940594  0.09203129   0.0000000   0.13366337
+#&gt; test.events       166.66666667 55.74465595 174.0000000  93.00000000
+#&gt; test.count        250.33333333 63.53791519 253.0000000 106.50000000
+#&gt; distance           -1.00000000  0.00000000  -1.0000000   0.00000000</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>sp_res</span>$<span class='no'>represampling</span>)</div><div class='output co'>#&gt; $`1`
+#&gt;   n.train n.test
+#&gt; 1     498    253
+#&gt; 2     573    178
+#&gt; 3     431    320
+#&gt; 
+#&gt; $`2`
+#&gt;   n.train n.test
+#&gt; 1     498    253
+#&gt; 2     573    178
+#&gt; 3     431    320
+#&gt; </div><div class='input'><span class='co'># plot(sp_res$represampling, ecuador)</span>
 
-<span class='no'>smry</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/data.frame'>data.frame</a></span>(
-    <span class='kw'>nonspat_training</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/unlist'>unlist</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/summary'>summary</a></span>(<span class='no'>par_nsp_res</span>$<span class='no'>error_rep</span>,
-                                      <span class='kw'>level</span> <span class='kw'>=</span> <span class='fl'>1</span>)$<span class='no'>train_auroc</span>),
-    <span class='kw'>nonspat_test</span>     <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/unlist'>unlist</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/summary'>summary</a></span>(<span class='no'>par_nsp_res</span>$<span class='no'>error_rep</span>,
-                                      <span class='kw'>level</span> <span class='kw'>=</span> <span class='fl'>1</span>)$<span class='no'>test_auroc</span>),
-    <span class='kw'>spatial_training</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/unlist'>unlist</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/summary'>summary</a></span>(<span class='no'>par_sp_res</span>$<span class='no'>error_rep</span>,
-                                      <span class='kw'>level</span> <span class='kw'>=</span> <span class='fl'>1</span>)$<span class='no'>train_auroc</span>),
-    <span class='kw'>spatial_test</span>     <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/unlist'>unlist</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/summary'>summary</a></span>(<span class='no'>par_sp_res</span>$<span class='no'>error_rep</span>,
-                                     <span class='kw'>level</span> <span class='kw'>=</span> <span class='fl'>1</span>)$<span class='no'>test_auroc</span>))
-<span class='fu'><a href='https://www.rdocumentation.org/packages/graphics/topics/boxplot'>boxplot</a></span>(<span class='no'>smry</span>, <span class='kw'>col</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>'red'</span>,<span class='st'>'red'</span>,<span class='st'>'red'</span>,<span class='st'>'green'</span>),
-    <span class='kw'>main</span> <span class='kw'>=</span> <span class='st'>'Training vs. test, nonspatial vs. spatial'</span>,
-    <span class='kw'>ylab</span> <span class='kw'>=</span> <span class='st'>'Area under the ROC curve'</span>)
-
-<span class='co'>##------------------------------------------------------------</span>
-<span class='co'>## Logistic regression example (glm) using partition_kmeans</span>
-<span class='co'>## and computation of permutation based variable importance</span>
-<span class='co'>##------------------------------------------------------------</span>
-
-<span class='fu'><a href='https://www.rdocumentation.org/packages/utils/topics/data'>data</a></span>(<span class='no'>ecuador</span>)
-<span class='no'>fo</span> <span class='kw'>&lt;-</span> <span class='no'>slides</span> ~ <span class='no'>dem</span> + <span class='no'>slope</span> + <span class='no'>hcurv</span> + <span class='no'>vcurv</span> + <span class='no'>log.carea</span> + <span class='no'>cslope</span>
-
-<span class='no'>out</span> <span class='kw'>&lt;-</span> <span class='fu'>sperrorest</span>(<span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>ecuador</span>, <span class='kw'>formula</span> <span class='kw'>=</span> <span class='no'>fo</span>,
-                  <span class='kw'>model_fun</span> <span class='kw'>=</span> <span class='no'>glm</span>,
-                  <span class='kw'>model_args</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>(<span class='kw'>family</span> <span class='kw'>=</span> <span class='st'>"binomial"</span>),
-                  <span class='kw'>pred_fun</span> <span class='kw'>=</span> <span class='no'>predict</span>,
-                  <span class='kw'>pred_args</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>(<span class='kw'>type</span> <span class='kw'>=</span> <span class='st'>"response"</span>),
-                  <span class='kw'>smp_fun</span> <span class='kw'>=</span> <span class='no'>partition_kmeans</span>,
-                  <span class='kw'>smp_args</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>(<span class='kw'>repetition</span> <span class='kw'>=</span> <span class='fl'>1</span>:<span class='fl'>2</span>, <span class='kw'>nfold</span> <span class='kw'>=</span> <span class='fl'>4</span>),
-                  <span class='kw'>par_args</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>(<span class='kw'>par_mode</span> <span class='kw'>=</span> <span class='st'>"future"</span>),
-                  <span class='kw'>importance</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>imp_permutations</span> <span class='kw'>=</span> <span class='fl'>10</span>)
-<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/summary'>summary</a></span>(<span class='no'>out</span>$<span class='no'>error_rep</span>)
-<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/summary'>summary</a></span>(<span class='no'>out</span>$<span class='no'>importance</span>)
-<span class='co'># }</span></pre>
+<span class='no'>smry</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(
+  <span class='kw'>nonspat_training</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/unlist.html'>unlist</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>nsp_res</span>$<span class='no'>error_rep</span>,
+    <span class='kw'>level</span> <span class='kw'>=</span> <span class='fl'>1</span>
+  )$<span class='no'>train_auroc</span>),
+  <span class='kw'>nonspat_test</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/unlist.html'>unlist</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>nsp_res</span>$<span class='no'>error_rep</span>,
+    <span class='kw'>level</span> <span class='kw'>=</span> <span class='fl'>1</span>
+  )$<span class='no'>test_auroc</span>),
+  <span class='kw'>spatial_training</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/unlist.html'>unlist</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>sp_res</span>$<span class='no'>error_rep</span>,
+    <span class='kw'>level</span> <span class='kw'>=</span> <span class='fl'>1</span>
+  )$<span class='no'>train_auroc</span>),
+  <span class='kw'>spatial_test</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/unlist.html'>unlist</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>sp_res</span>$<span class='no'>error_rep</span>,
+    <span class='kw'>level</span> <span class='kw'>=</span> <span class='fl'>1</span>
+  )$<span class='no'>test_auroc</span>)
+)
+<span class='fu'><a href='https://rdrr.io/r/graphics/boxplot.html'>boxplot</a></span>(<span class='no'>smry</span>,
+  <span class='kw'>col</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"red"</span>, <span class='st'>"red"</span>, <span class='st'>"red"</span>, <span class='st'>"green"</span>),
+  <span class='kw'>main</span> <span class='kw'>=</span> <span class='st'>"Training vs. test, nonspatial vs. spatial"</span>,
+  <span class='kw'>ylab</span> <span class='kw'>=</span> <span class='st'>"Area under the ROC curve"</span>
+)</div><div class='img'><img src='sperrorest-1.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      
       <li><a href="#value">Value</a></li>
-
       <li><a href="#details">Details</a></li>
-
-      <li><a href="#note">Note</a></li>
-
+      <li><a href="#parallelization">Parallelization</a></li>
       <li><a href="#references">References</a></li>
-      
       <li><a href="#examples">Examples</a></li>
     </ul>
 
   </div>
 </div>
+
 
       <footer>
       <div class="copyright">
@@ -457,13 +564,16 @@ Lecture Notes in Computer Science, 6065 LNCS: 184-195.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
 </div>
+
       </footer>
    </div>
 
   
 
+
   </body>
 </html>
+
 
