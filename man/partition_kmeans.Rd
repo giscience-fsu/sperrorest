@@ -2,7 +2,8 @@
 % Please edit documentation in R/sperrorest_resampling.R
 \name{partition_kmeans}
 \alias{partition_kmeans}
-\title{Partition samples spatially using k-means clustering of the coordinates}
+\title{Partition samples spatially using k-means clustering of the
+coordinates}
 \usage{
 partition_kmeans(
   data,
@@ -42,11 +43,11 @@ if \code{TRUE} (used internally by other {sperrorest} functions), return a
 
 \item{balancing_steps}{if \verb{> 1}, perform \code{nfold}-means clustering
 \code{balancing_steps} times, and pick the clustering that minimizes the Gini
-index of the sample size distribution among the partitions. The idea is that
-'degenerate' partitions will be avoided, but this also has the side effect of
-reducing variation among partitioning repetitions. More meaningful
-constraints (e.g., minimum number of positive and negative samples within
-each partition should be added in the future.}
+index of the sample size distribution among the partitions. The idea is
+that 'degenerate' partitions will be avoided, but this also has the side
+effect of reducing variation among partitioning repetitions. More
+meaningful constraints (e.g., minimum number of positive and negative
+samples within each partition should be added in the future.}
 
 \item{order_clusters}{if \code{TRUE}, clusters are ordered by increasing x
 coordinate of center point.}
@@ -54,13 +55,12 @@ coordinate of center point.}
 \item{...}{additional arguments to \link{kmeans}.}
 }
 \value{
-A \link{represampling} object, see also
-\link{partition_cv} for details.
+A \link{represampling} object, see also \link{partition_cv} for details.
 }
 \description{
-\code{partition_kmeans} divides the study area into irregularly shaped
-spatial partitions based on \emph{k}-means (\link{kmeans}) clustering
-of spatial coordinates.
+\code{partition_kmeans} divides the study area into irregularly
+shaped spatial partitions based on \emph{k}-means (\link{kmeans}) clustering of
+spatial coordinates.
 }
 \note{
 Default parameter settings may change in future releases.
@@ -83,7 +83,6 @@ IPMU 2010; Dortmund; 28 June - 2 July 2010.
 Lecture Notes in Computer Science, 6178 LNAI: 350-359.
 }
 \seealso{
-\link{sperrorest}, \link{partition_cv},
-\link{partition_disc}, \link{partition_tiles},
+\link{sperrorest}, \link{partition_cv}, \link{partition_disc}, \link{partition_tiles},
 \link{kmeans}
 }

@@ -30,49 +30,47 @@ partition_tiles(
 contain the x and y coordinates of sample locations}
 
 \item{dsplit}{optional vector of length 2: equidistance of splits in
-(possibly rotated) x direction (\code{dsplit[1]}) and y direction
-(\code{dsplit[2]}) used to define tiles. If \code{dsplit} is of length 1,
-its value is recycled. Either \code{dsplit} or \code{nsplit} must be specified.}
+(possibly rotated) x direction (\code{dsplit[1]}) and y direction (\code{dsplit[2]})
+used to define tiles. If \code{dsplit} is of length 1, its value is recycled.
+Either \code{dsplit} or \code{nsplit} must be specified.}
 
-\item{nsplit}{optional vector of length 2: number of splits in
-(possibly rotated) x direction (\code{nsplit[1]}) and y direction
-(\code{nsplit[2]}) used to define tiles. If \code{nsplit} is of length 1,
-its value is recycled.}
+\item{nsplit}{optional vector of length 2: number of splits in (possibly
+rotated) x direction (\code{nsplit[1]}) and y direction (\code{nsplit[2]}) used to
+define tiles. If \code{nsplit} is of length 1, its value is recycled.}
 
-\item{rotation}{indicates whether and how the rectangular grid should
-be rotated; random rotation is only between \code{-45} and \code{+45} degrees.}
+\item{rotation}{indicates whether and how the rectangular grid should be
+rotated; random rotation is only between \code{-45} and \code{+45} degrees.}
 
-\item{user_rotation}{if \code{rotation='user'}, angles (in degrees) by which
-the rectangular grid is to be rotated in each repetition. Either a vector of
+\item{user_rotation}{if \code{rotation='user'}, angles (in degrees) by which the
+rectangular grid is to be rotated in each repetition. Either a vector of
 same length as \code{repetition}, or a single number that will be replicated
 \code{length(repetition)} times.}
 
 \item{offset}{indicates whether and how the rectangular grid should be
 shifted by an offset.}
 
-\item{user_offset}{if \code{offset='user'}, a list (or vector) of two
-components specifying a shift of the rectangular grid in (possibly rotated) x
-and y direction. The offset values are relative values, a value of \code{0.5}
-resulting in a one-half tile shift towards the left, or upward.
-If this is a list, its first (second) component refers to the rotated x (y)
-direction, and both components must have same length as \code{repetition}
-(or length 1). If a vector of length 2 (or list components have length 1),
-the two values will be interpreted as relative shifts in (rotated) x and y
-direction, respectively, and will therefore be recycled as needed
+\item{user_offset}{if \code{offset='user'}, a list (or vector) of two components
+specifying a shift of the rectangular grid in (possibly rotated) x and y
+direction. The offset values are relative values, a value of \code{0.5}
+resulting in a one-half tile shift towards the left, or upward. If this is
+a list, its first (second) component refers to the rotated x (y) direction,
+and both components must have same length as \code{repetition} (or length 1). If
+a vector of length 2 (or list components have length 1), the two values
+will be interpreted as relative shifts in (rotated) x and y direction,
+respectively, and will therefore be recycled as needed
 (\code{length(repetition)} times each).}
 
-\item{reassign}{logical (default \code{TRUE}): if \code{TRUE}, 'small' tiles
-(as per \code{min_frac} and \code{min_n} arguments and
-\link{get_small_tiles}) are merged with (smallest) adjacent tiles.
-If \code{FALSE}, small tiles are 'eliminated', i.e. set to \code{NA}.}
+\item{reassign}{logical (default \code{TRUE}): if \code{TRUE}, 'small' tiles (as per
+\code{min_frac} and \code{min_n} arguments and \link{get_small_tiles}) are merged with
+(smallest) adjacent tiles. If \code{FALSE}, small tiles are 'eliminated', i.e.
+set to \code{NA}.}
 
 \item{min_frac}{numeric >=0, <1: minimum relative size of partition as
-percentage of sample; argument passed to \link{get_small_tiles}.
-Will be ignored if \code{NULL}.}
+percentage of sample; argument passed to \link{get_small_tiles}. Will be ignored
+if \code{NULL}.}
 
-\item{min_n}{integer >=0: minimum number of samples per partition;
-argument passed to \link{get_small_tiles}.
-Will be ignored if \code{NULL}.}
+\item{min_n}{integer >=0: minimum number of samples per partition; argument
+passed to \link{get_small_tiles}. Will be ignored if \code{NULL}.}
 
 \item{iterate}{argument to be passed to \link{tile_neighbors}}
 
@@ -91,26 +89,25 @@ repetition \code{i} (\code{i} in \code{repetition}) to initialize the random num
 generator before sampling from the data set.}
 }
 \value{
-A \link{represampling} object.
-Contains \code{length(repetition)} \link{resampling} objects as
-repetitions. The exact number of folds / test-set tiles within each
-\link{resampling} objects depends on the spatial configuration of
-the data set and possible cleaning steps (see \code{min_frac}, \code{min_n}).
+A \link{represampling} object. Contains \code{length(repetition)} \link{resampling}
+objects as repetitions. The exact number of folds / test-set tiles within
+each \link{resampling} objects depends on the spatial configuration of the data
+set and possible cleaning steps (see \code{min_frac}, \code{min_n}).
 }
 \description{
-\code{partition_tiles} divides the study area into a specified number of
-rectangular tiles. Optionally small partitions can be merged with adjacent
-tiles to achieve a minimum number or percentage of samples in each tile.
+\code{partition_tiles} divides the study area into a specified number
+of rectangular tiles. Optionally small partitions can be merged with
+adjacent tiles to achieve a minimum number or percentage of samples in each
+tile.
 }
 \note{
-Default parameter settings may change in future releases.
-This function, especially the rotation and shifting part of it and the
-algorithm for cleaning up small tiles is still a bit experimental.
-Use with caution.
-For non-zero offsets (\verb{offset!='none')}), the number of tiles may
-actually be greater than \code{nsplit[1]*nsplit[2]} because of fractional
-tiles lurking into the study region. \code{reassign=TRUE} with suitable
-thresholds is therefore recommended for non-zero (including random) offsets.
+Default parameter settings may change in future releases. This
+function, especially the rotation and shifting part of it and the algorithm
+for cleaning up small tiles is still a bit experimental. Use with caution.
+For non-zero offsets (\verb{offset!='none')}), the number of tiles may actually
+be greater than \code{nsplit[1]*nsplit[2]} because of fractional tiles lurking
+into the study region. \code{reassign=TRUE} with suitable thresholds is
+therefore recommended for non-zero (including random) offsets.
 }
 \examples{
 data(ecuador)
@@ -136,6 +133,6 @@ parti3 <- partition_tiles(ecuador,
 summary(parti3)
 }
 \seealso{
-\link{sperrorest}, \link{as.resampling.factor},
-\link{get_small_tiles}, \link{tile_neighbors}
+\link{sperrorest}, \link{as.resampling.factor}, \link{get_small_tiles},
+\link{tile_neighbors}
 }

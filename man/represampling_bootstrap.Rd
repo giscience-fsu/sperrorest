@@ -32,20 +32,19 @@ different set of 100 repetitions.}
 repetition \code{i} (\code{i} in \code{repetition}) to initialize the random number
 generator before sampling from the data set.}
 
-\item{oob}{logical (default \code{FALSE}): if \code{TRUE}, use the out-of-bag
-sample as the test sample; if \code{FALSE}, draw a second bootstrap sample of
-size \code{nboot} independently to obtain a test sample.}
+\item{oob}{logical (default \code{FALSE}): if \code{TRUE}, use the out-of-bag sample as
+the test sample; if \code{FALSE}, draw a second bootstrap sample of size \code{nboot}
+independently to obtain a test sample.}
 }
 \value{
-A \link{represampling} object. This is a (named) list
-containing \code{length(repetition)}.
-\link{resampling} objects. Each of these contains only one list with
-indices of \code{train}ing and \code{test} samples.
-Indices are row indices for \code{data}.
+A \link{represampling} object. This is a (named) list containing
+\code{length(repetition)}. \link{resampling} objects. Each of these contains only one
+list with indices of \code{train}ing and \code{test} samples. Indices are row indices
+for \code{data}.
 }
 \description{
-\code{represampling_bootstrap} draws a bootstrap random sample
-(with replacement) from \code{data}.
+\code{represampling_bootstrap} draws a bootstrap random sample (with
+replacement) from \code{data}.
 }
 \examples{
 data(ecuador)

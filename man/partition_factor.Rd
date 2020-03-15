@@ -2,8 +2,8 @@
 % Please edit documentation in R/sperrorest_resampling.R
 \name{partition_factor}
 \alias{partition_factor}
-\title{Partition the data for a (non-spatial) leave-one-factor-out cross-validation
-based on a given, fixed partitioning}
+\title{Partition the data for a (non-spatial) leave-one-factor-out
+cross-validation based on a given, fixed partitioning}
 \usage{
 partition_factor(
   data,
@@ -20,9 +20,9 @@ partition_factor(
 \item{coords}{vector of length 2 defining the variables in \code{data} that
 contain the x and y coordinates of sample locations.}
 
-\item{fac}{either the name of a variable (column) in \code{data}, or a vector
-of type factor and length \code{nrow(data)} that contains the partitions
-to be used for defining training and test samples.}
+\item{fac}{either the name of a variable (column) in \code{data}, or a vector of
+type factor and length \code{nrow(data)} that contains the partitions to be used
+for defining training and test samples.}
 
 \item{return_factor}{if \code{FALSE} (default), return a \link{represampling} object;
 if \code{TRUE} (used internally by other {sperrorest} functions), return a
@@ -35,12 +35,11 @@ of these repetitions. E.g., use \code{repetition = c(1:100)} to obtain (the
 different set of 100 repetitions.}
 }
 \value{
-A \link{represampling} object,
-see also \link{partition_cv} for details.
+A \link{represampling} object, see also \link{partition_cv} for details.
 }
 \description{
-\code{partition_factor} creates a \link{represampling} object, i.e. a set of sample
-indices defining cross-validation test and training sets.
+\code{partition_factor} creates a \link{represampling} object, i.e. a set
+of sample indices defining cross-validation test and training sets.
 }
 \note{
 In this partitioning approach, all \code{repetition}s are identical and
@@ -58,6 +57,5 @@ parti <- partition_factor(ecuador, fac = "zclass")
 summary(parti)
 }
 \seealso{
-\link{sperrorest}, \link{partition_cv},
-\link{as.resampling.factor}
+\link{sperrorest}, \link{partition_cv}, \link{as.resampling.factor}
 }

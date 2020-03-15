@@ -79,31 +79,27 @@ partition_cv <- function(data,
   return(resampling)
 }
 
-
-#' Partition the data for a stratified (non-spatial) cross-validation
+#' @title Partition the data for a stratified (non-spatial) cross-validation
 #'
-#' `partition_cv_strat` creates a set of sample indices corresponding
-#' to cross-validation test and training sets.
+#' @description `partition_cv_strat` creates a set of sample indices
+#'   corresponding to cross-validation test and training sets.
 #'
 #' @name partition_cv_strat
 #' @inheritParams partition_cv
 #'
 #' @param coords vector of length 2 defining the variables in `data` that
-#' contain the x and y coordinates of sample locations
-#' @param strat character: column in `data` containing a factor variable
-#' over which the partitioning should be stratified; or factor vector of length
-#' `nrow(data)`: variable over which to stratify
+#'   contain the x and y coordinates of sample locations
+#' @param strat character: column in `data` containing a factor variable over
+#'   which the partitioning should be stratified; or factor vector of length
+#'   `nrow(data)`: variable over which to stratify
 #'
-#' @return A [represampling()] object, see also
-#' [partition_cv()]. `partition_strat_cv`, however,
-#' stratified with respect to the variable `data[,strat]`;
-#' i.e., cross-validation partitioning is done within each set
-#' `data[data[,strat]==i,]` (`i` in `levels(data[, strat])`), and
-#' the `i`th folds of all levels are combined into one cross-validation
-#' fold.
+#' @return A [represampling] object, see also [partition_cv()].
+#'   `partition_strat_cv`, however, stratified with respect to the variable
+#'   `data[,strat]`; i.e., cross-validation partitioning is done within each set
+#'   `data[data[,strat]==i,]` (`i` in `levels(data[, strat])`), and the `i`th
+#'   folds of all levels are combined into one cross-validation fold.
 #'
-#' @seealso [sperrorest()], [as.resampling()],
-#' [resample_strat_uniform()]
+#' @seealso [sperrorest()], [as.resampling()], [resample_strat_uniform()]
 #'
 #' @examples
 #' data(ecuador)
@@ -120,7 +116,6 @@ partition_cv <- function(data,
 #' mean(ecuador$slides[idx] == "TRUE") / mean(ecuador$slides == "TRUE")
 #' # close to 1 because of large sample size, but with some random variation
 #' @export
-#' @noMd
 partition_cv_strat <- function(data, coords = c("x", "y"), nfold = 10,
                                return_factor = FALSE, repetition = 1,
                                seed1 = NULL, strat) {
@@ -162,28 +157,26 @@ partition_cv_strat <- function(data, coords = c("x", "y"), nfold = 10,
   return(repres)
 }
 
-#' Partition the data for a (non-spatial) leave-one-factor-out cross-validation
-#' based on a given, fixed partitioning
+#' @title Partition the data for a (non-spatial) leave-one-factor-out
+#'   cross-validation based on a given, fixed partitioning
 #'
-#' `partition_factor` creates a [represampling] object, i.e. a set of sample
-#' indices defining cross-validation test and training sets.
+#' @description `partition_factor` creates a [represampling] object, i.e. a set
+#'   of sample indices defining cross-validation test and training sets.
 #'
 #' @inheritParams partition_cv
 #'
 #' @param coords vector of length 2 defining the variables in `data` that
-#' contain the x and y coordinates of sample locations.
-#' @param fac either the name of a variable (column) in `data`, or a vector
-#' of type factor and length `nrow(data)` that contains the partitions
-#' to be used for defining training and test samples.
+#'   contain the x and y coordinates of sample locations.
+#' @param fac either the name of a variable (column) in `data`, or a vector of
+#'   type factor and length `nrow(data)` that contains the partitions to be used
+#'   for defining training and test samples.
 #'
-#' @return A [represampling] object,
-#' see also [partition_cv] for details.
+#' @return A [represampling] object, see also [partition_cv] for details.
 #'
 #' @note In this partitioning approach, all `repetition`s are identical and
-#' therefore pseudo-replications.
+#'   therefore pseudo-replications.
 #'
-#' @seealso [sperrorest], [partition_cv],
-#' [as.resampling.factor]
+#' @seealso [sperrorest], [partition_cv], [as.resampling.factor]
 #'
 #' @examples
 #' data(ecuador)
@@ -221,34 +214,32 @@ partition_factor <- function(data, coords = c("x", "y"), fac,
   return(represmp)
 }
 
-#' Partition the data for a (non-spatial) k-fold cross-validation at the group
-#' level
+#' @title Partition the data for a (non-spatial) k-fold cross-validation at the
+#'   group level
 #'
-#' `partition_factor_cv` creates a [represampling] object,
-#' i.e. a set of sample indices defining cross-validation test and
-#' training sets, where partitions are obtained by resampling at the level of
-#' groups of observations as defined by a given factor variable.
-#' This can be used, for example, to resample agricultural data that is grouped
-#' by fields, at the agricultural field level in order to preserve
-#' spatial autocorrelation within fields.
+#' @description `partition_factor_cv` creates a [represampling] object, i.e. a
+#'   set of sample indices defining cross-validation test and training sets,
+#'   where partitions are obtained by resampling at the level of groups of
+#'   observations as defined by a given factor variable. This can be used, for
+#'   example, to resample agricultural data that is grouped by fields, at the
+#'   agricultural field level in order to preserve spatial autocorrelation
+#'   within fields.
 #'
 #' @inheritParams partition_cv
 #'
-#' @param coords vector of length 2 defining the variables in `data`
-#' that contain the x and y coordinates of sample locations.
-#' @param fac either the name of a variable (column) in `data`, or a
-#' vector of type factor and length `nrow(data)` that defines groups or
-#' clusters of observations.
+#' @param coords vector of length 2 defining the variables in `data` that
+#'   contain the x and y coordinates of sample locations.
+#' @param fac either the name of a variable (column) in `data`, or a vector of
+#'   type factor and length `nrow(data)` that defines groups or clusters of
+#'   observations.
 #'
-#' @return A [represampling] object,
-#' see also [partition_cv] for details.
+#' @return A [represampling] object, see also [partition_cv] for details.
 #'
-#' @note In this partitioning approach, the number of factor levels in
-#' `fac` must be large enough for this factor-level resampling to make
-#' sense.
+#' @note In this partitioning approach, the number of factor levels in `fac`
+#'   must be large enough for this factor-level resampling to make sense.
 #'
-#' @seealso [sperrorest], [partition_cv],
-#' [partition_factor], [as.resampling.factor]
+#' @seealso [sperrorest], [partition_cv], [partition_factor],
+#'   [as.resampling.factor]
 #'
 #' @export
 partition_factor_cv <- function(data, coords = c("x", "y"), fac, nfold = 10,
@@ -290,82 +281,68 @@ partition_factor_cv <- function(data, coords = c("x", "y"), fac, nfold = 10,
   return(resampling)
 }
 
-
-#' Partition the study area into rectangular tiles
+#' @title Partition the study area into rectangular tiles
 #'
-#' `partition_tiles` divides the study area into a specified number of
-#' rectangular tiles. Optionally small partitions can be merged with adjacent
-#' tiles to achieve a minimum number or percentage of samples in each tile.
+#' @description `partition_tiles` divides the study area into a specified number
+#'   of rectangular tiles. Optionally small partitions can be merged with
+#'   adjacent tiles to achieve a minimum number or percentage of samples in each
+#'   tile.
 #'
 #' @inheritParams partition_cv
 #'
 #' @param coords vector of length 2 defining the variables in `data` that
-#' contain the x and y coordinates of sample locations
-#'
+#'   contain the x and y coordinates of sample locations
 #' @param dsplit optional vector of length 2: equidistance of splits in
-#' (possibly rotated) x direction (`dsplit[1]`) and y direction
-#' (`dsplit[2]`) used to define tiles. If `dsplit` is of length 1,
-#' its value is recycled. Either `dsplit` or `nsplit` must be specified.
-#'
-#' @param nsplit optional vector of length 2: number of splits in
-#' (possibly rotated) x direction (`nsplit[1]`) and y direction
-#' (`nsplit[2]`) used to define tiles. If `nsplit` is of length 1,
-#' its value is recycled.
-#'
-#' @param rotation indicates whether and how the rectangular grid should
-#' be rotated; random rotation is only between `-45` and `+45` degrees.
-#'
-#' @param user_rotation if `rotation='user'`, angles (in degrees) by which
-#' the rectangular grid is to be rotated in each repetition. Either a vector of
-#' same length as `repetition`, or a single number that will be replicated
-#' `length(repetition)` times.
-#'
+#'   (possibly rotated) x direction (`dsplit[1]`) and y direction (`dsplit[2]`)
+#'   used to define tiles. If `dsplit` is of length 1, its value is recycled.
+#'   Either `dsplit` or `nsplit` must be specified.
+#' @param nsplit optional vector of length 2: number of splits in (possibly
+#'   rotated) x direction (`nsplit[1]`) and y direction (`nsplit[2]`) used to
+#'   define tiles. If `nsplit` is of length 1, its value is recycled.
+#' @param rotation indicates whether and how the rectangular grid should be
+#'   rotated; random rotation is only between `-45` and `+45` degrees.
+#' @param user_rotation if `rotation='user'`, angles (in degrees) by which the
+#'   rectangular grid is to be rotated in each repetition. Either a vector of
+#'   same length as `repetition`, or a single number that will be replicated
+#'   `length(repetition)` times.
 #' @param offset indicates whether and how the rectangular grid should be
-#' shifted by an offset.
-#'
-#' @param user_offset if `offset='user'`, a list (or vector) of two
-#' components specifying a shift of the rectangular grid in (possibly rotated) x
-#' and y direction. The offset values are relative values, a value of `0.5`
-#' resulting in a one-half tile shift towards the left, or upward.
-#' If this is a list, its first (second) component refers to the rotated x (y)
-#' direction, and both components must have same length as `repetition`
-#' (or length 1). If a vector of length 2 (or list components have length 1),
-#' the two values will be interpreted as relative shifts in (rotated) x and y
-#' direction, respectively, and will therefore be recycled as needed
-#' (`length(repetition)` times each).
-#'
-#' @param reassign logical (default `TRUE`): if `TRUE`, 'small' tiles
-#' (as per `min_frac` and `min_n` arguments and
-#' [get_small_tiles]) are merged with (smallest) adjacent tiles.
-#' If `FALSE`, small tiles are 'eliminated', i.e. set to `NA`.
-#'
+#'   shifted by an offset.
+#' @param user_offset if `offset='user'`, a list (or vector) of two components
+#'   specifying a shift of the rectangular grid in (possibly rotated) x and y
+#'   direction. The offset values are relative values, a value of `0.5`
+#'   resulting in a one-half tile shift towards the left, or upward. If this is
+#'   a list, its first (second) component refers to the rotated x (y) direction,
+#'   and both components must have same length as `repetition` (or length 1). If
+#'   a vector of length 2 (or list components have length 1), the two values
+#'   will be interpreted as relative shifts in (rotated) x and y direction,
+#'   respectively, and will therefore be recycled as needed
+#'   (`length(repetition)` times each).
+#' @param reassign logical (default `TRUE`): if `TRUE`, 'small' tiles (as per
+#'   `min_frac` and `min_n` arguments and [get_small_tiles]) are merged with
+#'   (smallest) adjacent tiles. If `FALSE`, small tiles are 'eliminated', i.e.
+#'   set to `NA`.
 #' @param min_frac numeric >=0, <1: minimum relative size of partition as
-#' percentage of sample; argument passed to [get_small_tiles].
-#' Will be ignored if `NULL`.
-#'
-#' @param min_n integer >=0: minimum number of samples per partition;
-#' argument passed to [get_small_tiles].
-#' Will be ignored if `NULL`.
-#'
+#'   percentage of sample; argument passed to [get_small_tiles]. Will be ignored
+#'   if `NULL`.
+#' @param min_n integer >=0: minimum number of samples per partition; argument
+#'   passed to [get_small_tiles]. Will be ignored if `NULL`.
 #' @param iterate argument to be passed to [tile_neighbors]
 #'
-#' @return A [represampling] object.
-#' Contains `length(repetition)` [resampling] objects as
-#' repetitions. The exact number of folds / test-set tiles within each
-#' [resampling] objects depends on the spatial configuration of
-#' the data set and possible cleaning steps (see `min_frac`, `min_n`).
+#' @return A [represampling] object. Contains `length(repetition)` [resampling]
+#'   objects as repetitions. The exact number of folds / test-set tiles within
+#'   each [resampling] objects depends on the spatial configuration of the data
+#'   set and possible cleaning steps (see `min_frac`, `min_n`).
 #'
-#' @note Default parameter settings may change in future releases.
-#' This function, especially the rotation and shifting part of it and the
-#' algorithm for cleaning up small tiles is still a bit experimental.
-#' Use with caution.
-#' For non-zero offsets (`offset!='none')`), the number of tiles may
-#' actually be greater than `nsplit[1]*nsplit[2]` because of fractional
-#' tiles lurking into the study region. `reassign=TRUE` with suitable
-#' thresholds is therefore recommended for non-zero (including random) offsets.
+#' @note Default parameter settings may change in future releases. This
+#'   function, especially the rotation and shifting part of it and the algorithm
+#'   for cleaning up small tiles is still a bit experimental. Use with caution.
+#'   For non-zero offsets (`offset!='none')`), the number of tiles may actually
+#'   be greater than `nsplit[1]*nsplit[2]` because of fractional tiles lurking
+#'   into the study region. `reassign=TRUE` with suitable thresholds is
+#'   therefore recommended for non-zero (including random) offsets.
 #'
-#' @seealso [sperrorest], [as.resampling.factor],
-#' [get_small_tiles], [tile_neighbors]
+#' @seealso [sperrorest], [as.resampling.factor], [get_small_tiles],
+#'   [tile_neighbors]
 #'
 #' @examples
 #' data(ecuador)
@@ -609,44 +586,33 @@ partition_tiles <- function(data, coords = c("x", "y"), dsplit = NULL,
   return(resampling)
 }
 
-
-
-
-# Function 'partition_kmeans' --------------------------Uses k-means clustering
-# to divide the samples into 'nfold' spatial clusters and perform spatial
-# cross-validation.
-
-#' Partition samples spatially using k-means clustering of the coordinates
+#' @title Partition samples spatially using k-means clustering of the
+#'   coordinates
 #'
-#' `partition_kmeans` divides the study area into irregularly shaped
-#' spatial partitions based on *k*-means ([kmeans]) clustering
-#' of spatial coordinates.
+#' @description `partition_kmeans` divides the study area into irregularly
+#'   shaped spatial partitions based on *k*-means ([kmeans]) clustering of
+#'   spatial coordinates.
 #'
 #' @inheritParams partition_cv
 #'
 #' @importFrom stats kmeans
 #'
 #' @param coords vector of length 2 defining the variables in `data` that
-#' contain the x and y coordinates of sample locations.
-#'
+#'   contain the x and y coordinates of sample locations.
 #' @param nfold number of cross-validation folds, i.e. parameter *k* in
-#' *k*-means clustering.
-#'
+#'   *k*-means clustering.
 #' @param balancing_steps if `> 1`, perform `nfold`-means clustering
-#' `balancing_steps` times, and pick the clustering that minimizes the Gini
-#' index of the sample size distribution among the partitions. The idea is that
-#' 'degenerate' partitions will be avoided, but this also has the side effect of
-#' reducing variation among partitioning repetitions. More meaningful
-#' constraints (e.g., minimum number of positive and negative samples within
-#' each partition should be added in the future.
-#'
+#'   `balancing_steps` times, and pick the clustering that minimizes the Gini
+#'   index of the sample size distribution among the partitions. The idea is
+#'   that 'degenerate' partitions will be avoided, but this also has the side
+#'   effect of reducing variation among partitioning repetitions. More
+#'   meaningful constraints (e.g., minimum number of positive and negative
+#'   samples within each partition should be added in the future.
 #' @param order_clusters if `TRUE`, clusters are ordered by increasing x
-#' coordinate of center point.
-#'
+#'   coordinate of center point.
 #' @param ... additional arguments to [kmeans].
 #'
-#' @return A [represampling] object, see also
-#' [partition_cv] for details.
+#' @return A [represampling] object, see also [partition_cv] for details.
 #'
 #' @note Default parameter settings may change in future releases.
 #'
@@ -661,9 +627,8 @@ partition_tiles <- function(data, coords = c("x", "y"), dsplit = NULL,
 #' IPMU 2010; Dortmund; 28 June - 2 July 2010.
 #' Lecture Notes in Computer Science, 6178 LNAI: 350-359.
 #'
-#' @seealso [sperrorest], [partition_cv],
-#' [partition_disc], [partition_tiles],
-#' [kmeans]
+#' @seealso [sperrorest], [partition_cv], [partition_disc], [partition_tiles],
+#'   [kmeans]
 #'
 #' @examples
 #' data(ecuador)
@@ -716,50 +681,38 @@ partition_kmeans <- function(data, coords = c("x", "y"), nfold = 10,
   return(resampling)
 }
 
-
-#' Leave-one-disc-out cross-validation and leave-one-out cross-validation
+#' @title Leave-one-disc-out cross-validation and leave-one-out cross-validation
 #'
-#' `partition_disc` partitions the sample into training and tests set by
-#' selecting circular test areas (possibly surrounded by an exclusion buffer)
-#' and using the remaining samples as training samples (leave-one-disc-out
-#' cross-validation). `partition_loo` creates training and test sets for
-#' leave-one-out cross-validation with (optional) buffer.
-#'
-#' @name partition_disc
+#' @description partition_disc` partitions the sample into training and tests
+#'   set by selecting circular test areas (possibly surrounded by an exclusion
+#'   buffer) and using the remaining samples as training samples
+#'   (leave-one-disc-out cross-validation). `partition_loo` creates training and
+#'   test sets for leave-one-out cross-validation with (optional) buffer.
 #'
 #' @inheritParams partition_cv
 #'
 #' @param coords vector of length 2 defining the variables in `data` that
-#' contain the x and y coordinates of sample locations.
-#'
-#' @param radius radius of test area discs; performs leave-one-out resampling
-#' if radius <0.
-#'
-#' @param buffer radius of additional 'neutral area' around test area discs
-#' that is excluded from training and test sets; defaults to 0,
-#' i.e. all samples are either in the test area or in the training area.
-#'
-#' @param ndisc Number of discs to be randomly selected; each disc constitutes
-#' a separate test set. Defaults to `nrow(data)`, i.e. one disc around
-#' each sample.
-#'
-#' @param return_train If `FALSE`, returns only test sample;
-#' if `TRUE`, also the training area.
-#'
+#'   contain the x and y coordinates of sample locations.
+#' @param radius radius of test area discs; performs leave-one-out resampling if
+#'   radius <0.
+#' @param buffer radius of additional 'neutral area' around test area discs that
+#'   is excluded from training and test sets; defaults to 0, i.e. all samples
+#'   are either in the test area or in the training area.
+#' @param ndisc Number of discs to be randomly selected; each disc constitutes a
+#'   separate test set. Defaults to `nrow(data)`, i.e. one disc around each
+#'   sample.
+#' @param return_train If `FALSE`, returns only test sample; if `TRUE`, also the
+#'   training area.
 #' @param prob optional argument to [sample].
-#'
-#' @param replace optional argument to [sample]: sampling with or
-#' without replacement?
-#'
-#' @param repetition see `partition_cv`; however,
-#' see Note below: `repetition` should normally be `= 1` in this function.
-#'
+#' @param replace optional argument to [sample]: sampling with or without
+#'   replacement?
+#' @param repetition see `partition_cv`; however, see Note below: `repetition`
+#'   should normally be `= 1` in this function.
 #' @param ... arguments to be passed to `partition_disc`
 #'
-#' @return A [represampling] object.
-#' Contains `length(repetition)` `resampling` objects.
-#' Each of these contains `ndisc` lists with indices of test and
-#' (if `return_train = TRUE`) training sets.
+#' @return A [represampling] object. Contains `length(repetition)` `resampling`
+#'   objects. Each of these contains `ndisc` lists with indices of test and (if
+#'   `return_train = TRUE`) training sets.
 #'
 #' @note Test area discs are centered at (random) samples, not at general
 #' random locations. Test area discs may (and likely will) overlap independently
@@ -774,8 +727,8 @@ partition_kmeans <- function(data, coords = c("x", "y"), nfold = 10,
 #' hazards: review, comparison and evaluation. Natural Hazards and Earth System
 #' Sciences, 5(6): 853-862.
 #'
-#' @seealso [sperrorest], [partition_cv],
-#' [partition_kmeans]
+#' @seealso [sperrorest], [partition_cv], [partition_kmeans]
+#' @name partition_disc
 #'
 #' @examples
 #' data(ecuador)
@@ -790,9 +743,15 @@ partition_kmeans <- function(data, coords = c("x", "y"), nfold = 10,
 #' parti.loo <- partition_loo(ecuador, buffer = 200)
 #' summary(parti)
 #' @export
-partition_disc <- function(data, coords = c("x", "y"), radius, buffer = NULL,
-                           ndisc = nrow(data), seed1 = NULL,
-                           return_train = TRUE, prob = NULL, replace = FALSE,
+partition_disc <- function(data,
+                           coords = c("x", "y"),
+                           radius,
+                           buffer = NULL,
+                           ndisc = nrow(data),
+                           seed1 = NULL,
+                           return_train = TRUE,
+                           prob = NULL,
+                           replace = FALSE,
                            repetition = 1) {
 
   if (length(repetition) < 2) {
@@ -874,25 +833,24 @@ partition_loo <- function(data, ndisc = nrow(data), replace = FALSE, ...) {
   )
 }
 
-#' Non-spatial bootstrap resampling
+#' @title Non-spatial bootstrap resampling
 #'
-#' `represampling_bootstrap` draws a bootstrap random sample
-#' (with replacement) from `data`.
+#' @description `represampling_bootstrap` draws a bootstrap random sample (with
+#'   replacement) from `data`.
 #'
 #' @inheritParams partition_cv
 #'
 #' @param coords vector of length 2 defining the variables in `data` that
-#' contain the x and y coordinates of sample locations.
+#'   contain the x and y coordinates of sample locations.
 #' @param nboot Size of bootstrap sample
-#' @param oob logical (default `FALSE`): if `TRUE`, use the out-of-bag
-#' sample as the test sample; if `FALSE`, draw a second bootstrap sample of
-#' size `nboot` independently to obtain a test sample.
+#' @param oob logical (default `FALSE`): if `TRUE`, use the out-of-bag sample as
+#'   the test sample; if `FALSE`, draw a second bootstrap sample of size `nboot`
+#'   independently to obtain a test sample.
 #'
-#' @return A [represampling] object. This is a (named) list
-#' containing `length(repetition)`.
-#' [resampling] objects. Each of these contains only one list with
-#' indices of `train`ing and `test` samples.
-#' Indices are row indices for `data`.
+#' @return A [represampling] object. This is a (named) list containing
+#'   `length(repetition)`. [resampling] objects. Each of these contains only one
+#'   list with indices of `train`ing and `test` samples. Indices are row indices
+#'   for `data`.
 #'
 #' @examples
 #' data(ecuador)
@@ -932,41 +890,36 @@ represampling_bootstrap <- function(data, coords = c("x", "y"),
   return(as.represampling(resample)) # nolint
 }
 
-#' Bootstrap at an aggregated level
+#' @title Bootstrap at an aggregated level
 #'
-#' `represampling_factor_bootstrap` resamples partitions defined by a
-#' factor variable. This can be used for non-overlapping block bootstraps and
-#' similar.
+#' @description `represampling_factor_bootstrap` resamples partitions defined by
+#'   a factor variable. This can be used for non-overlapping block bootstraps
+#'   and similar.
 #'
 #' @inheritParams represampling_bootstrap
 #'
-#' @param fac defines a grouping or partitioning of the samples in `data`;
-#' three possible types:
-#' (1) the name of a variable in `data` (coerced to factor if not already
-#' a factor variable);
-#' (2) a factor variable (or a vector that can be coerced to factor);
-#' (3) a list of factor variables (or vectors that can be coerced to factor);
-#' this list must be of length `length(repetition)`, and if it is named,
-#' the names must be equal to `as.character(repetition)`; this list will
-#' typically be generated by a `partition.*` function with
-#' `return_factor = TRUE` (see Examples below)
+#' @param fac defines a grouping or partitioning of the samples in `data`; three
+#'   possible types: (1) the name of a variable in `data` (coerced to factor if
+#'   not already a factor variable); (2) a factor variable (or a vector that can
+#'   be coerced to factor); (3) a list of factor variables (or vectors that can
+#'   be coerced to factor); this list must be of length `length(repetition)`,
+#'   and if it is named, the names must be equal to `as.character(repetition)`;
+#'   this list will typically be generated by a `partition.*` function with
+#'   `return_factor = TRUE` (see Examples below)
 #'
 #' @param nboot number of bootstrap replications used for generating the
-#' bootstrap training sample (`nboot[1]`) and the test sample
-#' (`nboot[2]`); `nboot[2]` is ignored (with a warning) if
-#' `oob = TRUE`. A value of `-1` will be substituted with the number
-#' of levels of the factor variable, corresponding to an *n* out of
-#' *n* bootstrap at the grouping level defined by `fac`.
-#'
-#' @param oob if `TRUE`, the test sample will be the out-of-bag sample;
-#' if `FALSE` (default), the test sample is an independently drawn
-#' bootstrap sample of size `nboot[2]`.
-#'
-#' @details `nboot` refers to the number of groups
-#' (as defined by the factors) to be drawn with replacement from the set of
-#' groups. I.e., if `fac` is a factor variable, `nboot` would normally
-#' not be greater than `nlevels(fac)`, `nlevels(fac)` being the
-#' default as per `nboot = -1`.
+#'   bootstrap training sample (`nboot[1]`) and the test sample (`nboot[2]`);
+#'   `nboot[2]` is ignored (with a warning) if `oob = TRUE`. A value of `-1`
+#'   will be substituted with the number of levels of the factor variable,
+#'   corresponding to an *n* out of *n* bootstrap at the grouping level defined
+#'   by `fac`.
+#' @param oob if `TRUE`, the test sample will be the out-of-bag sample; if
+#'   `FALSE` (default), the test sample is an independently drawn bootstrap
+#'   sample of size `nboot[2]`.
+#' @details `nboot` refers to the number of groups (as defined by the factors)
+#'   to be drawn with replacement from the set of groups. I.e., if `fac` is a
+#'   factor variable, `nboot` would normally not be greater than `nlevels(fac)`,
+#'   `nlevels(fac)` being the default as per `nboot = -1`.
 #'
 #' @seealso [represampling_disc_bootstrap],
 #' [represampling_tile_bootstrap]
@@ -1114,7 +1067,6 @@ represampling_tile_bootstrap <- function(data,
   return(repres)
 }
 
-
 #' @title Spatial block bootstrap at the level of spatial k-means clusters
 #'
 #' @description `represampling_kmeans_bootstrap` performs a non-overlapping
@@ -1163,7 +1115,6 @@ represampling_kmeans_bootstrap <- function(data,
   )
   return(repres)
 }
-
 
 #' @title Overlapping spatial block bootstrap using circular blocks
 #'
@@ -1281,7 +1232,6 @@ represampling_disc_bootstrap <- function(data,
   resample <- as.represampling(resample) # nolint
   return(resample)
 }
-
 
 
 #' @title Plot spatial resampling objects
