@@ -1,45 +1,39 @@
 #' @title Partition the data for a (non-spatial) cross-validation
 #'
 #' @description `partition_cv` creates a [represampling] object for
-#' `length(repetition)`-repeated `nfold`-fold cross-validation.
+#'   `length(repetition)`-repeated `nfold`-fold cross-validation.
 #'
-#' @name partition_cv
-#'
-#' @param data `data.frame` containing at least the columns specified
-#' by `coords`
+#' @param data `data.frame` containing at least the columns specified by
+#'   `coords`
 #' @param coords (ignored by `partition_cv`)
-#' @param nfold number of partitions (folds) in `nfold`-fold
-#' cross-validation partitioning
-#' @param repetition numeric vector: cross-validation repetitions
-#' to be generated. Note that this is not the number of repetitions,
-#' but the indices of these repetitions. E.g., use `repetition = c(1:100)`
-#' to obtain (the 'first') 100 repetitions, and `repetition = c(101:200)`
-#' to obtain a different set of 100 repetitions.
-#' @param seed1 `seed1+i` is the random seed that will be used by
-#' [set.seed] in repetition `i` (`i` in `repetition`)
-#' to initialize the random number generator before sampling from the data set.
-#' @param return_factor if `FALSE` (default), return a
-#' [represampling] object; if `TRUE` (used internally by
-#' other {sperrorest} functions), return a `list` containing factor
-#' vectors (see Value)
+#' @param nfold number of partitions (folds) in `nfold`-fold cross-validation
+#'   partitioning
+#' @param repetition numeric vector: cross-validation repetitions to be
+#'   generated. Note that this is not the number of repetitions, but the indices
+#'   of these repetitions. E.g., use `repetition = c(1:100)` to obtain (the
+#'   'first') 100 repetitions, and `repetition = c(101:200)` to obtain a
+#'   different set of 100 repetitions.
+#' @param seed1 `seed1+i` is the random seed that will be used by [set.seed] in
+#'   repetition `i` (`i` in `repetition`) to initialize the random number
+#'   generator before sampling from the data set.
+#' @param return_factor if `FALSE` (default), return a [represampling] object;
+#'   if `TRUE` (used internally by other {sperrorest} functions), return a
+#'   `list` containing factor vectors (see Value)
 #'
-#' @details This function does not actually perform a cross-validation
-#' or partition the data set itself; it simply creates a data structure
-#' containing the indices of training and test samples.
+#' @details This function does not actually perform a cross-validation or
+#'   partition the data set itself; it simply creates a data structure
+#'   containing the indices of training and test samples.
 #'
-#' @return If `return_factor = FALSE` (the default), a
-#' [represampling] object. Specifically, this is a (named) list of
-#' `length(repetition)` `resampling` objects.
-#' Each of these [resampling] objects is a list of length
-#' `nfold` corresponding to the folds.
-#' Each fold is represented by a list of containing the components `train`
-#' and `test`, specifying the indices of training and test samples
-#' (row indices for `data`).
-#' If `return_factor = TRUE` (mainly used internally), a (named) list of
-#' length `length(repetition)`.
-#' Each component of this list is a vector of length `nrow(data)` of type
-#' `factor`, specifying for each sample the fold to which it belongs.
-#' The factor levels are `factor(1:nfold)`.
+#' @return If `return_factor = FALSE` (the default), a [represampling] object.
+#'   Specifically, this is a (named) list of `length(repetition)` `resampling`
+#'   objects. Each of these [resampling] objects is a list of length `nfold`
+#'   corresponding to the folds. Each fold is represented by a list of
+#'   containing the components `train` and `test`, specifying the indices of
+#'   training and test samples (row indices for `data`). If `return_factor =
+#'   TRUE` (mainly used internally), a (named) list of length
+#'   `length(repetition)`. Each component of this list is a vector of length
+#'   `nrow(data)` of type `factor`, specifying for each sample the fold to which
+#'   it belongs. The factor levels are `factor(1:nfold)`.
 #'
 #' @seealso [sperrorest], [represampling]
 #'
@@ -52,9 +46,13 @@
 #' idx <- resamp[["1"]][[2]]$test
 #' # test sample used in this particular repetition and fold:
 #' ecuador[idx, ]
+#' @name partition_cv
 #' @export
-partition_cv <- function(data, coords = c("x", "y"), nfold = 10, repetition = 1,
-                         seed1 = NULL, return_factor = FALSE) {
+partition_cv <- function(data,
+                         coords = c("x", "y"),
+                         nfold = 10, repetition = 1,
+                         seed1 = NULL,
+                         return_factor = FALSE) {
   resampling <- list()
 
   if (length(repetition) < 2) {

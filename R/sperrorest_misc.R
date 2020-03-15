@@ -148,7 +148,7 @@ add.distance.represampling <- function(object, ...) { # nolint
 #' @export
 as.tilename <- function(x, # nolint
                         ...) {
-  UseMethod(x, "as.tilename")
+  UseMethod("as.tilename", x)
 }
 
 #' @rdname as.tilename
@@ -437,9 +437,8 @@ as.resampling <- function(object, # nolint
                           ...) {
   if (inherits(object, "resampling")) {
     return(object)
-  }
-  else {
-    return(UseMethod(object, "as.resampling"))
+  } else {
+    return(UseMethod("as.resampling", object))
   }
 }
 
@@ -528,35 +527,35 @@ print.resampling <- function(x,
 
 
 #' @title Resampling objects with repetition, i.e. sets of partitionings or
-#'  boostrap samples
+#'   boostrap samples
 #'
 #' @description Functions for handling `represampling` objects, i.e. `list`s of
-#'  [resampling] objects.
+#'   [resampling] objects.
 #'
-#' @param object object of class `represampling`, or a list to be coerced to this
-#'  class.
+#' @param object object of class `represampling`, or a list to be coerced to
+#'   this class.
 #' @param x object of class `represampling`.
 #' @param ... currently not used.
 #'
 #' @name as.represampling
 #'
 #' @return `as.represampling` methods return an object of class `represampling`
-#'  with the contents of `object`.
+#'   with the contents of `object`.
 #'
 #' @details `represampling` objects are (names) lists of [resampling] objects.
-#'  Such objects are typically created by [partition_cv], [partition_kmeans],
-#'  [represampling_disc_bootstrap] and related functions.
+#'   Such objects are typically created by [partition_cv], [partition_kmeans],
+#'   [represampling_disc_bootstrap] and related functions.
 #'
-#'  In `r`-repeated `k`-fold cross-validation, for example, the corresponding
-#'  `represampling` object has length `r`, and each of its `r` [resampling]
-#'  objects has length `k`.
+#'   In `r`-repeated `k`-fold cross-validation, for example, the corresponding
+#'   `represampling` object has length `r`, and each of its `r` [resampling]
+#'   objects has length `k`.
 #'
-#'  `as.resampling_list` coerces `object` to class `represampling` while
-#'  coercing its elements to [resampling] objects. Some validity checks are
-#'  performed.
+#'   `as.resampling_list` coerces `object` to class `represampling` while
+#'   coercing its elements to [resampling] objects. Some validity checks are
+#'   performed.
 #'
 #' @seealso [resampling], [partition_cv], [partition_kmeans],
-#'  [represampling_disc_bootstrap], etc.
+#'   [represampling_disc_bootstrap], etc.
 #'
 #' @examples
 #' # Muenchow et al. (2012), see ?ecuador
@@ -576,7 +575,7 @@ as.represampling <- function(object, # nolint
     object # nocov
   }
   else {
-    UseMethod(object, "as.represampling")
+    UseMethod("as.represampling", object)
   }
 }
 

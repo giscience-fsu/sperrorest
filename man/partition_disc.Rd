@@ -21,8 +21,8 @@ partition_disc(
 partition_loo(data, ndisc = nrow(data), replace = FALSE, ...)
 }
 \arguments{
-\item{data}{\code{data.frame} containing at least the columns specified
-by \code{coords}}
+\item{data}{\code{data.frame} containing at least the columns specified by
+\code{coords}}
 
 \item{coords}{vector of length 2 defining the variables in \code{data} that
 contain the x and y coordinates of sample locations.}
@@ -38,9 +38,9 @@ i.e. all samples are either in the test area or in the training area.}
 a separate test set. Defaults to \code{nrow(data)}, i.e. one disc around
 each sample.}
 
-\item{seed1}{\code{seed1+i} is the random seed that will be used by
-\link{set.seed} in repetition \code{i} (\code{i} in \code{repetition})
-to initialize the random number generator before sampling from the data set.}
+\item{seed1}{\code{seed1+i} is the random seed that will be used by \link{set.seed} in
+repetition \code{i} (\code{i} in \code{repetition}) to initialize the random number
+generator before sampling from the data set.}
 
 \item{return_train}{If \code{FALSE}, returns only test sample;
 if \code{TRUE}, also the training area.}

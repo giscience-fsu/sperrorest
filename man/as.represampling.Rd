@@ -19,8 +19,8 @@ as.represampling(object, ...)
 is_represampling(object)
 }
 \arguments{
-\item{object}{object of class \code{represampling}, or a list to be coerced to this
-class.}
+\item{object}{object of class \code{represampling}, or a list to be coerced to
+this class.}
 
 \item{...}{currently not used.}
 

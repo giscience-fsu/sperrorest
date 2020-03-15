@@ -18,8 +18,8 @@ add.distance(object, ...)
 \item{...}{Additional arguments to \link{dataset_distance} and
 \link{add.distance.resampling}, respectively.}
 
-\item{data}{\code{data.frame} containing at least the columns specified
-by \code{coords}}
+\item{data}{\code{data.frame} containing at least the columns specified by
+\code{coords}}
 
 \item{coords}{(ignored by \code{partition_cv})}
 }
