@@ -12,7 +12,7 @@
 - Removed the following packages from Imports: {glue}, {purrr}, {doFuture}, {gdata}, {magrittr}, {parallel}, {pbapply}, {pbmcapply}, {foreach}
 - Moved the following packages from Imports to Suggests: {rpart}
 - Removed the following packages from Suggests: {pacman}, {ipred}, {RSAGA}
-- THe "spatial-use-case" vignette now runs and is not read-only anymore.
+- The "spatial-use-case" vignette now runs and is not read-only anymore.
 
 # sperrorest 2.1.5 (20-Mar-2018)
 
