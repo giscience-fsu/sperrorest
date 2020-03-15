@@ -2,8 +2,8 @@
 % Please edit documentation in R/sperrorest.R
 \name{sperrorest}
 \alias{sperrorest}
-\title{Perform spatial error estimation and variable importance assessment
-in parallel}
+\title{Perform spatial error estimation and variable importance assessment in
+parallel}
 \usage{
 sperrorest(
   formula,
@@ -24,57 +24,50 @@ sperrorest(
   imp_permutations = 1000,
   importance = !is.null(imp_variables),
   distance = FALSE,
-  par_args = list(par_mode = "foreach", par_units = NULL, par_option = NULL),
   do_gc = 1,
   progress = "all",
-  out_progress = "",
-  benchmark = FALSE,
-  ...
+  benchmark = FALSE
 )
 }
 \arguments{
-\item{formula}{A formula specifying the variables used by the \code{model}.
-Only simple formulas without interactions or nonlinear terms should
-be used, e.g. \code{y~x1+x2+x3} but not \code{y~x1*x2+log(x3)}.
-Formulas involving interaction and nonlinear terms may possibly work
-for error estimation but not for variable importance assessment,
-but should be used with caution.}
+\item{formula}{A formula specifying the variables used by the \code{model}. Only
+simple formulas without interactions or nonlinear terms should be used,
+e.g. \code{y~x1+x2+x3} but not \code{y~x1*x2+log(x3)}. Formulas involving interaction
+and nonlinear terms may possibly work for error estimation but not for
+variable importance assessment, but should be used with caution.}
 
-\item{data}{a \code{data.frame} with predictor and response variables.
-Training and test samples will be drawn from this data set by \code{train_fun}
-and \code{test_fun}, respectively.}
+\item{data}{a \code{data.frame} with predictor and response variables. Training
+and test samples will be drawn from this data set by \code{train_fun} and
+\code{test_fun}, respectively.}
 
 \item{coords}{vector of length 2 defining the variables in \code{data} that
 contain the x and y coordinates of sample locations.}
 
-\item{model_fun}{Function that fits a predictive model, such as \code{glm}
-or \code{rpart}. The function must accept at least two arguments, the first
-one being a formula and the second a data.frame with the learning sample.}
+\item{model_fun}{Function that fits a predictive model, such as \code{glm} or
+\code{rpart}. The function must accept at least two arguments, the first one
+being a formula and the second a data.frame with the learning sample.}
 
-\item{model_args}{Arguments to be passed to \code{model_fun}
-(in addition to the \code{formula} and \code{data} argument,
-which are provided by \code{sperrorest})}
+\item{model_args}{Arguments to be passed to \code{model_fun} (in addition to the
+\code{formula} and \code{data} argument, which are provided by {sperrorest})}
 
-\item{pred_fun}{Prediction function for a fitted model object created
-by \code{model}. Must accept at least two arguments: the fitted
-\code{object} and a \code{data.frame} \code{newdata} with data
-on which to predict the outcome.}
+\item{pred_fun}{Prediction function for a fitted model object created by
+\code{model}. Must accept at least two arguments: the fitted \code{object} and a
+\code{data.frame} \code{newdata} with data on which to predict the outcome.}
 
 \item{pred_args}{(optional) Arguments to \code{pred_fun} (in addition to the
-fitted model object and the \code{newdata} argument,
-which are provided by \code{sperrorest}).}
+fitted model object and the \code{newdata} argument, which are provided by
+{sperrorest}).}
 
-\item{smp_fun}{A function for sampling training and test sets from
-\code{data}. E.g. \link{partition_kmeans} for
-spatial cross-validation using spatial \emph{k}-means clustering.}
+\item{smp_fun}{A function for sampling training and test sets from \code{data}.
+E.g. \link{partition_kmeans} for spatial cross-validation using spatial
+\emph{k}-means clustering.}
 
 \item{smp_args}{(optional) Arguments to be passed to \code{smp_fun}.}
 
 \item{train_fun}{(optional) A function for resampling or subsampling the
 training sample in order to achieve, e.g., uniform sample sizes on all
-training sets, or maintaining a certain ratio of positives and negatives
-in training sets.
-E.g. \link{resample_uniform} or \link{resample_strat_uniform}.}
+training sets, or maintaining a certain ratio of positives and negatives in
+training sets. E.g. \link{resample_uniform} or \link{resample_strat_uniform}.}
 
 \item{train_param}{(optional) Arguments to be passed to \code{resample_fun}.}
 
@@ -83,170 +76,139 @@ E.g. \link{resample_uniform} or \link{resample_strat_uniform}.}
 \item{test_param}{(optional) Arguments to be passed to \code{test_fun}.}
 
 \item{err_fun}{A function that calculates selected error measures from the
-known responses in \code{data} and the model predictions delivered
-by \code{pred_fun}. E.g. \link{err_default} (the default).}
+known responses in \code{data} and the model predictions delivered by
+\code{pred_fun}. E.g. \link{err_default} (the default).}
 
-\item{imp_variables}{(optional; used if \code{importance = TRUE}).
-Variables for which permutation-based variable importance assessment
-is performed. If \code{importance = TRUE} and \code{imp_variables} ==
-\code{NULL}, all variables in \code{formula} will be used.}
+\item{imp_variables}{(optional; used if \code{importance = TRUE}). Variables for
+which permutation-based variable importance assessment is performed. If
+\code{importance = TRUE} and \code{imp_variables} == \code{NULL}, all variables in
+\code{formula} will be used.}
 
-\item{imp_permutations}{(optional; used if \code{importance = TRUE}).
-Number of permutations used for variable importance assessment.}
+\item{imp_permutations}{(optional; used if \code{importance = TRUE}). Number of
+permutations used for variable importance assessment.}
 
 \item{importance}{logical (default: \code{FALSE}): perform permutation-based
 variable importance assessment?}
 
-\item{distance}{logical (default: \code{FALSE}): if \code{TRUE}, calculate
-mean nearest-neighbour distances from test samples to training samples using
+\item{distance}{logical (default: \code{FALSE}): if \code{TRUE}, calculate mean
+nearest-neighbour distances from test samples to training samples using
 \link{add.distance.represampling}.}
 
-\item{par_args}{list of parallelization parameters:
-\itemize{
-\item{\code{par_mode}:} {the parallelization mode. See details.}
-\item{\code{par_units}:} {the number of parallel processing units.}
-\item{\code{par_option}:} {optional \link{future} settings for \code{par_mode = "future"} or
-\code{par_mode = "foreach"}.}
-}}
-
 \item{do_gc}{numeric (default: 1): defines frequency of memory garbage
-collection by calling \link{gc}; if \verb{< 1}, no garbage collection;
-if \verb{>= 1}, run a \link{gc} after each repetition;
-if \verb{>= 2}, after each fold.}
+collection by calling \link{gc}; if \verb{< 1}, no garbage collection; if \verb{>= 1}, run
+a \link{gc} after each repetition; if \verb{>= 2}, after each fold.}
 
 \item{progress}{character (default: \code{all}): Whether to show progress
 information (if possible). Default shows repetition, fold and (if enabled)
-variable importance progress for \code{par_mode = "foreach"} or
-\code{par_mode = "sequential"}.
-Set to \code{"rep"} for repetition information only or \code{FALSE} for no progress
-information.}
+variable importance progress. Set to \code{"rep"} for repetition information
+only or \code{FALSE} for no progress information.}
 
-\item{out_progress}{only used if \code{par_mode = foreach}: Write progress
-output to a file instead of console output.
-The default (\code{''}) results in console output for Unix-systems and
-file output ('sperrorest.progress.txt') in the current working directory
-for Windows systems. No console output is possible on Windows systems.}
-
-\item{benchmark}{(optional) logical (default: \code{FALSE}): if \code{TRUE},
-perform benchmarking and return \code{sperrorestbenchmark} object.}
-
-\item{...}{Further options passed to \link{makeCluster} for
-\code{par_mode = "foreach"}.}
+\item{benchmark}{(optional) logical (default: \code{FALSE}): if \code{TRUE}, perform
+benchmarking and return \code{sperrorestbenchmark} object.}
 }
 \value{
-A list (object of class \code{sperrorest}) with (up to) six components:
-\item{error_rep}{a \code{sperrorestreperror} object containing
-predictive performances at the repetition level}
-\item{error_fold}{a \code{sperroresterror} object containing predictive
-performances at the fold level}
-\item{represampling}{a \code{\link[=represampling]{represampling()}} object}
-\item{importance}{a \code{sperrorestimportance} object containing
-permutation-based variable importances at the fold level}
-\item{benchmark}{a \code{sperrorestbenchmark} object containing
+A list (object of class {sperrorest}) with (up to) six components:
+\itemize{
+\item error_rep: \code{sperrorestreperror} containing
+predictive performances at the repetition level
+\item error_fold: \code{sperroresterror} object containing predictive
+performances at the fold level
+\item represampling: \link{represampling} object
+\item importance: \code{sperrorestimportance} object containing
+permutation-based variable importances at the fold level
+\item benchmark: \code{sperrorestbenchmark} object containing
 information on the system the code is running on, starting and
-finishing times, number of available CPU cores, parallelization mode,
-number of parallel units, and runtime performance}
-\item{package_version}{a \code{sperrorestpackageversion} object containing
-information about the \code{sperrorest} package version}
+finishing times, number of available CPU cores and runtime performance
+\item package_version: \code{sperrorestpackageversion} object containing
+information about the {sperrorest} package version
+}
 }
 \description{
-\code{sperrorest} is a flexible interface for multiple types of
-parallelized spatial and non-spatial cross-validation
-and bootstrap error estimation and parallelized permutation-based
-assessment of spatial variable importance.
+{sperrorest} is a flexible interface for multiple types of
+parallelized spatial and non-spatial cross-validation and bootstrap error
+estimation and parallelized permutation-based assessment of spatial variable
+importance.
 }
 \details{
-By default \code{sperrorest} runs in parallel on all cores using
-\code{foreach} with the \link{future} backend. If this is not desired, specify
-\code{par_units} in \code{par_args} or set \code{par_mode = "sequential"}.
-
-Available parallelization modes include \code{par_mode = "apply"}
-(calls \link{pbmclapply} on Unix, \link{parApply} on Windows) and
-\code{future} (\link{future_lapply}).
-For the latter and \code{par_mode = "foreach"}, \code{par_option}
-(default to \code{multiprocess} and
-\code{cluster}, respectively) can be specified. See \link{plan} for further details.
-}
-\note{
 Custom predict functions passed to \code{pred_fun}, which consist of
-multiple custom defined child functions, must be defined in one function.
+multiple child functions, must be defined in one function.
 }
+\section{Parallelization}{
+
+
+Running in parallel is supported via package \CRANpkg{future}.
+Have a look at \code{vignette("future-1-overview", package = "future")}.
+In short: Choose a backend and specify the amount of workers, then call
+\code{sperrorest()} as usual. Example:\if{html}{\out{<div class="r">}}\preformatted{future::plan(future.callr::callr, workers = 2)
+sperrorest()
+}\if{html}{\out{</div>}}
+}
+
 \examples{
-\dontrun{
 
-##------------------------------------------------------------
+## ------------------------------------------------------------
 ## Classification tree example using non-spatial partitioning
-## setup and default parallel mode ("foreach")
-##------------------------------------------------------------
+## ------------------------------------------------------------
 
-data(ecuador) # Muenchow et al. (2012), see ?ecuador
+# Muenchow et al. (2012), see ?ecuador
 fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
 
 library(rpart)
 mypred_part <- function(object, newdata) predict(object, newdata)[, 2]
 ctrl <- rpart.control(cp = 0.005) # show the effects of overfitting
+# show the effects of overfitting
 fit <- rpart(fo, data = ecuador, control = ctrl)
 
-### Non-spatial 5-repeated 10-fold cross-validation:
+### Non-spatial cross-validation:
 mypred_part <- function(object, newdata) predict(object, newdata)[, 2]
-par_nsp_res <- sperrorest(data = ecuador, formula = fo,
-                          model_fun = rpart,
-                          model_args = list(control = ctrl),
-                          pred_fun = mypred_part,
-                          progress = TRUE,
-                          smp_fun = partition_cv,
-                          smp_args = list(repetition = 1:5, nfold = 10))
-summary(par_nsp_res$error_rep)
-summary(par_nsp_res$error_fold)
-summary(par_nsp_res$represampling)
-# plot(par_nsp_res$represampling, ecuador)
+nsp_res <- sperrorest(
+  data = ecuador, formula = fo,
+  model_fun = rpart,
+  model_args = list(control = ctrl),
+  pred_fun = mypred_part,
+  progress = TRUE,
+  smp_fun = partition_cv,
+  smp_args = list(repetition = 1:2, nfold = 3)
+)
+summary(nsp_res$error_rep)
+summary(nsp_res$error_fold)
+summary(nsp_res$represampling)
+# plot(nsp_res$represampling, ecuador)
 
-### Spatial 5-repeated 10-fold spatial cross-validation:
-par_sp_res <- sperrorest(data = ecuador, formula = fo,
-                         model_fun = rpart,
-                         model_args = list(control = ctrl),
-                         pred_fun = mypred_part,
-                         progress = TRUE,
-                         smp_fun = partition_kmeans,
-                         smp_args = list(repetition = 1:5, nfold = 10))
-summary(par_sp_res$error_rep)
-summary(par_sp_res$error_fold)
-summary(par_sp_res$represampling)
-# plot(par_sp_res$represampling, ecuador)
+### Spatial cross-validation:
+sp_res <- sperrorest(
+  data = ecuador, formula = fo,
+  model_fun = rpart,
+  model_args = list(control = ctrl),
+  pred_fun = mypred_part,
+  progress = TRUE,
+  smp_fun = partition_kmeans,
+  smp_args = list(repetition = 1:2, nfold = 3)
+)
+summary(sp_res$error_rep)
+summary(sp_res$error_fold)
+summary(sp_res$represampling)
+# plot(sp_res$represampling, ecuador)
 
 smry <- data.frame(
-    nonspat_training = unlist(summary(par_nsp_res$error_rep,
-                                      level = 1)$train_auroc),
-    nonspat_test     = unlist(summary(par_nsp_res$error_rep,
-                                      level = 1)$test_auroc),
-    spatial_training = unlist(summary(par_sp_res$error_rep,
-                                      level = 1)$train_auroc),
-    spatial_test     = unlist(summary(par_sp_res$error_rep,
-                                     level = 1)$test_auroc))
-boxplot(smry, col = c('red','red','red','green'),
-    main = 'Training vs. test, nonspatial vs. spatial',
-    ylab = 'Area under the ROC curve')
-
-##------------------------------------------------------------
-## Logistic regression example (glm) using partition_kmeans
-## and computation of permutation based variable importance
-##------------------------------------------------------------
-
-data(ecuador)
-fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
-
-out <- sperrorest(data = ecuador, formula = fo,
-                  model_fun = glm,
-                  model_args = list(family = "binomial"),
-                  pred_fun = predict,
-                  pred_args = list(type = "response"),
-                  smp_fun = partition_kmeans,
-                  smp_args = list(repetition = 1:2, nfold = 4),
-                  par_args = list(par_mode = "future"),
-                  importance = TRUE, imp_permutations = 10)
-summary(out$error_rep)
-summary(out$importance)
-}
+  nonspat_training = unlist(summary(nsp_res$error_rep,
+    level = 1
+  )$train_auroc),
+  nonspat_test = unlist(summary(nsp_res$error_rep,
+    level = 1
+  )$test_auroc),
+  spatial_training = unlist(summary(sp_res$error_rep,
+    level = 1
+  )$train_auroc),
+  spatial_test = unlist(summary(sp_res$error_rep,
+    level = 1
+  )$test_auroc)
+)
+boxplot(smry,
+  col = c("red", "red", "red", "green"),
+  main = "Training vs. test, nonspatial vs. spatial",
+  ylab = "Area under the ROC curve"
+)
 }
 \references{
 Brenning, A. 2012. Spatial cross-validation and bootstrap for

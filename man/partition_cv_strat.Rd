@@ -15,61 +15,59 @@ partition_cv_strat(
 )
 }
 \arguments{
-\item{data}{\code{data.frame} containing at least the columns specified
-by \code{coords}}
+\item{data}{\code{data.frame} containing at least the columns specified by
+\code{coords}}
 
 \item{coords}{vector of length 2 defining the variables in \code{data} that
 contain the x and y coordinates of sample locations}
 
-\item{nfold}{number of partitions (folds) in \code{nfold}-fold
-cross-validation partitioning}
+\item{nfold}{number of partitions (folds) in \code{nfold}-fold cross-validation
+partitioning}
 
-\item{return_factor}{if \code{FALSE} (default), return a
-\link{represampling} object; if \code{TRUE} (used internally by
-other \code{sperrorest} functions), return a \code{list} containing factor
-vectors (see Value)}
+\item{return_factor}{if \code{FALSE} (default), return a \link{represampling} object;
+if \code{TRUE} (used internally by other {sperrorest} functions), return a
+\code{list} containing factor vectors (see Value)}
 
-\item{repetition}{numeric vector: cross-validation repetitions
-to be generated. Note that this is not the number of repetitions,
-but the indices of these repetitions. E.g., use \code{repetition = c(1:100)}
-to obtain (the 'first') 100 repetitions, and \code{repetition = c(101:200)}
-to obtain a different set of 100 repetitions.}
+\item{repetition}{numeric vector: cross-validation repetitions to be
+generated. Note that this is not the number of repetitions, but the indices
+of these repetitions. E.g., use \code{repetition = c(1:100)} to obtain (the
+'first') 100 repetitions, and \code{repetition = c(101:200)} to obtain a
+different set of 100 repetitions.}
 
-\item{seed1}{\code{seed1+i} is the random seed that will be used by
-\link{set.seed} in repetition \code{i} (\code{i} in \code{repetition})
-to initialize the random number generator before sampling from the data set.}
+\item{seed1}{\code{seed1+i} is the random seed that will be used by \link{set.seed} in
+repetition \code{i} (\code{i} in \code{repetition}) to initialize the random number
+generator before sampling from the data set.}
 
-\item{strat}{character: column in \code{data} containing a factor variable
-over which the partitioning should be stratified; or factor vector of length
+\item{strat}{character: column in \code{data} containing a factor variable over
+which the partitioning should be stratified; or factor vector of length
 \code{nrow(data)}: variable over which to stratify}
 }
 \value{
-A \code{\link{represampling}} object, see also
-\code{\link{partition_cv}}. \code{partition_strat_cv}, however,
-stratified with respect to the variable \code{data[,strat]};
-i.e., cross-validation partitioning is done within each set
-\code{data[data[,strat]==i,]} (\code{i} in \code{levels(data[, strat])}), and
-the \code{i}th folds of all levels are combined into one cross-validation
-fold.
+A \link{represampling} object, see also \code{\link[=partition_cv]{partition_cv()}}.
+\code{partition_strat_cv}, however, stratified with respect to the variable
+\code{data[,strat]}; i.e., cross-validation partitioning is done within each set
+\code{data[data[,strat]==i,]} (\code{i} in \code{levels(data[, strat])}), and the \code{i}th
+folds of all levels are combined into one cross-validation fold.
 }
 \description{
-\code{partition_cv_strat} creates a set of sample indices corresponding
-to cross-validation test and training sets.
+\code{partition_cv_strat} creates a set of sample indices
+corresponding to cross-validation test and training sets.
 }
 \examples{
 data(ecuador)
-parti <- partition_cv_strat(ecuador, strat = 'slides', nfold = 5,
-repetition = 1)
-idx <- parti[['1']][[1]]$train
-mean(ecuador$slides[idx] == 'TRUE') / mean(ecuador$slides == 'TRUE')
+parti <- partition_cv_strat(ecuador,
+  strat = "slides", nfold = 5,
+  repetition = 1
+)
+idx <- parti[["1"]][[1]]$train
+mean(ecuador$slides[idx] == "TRUE") / mean(ecuador$slides == "TRUE")
 # always == 1
 # Non-stratified cross-validation:
 parti <- partition_cv(ecuador, nfold = 5, repetition = 1)
-idx <- parti[['1']][[1]]$train
-mean(ecuador$slides[idx] == 'TRUE') / mean(ecuador$slides == 'TRUE')
+idx <- parti[["1"]][[1]]$train
+mean(ecuador$slides[idx] == "TRUE") / mean(ecuador$slides == "TRUE")
 # close to 1 because of large sample size, but with some random variation
 }
 \seealso{
-\code{\link{sperrorest}}, \code{\link{as.resampling}},
-\code{\link{resample_strat_uniform}}
+\code{\link[=sperrorest]{sperrorest()}}, \code{\link[=as.resampling]{as.resampling()}}, \code{\link[=resample_strat_uniform]{resample_strat_uniform()}}
 }

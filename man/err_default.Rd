@@ -10,27 +10,28 @@ err_default(obs, pred)
 \item{obs}{factor, logical, or numeric vector with observations}
 
 \item{pred}{factor, logical, or numeric vector with predictions. Must be of
-same type as \code{obs} with the exception that \code{pred} may be numeric
-if \code{obs} is \code{factor} or \code{logical} ('soft' classification).}
+same type as \code{obs} with the exception that \code{pred} may be numeric if \code{obs}
+is \code{factor} or \code{logical} ('soft' classification).}
 }
 \value{
 A list with (currently) the following components, depending on the
 type of prediction problem:
-
-\item{'hard' classification}{misclassification error, overall accuracy;
+\itemize{
+\item 'hard' classification: Misclassification error, overall accuracy;
 if two classes, sensitivity, specificity, positive predictive value (PPV),
-negative predictive value (NPV), kappa}
-\item{'soft' classification}{area under the ROC curve, error and accuracy
+negative predictive value (NPV), kappa
+\item 'soft' classification: area under the ROC curve, error and accuracy
 at a obs>0.5 dichotomization, false-positive rate (FPR; 1-specificity)
 at 70, 80 and 90 percent sensitivity, true-positive rate (sensitivity)
-at 80, 90 and 95 percent specificity}
-\item{regression}{bias, standard deviation, mean squared error,
+at 80, 90 and 95 percent specificity.
+\item regression: Bias, standard deviation, mean squared error,
 MAD (\link{mad}), median, interquartile range (\link{IQR})
-of residuals}
+of residuals
+}
 }
 \description{
-Calculate a variety of accuracy measures from observations
-and predictions of numerical and categorical response variables.
+Calculate a variety of accuracy measures from observations and
+predictions of numerical and categorical response variables.
 }
 \note{
 \code{NA} values are currently not handled by this function,
@@ -39,13 +40,12 @@ i.e. they will result in an error.
 \examples{
 obs <- rnorm(1000)
 # Two mock (soft) classification examples:
-err_default( obs > 0, rnorm(1000) ) # just noise
-err_default( obs > 0, obs + rnorm(1000) ) # some discrimination
+err_default(obs > 0, rnorm(1000)) # just noise
+err_default(obs > 0, obs + rnorm(1000)) # some discrimination
 # Three mock regression examples:
-err_default( obs, rnorm(1000) ) # just noise, but no bias
-err_default( obs, obs + rnorm(1000) ) # some association, no bias
-err_default( obs, obs + 1 ) # perfect correlation, but with bias
-
+err_default(obs, rnorm(1000)) # just noise, but no bias
+err_default(obs, obs + rnorm(1000)) # some association, no bias
+err_default(obs, obs + 1) # perfect correlation, but with bias
 }
 \seealso{
 \pkg{ROCR}

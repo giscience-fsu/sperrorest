@@ -18,4 +18,16 @@ data.frame with matching factor levels to fitted model
 Accounts for missing factor levels present only in test data
 but not in train data by setting values to NA
 }
+\examples{
+foo <- data.frame(
+  response = rnorm(3),
+  predictor = as.factor(c("A", "B", "C"))
+)
+model <- lm(response ~ predictor, foo)
+foo.new <- data.frame(predictor = as.factor(c("A", "B", "C", "D")))
+predict(model, newdata = remove_missing_levels(
+  fit = model,
+  test_data = foo.new
+))
+}
 \keyword{internal}

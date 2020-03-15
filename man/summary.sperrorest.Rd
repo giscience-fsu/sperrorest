@@ -30,23 +30,22 @@
 \arguments{
 \item{object}{a \link{sperrorest} object}
 
-\item{level}{Level at which errors are summarized:
-0: overall; 1: repetition; 2: fold}
+\item{level}{Level at which errors are summarized: 0: overall; 1: repetition;
+2: fold}
 
 \item{na.rm}{Remove \code{NA} values? See \link{mean} etc.}
 
-\item{...}{additional arguments for \link{summary.sperroresterror}
-or \link{summary.sperrorestimportance}}
+\item{...}{additional arguments for \link{summary.sperroresterror} or
+\link{summary.sperrorestimportance}}
 
-\item{x}{Depending on method, a \link{sperrorest},
-\code{sperroresterror} or \code{sperrorestimportance} object}
+\item{x}{Depending on method, a \link{sperrorest}, \code{sperroresterror} or
+\code{sperrorestimportance} object}
 }
 \description{
-Summary methods provide varying level of detail while print methods
-provide full details.
+Summary methods provide varying level of detail while print
+methods provide full details.
 }
 \seealso{
-\link{sperrorest},
-\link{summary.sperroresterror},
+\link{sperrorest}, \link{summary.sperroresterror},
 \link{summary.sperrorestimportance}
 }

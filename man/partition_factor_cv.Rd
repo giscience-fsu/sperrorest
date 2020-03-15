@@ -2,8 +2,8 @@
 % Please edit documentation in R/sperrorest_resampling.R
 \name{partition_factor_cv}
 \alias{partition_factor_cv}
-\title{Partition the data for a (non-spatial) k-fold cross-validation at the group
-level}
+\title{Partition the data for a (non-spatial) k-fold cross-validation at the
+group level}
 \usage{
 partition_factor_cv(
   data,
@@ -16,53 +16,50 @@ partition_factor_cv(
 )
 }
 \arguments{
-\item{data}{\code{data.frame} containing at least the columns specified
-by \code{coords}}
+\item{data}{\code{data.frame} containing at least the columns specified by
+\code{coords}}
 
-\item{coords}{vector of length 2 defining the variables in \code{data}
-that contain the x and y coordinates of sample locations.}
+\item{coords}{vector of length 2 defining the variables in \code{data} that
+contain the x and y coordinates of sample locations.}
 
-\item{fac}{either the name of a variable (column) in \code{data}, or a
-vector of type factor and length \code{nrow(data)} that defines groups or
-clusters of observations.}
+\item{fac}{either the name of a variable (column) in \code{data}, or a vector of
+type factor and length \code{nrow(data)} that defines groups or clusters of
+observations.}
 
-\item{nfold}{number of partitions (folds) in \code{nfold}-fold
-cross-validation partitioning}
+\item{nfold}{number of partitions (folds) in \code{nfold}-fold cross-validation
+partitioning}
 
-\item{repetition}{numeric vector: cross-validation repetitions
-to be generated. Note that this is not the number of repetitions,
-but the indices of these repetitions. E.g., use \code{repetition = c(1:100)}
-to obtain (the 'first') 100 repetitions, and \code{repetition = c(101:200)}
-to obtain a different set of 100 repetitions.}
+\item{repetition}{numeric vector: cross-validation repetitions to be
+generated. Note that this is not the number of repetitions, but the indices
+of these repetitions. E.g., use \code{repetition = c(1:100)} to obtain (the
+'first') 100 repetitions, and \code{repetition = c(101:200)} to obtain a
+different set of 100 repetitions.}
 
-\item{seed1}{\code{seed1+i} is the random seed that will be used by
-\link{set.seed} in repetition \code{i} (\code{i} in \code{repetition})
-to initialize the random number generator before sampling from the data set.}
+\item{seed1}{\code{seed1+i} is the random seed that will be used by \link{set.seed} in
+repetition \code{i} (\code{i} in \code{repetition}) to initialize the random number
+generator before sampling from the data set.}
 
-\item{return_factor}{if \code{FALSE} (default), return a
-\link{represampling} object; if \code{TRUE} (used internally by
-other \code{sperrorest} functions), return a \code{list} containing factor
-vectors (see Value)}
+\item{return_factor}{if \code{FALSE} (default), return a \link{represampling} object;
+if \code{TRUE} (used internally by other {sperrorest} functions), return a
+\code{list} containing factor vectors (see Value)}
 }
 \value{
-A \link{represampling} object,
-see also \link{partition_cv} for details.
+A \link{represampling} object, see also \link{partition_cv} for details.
 }
 \description{
-\code{partition_factor_cv} creates a \link{represampling} object,
-i.e. a set of sample indices defining cross-validation test and
-training sets, where partitions are obtained by resampling at the level of
-groups of observations as defined by a given factor variable.
-This can be used, for example, to resample agricultural data that is grouped
-by fields, at the agricultural field level in order to preserve
-spatial autocorrelation within fields.
+\code{partition_factor_cv} creates a \link{represampling} object, i.e. a
+set of sample indices defining cross-validation test and training sets,
+where partitions are obtained by resampling at the level of groups of
+observations as defined by a given factor variable. This can be used, for
+example, to resample agricultural data that is grouped by fields, at the
+agricultural field level in order to preserve spatial autocorrelation
+within fields.
 }
 \note{
-In this partitioning approach, the number of factor levels in
-\code{fac} must be large enough for this factor-level resampling to make
-sense.
+In this partitioning approach, the number of factor levels in \code{fac}
+must be large enough for this factor-level resampling to make sense.
 }
 \seealso{
-\link{sperrorest}, \link{partition_cv},
-\link{partition_factor}, \link{as.resampling.factor}
+\link{sperrorest}, \link{partition_cv}, \link{partition_factor},
+\link{as.resampling.factor}
 }

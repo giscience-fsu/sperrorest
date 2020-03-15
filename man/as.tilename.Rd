@@ -25,22 +25,21 @@ as.tilename(x, ...)
 \method{print}{tilename}(x, ...)
 }
 \arguments{
-\item{x}{object of class \code{tilename}, \code{character}, or
-\code{numeric} (of length 2).}
+\item{x}{object of class \code{tilename}, \code{character}, or \code{numeric} (of length 2).}
 
 \item{...}{additional arguments (currently ignored).}
 }
 \value{
-object of class \code{tilename}, \code{character}, or numeric
-vector of length 2
+object of class \code{tilename}, \code{character}, or numeric vector of length
+2
 }
 \description{
-Functions for generating and handling alphanumeric tile names of the
-form \code{'X2:Y7'} as used by \link{partition_tiles} and
+Functions for generating and handling alphanumeric tile names of
+the form \code{'X2:Y7'} as used by \link{partition_tiles} and
 \link{represampling_tile_bootstrap}.
 }
 \examples{
-tnm <- as.tilename(c(2,3))
+tnm <- as.tilename(c(2, 3))
 tnm # 'X2:Y3'
 as.numeric(tnm) # c(2,3)
 }

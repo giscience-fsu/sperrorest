@@ -7,8 +7,8 @@
 \alias{as.represampling.list}
 \alias{print.represampling}
 \alias{is_represampling}
-\title{Resampling objects with repetition, i.e. sets of partitionings or boostrap
-samples}
+\title{Resampling objects with repetition, i.e. sets of partitionings or
+boostrap samples}
 \usage{
 as.represampling(object, ...)
 
@@ -19,39 +19,38 @@ as.represampling(object, ...)
 is_represampling(object)
 }
 \arguments{
-\item{object}{object of class \code{represampling}, or a list to be coerced
-to this class.}
+\item{object}{object of class \code{represampling}, or a list to be coerced to
+this class.}
 
 \item{...}{currently not used.}
 
 \item{x}{object of class \code{represampling}.}
 }
 \value{
-\code{as.represampling} methods return an object of class
-\code{represampling} with the contents of \code{object}.
+\code{as.represampling} methods return an object of class \code{represampling}
+with the contents of \code{object}.
 }
 \description{
 Functions for handling \code{represampling} objects, i.e. \code{list}s of
 \link{resampling} objects.
 }
 \details{
-\code{represampling} objects are (names) lists of
-\link{resampling} objects. Such objects are typically created by
-\link{partition_cv}, \link{partition_kmeans},
+\code{represampling} objects are (names) lists of \link{resampling} objects.
+Such objects are typically created by \link{partition_cv}, \link{partition_kmeans},
 \link{represampling_disc_bootstrap} and related functions.
 
-In \code{r}-repeated \code{k}-fold cross-validation, for example, the
-corresponding \code{represampling} object has length \code{r}, and each of
-its \code{r} \link{resampling} objects has length \code{k}.
+In \code{r}-repeated \code{k}-fold cross-validation, for example, the corresponding
+\code{represampling} object has length \code{r}, and each of its \code{r} \link{resampling}
+objects has length \code{k}.
 
-\code{as.resampling_list} coerces \code{object} to class \code{represampling}
-while coercing its elements to \link{resampling} objects.
-Some validity checks are performed.
+\code{as.resampling_list} coerces \code{object} to class \code{represampling} while
+coercing its elements to \link{resampling} objects. Some validity checks are
+performed.
 }
 \examples{
-data(ecuador) # Muenchow et al. (2012), see ?ecuador
+# Muenchow et al. (2012), see ?ecuador
 # Partitioning by elevation classes in 200 m steps:
-fac <- factor( as.character( floor( ecuador$dem / 300 ) ) )
+fac <- factor(as.character(floor(ecuador$dem / 300)))
 summary(fac)
 parti <- as.resampling(fac)
 # a list of lists specifying sets of training and test sets,
@@ -60,7 +59,6 @@ str(parti)
 summary(parti)
 }
 \seealso{
-\link{resampling}, \link{partition_cv},
-\link{partition_kmeans},
+\link{resampling}, \link{partition_cv}, \link{partition_kmeans},
 \link{represampling_disc_bootstrap}, etc.
 }

@@ -2,7 +2,8 @@
 % Please edit documentation in R/sperrorest_resampling.R
 \name{partition_kmeans}
 \alias{partition_kmeans}
-\title{Partition samples spatially using k-means clustering of the coordinates}
+\title{Partition samples spatially using k-means clustering of the
+coordinates}
 \usage{
 partition_kmeans(
   data,
@@ -17,8 +18,8 @@ partition_kmeans(
 )
 }
 \arguments{
-\item{data}{\code{data.frame} containing at least the columns specified
-by \code{coords}}
+\item{data}{\code{data.frame} containing at least the columns specified by
+\code{coords}}
 
 \item{coords}{vector of length 2 defining the variables in \code{data} that
 contain the x and y coordinates of sample locations.}
@@ -26,28 +27,27 @@ contain the x and y coordinates of sample locations.}
 \item{nfold}{number of cross-validation folds, i.e. parameter \emph{k} in
 \emph{k}-means clustering.}
 
-\item{repetition}{numeric vector: cross-validation repetitions
-to be generated. Note that this is not the number of repetitions,
-but the indices of these repetitions. E.g., use \code{repetition = c(1:100)}
-to obtain (the 'first') 100 repetitions, and \code{repetition = c(101:200)}
-to obtain a different set of 100 repetitions.}
+\item{repetition}{numeric vector: cross-validation repetitions to be
+generated. Note that this is not the number of repetitions, but the indices
+of these repetitions. E.g., use \code{repetition = c(1:100)} to obtain (the
+'first') 100 repetitions, and \code{repetition = c(101:200)} to obtain a
+different set of 100 repetitions.}
 
-\item{seed1}{\code{seed1+i} is the random seed that will be used by
-\link{set.seed} in repetition \code{i} (\code{i} in \code{repetition})
-to initialize the random number generator before sampling from the data set.}
+\item{seed1}{\code{seed1+i} is the random seed that will be used by \link{set.seed} in
+repetition \code{i} (\code{i} in \code{repetition}) to initialize the random number
+generator before sampling from the data set.}
 
-\item{return_factor}{if \code{FALSE} (default), return a
-\link{represampling} object; if \code{TRUE} (used internally by
-other \code{sperrorest} functions), return a \code{list} containing factor
-vectors (see Value)}
+\item{return_factor}{if \code{FALSE} (default), return a \link{represampling} object;
+if \code{TRUE} (used internally by other {sperrorest} functions), return a
+\code{list} containing factor vectors (see Value)}
 
 \item{balancing_steps}{if \verb{> 1}, perform \code{nfold}-means clustering
 \code{balancing_steps} times, and pick the clustering that minimizes the Gini
-index of the sample size distribution among the partitions. The idea is that
-'degenerate' partitions will be avoided, but this also has the side effect of
-reducing variation among partitioning repetitions. More meaningful
-constraints (e.g., minimum number of positive and negative samples within
-each partition should be added in the future.}
+index of the sample size distribution among the partitions. The idea is
+that 'degenerate' partitions will be avoided, but this also has the side
+effect of reducing variation among partitioning repetitions. More
+meaningful constraints (e.g., minimum number of positive and negative
+samples within each partition should be added in the future.}
 
 \item{order_clusters}{if \code{TRUE}, clusters are ordered by increasing x
 coordinate of center point.}
@@ -55,13 +55,12 @@ coordinate of center point.}
 \item{...}{additional arguments to \link{kmeans}.}
 }
 \value{
-A \link{represampling} object, see also
-\link{partition_cv} for details.
+A \link{represampling} object, see also \link{partition_cv} for details.
 }
 \description{
-\code{partition_kmeans} divides the study area into irregularly shaped
-spatial partitions based on \emph{k}-means (\link{kmeans}) clustering
-of spatial coordinates.
+\code{partition_kmeans} divides the study area into irregularly
+shaped spatial partitions based on \emph{k}-means (\link{kmeans}) clustering of
+spatial coordinates.
 }
 \note{
 Default parameter settings may change in future releases.
@@ -70,7 +69,6 @@ Default parameter settings may change in future releases.
 data(ecuador)
 resamp <- partition_kmeans(ecuador, nfold = 5, repetition = 2)
 # plot(resamp, ecuador)
-
 }
 \references{
 Brenning, A., Long, S., & Fieguth, P. (2012).
@@ -85,7 +83,6 @@ IPMU 2010; Dortmund; 28 June - 2 July 2010.
 Lecture Notes in Computer Science, 6178 LNAI: 350-359.
 }
 \seealso{
-\link{sperrorest}, \link{partition_cv},
-\link{partition_disc}, \link{partition_tiles},
+\link{sperrorest}, \link{partition_cv}, \link{partition_disc}, \link{partition_tiles},
 \link{kmeans}
 }

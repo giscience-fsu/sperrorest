@@ -18,18 +18,16 @@ add.distance(object, ...)
 \item{...}{Additional arguments to \link{dataset_distance} and
 \link{add.distance.resampling}, respectively.}
 
-\item{data}{\code{data.frame} containing at least the columns specified
-by \code{coords}}
+\item{data}{\code{data.frame} containing at least the columns specified by
+\code{coords}}
 
 \item{coords}{(ignored by \code{partition_cv})}
 }
 \value{
-A \link{resampling} or \link{represampling} object
-containing an additional.
-\verb{$distance} component in each \link{resampling} object.
-The \code{distance} component is a single numeric value indicating, for
-each \code{train} / \code{test} pair, the (by default, mean)
-nearest-neighbour distance between the two sets.
+A \link{resampling} or \link{represampling} object containing an additional.
+\verb{$distance} component in each \link{resampling} object. The \code{distance} component
+is a single numeric value indicating, for each \code{train} / \code{test} pair, the
+(by default, mean) nearest-neighbour distance between the two sets.
 }
 \description{
 Add distance information to resampling objects
@@ -37,12 +35,11 @@ Add distance information to resampling objects
 \details{
 Nearest-neighbour distances are calculated for each sample in the
 test set. These \verb{nrow(???$test)} nearest-neighbour distances are then
-averaged. Aggregation methods other than \code{mean} can be chosen using
-the \code{fun} argument, which will be passed on to
-\link{dataset_distance}.
+averaged. Aggregation methods other than \code{mean} can be chosen using the
+\code{fun} argument, which will be passed on to \link{dataset_distance}.
 }
 \examples{
-data(ecuador) # Muenchow et al. (2012), see ?ecuador
+# Muenchow et al. (2012), see ?ecuador
 nsp.parti <- partition_cv(ecuador)
 sp.parti <- partition_kmeans(ecuador)
 nsp.parti <- add.distance(nsp.parti, ecuador)
@@ -52,7 +49,6 @@ nsp.parti[[1]][[1]]$distance
 # spatial partitioning: more substantial distance, depending on number of
 # folds etc.
 sp.parti[[1]][[1]]$distance
-
 }
 \seealso{
 \link{dataset_distance} \link{represampling}

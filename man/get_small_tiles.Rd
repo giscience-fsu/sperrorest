@@ -23,22 +23,26 @@ character vector: names of tiles that are considered 'small'
 according to these criteria
 }
 \description{
-\code{get_small_tiles} identifies partitions (tiles) that are too small
-according to some defined criterion / criteria (minimum number of samples in
-tile and/or minimum fraction of entire dataset).
+\code{get_small_tiles} identifies partitions (tiles) that are too
+small according to some defined criterion / criteria (minimum number of
+samples in tile and/or minimum fraction of entire dataset).
 }
 \examples{
-data(ecuador) # Muenchow et al. (2012), see ?ecuador
+# Muenchow et al. (2012), see ?ecuador
 # Rectangular partitioning without removal of small tiles:
-parti <- partition_tiles(ecuador, nsplit = c(10,10), reassign = FALSE)
+parti <- partition_tiles(ecuador, nsplit = c(10, 10), reassign = FALSE)
 summary(parti)
 length(parti[[1]])
 # Same in factor format for the application of get_small_tiles:
-parti_fac <- partition_tiles(ecuador, nsplit = c(10, 10), reassign = FALSE,
-                             return_factor = TRUE)
+parti_fac <- partition_tiles(ecuador,
+  nsplit = c(10, 10), reassign = FALSE,
+  return_factor = TRUE
+)
 get_small_tiles(parti_fac[[1]], min_n = 20) # tiles with less than 20 samples
-parti2 <- partition_tiles(ecuador, nsplit = c(10, 10), reassign = TRUE,
-                          min_n = 20, min_frac = 0)
+parti2 <- partition_tiles(ecuador,
+  nsplit = c(10, 10), reassign = TRUE,
+  min_n = 20, min_frac = 0
+)
 length(parti2[[1]]) # < length(parti[[1]])
 }
 \seealso{

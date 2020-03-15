@@ -2,7 +2,9 @@
 #' @description transfers output of parallel calls to runreps
 #' @keywords internal
 #' @export
-transfer_parallel_output <- function(my_res = NULL, res = NULL, impo = NULL,
+transfer_parallel_output <- function(my_res = NULL,
+                                     res = NULL,
+                                     impo = NULL,
                                      pooled_error = NULL) {
 
   for (i in seq_along(my_res)) {
@@ -17,16 +19,16 @@ transfer_parallel_output <- function(my_res = NULL, res = NULL, impo = NULL,
     }
   }
 
-  return(list(pooled_error = pooled_error, impo = impo,
-              res = res))
+  return(list(
+    pooled_error = pooled_error, impo = impo,
+    res = res
+  ))
 }
 
 #' @title remove_missing_levels
 #' @description Accounts for missing factor levels present only in test data
 #' but not in train data by setting values to NA
 #'
-#' @import magrittr
-#' @importFrom gdata unmatrix
 #' @importFrom stringr str_split
 #'
 #' @param fit fitted model on training data
@@ -37,38 +39,50 @@ transfer_parallel_output <- function(my_res = NULL, res = NULL, impo = NULL,
 #'
 #' @keywords internal
 #'
+#' @examples
+#' foo <- data.frame(
+#'   response = rnorm(3),
+#'   predictor = as.factor(c("A", "B", "C"))
+#' )
+#' model <- lm(response ~ predictor, foo)
+#' foo.new <- data.frame(predictor = as.factor(c("A", "B", "C", "D")))
+#' predict(model, newdata = remove_missing_levels(
+#'   fit = model,
+#'   test_data = foo.new
+#' ))
 #' @export
-remove_missing_levels <- function(fit, test_data) {
+remove_missing_levels <- function(fit,
+                                  test_data) {
 
   # https://stackoverflow.com/a/39495480/4185785
 
   # drop empty factor levels in test data
-  test_data %>%
-    droplevels() %>%
-    as.data.frame() -> test_data
+  test_data <- as.data.frame(droplevels(test_data))
 
   # 'fit' object structure of 'lm' and 'glmmPQL' is different so we need to
   # account for it
   if (any(class(fit) == "glmmPQL")) {
     # Obtain factor predictors in the model and their levels
-    factors <- (gsub("[-^0-9]|as.factor|\\(|\\)", "",
-                     names(unlist(fit$contrasts))))
+    factors <- (gsub(
+      "[-^0-9]|as.factor|\\(|\\)", "",
+      names(unlist(fit$contrasts))
+    ))
     # do nothing if no factors are present
     if (length(factors) == 0) {
       return(test_data)
     }
 
-    map(fit$contrasts, function(x) names(unmatrix(x))) %>%
-      unlist() -> factor_levels
-    factor_levels %>%
-      str_split(":", simplify = TRUE) %>%
-      extract(, 1) -> factor_levels
+    factor_levels <- unlist(lapply(fit$contrasts, function(x) names(unmatrix(x)))) # nolint
+
+    factor_levels <- str_split(factor_levels, ":", simplify = TRUE)[, 1]
 
     model_factors <- as.data.frame(cbind(factors, factor_levels))
   } else {
     # Obtain factor predictors in the model and their levels
-    factors <- (gsub("[-^0-9]|as.factor|\\(|\\)", "",
-                     names(unlist(fit$xlevels))))
+    factors <- (gsub(
+      "[-^0-9]|as.factor|\\(|\\)", "",
+      names(unlist(fit$xlevels))
+    ))
     # do nothing if no factors are present
     if (length(factors) == 0) {
       return(test_data)
@@ -85,23 +99,50 @@ remove_missing_levels <- function(fit, test_data) {
   # For each factor predictor in your data, if the level is not in the model,
   # set the value to NA
 
-  for (i in 1:length(predictors)) {
+  for (i in seq_along(predictors)) {
     found <- test_data[, predictors[i]] %in% model_factors[
-      model_factors$factors == predictors[i], ]$factor_levels
+      model_factors$factors == predictors[i],
+    ]$factor_levels
     if (any(!found)) {
       # track which variable
       var <- predictors[i]
       # set to NA
       test_data[!found, predictors[i]] <- NA
       # drop empty factor levels in test data
-      test_data %>%
-        droplevels() -> test_data
+      test_data <- droplevels(test_data)
       # issue warning to console
-      message(sprintf(paste0("\n'sperrorest()': Setting missing levels in",
-                             " '%s', only present in test data but missing ",
-                             "in train data, to 'NA'."),
-                      var))
+      message(sprintf(
+        paste0(
+          "\n'sperrorest()': Setting missing levels in",
+          " '%s', only present in test data but missing ",
+          "in train data, to 'NA'."
+        ),
+        var
+      ))
     }
   }
   return(test_data) # nocov end
+}
+
+# copied from gdata::unmatrix to save a pkg dependency
+unmatrix <- function(x,
+                     byrow = FALSE) {
+  rnames <- rownames(x)
+  cnames <- colnames(x)
+  if (is.null(rnames)) {
+    rnames <- paste("r", seq_along(x), sep = "")
+  }
+  if (is.null(cnames)) {
+    cnames <- paste("c", seq_along(x), sep = "")
+  }
+  nmat <- outer(rnames, cnames, paste, sep = ":")
+  if (byrow) {
+    vlist <- c(t(x))
+    names(vlist) <- c(t(nmat))
+  }
+  else {
+    vlist <- c(x)
+    names(vlist) <- c(nmat)
+  }
+  return(vlist)
 }

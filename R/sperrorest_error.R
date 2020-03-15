@@ -1,31 +1,28 @@
 #' @title Default error function
 #'
-#' @description Calculate a variety of accuracy measures from observations
-#'  and predictions of numerical and categorical response variables.
-#'
-#' @name err_default
+#' @description Calculate a variety of accuracy measures from observations and
+#'   predictions of numerical and categorical response variables.
 #'
 #' @importFrom ROCR prediction performance
 #'
 #' @param obs factor, logical, or numeric vector with observations
-#'
 #' @param pred factor, logical, or numeric vector with predictions. Must be of
-#' same type as `obs` with the exception that `pred` may be numeric
-#' if `obs` is `factor` or `logical` ('soft' classification).
+#'   same type as `obs` with the exception that `pred` may be numeric if `obs`
+#'   is `factor` or `logical` ('soft' classification).
 #'
 #' @return A list with (currently) the following components, depending on the
-#' type of prediction problem:
+#'   type of prediction problem:
 #'
-#' \item{'hard' classification}{misclassification error, overall accuracy;
+#' - 'hard' classification: Misclassification error, overall accuracy;
 #' if two classes, sensitivity, specificity, positive predictive value (PPV),
-#' negative predictive value (NPV), kappa}
-#' \item{'soft' classification}{area under the ROC curve, error and accuracy
+#' negative predictive value (NPV), kappa
+#' - 'soft' classification: area under the ROC curve, error and accuracy
 #' at a obs>0.5 dichotomization, false-positive rate (FPR; 1-specificity)
 #' at 70, 80 and 90 percent sensitivity, true-positive rate (sensitivity)
-#' at 80, 90 and 95 percent specificity}
-#' \item{regression}{bias, standard deviation, mean squared error,
+#' at 80, 90 and 95 percent specificity.
+#' - regression: Bias, standard deviation, mean squared error,
 #' MAD ([mad]), median, interquartile range ([IQR])
-#' of residuals}
+#' of residuals
 #'
 #' @note `NA` values are currently not handled by this function,
 #' i.e. they will result in an error.
@@ -35,15 +32,16 @@
 #' @examples
 #' obs <- rnorm(1000)
 #' # Two mock (soft) classification examples:
-#' err_default( obs > 0, rnorm(1000) ) # just noise
-#' err_default( obs > 0, obs + rnorm(1000) ) # some discrimination
+#' err_default(obs > 0, rnorm(1000)) # just noise
+#' err_default(obs > 0, obs + rnorm(1000)) # some discrimination
 #' # Three mock regression examples:
-#' err_default( obs, rnorm(1000) ) # just noise, but no bias
-#' err_default( obs, obs + rnorm(1000) ) # some association, no bias
-#' err_default( obs, obs + 1 ) # perfect correlation, but with bias
-#'
+#' err_default(obs, rnorm(1000)) # just noise, but no bias
+#' err_default(obs, obs + rnorm(1000)) # some association, no bias
+#' err_default(obs, obs + 1) # perfect correlation, but with bias
+#' @name err_default
 #' @export
-err_default <- function(obs, pred) {
+err_default <- function(obs,
+                        pred) {
   # The following wrapper functions are used in order to avoid warning messages:
   mmin <- function(x, ...) {
     if (length(x) == 0) {
@@ -107,7 +105,9 @@ err_default <- function(obs, pred) {
         pexp <- (npos / n) * (npospred / n) + (nneg / n) * (nnegpred / n)
         if (pexp == 1) {
           err$kappa <- NA
-        } else err$kappa <- (err$accuracy - pexp) / (1 - pexp) # nocov end
+        } else {
+          err$kappa <- (err$accuracy - pexp) / (1 - pexp)
+        } # nocov end
       }
     } else {
 
@@ -123,12 +123,11 @@ err_default <- function(obs, pred) {
       if (!is.vector(pred) && !is.matrix(pred)) {
         pred <- as.numeric(pred)
       }
-      predobj <- prediction(pred, obs) # nolint
-      auroc <- performance(predobj, measure = "auc")@y.values[[1]] # nolint
+      predobj <- ROCR::prediction(pred, obs) # nolint
+      auroc <- ROCR::performance(predobj, measure = "auc")@y.values[[1]] # nolint
       err <- list(auroc = auroc)
 
       pos <- levels(obs)[2]
-      # neg <- levels(obs)[1] # not in use
 
       err$error <- mean((obs == pos) != (pred >= 0.5), na.rm = TRUE) # nolint
       err$accuracy <- 1 - err$error
@@ -151,33 +150,60 @@ err_default <- function(obs, pred) {
         thrs <- seq(min(pred) + 1e-04, max(pred) + 1e-04, length = 500)
       }
 
-      thr <- mmax(thrs[sapply(thrs, function(x) tpr(obs == pos, pred, npos,
-                                                    x) >= 0.7)])
+      thr <- mmax(thrs[sapply(thrs, function(x) {
+        tpr(
+          obs == pos, pred, npos,
+          x
+        ) >= 0.7
+      })])
       err$fpr70 <- fpr(obs == pos, pred, nneg, thr)
-      thr <- mmax(thrs[sapply(thrs, function(x) tpr(obs == pos, pred, npos,
-                                                    x) >= 0.8)])
+      thr <- mmax(thrs[sapply(thrs, function(x) {
+        tpr(
+          obs == pos, pred, npos,
+          x
+        ) >= 0.8
+      })])
       err$fpr80 <- fpr(obs == pos, pred, nneg, thr)
-      thr <- mmax(thrs[sapply(thrs, function(x) tpr(obs == pos, pred, npos,
-                                                    x) >= 0.9)])
+      thr <- mmax(thrs[sapply(thrs, function(x) {
+        tpr(
+          obs == pos, pred, npos,
+          x
+        ) >= 0.9
+      })])
       err$fpr90 <- fpr(obs == pos, pred, nneg, thr)
 
-      thr <- mmin(thrs[sapply(thrs, function(x) fpr(obs == pos, pred, nneg,
-                                                    x) <= 0.2)])
+      thr <- mmin(thrs[sapply(thrs, function(x) {
+        fpr(
+          obs == pos, pred, nneg,
+          x
+        ) <= 0.2
+      })])
       err$tpr80 <- tpr(obs == pos, pred, npos, thr)
-      thr <- mmin(thrs[sapply(thrs, function(x) fpr(obs == pos, pred, nneg,
-                                                    x) <= 0.1)])
+      thr <- mmin(thrs[sapply(thrs, function(x) {
+        fpr(
+          obs == pos, pred, nneg,
+          x
+        ) <= 0.1
+      })])
       err$tpr90 <- tpr(obs == pos, pred, npos, thr)
-      thr <- mmin(thrs[sapply(thrs, function(x) fpr(obs == pos, pred, nneg,
-                                                    x) <= 0.05)])
+      thr <- mmin(thrs[sapply(thrs, function(x) {
+        fpr(
+          obs == pos, pred, nneg,
+          x
+        ) <= 0.05
+      })])
       err$tpr95 <- tpr(obs == pos, pred, npos, thr)
     }
     err$events <- sum(obs == levels(obs)[2])
   } else {
     # Regression problem:
-    err <- list(bias = mean(obs - pred), stddev = sd(obs - pred),
-                rmse = sqrt(mean((obs - pred) ^ 2)), mad = mad(obs - pred), # nolint
-                median = median(obs - pred), iqr = IQR(obs - pred,
-                                                       na.rm = TRUE))
+    err <- list(
+      bias = mean(obs - pred), stddev = sd(obs - pred),
+      rmse = sqrt(mean((obs - pred)^2)), mad = mad(obs - pred), # nolint
+      median = median(obs - pred), iqr = IQR(obs - pred,
+        na.rm = TRUE
+      )
+    )
   }
   # Number of observations available:
   err$count <- length(obs)

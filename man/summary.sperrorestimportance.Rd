@@ -2,16 +2,16 @@
 % Please edit documentation in R/summary_functions.R
 \name{summary.sperrorestimportance}
 \alias{summary.sperrorestimportance}
-\title{Summarize variable importance statistics obtained by \code{sperrorest}}
+\title{Summarize variable importance statistics obtained by {sperrorest}}
 \usage{
 \method{summary}{sperrorestimportance}(object, level = 0, na.rm = TRUE, which = NULL, ...)
 }
 \arguments{
-\item{object}{\code{sperrorestimportance} object calculated by
-\link{sperrorest} called with argument \code{importance = TRUE}}
+\item{object}{\code{sperrorestimportance} object calculated by \link{sperrorest} called
+with argument \code{importance = TRUE}}
 
-\item{level}{Level at which errors are summarized:
-0: overall; 1: repetition; 2: fold}
+\item{level}{Level at which errors are summarized: 0: overall; 1: repetition;
+2: fold}
 
 \item{na.rm}{Remove \code{NA} values? See \link{mean} etc.}
 
@@ -24,7 +24,7 @@ which the importances should be summarized (to do: check implementation)}
 a list or data.frame, depending on the \code{level} of aggregation
 }
 \description{
-\code{summary.sperrorestimportance} calculated mean, standard deviation,
-median etc. of the calculated error measures at the specified level
-(overall, repetition, or fold).
+\code{summary.sperrorestimportance} calculated mean, standard
+deviation, median etc. of the calculated error measures at the specified
+level (overall, repetition, or fold).
 }
