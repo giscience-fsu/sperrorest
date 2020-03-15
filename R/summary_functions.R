@@ -1,10 +1,9 @@
-#' Summarize error statistics obtained by {sperrorest}
+#' @title Summarize error statistics obtained by {sperrorest}
 #'
-#' `summary.sperroresterror` calculates mean, standard deviation,
-#' median etc. of the calculated error measures at the specified level
-#' (overall, repetition, or fold).
-#' `summary.sperrorestreperror` does the same with the pooled error,
-#' at the overall or repetition level.
+#' @description `summary.sperroresterror` calculates mean, standard deviation,
+#'  median etc. of the calculated error measures at the specified level
+#'  (overall, repetition, or fold). `summary.sperrorestreperror` does the same
+#'  with the pooled error, at the overall or repetition level.
 #'
 #' @importFrom stats IQR kmeans mad median predict
 #' rnorm runif sd terms weighted.mean
@@ -12,44 +11,44 @@
 #' @name summary.sperroresterror
 #' @method summary sperroresterror
 #'
-#' @param object `sperroresterror` resp. `sperrorestcombinederror`
-#' error object calculated by [sperrorest]
-#' @param level Level at which errors are summarized:
-#' 0: overall; 1: repetition; 2: fold
+#' @param object `sperroresterror` resp. `sperrorestcombinederror` error object
+#'   calculated by [sperrorest]
+#' @param level Level at which errors are summarized: 0: overall; 1: repetition;
+#'   2: fold
 #' @param pooled If `TRUE` (default), mean and standard deviation etc are
-#' calculated between fold-level error estimates. If `FALSE`,
-#' apply first a [weighted.mean] among folds before calculating
-#' mean, standard deviation etc among repetitions. See also Details.
+#'   calculated between fold-level error estimates. If `FALSE`, apply first a
+#'   [weighted.mean] among folds before calculating mean, standard deviation etc
+#'   among repetitions. See also Details.
 #' @param na.rm Remove `NA` values? See [mean] etc.
 #' @param ... additional arguments (currently ignored)
 #'
-#' @return Depending on the level of aggregation, a `list` or
-#' `data.frame` with mean, and at level 0 also standard deviation,
-#' median and IQR of the error measures.
+#' @return Depending on the level of aggregation, a `list` or `data.frame` with
+#'   mean, and at level 0 also standard deviation, median and IQR of the error
+#'   measures.
 #'
-#' @details Let's use an example to explain the `error_rep` argument.
-#' E.g., assume we are using 100-repeated 10-fold cross-validation.
-#' If `error_rep = TRUE` (default), the mean and standard deviation calculated
-#' when summarizing at `level = 0`
-#' are calculated across the error estimates obtained for
-#' each of the `100*10 = 1000` folds.
-#' If `error_rep = FALSE`, mean and standard deviation are calculated across
-#' the `100` repetitions, using the weighted average of the fold-level
-#' errors to calculate an error value for the entire sample.
-#' This will essentially not affect the mean value but of course the
-#' standard deviation of the error. `error_rep = FALSE` is not recommended,
-#' it is mainly for testing purposes; when the test sets are small
-#' (as in leave-one-out cross-validation, in the extreme case),
-#' consider running [sperrorest] with `error_rep = TRUE` and
-#' examine only the `error_rep` component of its result.
+#' @details Let's use an example to explain the `error_rep` argument. E.g.,
+#'   assume we are using 100-repeated 10-fold cross-validation. If `error_rep =
+#'   TRUE` (default), the mean and standard deviation calculated when
+#'   summarizing at `level = 0` are calculated across the error estimates
+#'   obtained for each of the `100*10 = 1000` folds. If `error_rep = FALSE`,
+#'   mean and standard deviation are calculated across the `100` repetitions,
+#'   using the weighted average of the fold-level errors to calculate an error
+#'   value for the entire sample. This will essentially not affect the mean
+#'   value but of course the standard deviation of the error.
+#'
+#'   `error_rep = FALSE` is not recommended, it is mainly for testing purposes;
+#'   when the test sets are small (as in leave-one-out cross-validation, in the
+#'   extreme case), consider running [sperrorest] with `error_rep = TRUE` and
+#'   examine only the `error_rep` component of its result.
 #'
 #' @seealso [sperrorest]
 #'
 #' @export
-
-# nolint start
-summary.sperroresterror <- function(object, level = 0, pooled = TRUE,
-                                    na.rm = TRUE, ...) {
+summary.sperroresterror <- function(object, # nolint start
+                                    level = 0,
+                                    pooled = TRUE,
+                                    na.rm = TRUE,
+                                    ...) {
   err <- unclass(object)
   # nolint end
   if (pooled) {
@@ -135,9 +134,10 @@ summary.sperroresterror <- function(object, level = 0, pooled = TRUE,
 #' @name summary.sperrorestreperror
 #' @method summary sperrorestreperror
 #' @export
-# nolint start
-summary.sperrorestreperror <- function(object, level = 0, na.rm = TRUE, ...) {
-  # nolint end
+summary.sperrorestreperror <- function(object, # nolint
+                                       level = 0,
+                                       na.rm = TRUE, # nolint
+                                       ...) {
   class(object) <- NULL
   object <- as.data.frame(object)
   if (level <= 0) {
@@ -150,26 +150,28 @@ summary.sperrorestreperror <- function(object, level = 0, na.rm = TRUE, ...) {
   return(object)
 }
 
-#' Summarize variable importance statistics obtained by {sperrorest}
+#' @title Summarize variable importance statistics obtained by {sperrorest}
 #'
-#' `summary.sperrorestimportance` calculated mean, standard deviation,
-#' median etc. of the calculated error measures at the specified level
-#' (overall, repetition, or fold).
+#' @description `summary.sperrorestimportance` calculated mean, standard
+#'   deviation, median etc. of the calculated error measures at the specified
+#'   level (overall, repetition, or fold).
 #' @name summary.sperrorestimportance
 #' @method summary sperrorestimportance
 #'
-#' @param object `sperrorestimportance` object calculated by
-#' [sperrorest] called with argument `importance = TRUE`
+#' @param object `sperrorestimportance` object calculated by [sperrorest] called
+#'   with argument `importance = TRUE`
 #' @inheritParams summary.sperroresterror
 #' @param which optional character vector specifying selected variables for
-#' which the importances should be summarized (to do: check implementation)
+#'   which the importances should be summarized (to do: check implementation)
 #'
 #' @return a list or data.frame, depending on the `level` of aggregation
 #'
 #' @export
-# nolint start
-summary.sperrorestimportance <- function(object, level = 0, na.rm = TRUE,
-                                         which = NULL, ...) {
+summary.sperrorestimportance <- function(object, # nolint start
+                                         level = 0,
+                                         na.rm = TRUE,
+                                         which = NULL,
+                                         ...) {
   # nolint end
   arrdim <- c(length(object), length(object[[1]]), dim(object[[1]][[1]]))
   arrdimnames <- list(
@@ -211,26 +213,26 @@ summary.sperrorestimportance <- function(object, level = 0, na.rm = TRUE,
 }
 
 
-#' Summary and print methods for sperrorest results
+#' @title Summary and print methods for sperrorest results
 #'
-#' Summary methods provide varying level of detail while print methods
-#' provide full details.
+#' @description Summary methods provide varying level of detail while print
+#'   methods provide full details.
 #' @name summary.sperrorest
 #'
 #' @method summary sperrorest
 #'
 #' @param object a [sperrorest] object
-#' @param ... additional arguments for [summary.sperroresterror]
-#' or [summary.sperrorestimportance]
-#' @param x Depending on method, a [sperrorest],
-#' `sperroresterror` or `sperrorestimportance` object
+#' @param ... additional arguments for [summary.sperroresterror] or
+#'   [summary.sperrorestimportance]
+#' @param x Depending on method, a [sperrorest], `sperroresterror` or
+#'   `sperrorestimportance` object
 #'
-#' @seealso [sperrorest],
-#' [summary.sperroresterror],
-#' [summary.sperrorestimportance]
+#' @seealso [sperrorest], [summary.sperroresterror],
+#'   [summary.sperrorestimportance]
 #'
 #' @export
-summary.sperrorest <- function(object, ...) {
+summary.sperrorest <- function(object,
+                               ...) {
   list(
     error_rep = summary(object$error_rep, ...),
     error_fold = summary(object$error_fold, ...),

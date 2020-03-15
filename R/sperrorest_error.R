@@ -1,31 +1,28 @@
 #' @title Default error function
 #'
-#' @description Calculate a variety of accuracy measures from observations
-#'  and predictions of numerical and categorical response variables.
-#'
-#' @name err_default
+#' @description Calculate a variety of accuracy measures from observations and
+#'   predictions of numerical and categorical response variables.
 #'
 #' @importFrom ROCR prediction performance
 #'
 #' @param obs factor, logical, or numeric vector with observations
-#'
 #' @param pred factor, logical, or numeric vector with predictions. Must be of
-#' same type as `obs` with the exception that `pred` may be numeric
-#' if `obs` is `factor` or `logical` ('soft' classification).
+#'   same type as `obs` with the exception that `pred` may be numeric if `obs`
+#'   is `factor` or `logical` ('soft' classification).
 #'
 #' @return A list with (currently) the following components, depending on the
-#' type of prediction problem:
+#'   type of prediction problem:
 #'
-#' \item{'hard' classification}{misclassification error, overall accuracy;
+#' - 'hard' classification: Misclassification error, overall accuracy;
 #' if two classes, sensitivity, specificity, positive predictive value (PPV),
-#' negative predictive value (NPV), kappa}
-#' \item{'soft' classification}{area under the ROC curve, error and accuracy
+#' negative predictive value (NPV), kappa
+#' - 'soft' classification: area under the ROC curve, error and accuracy
 #' at a obs>0.5 dichotomization, false-positive rate (FPR; 1-specificity)
 #' at 70, 80 and 90 percent sensitivity, true-positive rate (sensitivity)
-#' at 80, 90 and 95 percent specificity}
-#' \item{regression}{bias, standard deviation, mean squared error,
+#' at 80, 90 and 95 percent specificity.
+#' - regression: Bias, standard deviation, mean squared error,
 #' MAD ([mad]), median, interquartile range ([IQR])
-#' of residuals}
+#' of residuals
 #'
 #' @note `NA` values are currently not handled by this function,
 #' i.e. they will result in an error.
@@ -41,8 +38,10 @@
 #' err_default(obs, rnorm(1000)) # just noise, but no bias
 #' err_default(obs, obs + rnorm(1000)) # some association, no bias
 #' err_default(obs, obs + 1) # perfect correlation, but with bias
+#' @name err_default
 #' @export
-err_default <- function(obs, pred) {
+err_default <- function(obs,
+                        pred) {
   # The following wrapper functions are used in order to avoid warning messages:
   mmin <- function(x, ...) {
     if (length(x) == 0) {

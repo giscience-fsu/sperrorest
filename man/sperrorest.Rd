@@ -2,8 +2,8 @@
 % Please edit documentation in R/sperrorest.R
 \name{sperrorest}
 \alias{sperrorest}
-\title{Perform spatial error estimation and variable importance assessment
-in parallel}
+\title{Perform spatial error estimation and variable importance assessment in
+parallel}
 \usage{
 sperrorest(
   formula,
@@ -30,48 +30,44 @@ sperrorest(
 )
 }
 \arguments{
-\item{formula}{A formula specifying the variables used by the \code{model}.
-Only simple formulas without interactions or nonlinear terms should
-be used, e.g. \code{y~x1+x2+x3} but not \code{y~x1*x2+log(x3)}.
-Formulas involving interaction and nonlinear terms may possibly work
-for error estimation but not for variable importance assessment,
-but should be used with caution.}
+\item{formula}{A formula specifying the variables used by the \code{model}. Only
+simple formulas without interactions or nonlinear terms should be used,
+e.g. \code{y~x1+x2+x3} but not \code{y~x1*x2+log(x3)}. Formulas involving interaction
+and nonlinear terms may possibly work for error estimation but not for
+variable importance assessment, but should be used with caution.}
 
-\item{data}{a \code{data.frame} with predictor and response variables.
-Training and test samples will be drawn from this data set by \code{train_fun}
-and \code{test_fun}, respectively.}
+\item{data}{a \code{data.frame} with predictor and response variables. Training
+and test samples will be drawn from this data set by \code{train_fun} and
+\code{test_fun}, respectively.}
 
 \item{coords}{vector of length 2 defining the variables in \code{data} that
 contain the x and y coordinates of sample locations.}
 
-\item{model_fun}{Function that fits a predictive model, such as \code{glm}
-or \code{rpart}. The function must accept at least two arguments, the first
-one being a formula and the second a data.frame with the learning sample.}
+\item{model_fun}{Function that fits a predictive model, such as \code{glm} or
+\code{rpart}. The function must accept at least two arguments, the first one
+being a formula and the second a data.frame with the learning sample.}
 
-\item{model_args}{Arguments to be passed to \code{model_fun}
-(in addition to the \code{formula} and \code{data} argument,
-which are provided by {sperrorest})}
+\item{model_args}{Arguments to be passed to \code{model_fun} (in addition to the
+\code{formula} and \code{data} argument, which are provided by {sperrorest})}
 
-\item{pred_fun}{Prediction function for a fitted model object created
-by \code{model}. Must accept at least two arguments: the fitted
-\code{object} and a \code{data.frame} \code{newdata} with data
-on which to predict the outcome.}
+\item{pred_fun}{Prediction function for a fitted model object created by
+\code{model}. Must accept at least two arguments: the fitted \code{object} and a
+\code{data.frame} \code{newdata} with data on which to predict the outcome.}
 
 \item{pred_args}{(optional) Arguments to \code{pred_fun} (in addition to the
-fitted model object and the \code{newdata} argument,
-which are provided by {sperrorest}).}
+fitted model object and the \code{newdata} argument, which are provided by
+{sperrorest}).}
 
-\item{smp_fun}{A function for sampling training and test sets from
-\code{data}. E.g. \link{partition_kmeans} for
-spatial cross-validation using spatial \emph{k}-means clustering.}
+\item{smp_fun}{A function for sampling training and test sets from \code{data}.
+E.g. \link{partition_kmeans} for spatial cross-validation using spatial
+\emph{k}-means clustering.}
 
 \item{smp_args}{(optional) Arguments to be passed to \code{smp_fun}.}
 
 \item{train_fun}{(optional) A function for resampling or subsampling the
 training sample in order to achieve, e.g., uniform sample sizes on all
-training sets, or maintaining a certain ratio of positives and negatives
-in training sets.
-E.g. \link{resample_uniform} or \link{resample_strat_uniform}.}
+training sets, or maintaining a certain ratio of positives and negatives in
+training sets. E.g. \link{resample_uniform} or \link{resample_strat_uniform}.}
 
 \item{train_param}{(optional) Arguments to be passed to \code{resample_fun}.}
 
@@ -80,37 +76,35 @@ E.g. \link{resample_uniform} or \link{resample_strat_uniform}.}
 \item{test_param}{(optional) Arguments to be passed to \code{test_fun}.}
 
 \item{err_fun}{A function that calculates selected error measures from the
-known responses in \code{data} and the model predictions delivered
-by \code{pred_fun}. E.g. \link{err_default} (the default).}
+known responses in \code{data} and the model predictions delivered by
+\code{pred_fun}. E.g. \link{err_default} (the default).}
 
-\item{imp_variables}{(optional; used if \code{importance = TRUE}).
-Variables for which permutation-based variable importance assessment
-is performed. If \code{importance = TRUE} and \code{imp_variables} ==
-\code{NULL}, all variables in \code{formula} will be used.}
+\item{imp_variables}{(optional; used if \code{importance = TRUE}). Variables for
+which permutation-based variable importance assessment is performed. If
+\code{importance = TRUE} and \code{imp_variables} == \code{NULL}, all variables in
+\code{formula} will be used.}
 
-\item{imp_permutations}{(optional; used if \code{importance = TRUE}).
-Number of permutations used for variable importance assessment.}
+\item{imp_permutations}{(optional; used if \code{importance = TRUE}). Number of
+permutations used for variable importance assessment.}
 
 \item{importance}{logical (default: \code{FALSE}): perform permutation-based
 variable importance assessment?}
 
-\item{distance}{logical (default: \code{FALSE}): if \code{TRUE}, calculate
-mean nearest-neighbour distances from test samples to training samples using
+\item{distance}{logical (default: \code{FALSE}): if \code{TRUE}, calculate mean
+nearest-neighbour distances from test samples to training samples using
 \link{add.distance.represampling}.}
 
 \item{do_gc}{numeric (default: 1): defines frequency of memory garbage
-collection by calling \link{gc}; if \verb{< 1}, no garbage collection;
-if \verb{>= 1}, run a \link{gc} after each repetition;
-if \verb{>= 2}, after each fold.}
+collection by calling \link{gc}; if \verb{< 1}, no garbage collection; if \verb{>= 1}, run
+a \link{gc} after each repetition; if \verb{>= 2}, after each fold.}
 
 \item{progress}{character (default: \code{all}): Whether to show progress
 information (if possible). Default shows repetition, fold and (if enabled)
-variable importance progress.
-Set to \code{"rep"} for repetition information only or \code{FALSE} for no progress
-information.}
+variable importance progress. Set to \code{"rep"} for repetition information
+only or \code{FALSE} for no progress information.}
 
-\item{benchmark}{(optional) logical (default: \code{FALSE}): if \code{TRUE},
-perform benchmarking and return \code{sperrorestbenchmark} object.}
+\item{benchmark}{(optional) logical (default: \code{FALSE}): if \code{TRUE}, perform
+benchmarking and return \code{sperrorestbenchmark} object.}
 }
 \value{
 A list (object of class {sperrorest}) with (up to) six components:
@@ -131,9 +125,9 @@ information about the {sperrorest} package version
 }
 \description{
 {sperrorest} is a flexible interface for multiple types of
-parallelized spatial and non-spatial cross-validation
-and bootstrap error estimation and parallelized permutation-based
-assessment of spatial variable importance.
+parallelized spatial and non-spatial cross-validation and bootstrap error
+estimation and parallelized permutation-based assessment of spatial variable
+importance.
 }
 \details{
 Custom predict functions passed to \code{pred_fun}, which consist of

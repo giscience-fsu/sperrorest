@@ -1,14 +1,13 @@
-#' @title Perform spatial error estimation and variable importance assessment
-#' in parallel
+#' @title Perform spatial error estimation and variable importance assessment in
+#'   parallel
 #'
-#' @description
-#' {sperrorest} is a flexible interface for multiple types of
-#' parallelized spatial and non-spatial cross-validation
-#' and bootstrap error estimation and parallelized permutation-based
-#' assessment of spatial variable importance.
+#' @description {sperrorest} is a flexible interface for multiple types of
+#' parallelized spatial and non-spatial cross-validation and bootstrap error
+#' estimation and parallelized permutation-based assessment of spatial variable
+#' importance.
 #'
 #' @details Custom predict functions passed to `pred_fun`, which consist of
-#' multiple child functions, must be defined in one function.
+#'   multiple child functions, must be defined in one function.
 #'
 #' @section Parallelization:
 #'
@@ -26,86 +25,62 @@
 #' @importFrom utils packageVersion tail
 #' @importFrom stringr str_replace_all
 #'
-#' @param data a `data.frame` with predictor and response variables.
-#' Training and test samples will be drawn from this data set by `train_fun`
-#' and `test_fun`, respectively.
+#' @param data a `data.frame` with predictor and response variables. Training
+#'   and test samples will be drawn from this data set by `train_fun` and
+#'   `test_fun`, respectively.
 #'
-#' @param formula A formula specifying the variables used by the `model`.
-#' Only simple formulas without interactions or nonlinear terms should
-#' be used, e.g. `y~x1+x2+x3` but not `y~x1*x2+log(x3)`.
-#' Formulas involving interaction and nonlinear terms may possibly work
-#' for error estimation but not for variable importance assessment,
-#' but should be used with caution.
-#'
+#' @param formula A formula specifying the variables used by the `model`. Only
+#'   simple formulas without interactions or nonlinear terms should be used,
+#'   e.g. `y~x1+x2+x3` but not `y~x1*x2+log(x3)`. Formulas involving interaction
+#'   and nonlinear terms may possibly work for error estimation but not for
+#'   variable importance assessment, but should be used with caution.
 #' @param coords vector of length 2 defining the variables in `data` that
-#' contain the x and y coordinates of sample locations.
-#'
-#' @param model_fun Function that fits a predictive model, such as `glm`
-#' or `rpart`. The function must accept at least two arguments, the first
-#' one being a formula and the second a data.frame with the learning sample.
-#' @param model_args Arguments to be passed to `model_fun`
-#' (in addition to the `formula` and `data` argument,
-#' which are provided by {sperrorest})
-#'
-#' @param pred_fun Prediction function for a fitted model object created
-#' by `model`. Must accept at least two arguments: the fitted
-#' `object` and a `data.frame` `newdata` with data
-#' on which to predict the outcome.
-#'
+#'   contain the x and y coordinates of sample locations.
+#' @param model_fun Function that fits a predictive model, such as `glm` or
+#'   `rpart`. The function must accept at least two arguments, the first one
+#'   being a formula and the second a data.frame with the learning sample.
+#' @param model_args Arguments to be passed to `model_fun` (in addition to the
+#'   `formula` and `data` argument, which are provided by {sperrorest})
+#' @param pred_fun Prediction function for a fitted model object created by
+#'   `model`. Must accept at least two arguments: the fitted `object` and a
+#'   `data.frame` `newdata` with data on which to predict the outcome.
 #' @param pred_args (optional) Arguments to `pred_fun` (in addition to the
-#' fitted model object and the `newdata` argument,
-#' which are provided by {sperrorest}).
-#'
-#' @param smp_fun A function for sampling training and test sets from
-#' `data`. E.g. [partition_kmeans] for
-#' spatial cross-validation using spatial *k*-means clustering.
-#'
+#'   fitted model object and the `newdata` argument, which are provided by
+#'   {sperrorest}).
+#' @param smp_fun A function for sampling training and test sets from `data`.
+#'   E.g. [partition_kmeans] for spatial cross-validation using spatial
+#'   *k*-means clustering.
 #' @param smp_args (optional) Arguments to be passed to `smp_fun`.
-#'
 #' @param train_fun (optional) A function for resampling or subsampling the
-#' training sample in order to achieve, e.g., uniform sample sizes on all
-#' training sets, or maintaining a certain ratio of positives and negatives
-#' in training sets.
-#' E.g. [resample_uniform] or [resample_strat_uniform].
-#'
+#'   training sample in order to achieve, e.g., uniform sample sizes on all
+#'   training sets, or maintaining a certain ratio of positives and negatives in
+#'   training sets. E.g. [resample_uniform] or [resample_strat_uniform].
 #' @param train_param (optional) Arguments to be passed to `resample_fun`.
-#'
 #' @param test_fun (optional) Like `train_fun` but for the test set.
-#'
 #' @param test_param (optional) Arguments to be passed to `test_fun`.
-#'
 #' @param err_fun A function that calculates selected error measures from the
-#' known responses in `data` and the model predictions delivered
-#' by `pred_fun`. E.g. [err_default] (the default).
-#'
-#' @param imp_variables (optional; used if `importance = TRUE`).
-#' Variables for which permutation-based variable importance assessment
-#' is performed. If `importance = TRUE` and `imp_variables` ==
-#' `NULL`, all variables in `formula` will be used.
-#'
-#' @param imp_permutations (optional; used if `importance = TRUE`).
-#' Number of permutations used for variable importance assessment.
-#'
+#'   known responses in `data` and the model predictions delivered by
+#'   `pred_fun`. E.g. [err_default] (the default).
+#' @param imp_variables (optional; used if `importance = TRUE`). Variables for
+#'   which permutation-based variable importance assessment is performed. If
+#'   `importance = TRUE` and `imp_variables` == `NULL`, all variables in
+#'   `formula` will be used.
+#' @param imp_permutations (optional; used if `importance = TRUE`). Number of
+#'   permutations used for variable importance assessment.
 #' @param importance logical (default: `FALSE`): perform permutation-based
-#' variable importance assessment?
-#'
-#' @param distance logical (default: `FALSE`): if `TRUE`, calculate
-#' mean nearest-neighbour distances from test samples to training samples using
-#' [add.distance.represampling].
-#'
+#'   variable importance assessment?
+#' @param distance logical (default: `FALSE`): if `TRUE`, calculate mean
+#'   nearest-neighbour distances from test samples to training samples using
+#'   [add.distance.represampling].
 #' @param do_gc numeric (default: 1): defines frequency of memory garbage
-#' collection by calling [gc]; if `< 1`, no garbage collection;
-#' if `>= 1`, run a [gc] after each repetition;
-#' if `>= 2`, after each fold.
-#'
+#'   collection by calling [gc]; if `< 1`, no garbage collection; if `>= 1`, run
+#'   a [gc] after each repetition; if `>= 2`, after each fold.
 #' @param progress character (default: `all`): Whether to show progress
-#' information (if possible). Default shows repetition, fold and (if enabled)
-#' variable importance progress.
-#' Set to `"rep"` for repetition information only or `FALSE` for no progress
-#' information.
-#'
-#' @param benchmark (optional) logical (default: `FALSE`): if `TRUE`,
-#' perform benchmarking and return `sperrorestbenchmark` object.
+#'   information (if possible). Default shows repetition, fold and (if enabled)
+#'   variable importance progress. Set to `"rep"` for repetition information
+#'   only or `FALSE` for no progress information.
+#' @param benchmark (optional) logical (default: `FALSE`): if `TRUE`, perform
+#'   benchmarking and return `sperrorestbenchmark` object.
 #'
 #' @return A list (object of class {sperrorest}) with (up to) six components:
 #' - error_rep: `sperrorestreperror` containing
@@ -120,7 +95,6 @@
 #' finishing times, number of available CPU cores and runtime performance
 #' - package_version: `sperrorestpackageversion` object containing
 #' information about the {sperrorest} package version
-#'
 #'
 #' @references Brenning, A. 2012. Spatial cross-validation and bootstrap for
 #' the assessment of prediction rules in remote sensing: the R package

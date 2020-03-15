@@ -23,9 +23,9 @@ character vector: names of tiles that are considered 'small'
 according to these criteria
 }
 \description{
-\code{get_small_tiles} identifies partitions (tiles) that are too small
-according to some defined criterion / criteria (minimum number of samples in
-tile and/or minimum fraction of entire dataset).
+\code{get_small_tiles} identifies partitions (tiles) that are too
+small according to some defined criterion / criteria (minimum number of
+samples in tile and/or minimum fraction of entire dataset).
 }
 \examples{
 # Muenchow et al. (2012), see ?ecuador
