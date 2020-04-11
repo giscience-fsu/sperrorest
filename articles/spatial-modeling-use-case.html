@@ -261,11 +261,11 @@
 <div class="sourceCode" id="cb24"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span>(<span class="no">res_lda_nsp</span>$<span class="no">error_rep</span>, <span class="no">summary</span>)</pre></body></html></div>
 <pre><code>## $train_error
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##  0.0333  0.0334  0.0337  0.0341  0.0344  0.0361 
+##  0.0328  0.0334  0.0338  0.0338  0.0341  0.0347 
 ## 
 ## $train_accuracy
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##   0.964   0.966   0.966   0.966   0.967   0.967 
+##   0.965   0.966   0.966   0.966   0.967   0.967 
 ## 
 ## $train_events
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
@@ -277,11 +277,11 @@
 ## 
 ## $test_error
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##  0.0389  0.0393  0.0401  0.0403  0.0408  0.0430 
+##  0.0366  0.0380  0.0390  0.0391  0.0403  0.0423 
 ## 
 ## $test_accuracy
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##   0.957   0.959   0.960   0.960   0.961   0.961 
+##   0.958   0.960   0.961   0.961   0.962   0.963 
 ## 
 ## $test_events
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
@@ -306,15 +306,15 @@
   <span class="kw">benchmark</span> <span class="kw">=</span> <span class="fl">TRUE</span>, <span class="kw">progress</span> <span class="kw">=</span> <span class="fl">FALSE</span>
 )
 <span class="no">res_lda_sp</span>$<span class="no">benchmark</span>$<span class="no">runtime_performance</span></pre></body></html></div>
-<pre><code>## Time difference of 45.5 secs</code></pre>
+<pre><code>## Time difference of 48.1 secs</code></pre>
 <div class="sourceCode" id="cb29"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span>(<span class="no">res_lda_sp</span>$<span class="no">error_rep</span>, <span class="no">summary</span>)</pre></body></html></div>
 <pre><code>## $train_error
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##  0.0244  0.0273  0.0289  0.0284  0.0299  0.0308 
+##  0.0270  0.0282  0.0288  0.0297  0.0317  0.0338 
 ## 
 ## $train_accuracy
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##   0.969   0.970   0.971   0.972   0.973   0.976 
+##   0.966   0.968   0.971   0.970   0.972   0.973 
 ## 
 ## $train_events
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
@@ -326,11 +326,11 @@
 ## 
 ## $test_error
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##  0.0581  0.0653  0.0686  0.0692  0.0700  0.0869 
+##  0.0516  0.0602  0.0624  0.0629  0.0669  0.0708 
 ## 
 ## $test_accuracy
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##   0.913   0.930   0.931   0.931   0.935   0.942 
+##   0.929   0.933   0.938   0.937   0.940   0.948 
 ## 
 ## $test_events
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
@@ -393,11 +393,11 @@
 ## 
 ## $test_error
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##  0.0797  0.0881  0.0913  0.0907  0.0941  0.1001 
+##  0.0787  0.0873  0.0888  0.0910  0.0942  0.1046 
 ## 
 ## $test_accuracy
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##   0.900   0.906   0.909   0.909   0.912   0.920 
+##   0.895   0.906   0.911   0.909   0.913   0.921 
 ## 
 ## $test_events
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
@@ -408,7 +408,7 @@
 ##    7713    7713    7713    7713    7713    7713</code></pre>
 <div class="sourceCode" id="cb35"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="no">res_rf_sp</span>$<span class="no">error_rep</span>$<span class="no">test_accuracy</span>)</pre></body></html></div>
 <pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##   0.900   0.906   0.909   0.909   0.912   0.920</code></pre>
+##   0.895   0.906   0.911   0.909   0.913   0.921</code></pre>
 <p>What a surprise! {ranger}‘s classification is not that good after all, if we acknowledge that in ’real life’ we wouldn’t be making predictions in situations where the class membership of other grid cells in the same field is known in the training stage. So spatial dependence does matter.</p>
 </div>
 </div>
@@ -465,7 +465,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
 </div>
 
       </footer>
