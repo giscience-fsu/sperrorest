@@ -1,3 +1,8 @@
+# sperrorest 3.0.1
+
+- Resolve minor NAMESPACE issues for {future} on CRAN
+
+
 # sperrorest 3.0.0.9000
 
 - Internal changes only.
