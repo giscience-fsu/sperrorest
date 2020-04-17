@@ -1,7 +1,7 @@
 # sperrorest
 
 <!-- badges: start -->
-[![R CMD Check via {tic}](https://img.shields.io/github/workflow/status/giscience-fsu/sperrorest/R%20CMD%20Check%20via%20%7Btic%7D?logo=github&label=R%20CMD%20Check%20via%20{tic}&style=flat-square)](https://github.com/giscience-fsu/sperrorest/actions)
+[![R CMD Check via {tic}](https://github.com/giscience-fsu/sperrorest/workflows/R%20CMD%20Check%20via%20{tic}/badge.svg?branch=master)](https://github.com/giscience-fsu/sperrorest/actions)
 [![CRAN](https://www.r-pkg.org/badges/version/sperrorest)](https://cran.r-project.org/package=sperrorest)
 [![lifecycle](https://img.shields.io/badge/lifecycle-retired-blue.svg)](https://www.tidyverse.org/lifecycle/#retired)
 [![codecov](https://codecov.io/gh/giscience-fsu/sperrorest/branch/master/graph/badge.svg)](https://codecov.io/gh/giscience-fsu/sperrorest)
