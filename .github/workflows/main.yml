@@ -101,8 +101,7 @@ jobs:
           brew install ccache
           wget https://cran.r-project.org/bin/macosx/tools/clang-7.0.0.pkg
           sudo installer -package clang-7.0.0.pkg -target /
-          mkdir -p ~/.R && echo -e 'CXX_STD = CXX14\n\nCC=ccache /usr/local/clang7/bin/clang\nCC11=ccache /usr/local/clang7/bin/clang\nCC14=ccache /usr/local/clang7/bin/clang\nCXX=ccache /usr/local/clang7/bin/clang++\nCXX11=ccache /usr/local/clang7/bin/clang++\nCXX14=ccache /usr/local/clang7/bin/clang++\nC11=ccache /usr/local/clang7/bin/clang++\nC14=ccache /usr/local/clang7/bin/clang++\nF77=ccache gfortran/nCFLAGS=-isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk\nCXXFLAGS=-isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk\nCCFLAGS=-isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk\nCFLAGS=-isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk' > $HOME/.R/Makevars
-          R CMD javareconf
+          mkdir -p ~/.R && echo -e 'CC=ccache clang\nCPP=ccache clang\nCXX=ccache clang++\nCXX11=ccache clang++\nCXX14=ccache clang++\nCXX17=ccache clang++\nCFLAGS=-isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk\nCCFLAGS=-isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk\nCXXFLAGS=-isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk\nCPPFLAGS=-isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include\nF77=ccache /usr/local/gfortran/bin/gfortran\nFC=ccache /usr/local/gfortran/bin/gfortran' > $HOME/.R/Makevars
 
       # install ccache and write config file
       # mirror the setup described in https://github.com/rmacoslib/r-macos-rtools
@@ -113,7 +112,6 @@ jobs:
           wget https://cran.r-project.org/bin/macosx/tools/clang-8.0.0.pkg
           sudo installer -package clang-8.0.0.pkg -target /
           mkdir -p ~/.R && echo -e 'CXX_STD = CXX14\n\nCC=ccache /usr/local/clang8/bin/clang\nCC11=ccache /usr/local/clang8/bin/clang\nCC14=ccache /usr/local/clang8/bin/clang\nCXX=ccache /usr/local/clang8/bin/clang++\nCXX11=ccache /usr/local/clang8/bin/clang++\nCXX14=ccache /usr/local/clang8/bin/clang++\nC11=ccache /usr/local/clang8/bin/clang++\nC14=ccache /usr/local/clang8/bin/clang++\nF88=ccache gfortran/nCFLAGS=-isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk\nCXXFLAGS=-isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk\nCCFLAGS=-isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk\nCFLAGS=-isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk' > $HOME/.R/Makevars
-          R CMD javareconf
 
       # for some strange Windows reason this step and the next one need to be decoupled
       - name: "[Stage] Prepare"
@@ -146,14 +144,15 @@ jobs:
           name: ${{ runner.os }}-r${{ matrix.config.r }}-results
           path: check
       - name: "[Stage] Before Deploy"
-        if: matrix.config.os == 'macOS-latest' && matrix.config.r == 'release'
+        if: matrix.config.r != 'devel'
         run: |
           Rscript -e "tic::before_deploy()"
 
       - name: "[Stage] Deploy"
-        if: matrix.config.os == 'macOS-latest' && matrix.config.r == 'release'
+        if: matrix.config.r != 'devel'
         run: Rscript -e "tic::deploy()"
 
       - name: "[Stage] After Deploy"
         if: matrix.config.os == 'macOS-latest' && matrix.config.r == 'release'
         run: Rscript -e "tic::after_deploy()"
+
