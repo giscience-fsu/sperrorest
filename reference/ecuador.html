@@ -163,8 +163,9 @@ review, comparison and evaluation.
 Natural Hazards and Earth System Sciences, 5(6): 853-862.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>ecuador</span>)
-<span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span>(<span class='no'>ecuador</span>)</div><div class='output co'>#&gt; 'data.frame':	751 obs. of  13 variables:
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>ecuador</span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span>(<span class='kw'>ecuador</span>)
+</div><div class='output co'>#&gt; 'data.frame':	751 obs. of  13 variables:
 #&gt;  $ x             : num  712882 715232 715392 715042 715382 ...
 #&gt;  $ y             : num  9560002 9559582 9560172 9559312 9560142 ...
 #&gt;  $ dem           : num  1912 2199 1989 2320 2021 ...
@@ -177,12 +178,14 @@ Natural Hazards and Earth System Sciences, 5(6): 853-862.</p>
 #&gt;  $ slides        : Factor w/ 2 levels "FALSE","TRUE": 2 2 2 2 2 2 2 2 2 2 ...
 #&gt;  $ distdeforest  : num  15 300 300 300 300 9.15 300 300 300 0 ...
 #&gt;  $ distslidespast: num  9 21 40 100 21 2 100 100 41 5 ...
-#&gt;  $ log.carea     : num  3.75 3.15 5.55 2.7 2.83 ...</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>rpart</span>)
-<span class='no'>ctrl</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/rpart/man/rpart.control.html'>rpart.control</a></span>(<span class='kw'>cp</span> <span class='kw'>=</span> <span class='fl'>0.02</span>)
-<span class='no'>fit</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/rpart/man/rpart.html'>rpart</a></span>(<span class='no'>slides</span> ~ <span class='no'>dem</span> + <span class='no'>slope</span> + <span class='no'>hcurv</span> + <span class='no'>vcurv</span> +
-  <span class='no'>log.carea</span> + <span class='no'>cslope</span>, <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>ecuador</span>, <span class='kw'>control</span> <span class='kw'>=</span> <span class='no'>ctrl</span>)
-<span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span>(<span class='kw'>xpd</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>fit</span>, <span class='kw'>compress</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>main</span> <span class='kw'>=</span> <span class='st'>"Muenchows landslide data set"</span>)</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/text.html'>text</a></span>(<span class='no'>fit</span>, <span class='kw'>use.n</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='img'><img src='ecuador-1.png' alt='' width='700' height='433' /></div></pre>
+#&gt;  $ log.carea     : num  3.75 3.15 5.55 2.7 2.83 ...</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'><a href='https://github.com/bethatkinson/rpart'>rpart</a></span>)
+<span class='kw'>ctrl</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/rpart/man/rpart.control.html'>rpart.control</a></span>(cp = <span class='fl'>0.02</span>)
+<span class='kw'>fit</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/rpart/man/rpart.html'>rpart</a></span>(<span class='kw'>slides</span> <span class='op'>~</span> <span class='kw'>dem</span> <span class='op'>+</span> <span class='kw'>slope</span> <span class='op'>+</span> <span class='kw'>hcurv</span> <span class='op'>+</span> <span class='kw'>vcurv</span> <span class='op'>+</span>
+  <span class='kw'>log.carea</span> <span class='op'>+</span> <span class='kw'>cslope</span>, data = <span class='kw'>ecuador</span>, control = <span class='kw'>ctrl</span>)
+<span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span>(xpd = <span class='fl'>TRUE</span>)
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>fit</span>, compress = <span class='fl'>TRUE</span>, main = <span class='st'>"Muenchows landslide data set"</span>)
+</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/text.html'>text</a></span>(<span class='kw'>fit</span>, use.n = <span class='fl'>TRUE</span>)
+</div><div class='img'><img src='ecuador-1.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -198,7 +201,7 @@ Natural Hazards and Earth System Sciences, 5(6): 853-862.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

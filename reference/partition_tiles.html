@@ -142,21 +142,21 @@ tile.</p>
     </div>
 
     <pre class="usage"><span class='fu'>partition_tiles</span>(
-  <span class='no'>data</span>,
-  <span class='kw'>coords</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"x"</span>, <span class='st'>"y"</span>),
-  <span class='kw'>dsplit</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>nsplit</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>rotation</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"none"</span>, <span class='st'>"random"</span>, <span class='st'>"user"</span>),
-  <span class='no'>user_rotation</span>,
-  <span class='kw'>offset</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"none"</span>, <span class='st'>"random"</span>, <span class='st'>"user"</span>),
-  <span class='no'>user_offset</span>,
-  <span class='kw'>reassign</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>min_frac</span> <span class='kw'>=</span> <span class='fl'>0.025</span>,
-  <span class='kw'>min_n</span> <span class='kw'>=</span> <span class='fl'>5</span>,
-  <span class='kw'>iterate</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>return_factor</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>repetition</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>seed1</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
+  <span class='kw'>data</span>,
+  coords = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"x"</span>, <span class='st'>"y"</span>),
+  dsplit = <span class='kw'>NULL</span>,
+  nsplit = <span class='kw'>NULL</span>,
+  rotation = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"none"</span>, <span class='st'>"random"</span>, <span class='st'>"user"</span>),
+  <span class='kw'>user_rotation</span>,
+  offset = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"none"</span>, <span class='st'>"random"</span>, <span class='st'>"user"</span>),
+  <span class='kw'>user_offset</span>,
+  reassign = <span class='fl'>TRUE</span>,
+  min_frac = <span class='fl'>0.025</span>,
+  min_n = <span class='fl'>5</span>,
+  iterate = <span class='fl'>1</span>,
+  return_factor = <span class='fl'>FALSE</span>,
+  repetition = <span class='fl'>1</span>,
+  seed1 = <span class='kw'>NULL</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -280,18 +280,19 @@ therefore recommended for non-zero (including random) offsets.</p>
 <a href='tile_neighbors.html'>tile_neighbors</a></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>ecuador</span>)
-<span class='no'>parti</span> <span class='kw'>&lt;-</span> <span class='fu'>partition_tiles</span>(<span class='no'>ecuador</span>, <span class='kw'>nsplit</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>4</span>, <span class='fl'>3</span>), <span class='kw'>reassign</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>ecuador</span>)
+<span class='kw'>parti</span> <span class='op'>&lt;-</span> <span class='fu'>partition_tiles</span>(<span class='kw'>ecuador</span>, nsplit = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>4</span>, <span class='fl'>3</span>), reassign = <span class='fl'>FALSE</span>)
 <span class='co'># plot(parti,ecuador)</span>
 <span class='co'># tile A4 has only 55 samples</span>
 <span class='co'># same partitioning, but now merge tiles with less than 100 samples to</span>
 <span class='co'># adjacent tiles:</span>
-<span class='no'>parti2</span> <span class='kw'>&lt;-</span> <span class='fu'>partition_tiles</span>(<span class='no'>ecuador</span>,
-  <span class='kw'>nsplit</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>4</span>, <span class='fl'>3</span>), <span class='kw'>reassign</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>min_n</span> <span class='kw'>=</span> <span class='fl'>100</span>
+<span class='kw'>parti2</span> <span class='op'>&lt;-</span> <span class='fu'>partition_tiles</span>(<span class='kw'>ecuador</span>,
+  nsplit = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>4</span>, <span class='fl'>3</span>), reassign = <span class='fl'>TRUE</span>,
+  min_n = <span class='fl'>100</span>
 )
 <span class='co'># plot(parti2,ecuador)</span>
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>parti2</span>)</div><div class='output co'>#&gt; $`1`
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>parti2</span>)
+</div><div class='output co'>#&gt; $`1`
 #&gt;       n.train n.test
 #&gt; X1:Y3     600    151
 #&gt; X2:Y2     626    125
@@ -301,12 +302,13 @@ therefore recommended for non-zero (including random) offsets.</p>
 #&gt; </div><div class='input'><span class='co'># tile B4 (in 'parti') was smaller than A3, therefore A4 was merged with B4,</span>
 <span class='co'># not with A3</span>
 <span class='co'># now with random rotation and offset, and tiles of 2000 m length:</span>
-<span class='no'>parti3</span> <span class='kw'>&lt;-</span> <span class='fu'>partition_tiles</span>(<span class='no'>ecuador</span>,
-  <span class='kw'>dsplit</span> <span class='kw'>=</span> <span class='fl'>2000</span>, <span class='kw'>offset</span> <span class='kw'>=</span> <span class='st'>"random"</span>,
-  <span class='kw'>rotation</span> <span class='kw'>=</span> <span class='st'>"random"</span>, <span class='kw'>reassign</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>min_n</span> <span class='kw'>=</span> <span class='fl'>100</span>
+<span class='kw'>parti3</span> <span class='op'>&lt;-</span> <span class='fu'>partition_tiles</span>(<span class='kw'>ecuador</span>,
+  dsplit = <span class='fl'>2000</span>, offset = <span class='st'>"random"</span>,
+  rotation = <span class='st'>"random"</span>, reassign = <span class='fl'>TRUE</span>, min_n = <span class='fl'>100</span>
 )
 <span class='co'># plot(parti3, ecuador)</span>
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>parti3</span>)</div><div class='output co'>#&gt; $`1`
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>parti3</span>)
+</div><div class='output co'>#&gt; $`1`
 #&gt;       n.train n.test
 #&gt; X2:Y1     504    247
 #&gt; X2:Y2     537    214
@@ -327,7 +329,7 @@ therefore recommended for non-zero (including random) offsets.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

@@ -141,11 +141,11 @@ of sample indices defining cross-validation test and training sets.</p>
     </div>
 
     <pre class="usage"><span class='fu'>partition_factor</span>(
-  <span class='no'>data</span>,
-  <span class='kw'>coords</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"x"</span>, <span class='st'>"y"</span>),
-  <span class='no'>fac</span>,
-  <span class='kw'>return_factor</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>repetition</span> <span class='kw'>=</span> <span class='fl'>1</span>
+  <span class='kw'>data</span>,
+  coords = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"x"</span>, <span class='st'>"y"</span>),
+  <span class='kw'>fac</span>,
+  return_factor = <span class='fl'>FALSE</span>,
+  repetition = <span class='fl'>1</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -195,17 +195,19 @@ therefore pseudo-replications.</p>
     <div class='dont-index'><p><a href='sperrorest.html'>sperrorest</a>, <a href='partition_cv.html'>partition_cv</a>, <a href='as.resampling.html'>as.resampling.factor</a></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>ecuador</span>)
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>ecuador</span>)
 <span class='co'># I don't recommend using this partitioning for cross-validation,</span>
 <span class='co'># this is only for demonstration purposes:</span>
-<span class='no'>breaks</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/quantile.html'>quantile</a></span>(<span class='no'>ecuador</span>$<span class='no'>dem</span>, <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span>(<span class='fl'>0</span>, <span class='fl'>1</span>, <span class='kw'>length</span> <span class='kw'>=</span> <span class='fl'>6</span>))
-<span class='no'>ecuador</span>$<span class='no'>zclass</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/cut.html'>cut</a></span>(<span class='no'>ecuador</span>$<span class='no'>dem</span>, <span class='no'>breaks</span>, <span class='kw'>include.lowest</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>ecuador</span>$<span class='no'>zclass</span>)</div><div class='output co'>#&gt; [1.72e+03,1.92e+03] (1.92e+03,2.14e+03] (2.14e+03,2.31e+03] (2.31e+03,2.57e+03] 
+<span class='kw'>breaks</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/quantile.html'>quantile</a></span>(<span class='kw'>ecuador</span><span class='op'>$</span><span class='kw'>dem</span>, <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span>(<span class='fl'>0</span>, <span class='fl'>1</span>, length = <span class='fl'>6</span>))
+<span class='kw'>ecuador</span><span class='op'>$</span><span class='kw'>zclass</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/cut.html'>cut</a></span>(<span class='kw'>ecuador</span><span class='op'>$</span><span class='kw'>dem</span>, <span class='kw'>breaks</span>, include.lowest = <span class='fl'>TRUE</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>ecuador</span><span class='op'>$</span><span class='kw'>zclass</span>)
+</div><div class='output co'>#&gt; [1.72e+03,1.92e+03] (1.92e+03,2.14e+03] (2.14e+03,2.31e+03] (2.31e+03,2.57e+03] 
 #&gt;                 151                 150                 150                 150 
 #&gt; (2.57e+03,3.11e+03] 
-#&gt;                 150 </div><div class='input'><span class='no'>parti</span> <span class='kw'>&lt;-</span> <span class='fu'>partition_factor</span>(<span class='no'>ecuador</span>, <span class='kw'>fac</span> <span class='kw'>=</span> <span class='st'>"zclass"</span>)
+#&gt;                 150 </div><div class='input'><span class='kw'>parti</span> <span class='op'>&lt;-</span> <span class='fu'>partition_factor</span>(<span class='kw'>ecuador</span>, fac = <span class='st'>"zclass"</span>)
 <span class='co'># plot(parti,ecuador)</span>
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>parti</span>)</div><div class='output co'>#&gt; $`1`
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>parti</span>)
+</div><div class='output co'>#&gt; $`1`
 #&gt;                     n.train n.test
 #&gt; [1.72e+03,1.92e+03]     600    151
 #&gt; (1.92e+03,2.14e+03]     601    150
@@ -228,7 +230,7 @@ therefore pseudo-replications.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

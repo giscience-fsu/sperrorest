@@ -137,7 +137,7 @@ predictions of numerical and categorical response variables." />
 predictions of numerical and categorical response variables.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>err_default</span>(<span class='no'>obs</span>, <span class='no'>pred</span>)</pre>
+    <pre class="usage"><span class='fu'>err_default</span>(<span class='kw'>obs</span>, <span class='kw'>pred</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -179,9 +179,10 @@ i.e. they will result in an error.</p>
     <div class='dont-index'><p><span class="pkg">ROCR</span></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>obs</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='fl'>1000</span>)
+    <pre class="examples"><div class='input'><span class='kw'>obs</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='fl'>1000</span>)
 <span class='co'># Two mock (soft) classification examples:</span>
-<span class='fu'>err_default</span>(<span class='no'>obs</span> <span class='kw'>&gt;</span> <span class='fl'>0</span>, <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='fl'>1000</span>)) <span class='co'># just noise</span></div><div class='output co'>#&gt; $auroc
+<span class='fu'>err_default</span>(<span class='kw'>obs</span> <span class='op'>&gt;</span> <span class='fl'>0</span>, <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='fl'>1000</span>)) <span class='co'># just noise</span>
+</div><div class='output co'>#&gt; $auroc
 #&gt; [1] 0.5144468
 #&gt; 
 #&gt; $error
@@ -219,7 +220,8 @@ i.e. they will result in an error.</p>
 #&gt; 
 #&gt; $count
 #&gt; [1] 1000
-#&gt; </div><div class='input'><span class='fu'>err_default</span>(<span class='no'>obs</span> <span class='kw'>&gt;</span> <span class='fl'>0</span>, <span class='no'>obs</span> + <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='fl'>1000</span>)) <span class='co'># some discrimination</span></div><div class='output co'>#&gt; $auroc
+#&gt; </div><div class='input'><span class='fu'>err_default</span>(<span class='kw'>obs</span> <span class='op'>&gt;</span> <span class='fl'>0</span>, <span class='kw'>obs</span> <span class='op'>+</span> <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='fl'>1000</span>)) <span class='co'># some discrimination</span>
+</div><div class='output co'>#&gt; $auroc
 #&gt; [1] 0.8507352
 #&gt; 
 #&gt; $error
@@ -258,7 +260,8 @@ i.e. they will result in an error.</p>
 #&gt; $count
 #&gt; [1] 1000
 #&gt; </div><div class='input'><span class='co'># Three mock regression examples:</span>
-<span class='fu'>err_default</span>(<span class='no'>obs</span>, <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='fl'>1000</span>)) <span class='co'># just noise, but no bias</span></div><div class='output co'>#&gt; $bias
+<span class='fu'>err_default</span>(<span class='kw'>obs</span>, <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='fl'>1000</span>)) <span class='co'># just noise, but no bias</span>
+</div><div class='output co'>#&gt; $bias
 #&gt; [1] 0.04713972
 #&gt; 
 #&gt; $stddev
@@ -278,7 +281,8 @@ i.e. they will result in an error.</p>
 #&gt; 
 #&gt; $count
 #&gt; [1] 1000
-#&gt; </div><div class='input'><span class='fu'>err_default</span>(<span class='no'>obs</span>, <span class='no'>obs</span> + <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='fl'>1000</span>)) <span class='co'># some association, no bias</span></div><div class='output co'>#&gt; $bias
+#&gt; </div><div class='input'><span class='fu'>err_default</span>(<span class='kw'>obs</span>, <span class='kw'>obs</span> <span class='op'>+</span> <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='fl'>1000</span>)) <span class='co'># some association, no bias</span>
+</div><div class='output co'>#&gt; $bias
 #&gt; [1] -0.005555493
 #&gt; 
 #&gt; $stddev
@@ -298,7 +302,8 @@ i.e. they will result in an error.</p>
 #&gt; 
 #&gt; $count
 #&gt; [1] 1000
-#&gt; </div><div class='input'><span class='fu'>err_default</span>(<span class='no'>obs</span>, <span class='no'>obs</span> + <span class='fl'>1</span>) <span class='co'># perfect correlation, but with bias</span></div><div class='output co'>#&gt; $bias
+#&gt; </div><div class='input'><span class='fu'>err_default</span>(<span class='kw'>obs</span>, <span class='kw'>obs</span> <span class='op'>+</span> <span class='fl'>1</span>) <span class='co'># perfect correlation, but with bias</span>
+</div><div class='output co'>#&gt; $bias
 #&gt; [1] -1
 #&gt; 
 #&gt; $stddev
@@ -334,7 +339,7 @@ i.e. they will result in an error.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

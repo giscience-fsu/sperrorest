@@ -138,12 +138,12 @@ length(repetition)-repeated nfold-fold cross-validation." />
     </div>
 
     <pre class="usage"><span class='fu'>partition_cv</span>(
-  <span class='no'>data</span>,
-  <span class='kw'>coords</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"x"</span>, <span class='st'>"y"</span>),
-  <span class='kw'>nfold</span> <span class='kw'>=</span> <span class='fl'>10</span>,
-  <span class='kw'>repetition</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>seed1</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>return_factor</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
+  <span class='kw'>data</span>,
+  coords = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"x"</span>, <span class='st'>"y"</span>),
+  nfold = <span class='fl'>10</span>,
+  repetition = <span class='fl'>1</span>,
+  seed1 = <span class='kw'>NULL</span>,
+  return_factor = <span class='fl'>FALSE</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -206,14 +206,15 @@ containing the indices of training and test samples.</p>
     <div class='dont-index'><p><a href='sperrorest.html'>sperrorest</a>, <a href='as.represampling.html'>represampling</a></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>ecuador</span>)
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>ecuador</span>)
 <span class='co'>## non-spatial cross-validation:</span>
-<span class='no'>resamp</span> <span class='kw'>&lt;-</span> <span class='fu'>partition_cv</span>(<span class='no'>ecuador</span>, <span class='kw'>nfold</span> <span class='kw'>=</span> <span class='fl'>5</span>, <span class='kw'>repetition</span> <span class='kw'>=</span> <span class='fl'>5</span>)
+<span class='kw'>resamp</span> <span class='op'>&lt;-</span> <span class='fu'>partition_cv</span>(<span class='kw'>ecuador</span>, nfold = <span class='fl'>5</span>, repetition = <span class='fl'>5</span>)
 <span class='co'># plot(resamp, ecuador)</span>
 <span class='co'># first repetition, second fold, test set indices:</span>
-<span class='no'>idx</span> <span class='kw'>&lt;-</span> <span class='no'>resamp</span><span class='kw'>[[</span><span class='st'>"1"</span>]]<span class='kw'>[[</span><span class='fl'>2</span>]]$<span class='no'>test</span>
+<span class='kw'>idx</span> <span class='op'>&lt;-</span> <span class='kw'>resamp</span>[[<span class='st'>"1"</span>]][[<span class='fl'>2</span>]]<span class='op'>$</span><span class='kw'>test</span>
 <span class='co'># test sample used in this particular repetition and fold:</span>
-<span class='no'>ecuador</span>[<span class='no'>idx</span>, ]</div><div class='output co'>#&gt;              x       y     dem     slope    hcurv    vcurv        carea
+<span class='kw'>ecuador</span>[<span class='kw'>idx</span>, ]
+</div><div class='output co'>#&gt;              x       y     dem     slope    hcurv    vcurv        carea
 #&gt; 44302 714932.5 9557982 2649.56 37.300698  0.01633 -0.01813    1130.5791
 #&gt; 15762 714922.5 9558862 2535.97 54.910556  0.01305 -0.00555     430.4604
 #&gt; 16749 715072.5 9558242 2745.27 49.053782  0.00097  0.01483     566.7674
@@ -530,7 +531,7 @@ containing the indices of training and test samples.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

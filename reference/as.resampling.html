@@ -137,23 +137,23 @@ or boostrap samples derived from a data set." />
 or boostrap samples derived from a data set.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>as.resampling</span>(<span class='no'>object</span>, <span class='no'>...</span>)
+    <pre class="usage"><span class='fu'>as.resampling</span>(<span class='kw'>object</span>, <span class='kw'>...</span>)
 
 <span class='co'># S3 method for default</span>
-<span class='fu'>as.resampling</span>(<span class='no'>object</span>, <span class='no'>...</span>)
+<span class='fu'>as.resampling</span>(<span class='kw'>object</span>, <span class='kw'>...</span>)
 
 <span class='co'># S3 method for factor</span>
-<span class='fu'>as.resampling</span>(<span class='no'>object</span>, <span class='no'>...</span>)
+<span class='fu'>as.resampling</span>(<span class='kw'>object</span>, <span class='kw'>...</span>)
 
 <span class='co'># S3 method for list</span>
-<span class='fu'>as.resampling</span>(<span class='no'>object</span>, <span class='no'>...</span>)
+<span class='fu'>as.resampling</span>(<span class='kw'>object</span>, <span class='kw'>...</span>)
 
-<span class='fu'>validate.resampling</span>(<span class='no'>object</span>)
+<span class='fu'>validate.resampling</span>(<span class='kw'>object</span>)
 
-<span class='fu'>is.resampling</span>(<span class='no'>x</span>, <span class='no'>...</span>)
+<span class='fu'>is.resampling</span>(<span class='kw'>x</span>, <span class='kw'>...</span>)
 
 <span class='co'># S3 method for resampling</span>
-<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='no'>x</span>, <span class='no'>...</span>)</pre>
+<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='kw'>x</span>, <span class='kw'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -206,9 +206,10 @@ class attribute <code>'resampling'</code> if successful.</p>
     <pre class="examples"><div class='input'><span class='co'># Muenchow et al. (2012), see ?ecuador</span>
 
 <span class='co'># Partitioning by elevation classes in 200 m steps:</span>
-<span class='no'>parti</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/character.html'>as.character</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/Round.html'>floor</a></span>(<span class='no'>ecuador</span>$<span class='no'>dem</span> / <span class='fl'>200</span>)))
-<span class='no'>smp</span> <span class='kw'>&lt;-</span> <span class='fu'>as.resampling</span>(<span class='no'>parti</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>smp</span>)</div><div class='output co'>#&gt;    n.train n.test
+<span class='kw'>parti</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/character.html'>as.character</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/Round.html'>floor</a></span>(<span class='kw'>ecuador</span><span class='op'>$</span><span class='kw'>dem</span> <span class='op'>/</span> <span class='fl'>200</span>)))
+<span class='kw'>smp</span> <span class='op'>&lt;-</span> <span class='fu'>as.resampling</span>(<span class='kw'>parti</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>smp</span>)
+</div><div class='output co'>#&gt;    n.train n.test
 #&gt; 10     600    151
 #&gt; 11     585    166
 #&gt; 12     660     91
@@ -217,13 +218,15 @@ class attribute <code>'resampling'</code> if successful.</p>
 #&gt; 15     747      4
 #&gt; 8      730     21
 #&gt; 9      567    184</div><div class='input'><span class='co'># Compare:</span>
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>parti</span>)</div><div class='output co'>#&gt;  10  11  12  13  14  15   8   9 
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>parti</span>)
+</div><div class='output co'>#&gt;  10  11  12  13  14  15   8   9 
 #&gt; 151 166  91 110  24   4  21 184 </div><div class='input'>
 <span class='co'># k-fold (non-spatial) cross-validation partitioning:</span>
-<span class='no'>parti</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition_cv.html'>partition_cv</a></span>(<span class='no'>ecuador</span>)
-<span class='no'>parti</span> <span class='kw'>&lt;-</span> <span class='no'>parti</span><span class='kw'>[[</span><span class='fl'>1</span>]] <span class='co'># the first (and only) resampling object in parti</span>
+<span class='kw'>parti</span> <span class='op'>&lt;-</span> <span class='fu'><a href='partition_cv.html'>partition_cv</a></span>(<span class='kw'>ecuador</span>)
+<span class='kw'>parti</span> <span class='op'>&lt;-</span> <span class='kw'>parti</span>[[<span class='fl'>1</span>]] <span class='co'># the first (and only) resampling object in parti</span>
 <span class='co'># data corresponding to the test sample of the first fold:</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span>(<span class='no'>ecuador</span>[<span class='no'>parti</span><span class='kw'>[[</span><span class='fl'>1</span>]]$<span class='no'>test</span>, ])</div><div class='output co'>#&gt; 'data.frame':	75 obs. of  13 variables:
+<span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span>(<span class='kw'>ecuador</span>[<span class='kw'>parti</span>[[<span class='fl'>1</span>]]<span class='op'>$</span><span class='kw'>test</span>, ])
+</div><div class='output co'>#&gt; 'data.frame':	75 obs. of  13 variables:
 #&gt;  $ x             : num  715382 714892 714202 714862 714032 ...
 #&gt;  $ y             : num  9560142 9559312 9557412 9560982 9558502 ...
 #&gt;  $ dem           : num  2021 2380 2544 1863 2403 ...
@@ -237,7 +240,8 @@ class attribute <code>'resampling'</code> if successful.</p>
 #&gt;  $ distdeforest  : num  300 300 300 20.2 300 ...
 #&gt;  $ distslidespast: num  21 31 100 68 8 5 65 0 25 100 ...
 #&gt;  $ log.carea     : num  2.83 2.44 3.01 3.43 2.75 ...</div><div class='input'><span class='co'># the corresponding training sample - larger:</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span>(<span class='no'>ecuador</span>[<span class='no'>parti</span><span class='kw'>[[</span><span class='fl'>1</span>]]$<span class='no'>train</span>, ])</div><div class='output co'>#&gt; 'data.frame':	676 obs. of  13 variables:
+<span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span>(<span class='kw'>ecuador</span>[<span class='kw'>parti</span>[[<span class='fl'>1</span>]]<span class='op'>$</span><span class='kw'>train</span>, ])
+</div><div class='output co'>#&gt; 'data.frame':	676 obs. of  13 variables:
 #&gt;  $ x             : num  712882 715232 715392 715042 712802 ...
 #&gt;  $ y             : num  9560002 9559582 9560172 9559312 9559952 ...
 #&gt;  $ dem           : num  1912 2199 1989 2320 1838 ...
@@ -252,10 +256,11 @@ class attribute <code>'resampling'</code> if successful.</p>
 #&gt;  $ distslidespast: num  9 21 40 100 2 100 100 41 5 20 ...
 #&gt;  $ log.carea     : num  3.75 3.15 5.55 2.7 2.8 ...</div><div class='input'>
 <span class='co'># Bootstrap training sets, out-of-bag test sets:</span>
-<span class='no'>parti</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='represampling_bootstrap.html'>represampling_bootstrap</a></span>(<span class='no'>ecuador</span>, <span class='kw'>oob</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
-<span class='no'>parti</span> <span class='kw'>&lt;-</span> <span class='no'>parti</span><span class='kw'>[[</span><span class='fl'>1</span>]] <span class='co'># the first (and only) resampling object in parti</span>
+<span class='kw'>parti</span> <span class='op'>&lt;-</span> <span class='fu'><a href='represampling_bootstrap.html'>represampling_bootstrap</a></span>(<span class='kw'>ecuador</span>, oob = <span class='fl'>TRUE</span>)
+<span class='kw'>parti</span> <span class='op'>&lt;-</span> <span class='kw'>parti</span>[[<span class='fl'>1</span>]] <span class='co'># the first (and only) resampling object in parti</span>
 <span class='co'># out-of-bag test sample: approx. one-third of nrow(ecuador):</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span>(<span class='no'>ecuador</span>[<span class='no'>parti</span><span class='kw'>[[</span><span class='fl'>1</span>]]$<span class='no'>test</span>, ])</div><div class='output co'>#&gt; 'data.frame':	7 obs. of  13 variables:
+<span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span>(<span class='kw'>ecuador</span>[<span class='kw'>parti</span>[[<span class='fl'>1</span>]]<span class='op'>$</span><span class='kw'>test</span>, ])
+</div><div class='output co'>#&gt; 'data.frame':	7 obs. of  13 variables:
 #&gt;  $ x             : num  712882 715232 715382 715272 714842 ...
 #&gt;  $ y             : num  9560002 9559582 9560142 9557702 9558892 ...
 #&gt;  $ dem           : num  1912 2199 2021 2813 2483 ...
@@ -269,7 +274,8 @@ class attribute <code>'resampling'</code> if successful.</p>
 #&gt;  $ distdeforest  : num  15 300 300 300 300 ...
 #&gt;  $ distslidespast: num  9 21 21 100 100 20 100
 #&gt;  $ log.carea     : num  3.75 3.15 2.83 3.32 2.88 ...</div><div class='input'><span class='co'># bootstrap training sample: same size as nrow(ecuador):</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span>(<span class='no'>ecuador</span>[<span class='no'>parti</span><span class='kw'>[[</span><span class='fl'>1</span>]]$<span class='no'>train</span>, ])</div><div class='output co'>#&gt; 'data.frame':	751 obs. of  13 variables:
+<span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span>(<span class='kw'>ecuador</span>[<span class='kw'>parti</span>[[<span class='fl'>1</span>]]<span class='op'>$</span><span class='kw'>train</span>, ])
+</div><div class='output co'>#&gt; 'data.frame':	751 obs. of  13 variables:
 #&gt;  $ x             : num  713472 712762 713952 715832 713642 ...
 #&gt;  $ y             : num  9558462 9560962 9561282 9558112 9560602 ...
 #&gt;  $ dem           : num  2298 2022 1801 2824 1945 ...
@@ -298,7 +304,7 @@ class attribute <code>'resampling'</code> if successful.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

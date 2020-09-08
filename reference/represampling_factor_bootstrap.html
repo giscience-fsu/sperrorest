@@ -140,12 +140,12 @@ and similar.</p>
     </div>
 
     <pre class="usage"><span class='fu'>represampling_factor_bootstrap</span>(
-  <span class='no'>data</span>,
-  <span class='no'>fac</span>,
-  <span class='kw'>repetition</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>nboot</span> <span class='kw'>=</span> -<span class='fl'>1</span>,
-  <span class='kw'>seed1</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>oob</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
+  <span class='kw'>data</span>,
+  <span class='kw'>fac</span>,
+  repetition = <span class='fl'>1</span>,
+  nboot = <span class='op'>-</span><span class='fl'>1</span>,
+  seed1 = <span class='kw'>NULL</span>,
+  oob = <span class='fl'>FALSE</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -210,26 +210,27 @@ factor variable, <code>nboot</code> would normally not be greater than <code><a 
 <a href='represampling_tile_bootstrap.html'>represampling_tile_bootstrap</a></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>ecuador</span>)
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>ecuador</span>)
 <span class='co'># a dummy example for demonstration, performing bootstrap</span>
 <span class='co'># at the level of an arbitrary factor variable:</span>
-<span class='no'>parti</span> <span class='kw'>&lt;-</span> <span class='fu'>represampling_factor_bootstrap</span>(<span class='no'>ecuador</span>,
-  <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/Round.html'>floor</a></span>(<span class='no'>ecuador</span>$<span class='no'>dem</span> / <span class='fl'>100</span>)),
-  <span class='kw'>oob</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>
+<span class='kw'>parti</span> <span class='op'>&lt;-</span> <span class='fu'>represampling_factor_bootstrap</span>(<span class='kw'>ecuador</span>,
+  <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/Round.html'>floor</a></span>(<span class='kw'>ecuador</span><span class='op'>$</span><span class='kw'>dem</span> <span class='op'>/</span> <span class='fl'>100</span>)),
+  oob = <span class='fl'>TRUE</span>
 )
 <span class='co'># plot(parti,ecuador)</span>
 <span class='co'># using the factor bootstrap for a non-overlapping block bootstrap</span>
 <span class='co'># (see also represampling_tile_bootstrap):</span>
-<span class='no'>fac</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition_tiles.html'>partition_tiles</a></span>(<span class='no'>ecuador</span>,
-  <span class='kw'>return_factor</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>repetition</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>:<span class='fl'>3</span>),
-  <span class='kw'>dsplit</span> <span class='kw'>=</span> <span class='fl'>500</span>, <span class='kw'>min_n</span> <span class='kw'>=</span> <span class='fl'>200</span>, <span class='kw'>rotation</span> <span class='kw'>=</span> <span class='st'>"random"</span>,
-  <span class='kw'>offset</span> <span class='kw'>=</span> <span class='st'>"random"</span>
+<span class='kw'>fac</span> <span class='op'>&lt;-</span> <span class='fu'><a href='partition_tiles.html'>partition_tiles</a></span>(<span class='kw'>ecuador</span>,
+  return_factor = <span class='fl'>TRUE</span>, repetition = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>),
+  dsplit = <span class='fl'>500</span>, min_n = <span class='fl'>200</span>, rotation = <span class='st'>"random"</span>,
+  offset = <span class='st'>"random"</span>
 )
-<span class='no'>parti</span> <span class='kw'>&lt;-</span> <span class='fu'>represampling_factor_bootstrap</span>(<span class='no'>ecuador</span>, <span class='no'>fac</span>,
-  <span class='kw'>oob</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>repetition</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>:<span class='fl'>3</span>)
+<span class='kw'>parti</span> <span class='op'>&lt;-</span> <span class='fu'>represampling_factor_bootstrap</span>(<span class='kw'>ecuador</span>, <span class='kw'>fac</span>,
+  oob = <span class='fl'>TRUE</span>,
+  repetition = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>)
 )
-<span class='co'># plot(parti, ecuador)</span></div></pre>
+<span class='co'># plot(parti, ecuador)</span>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -245,7 +246,7 @@ factor variable, <code>nboot</code> would normally not be greater than <code><a 
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>

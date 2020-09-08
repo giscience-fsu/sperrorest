@@ -138,13 +138,13 @@ corresponding to cross-validation test and training sets.</p>
     </div>
 
     <pre class="usage"><span class='fu'>partition_cv_strat</span>(
-  <span class='no'>data</span>,
-  <span class='kw'>coords</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"x"</span>, <span class='st'>"y"</span>),
-  <span class='kw'>nfold</span> <span class='kw'>=</span> <span class='fl'>10</span>,
-  <span class='kw'>return_factor</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>repetition</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>seed1</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='no'>strat</span>
+  <span class='kw'>data</span>,
+  coords = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"x"</span>, <span class='st'>"y"</span>),
+  nfold = <span class='fl'>10</span>,
+  return_factor = <span class='fl'>FALSE</span>,
+  repetition = <span class='fl'>1</span>,
+  seed1 = <span class='kw'>NULL</span>,
+  <span class='kw'>strat</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -205,17 +205,19 @@ folds of all levels are combined into one cross-validation fold.</p>
     <div class='dont-index'><p><code><a href='sperrorest.html'>sperrorest()</a></code>, <code><a href='as.resampling.html'>as.resampling()</a></code>, <code><a href='resample_strat_uniform.html'>resample_strat_uniform()</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>ecuador</span>)
-<span class='no'>parti</span> <span class='kw'>&lt;-</span> <span class='fu'>partition_cv_strat</span>(<span class='no'>ecuador</span>,
-  <span class='kw'>strat</span> <span class='kw'>=</span> <span class='st'>"slides"</span>, <span class='kw'>nfold</span> <span class='kw'>=</span> <span class='fl'>5</span>,
-  <span class='kw'>repetition</span> <span class='kw'>=</span> <span class='fl'>1</span>
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>ecuador</span>)
+<span class='kw'>parti</span> <span class='op'>&lt;-</span> <span class='fu'>partition_cv_strat</span>(<span class='kw'>ecuador</span>,
+  strat = <span class='st'>"slides"</span>, nfold = <span class='fl'>5</span>,
+  repetition = <span class='fl'>1</span>
 )
-<span class='no'>idx</span> <span class='kw'>&lt;-</span> <span class='no'>parti</span><span class='kw'>[[</span><span class='st'>"1"</span>]]<span class='kw'>[[</span><span class='fl'>1</span>]]$<span class='no'>train</span>
-<span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span>(<span class='no'>ecuador</span>$<span class='no'>slides</span>[<span class='no'>idx</span>] <span class='kw'>==</span> <span class='st'>"TRUE"</span>) / <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span>(<span class='no'>ecuador</span>$<span class='no'>slides</span> <span class='kw'>==</span> <span class='st'>"TRUE"</span>)</div><div class='output co'>#&gt; [1] 0.9996672</div><div class='input'><span class='co'># always == 1</span>
+<span class='kw'>idx</span> <span class='op'>&lt;-</span> <span class='kw'>parti</span>[[<span class='st'>"1"</span>]][[<span class='fl'>1</span>]]<span class='op'>$</span><span class='kw'>train</span>
+<span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span>(<span class='kw'>ecuador</span><span class='op'>$</span><span class='kw'>slides</span>[<span class='kw'>idx</span>] <span class='op'>==</span> <span class='st'>"TRUE"</span>) <span class='op'>/</span> <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span>(<span class='kw'>ecuador</span><span class='op'>$</span><span class='kw'>slides</span> <span class='op'>==</span> <span class='st'>"TRUE"</span>)
+</div><div class='output co'>#&gt; [1] 0.9996672</div><div class='input'><span class='co'># always == 1</span>
 <span class='co'># Non-stratified cross-validation:</span>
-<span class='no'>parti</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='partition_cv.html'>partition_cv</a></span>(<span class='no'>ecuador</span>, <span class='kw'>nfold</span> <span class='kw'>=</span> <span class='fl'>5</span>, <span class='kw'>repetition</span> <span class='kw'>=</span> <span class='fl'>1</span>)
-<span class='no'>idx</span> <span class='kw'>&lt;-</span> <span class='no'>parti</span><span class='kw'>[[</span><span class='st'>"1"</span>]]<span class='kw'>[[</span><span class='fl'>1</span>]]$<span class='no'>train</span>
-<span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span>(<span class='no'>ecuador</span>$<span class='no'>slides</span>[<span class='no'>idx</span>] <span class='kw'>==</span> <span class='st'>"TRUE"</span>) / <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span>(<span class='no'>ecuador</span>$<span class='no'>slides</span> <span class='kw'>==</span> <span class='st'>"TRUE"</span>)</div><div class='output co'>#&gt; [1] 1.009664</div><div class='input'># close to 1 because of large sample size, but with some random variation
+<span class='kw'>parti</span> <span class='op'>&lt;-</span> <span class='fu'><a href='partition_cv.html'>partition_cv</a></span>(<span class='kw'>ecuador</span>, nfold = <span class='fl'>5</span>, repetition = <span class='fl'>1</span>)
+<span class='kw'>idx</span> <span class='op'>&lt;-</span> <span class='kw'>parti</span>[[<span class='st'>"1"</span>]][[<span class='fl'>1</span>]]<span class='op'>$</span><span class='kw'>train</span>
+<span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span>(<span class='kw'>ecuador</span><span class='op'>$</span><span class='kw'>slides</span>[<span class='kw'>idx</span>] <span class='op'>==</span> <span class='st'>"TRUE"</span>) <span class='op'>/</span> <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span>(<span class='kw'>ecuador</span><span class='op'>$</span><span class='kw'>slides</span> <span class='op'>==</span> <span class='st'>"TRUE"</span>)
+</div><div class='output co'>#&gt; [1] 1.009664</div><div class='input'><span class='co'># close to 1 because of large sample size, but with some random variation</span>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -232,7 +234,7 @@ folds of all levels are combined into one cross-validation fold.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
 </div>
 
       </footer>
