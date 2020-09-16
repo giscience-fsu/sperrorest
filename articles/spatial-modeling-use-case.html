@@ -229,7 +229,7 @@
 ## Target node size:                 1 
 ## Variable importance mode:         none 
 ## Splitrule:                        gini 
-## OOB prediction error:             0.58 %</code></pre>
+## OOB prediction error:             0.54 %</code></pre>
 <p>Let’s take a look at the MER achieved on the training sample:</p>
 <div class="sourceCode" id="cb18"><pre class="downlit">
 <span class="kw">pred</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span>(<span class="kw">fit</span>, data = <span class="kw">maipo</span>, type = <span class="st">"response"</span>)
@@ -295,11 +295,11 @@
 </pre></div>
 <pre><code>## $train_error
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##  0.0327  0.0332  0.0338  0.0338  0.0340  0.0352 
+##  0.0324  0.0329  0.0338  0.0336  0.0342  0.0346 
 ## 
 ## $train_accuracy
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##   0.965   0.966   0.966   0.966   0.967   0.967 
+##   0.965   0.966   0.966   0.966   0.967   0.968 
 ## 
 ## $train_events
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
@@ -311,11 +311,11 @@
 ## 
 ## $test_error
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##  0.0379  0.0396  0.0401  0.0405  0.0419  0.0436 
+##  0.0390  0.0393  0.0406  0.0405  0.0413  0.0425 
 ## 
 ## $test_accuracy
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##   0.956   0.958   0.960   0.959   0.960   0.962 
+##   0.957   0.959   0.959   0.960   0.961   0.961 
 ## 
 ## $test_events
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
@@ -344,17 +344,17 @@
 )
 <span class="kw">res_lda_sp</span><span class="op">$</span><span class="kw">benchmark</span><span class="op">$</span><span class="kw">runtime_performance</span>
 </pre></div>
-<pre><code>## Time difference of 52.4 secs</code></pre>
+<pre><code>## Time difference of 52.7 secs</code></pre>
 <div class="sourceCode" id="cb29"><pre class="downlit">
 <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span>(<span class="kw">res_lda_sp</span><span class="op">$</span><span class="kw">error_rep</span>, <span class="kw">summary</span>)
 </pre></div>
 <pre><code>## $train_error
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##  0.0281  0.0291  0.0294  0.0300  0.0307  0.0329 
+##  0.0255  0.0284  0.0292  0.0291  0.0302  0.0317 
 ## 
 ## $train_accuracy
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##   0.967   0.969   0.971   0.970   0.971   0.972 
+##   0.968   0.970   0.971   0.971   0.972   0.974 
 ## 
 ## $train_events
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
@@ -366,11 +366,11 @@
 ## 
 ## $test_error
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##  0.0526  0.0637  0.0694  0.0682  0.0742  0.0822 
+##  0.0555  0.0602  0.0629  0.0652  0.0697  0.0791 
 ## 
 ## $test_accuracy
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##   0.918   0.926   0.931   0.932   0.936   0.947 
+##   0.921   0.930   0.937   0.935   0.940   0.945 
 ## 
 ## $test_events
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
@@ -439,11 +439,11 @@
 ## 
 ## $test_error
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##  0.0790  0.0838  0.0875  0.0898  0.0986  0.1019 
+##  0.0787  0.0830  0.0898  0.0889  0.0928  0.0997 
 ## 
 ## $test_accuracy
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##   0.898   0.901   0.912   0.910   0.916   0.921 
+##   0.900   0.907   0.910   0.911   0.917   0.921 
 ## 
 ## $test_events
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
@@ -456,7 +456,7 @@
 <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="kw">res_rf_sp</span><span class="op">$</span><span class="kw">error_rep</span><span class="op">$</span><span class="kw">test_accuracy</span>)
 </pre></div>
 <pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##   0.898   0.901   0.912   0.910   0.916   0.921</code></pre>
+##   0.900   0.907   0.910   0.911   0.917   0.921</code></pre>
 <p>What a surprise! {ranger}‘s classification is not that good after all, if we acknowledge that in ’real life’ we wouldn’t be making predictions in situations where the class membership of other grid cells in the same field is known in the training stage. So spatial dependence does matter.</p>
 </div>
 </div>
