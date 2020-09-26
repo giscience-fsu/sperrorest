@@ -144,29 +144,29 @@ estimation and parallelized permutation-based assessment of spatial variable
 importance.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>sperrorest</span>(
-  <span class='kw'>formula</span>,
-  <span class='kw'>data</span>,
-  coords = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"x"</span>, <span class='st'>"y"</span>),
-  <span class='kw'>model_fun</span>,
-  model_args = <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(),
-  pred_fun = <span class='kw'>NULL</span>,
-  pred_args = <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(),
-  smp_fun = <span class='kw'>partition_cv</span>,
-  smp_args = <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(),
-  train_fun = <span class='kw'>NULL</span>,
-  train_param = <span class='kw'>NULL</span>,
-  test_fun = <span class='kw'>NULL</span>,
-  test_param = <span class='kw'>NULL</span>,
-  err_fun = <span class='kw'>err_default</span>,
-  imp_variables = <span class='kw'>NULL</span>,
-  imp_permutations = <span class='fl'>1000</span>,
-  importance = <span class='op'>!</span><span class='fu'><a href='https://rdrr.io/r/base/NULL.html'>is.null</a></span>(<span class='kw'>imp_variables</span>),
-  distance = <span class='fl'>FALSE</span>,
-  do_gc = <span class='fl'>1</span>,
-  progress = <span class='st'>"all"</span>,
-  benchmark = <span class='fl'>FALSE</span>
-)</pre>
+    <pre class="usage"><span class='fu'>sperrorest</span><span class='op'>(</span>
+  <span class='va'>formula</span>,
+  <span class='va'>data</span>,
+  coords <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"x"</span>, <span class='st'>"y"</span><span class='op'>)</span>,
+  <span class='va'>model_fun</span>,
+  model_args <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='op'>)</span>,
+  pred_fun <span class='op'>=</span> <span class='cn'>NULL</span>,
+  pred_args <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='op'>)</span>,
+  smp_fun <span class='op'>=</span> <span class='va'>partition_cv</span>,
+  smp_args <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='op'>)</span>,
+  train_fun <span class='op'>=</span> <span class='cn'>NULL</span>,
+  train_param <span class='op'>=</span> <span class='cn'>NULL</span>,
+  test_fun <span class='op'>=</span> <span class='cn'>NULL</span>,
+  test_param <span class='op'>=</span> <span class='cn'>NULL</span>,
+  err_fun <span class='op'>=</span> <span class='va'>err_default</span>,
+  imp_variables <span class='op'>=</span> <span class='cn'>NULL</span>,
+  imp_permutations <span class='op'>=</span> <span class='fl'>1000</span>,
+  importance <span class='op'>=</span> <span class='op'>!</span><span class='fu'><a href='https://rdrr.io/r/base/NULL.html'>is.null</a></span><span class='op'>(</span><span class='va'>imp_variables</span><span class='op'>)</span>,
+  distance <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  do_gc <span class='op'>=</span> <span class='fl'>1</span>,
+  progress <span class='op'>=</span> <span class='st'>"all"</span>,
+  benchmark <span class='op'>=</span> <span class='cn'>FALSE</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -320,8 +320,8 @@ multiple child functions, must be defined in one function.</p>
 <p>Running in parallel is supported via package <a href='https://CRAN.R-project.org/package=future'><span class="pkg">future</span></a>.
 Have a look at <code>vignette("future-1-overview", package = "future")</code>.
 In short: Choose a backend and specify the amount of workers, then call
-<code>sperrorest()</code> as usual. Example:<div class="r"></p><pre><span class='kw'>future</span>::<span class='fu'><a href='https://rdrr.io/pkg/future/man/plan.html'>plan</a></span>(<span class='kw'>future.callr</span>::<span class='kw'>callr</span>, workers = <span class='fl'>2</span>)
-<span class='fu'>sperrorest</span>()
+<code>sperrorest()</code> as usual. Example:<div class="r"></p><pre><span class='fu'>future</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/future/man/plan.html'>plan</a></span><span class='op'>(</span><span class='fu'>future.callr</span><span class='fu'>::</span><span class='va'>callr</span>, workers <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span>
+<span class='fu'>sperrorest</span><span class='op'>(</span><span class='op'>)</span>
 </pre><p></div></p>
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
@@ -353,33 +353,33 @@ Lecture Notes in Computer Science, 6065 LNCS: 184-195.</p>
 <span class='co'>## ------------------------------------------------------------</span>
 
 <span class='co'># Muenchow et al. (2012), see ?ecuador</span>
-<span class='kw'>fo</span> <span class='op'>&lt;-</span> <span class='kw'>slides</span> <span class='op'>~</span> <span class='kw'>dem</span> <span class='op'>+</span> <span class='kw'>slope</span> <span class='op'>+</span> <span class='kw'>hcurv</span> <span class='op'>+</span> <span class='kw'>vcurv</span> <span class='op'>+</span> <span class='kw'>log.carea</span> <span class='op'>+</span> <span class='kw'>cslope</span>
+<span class='va'>fo</span> <span class='op'>&lt;-</span> <span class='va'>slides</span> <span class='op'>~</span> <span class='va'>dem</span> <span class='op'>+</span> <span class='va'>slope</span> <span class='op'>+</span> <span class='va'>hcurv</span> <span class='op'>+</span> <span class='va'>vcurv</span> <span class='op'>+</span> <span class='va'>log.carea</span> <span class='op'>+</span> <span class='va'>cslope</span>
 
-<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'><a href='https://github.com/bethatkinson/rpart'>rpart</a></span>)
-<span class='kw'>mypred_part</span> <span class='op'>&lt;-</span> <span class='fu'>function</span>(<span class='kw'>object</span>, <span class='kw'>newdata</span>) <span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span>(<span class='kw'>object</span>, <span class='kw'>newdata</span>)[, <span class='fl'>2</span>]
-<span class='kw'>ctrl</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/rpart/man/rpart.control.html'>rpart.control</a></span>(cp = <span class='fl'>0.005</span>) <span class='co'># show the effects of overfitting</span>
+<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://github.com/bethatkinson/rpart'>rpart</a></span><span class='op'>)</span>
+<span class='va'>mypred_part</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>newdata</span><span class='op'>)</span> <span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>newdata</span><span class='op'>)</span><span class='op'>[</span>, <span class='fl'>2</span><span class='op'>]</span>
+<span class='va'>ctrl</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/rpart/man/rpart.control.html'>rpart.control</a></span><span class='op'>(</span>cp <span class='op'>=</span> <span class='fl'>0.005</span><span class='op'>)</span> <span class='co'># show the effects of overfitting</span>
 <span class='co'># show the effects of overfitting</span>
-<span class='kw'>fit</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/rpart/man/rpart.html'>rpart</a></span>(<span class='kw'>fo</span>, data = <span class='kw'>ecuador</span>, control = <span class='kw'>ctrl</span>)
+<span class='va'>fit</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/rpart/man/rpart.html'>rpart</a></span><span class='op'>(</span><span class='va'>fo</span>, data <span class='op'>=</span> <span class='va'>ecuador</span>, control <span class='op'>=</span> <span class='va'>ctrl</span><span class='op'>)</span>
 
 <span class='co'>### Non-spatial cross-validation:</span>
-<span class='kw'>mypred_part</span> <span class='op'>&lt;-</span> <span class='fu'>function</span>(<span class='kw'>object</span>, <span class='kw'>newdata</span>) <span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span>(<span class='kw'>object</span>, <span class='kw'>newdata</span>)[, <span class='fl'>2</span>]
-<span class='kw'>nsp_res</span> <span class='op'>&lt;-</span> <span class='fu'>sperrorest</span>(
-  data = <span class='kw'>ecuador</span>, formula = <span class='kw'>fo</span>,
-  model_fun = <span class='kw'>rpart</span>,
-  model_args = <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(control = <span class='kw'>ctrl</span>),
-  pred_fun = <span class='kw'>mypred_part</span>,
-  progress = <span class='fl'>TRUE</span>,
-  smp_fun = <span class='kw'>partition_cv</span>,
-  smp_args = <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(repetition = <span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span>, nfold = <span class='fl'>3</span>)
-)
-</div><div class='output co'>#&gt; Fri Sep 25 04:23:40 2020 Repetition 
-#&gt; Fri Sep 25 04:23:40 2020 Repetition - Fold 1 
-#&gt; Fri Sep 25 04:23:40 2020 Repetition - Fold 2 
-#&gt; Fri Sep 25 04:23:40 2020 Repetition - Fold 3 
-#&gt; Fri Sep 25 04:23:41 2020 Repetition 
-#&gt; Fri Sep 25 04:23:41 2020 Repetition - Fold 1 
-#&gt; Fri Sep 25 04:23:41 2020 Repetition - Fold 2 
-#&gt; Fri Sep 25 04:23:41 2020 Repetition - Fold 3 </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>nsp_res</span><span class='op'>$</span><span class='kw'>error_rep</span>)
+<span class='va'>mypred_part</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>newdata</span><span class='op'>)</span> <span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>newdata</span><span class='op'>)</span><span class='op'>[</span>, <span class='fl'>2</span><span class='op'>]</span>
+<span class='va'>nsp_res</span> <span class='op'>&lt;-</span> <span class='fu'>sperrorest</span><span class='op'>(</span>
+  data <span class='op'>=</span> <span class='va'>ecuador</span>, formula <span class='op'>=</span> <span class='va'>fo</span>,
+  model_fun <span class='op'>=</span> <span class='va'>rpart</span>,
+  model_args <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>control <span class='op'>=</span> <span class='va'>ctrl</span><span class='op'>)</span>,
+  pred_fun <span class='op'>=</span> <span class='va'>mypred_part</span>,
+  progress <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  smp_fun <span class='op'>=</span> <span class='va'>partition_cv</span>,
+  smp_args <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>repetition <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span>, nfold <span class='op'>=</span> <span class='fl'>3</span><span class='op'>)</span>
+<span class='op'>)</span>
+</div><div class='output co'>#&gt; Sat Sep 26 04:25:24 2020 Repetition 
+#&gt; Sat Sep 26 04:25:24 2020 Repetition - Fold 1 
+#&gt; Sat Sep 26 04:25:24 2020 Repetition - Fold 2 
+#&gt; Sat Sep 26 04:25:24 2020 Repetition - Fold 3 
+#&gt; Sat Sep 26 04:25:25 2020 Repetition 
+#&gt; Sat Sep 26 04:25:25 2020 Repetition - Fold 1 
+#&gt; Sat Sep 26 04:25:25 2020 Repetition - Fold 2 
+#&gt; Sat Sep 26 04:25:25 2020 Repetition - Fold 3 </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>nsp_res</span><span class='op'>$</span><span class='va'>error_rep</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;                           mean           sd       median          IQR
 #&gt; train_auroc          0.8243307 0.0125941070    0.8243307 0.0089053785
 #&gt; train_error          0.1950732 0.0009415536    0.1950732 0.0006657790
@@ -406,7 +406,7 @@ Lecture Notes in Computer Science, 6065 LNCS: 184-195.</p>
 #&gt; test_tpr90           0.1480000 0.0141421356    0.1480000 0.0100000000
 #&gt; test_tpr95           0.0840000 0.0339411255    0.0840000 0.0240000000
 #&gt; test_events        500.0000000 0.0000000000  500.0000000 0.0000000000
-#&gt; test_count         751.0000000 0.0000000000  751.0000000 0.0000000000</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>nsp_res</span><span class='op'>$</span><span class='kw'>error_fold</span>)
+#&gt; test_count         751.0000000 0.0000000000  751.0000000 0.0000000000</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>nsp_res</span><span class='op'>$</span><span class='va'>error_fold</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;                           mean         sd      median        IQR
 #&gt; train.auroc         0.82011298 0.02776312   0.8263439 0.03078675
 #&gt; train.error         0.19507319 0.02176863   0.1956088 0.03343313
@@ -434,7 +434,7 @@ Lecture Notes in Computer Science, 6065 LNCS: 184-195.</p>
 #&gt; test.tpr95          0.07681264 0.04020856   0.0889523 0.02610701
 #&gt; test.events       166.66666667 6.94742158 166.5000000 7.00000000
 #&gt; test.count        250.33333333 0.51639778 250.0000000 0.75000000
-#&gt; distance           -1.00000000 0.00000000  -1.0000000 0.00000000</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>nsp_res</span><span class='op'>$</span><span class='kw'>represampling</span>)
+#&gt; distance           -1.00000000 0.00000000  -1.0000000 0.00000000</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>nsp_res</span><span class='op'>$</span><span class='va'>represampling</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; $`1`
 #&gt;   n.train n.test
 #&gt; 1     500    251
@@ -449,23 +449,23 @@ Lecture Notes in Computer Science, 6065 LNCS: 184-195.</p>
 #&gt; </div><div class='input'><span class='co'># plot(nsp_res$represampling, ecuador)</span>
 
 <span class='co'>### Spatial cross-validation:</span>
-<span class='kw'>sp_res</span> <span class='op'>&lt;-</span> <span class='fu'>sperrorest</span>(
-  data = <span class='kw'>ecuador</span>, formula = <span class='kw'>fo</span>,
-  model_fun = <span class='kw'>rpart</span>,
-  model_args = <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(control = <span class='kw'>ctrl</span>),
-  pred_fun = <span class='kw'>mypred_part</span>,
-  progress = <span class='fl'>TRUE</span>,
-  smp_fun = <span class='kw'>partition_kmeans</span>,
-  smp_args = <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(repetition = <span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span>, nfold = <span class='fl'>3</span>)
-)
-</div><div class='output co'>#&gt; Fri Sep 25 04:23:41 2020 Repetition 
-#&gt; Fri Sep 25 04:23:41 2020 Repetition - Fold 1 
-#&gt; Fri Sep 25 04:23:41 2020 Repetition - Fold 2 
-#&gt; Fri Sep 25 04:23:41 2020 Repetition - Fold 3 
-#&gt; Fri Sep 25 04:23:41 2020 Repetition 
-#&gt; Fri Sep 25 04:23:41 2020 Repetition - Fold 1 
-#&gt; Fri Sep 25 04:23:41 2020 Repetition - Fold 2 
-#&gt; Fri Sep 25 04:23:41 2020 Repetition - Fold 3 </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>sp_res</span><span class='op'>$</span><span class='kw'>error_rep</span>)
+<span class='va'>sp_res</span> <span class='op'>&lt;-</span> <span class='fu'>sperrorest</span><span class='op'>(</span>
+  data <span class='op'>=</span> <span class='va'>ecuador</span>, formula <span class='op'>=</span> <span class='va'>fo</span>,
+  model_fun <span class='op'>=</span> <span class='va'>rpart</span>,
+  model_args <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>control <span class='op'>=</span> <span class='va'>ctrl</span><span class='op'>)</span>,
+  pred_fun <span class='op'>=</span> <span class='va'>mypred_part</span>,
+  progress <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  smp_fun <span class='op'>=</span> <span class='va'>partition_kmeans</span>,
+  smp_args <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>repetition <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span>, nfold <span class='op'>=</span> <span class='fl'>3</span><span class='op'>)</span>
+<span class='op'>)</span>
+</div><div class='output co'>#&gt; Sat Sep 26 04:25:25 2020 Repetition 
+#&gt; Sat Sep 26 04:25:25 2020 Repetition - Fold 1 
+#&gt; Sat Sep 26 04:25:25 2020 Repetition - Fold 2 
+#&gt; Sat Sep 26 04:25:25 2020 Repetition - Fold 3 
+#&gt; Sat Sep 26 04:25:25 2020 Repetition 
+#&gt; Sat Sep 26 04:25:25 2020 Repetition - Fold 1 
+#&gt; Sat Sep 26 04:25:25 2020 Repetition - Fold 2 
+#&gt; Sat Sep 26 04:25:25 2020 Repetition - Fold 3 </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>sp_res</span><span class='op'>$</span><span class='va'>error_rep</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;                           mean sd       median IQR
 #&gt; train_auroc          0.8596096  0    0.8596096   0
 #&gt; train_error          0.1804261  0    0.1804261   0
@@ -492,7 +492,7 @@ Lecture Notes in Computer Science, 6065 LNCS: 184-195.</p>
 #&gt; test_tpr90           0.1040000  0    0.1040000   0
 #&gt; test_tpr95           0.0520000  0    0.0520000   0
 #&gt; test_events        500.0000000  0  500.0000000   0
-#&gt; test_count         751.0000000  0  751.0000000   0</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>sp_res</span><span class='op'>$</span><span class='kw'>error_fold</span>)
+#&gt; test_count         751.0000000  0  751.0000000   0</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>sp_res</span><span class='op'>$</span><span class='va'>error_fold</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;                           mean          sd      median          IQR
 #&gt; train.auroc         0.85746860  0.01344957   0.8616441   0.02189372
 #&gt; train.error         0.18118523  0.01386149   0.1809745   0.02324481
@@ -520,7 +520,7 @@ Lecture Notes in Computer Science, 6065 LNCS: 184-195.</p>
 #&gt; test.tpr95          0.05940594  0.09203129   0.0000000   0.13366337
 #&gt; test.events       166.66666667 55.74465595 174.0000000  93.00000000
 #&gt; test.count        250.33333333 63.53791519 253.0000000 106.50000000
-#&gt; distance           -1.00000000  0.00000000  -1.0000000   0.00000000</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>sp_res</span><span class='op'>$</span><span class='kw'>represampling</span>)
+#&gt; distance           -1.00000000  0.00000000  -1.0000000   0.00000000</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>sp_res</span><span class='op'>$</span><span class='va'>represampling</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; $`1`
 #&gt;   n.train n.test
 #&gt; 1     498    253
@@ -534,25 +534,25 @@ Lecture Notes in Computer Science, 6065 LNCS: 184-195.</p>
 #&gt; 3     431    320
 #&gt; </div><div class='input'><span class='co'># plot(sp_res$represampling, ecuador)</span>
 
-<span class='kw'>smry</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(
-  nonspat_training = <span class='fu'><a href='https://rdrr.io/r/base/unlist.html'>unlist</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>nsp_res</span><span class='op'>$</span><span class='kw'>error_rep</span>,
-    level = <span class='fl'>1</span>
-  )<span class='op'>$</span><span class='kw'>train_auroc</span>),
-  nonspat_test = <span class='fu'><a href='https://rdrr.io/r/base/unlist.html'>unlist</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>nsp_res</span><span class='op'>$</span><span class='kw'>error_rep</span>,
-    level = <span class='fl'>1</span>
-  )<span class='op'>$</span><span class='kw'>test_auroc</span>),
-  spatial_training = <span class='fu'><a href='https://rdrr.io/r/base/unlist.html'>unlist</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>sp_res</span><span class='op'>$</span><span class='kw'>error_rep</span>,
-    level = <span class='fl'>1</span>
-  )<span class='op'>$</span><span class='kw'>train_auroc</span>),
-  spatial_test = <span class='fu'><a href='https://rdrr.io/r/base/unlist.html'>unlist</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>sp_res</span><span class='op'>$</span><span class='kw'>error_rep</span>,
-    level = <span class='fl'>1</span>
-  )<span class='op'>$</span><span class='kw'>test_auroc</span>)
-)
-<span class='fu'><a href='https://rdrr.io/r/graphics/boxplot.html'>boxplot</a></span>(<span class='kw'>smry</span>,
-  col = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"red"</span>, <span class='st'>"red"</span>, <span class='st'>"red"</span>, <span class='st'>"green"</span>),
-  main = <span class='st'>"Training vs. test, nonspatial vs. spatial"</span>,
-  ylab = <span class='st'>"Area under the ROC curve"</span>
-)
+<span class='va'>smry</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>
+  nonspat_training <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/unlist.html'>unlist</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>nsp_res</span><span class='op'>$</span><span class='va'>error_rep</span>,
+    level <span class='op'>=</span> <span class='fl'>1</span>
+  <span class='op'>)</span><span class='op'>$</span><span class='va'>train_auroc</span><span class='op'>)</span>,
+  nonspat_test <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/unlist.html'>unlist</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>nsp_res</span><span class='op'>$</span><span class='va'>error_rep</span>,
+    level <span class='op'>=</span> <span class='fl'>1</span>
+  <span class='op'>)</span><span class='op'>$</span><span class='va'>test_auroc</span><span class='op'>)</span>,
+  spatial_training <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/unlist.html'>unlist</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>sp_res</span><span class='op'>$</span><span class='va'>error_rep</span>,
+    level <span class='op'>=</span> <span class='fl'>1</span>
+  <span class='op'>)</span><span class='op'>$</span><span class='va'>train_auroc</span><span class='op'>)</span>,
+  spatial_test <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/unlist.html'>unlist</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>sp_res</span><span class='op'>$</span><span class='va'>error_rep</span>,
+    level <span class='op'>=</span> <span class='fl'>1</span>
+  <span class='op'>)</span><span class='op'>$</span><span class='va'>test_auroc</span><span class='op'>)</span>
+<span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/boxplot.html'>boxplot</a></span><span class='op'>(</span><span class='va'>smry</span>,
+  col <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"red"</span>, <span class='st'>"red"</span>, <span class='st'>"red"</span>, <span class='st'>"green"</span><span class='op'>)</span>,
+  main <span class='op'>=</span> <span class='st'>"Training vs. test, nonspatial vs. spatial"</span>,
+  ylab <span class='op'>=</span> <span class='st'>"Area under the ROC curve"</span>
+<span class='op'>)</span>
 </div><div class='img'><img src='sperrorest-1.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

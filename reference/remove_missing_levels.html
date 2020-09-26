@@ -137,7 +137,7 @@ but not in train data by setting values to NA" />
 but not in train data by setting values to NA</p>
     </div>
 
-    <pre class="usage"><span class='fu'>remove_missing_levels</span>(<span class='kw'>fit</span>, <span class='kw'>test_data</span>)</pre>
+    <pre class="usage"><span class='fu'>remove_missing_levels</span><span class='op'>(</span><span class='va'>fit</span>, <span class='va'>test_data</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -157,16 +157,16 @@ but not in train data by setting values to NA</p>
     <p>data.frame with matching factor levels to fitted model</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>foo</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(
-  response = <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='fl'>3</span>),
-  predictor = <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>as.factor</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"A"</span>, <span class='st'>"B"</span>, <span class='st'>"C"</span>))
-)
-<span class='kw'>model</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/lm.html'>lm</a></span>(<span class='kw'>response</span> <span class='op'>~</span> <span class='kw'>predictor</span>, <span class='kw'>foo</span>)
-<span class='kw'>foo.new</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(predictor = <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>as.factor</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"A"</span>, <span class='st'>"B"</span>, <span class='st'>"C"</span>, <span class='st'>"D"</span>)))
-<span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span>(<span class='kw'>model</span>, newdata = <span class='fu'>remove_missing_levels</span>(
-  fit = <span class='kw'>model</span>,
-  test_data = <span class='kw'>foo.new</span>
-))
+    <pre class="examples"><div class='input'><span class='va'>foo</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>
+  response <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='fl'>3</span><span class='op'>)</span>,
+  predictor <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>as.factor</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"A"</span>, <span class='st'>"B"</span>, <span class='st'>"C"</span><span class='op'>)</span><span class='op'>)</span>
+<span class='op'>)</span>
+<span class='va'>model</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/lm.html'>lm</a></span><span class='op'>(</span><span class='va'>response</span> <span class='op'>~</span> <span class='va'>predictor</span>, <span class='va'>foo</span><span class='op'>)</span>
+<span class='va'>foo.new</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>predictor <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>as.factor</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"A"</span>, <span class='st'>"B"</span>, <span class='st'>"C"</span>, <span class='st'>"D"</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span><span class='op'>(</span><span class='va'>model</span>, newdata <span class='op'>=</span> <span class='fu'>remove_missing_levels</span><span class='op'>(</span>
+  fit <span class='op'>=</span> <span class='va'>model</span>,
+  test_data <span class='op'>=</span> <span class='va'>foo.new</span>
+<span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; <span class='message'></span>
 #&gt; <span class='message'>'sperrorest()': Setting missing levels in 'predictor', only present in test data but missing in train data, to 'NA'.</span></div><div class='output co'>#&gt;          1          2          3          4 
 #&gt;  1.0924612  0.1658017 -0.6202560         NA </div></pre>

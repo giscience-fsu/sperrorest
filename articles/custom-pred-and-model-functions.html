@@ -116,12 +116,11 @@
 <a href="#solution" class="anchor"></a>Solution</h3>
 <p>In this case, we need to write a wrapper function for <code>glmmPQL</code> (named <code>glmmPQL_modelfun</code> here) which accounts for this naming problem. Here, we are passing the <code>formula</code> argument to our custom model function which then does the actual call to <code>glmmPQL()</code> using the supplied <code>formula</code> object as the <code>fixed</code> argument of <code>glmmPQL</code>. By default, <code>glmmPQL()</code> has further arguments like <code>family</code> or <code>random</code>. If we want to use these, we pass them to <code>model_args</code> which then appends these to the arguments of <code>glmmPQL_modelfun</code>.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit">
-<span class="kw">glmmPQL_modelfun</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">formula</span> = <span class="kw">NULL</span>, <span class="kw">data</span> = <span class="kw">NULL</span>, <span class="kw">random</span> = <span class="kw">NULL</span>,
-                             <span class="kw">family</span> = <span class="kw">NULL</span>) {
-  <span class="kw">fit</span> <span class="op">&lt;-</span> <span class="fu">glmmPQL</span>(fixed = <span class="kw">formula</span>, data = <span class="kw">data</span>, random = <span class="kw">random</span>, family = <span class="kw">family</span>)
-  <span class="fu"><a href="https://rdrr.io/r/base/function.html">return</a></span>(<span class="kw">fit</span>)
-}
-</pre></div>
+<span class="va">glmmPQL_modelfun</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">formula</span> <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">data</span> <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">random</span> <span class="op">=</span> <span class="cn">NULL</span>,
+                             <span class="va">family</span> <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="op">{</span>
+  <span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu">glmmPQL</span><span class="op">(</span>fixed <span class="op">=</span> <span class="va">formula</span>, data <span class="op">=</span> <span class="va">data</span>, random <span class="op">=</span> <span class="va">random</span>, family <span class="op">=</span> <span class="va">family</span><span class="op">)</span>
+  <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span>
+<span class="op">}</span></pre></div>
 </div>
 </div>
 <div id="user-defined-predict-functions" class="section level2">
@@ -143,22 +142,20 @@
 <p>When calling predict on a fitted <code>randomForest</code> model with a binary response variable, the predicted values are actually stored in the resulting object returned by <code><a href="https://rdrr.io/r/stats/predict.html">predict()</a></code> (here called <code>pred</code>). So why do we have trouble here then?</p>
 <p>Simply because <code>pred</code> is a matrix containing both probabilities for the <code>FALSE</code> (= 0) and <code>TRUE</code> (= 1) case. <code><a href="../reference/sperrorest.html">sperrorest()</a></code> needs a vector containing only the predicted values of the <code>TRUE</code> case to pass these further onto <code>err_fun()</code> which then takes care of calculating all the error measures. So the important part is to subset the resulting matrix in the <code>pred</code> object to <code>TRUE</code> cases only and return the result.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit">
-<span class="kw">rf_predfun</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">object</span> = <span class="kw">NULL</span>, <span class="kw">newdata</span> = <span class="kw">NULL</span>, <span class="kw">type</span> = <span class="kw">NULL</span>) {
-  <span class="kw">pred</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span>(object = <span class="kw">object</span>, newdata = <span class="kw">newdata</span>, type = <span class="kw">type</span>)
-  <span class="kw">pred</span> <span class="op">&lt;-</span> <span class="kw">pred</span>[, <span class="fl">2</span>]
-}
-</pre></div>
+<span class="va">rf_predfun</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">object</span> <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">newdata</span> <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">type</span> <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="op">{</span>
+  <span class="va">pred</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span><span class="op">(</span>object <span class="op">=</span> <span class="va">object</span>, newdata <span class="op">=</span> <span class="va">newdata</span>, type <span class="op">=</span> <span class="va">type</span><span class="op">)</span>
+  <span class="va">pred</span> <span class="op">&lt;-</span> <span class="va">pred</span><span class="op">[</span>, <span class="fl">2</span><span class="op">]</span>
+<span class="op">}</span></pre></div>
 </div>
 <div id="svm" class="section level4">
 <h4 class="hasAnchor">
 <a href="#svm" class="anchor"></a>svm</h4>
 <p>The same case (binary response) using <code>svm</code> from the <code>e1071</code> package. Here, the predicted probabilities are stored in a sub-object of <code>pred</code>. We can address it using the <code><a href="https://rdrr.io/r/base/attr.html">attr()</a></code> function. Then again, we only need the <code>TRUE</code> cases for <code><a href="../reference/sperrorest.html">sperrorest()</a></code>.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit">
-<span class="kw">svm_predfun</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">object</span> = <span class="kw">NULL</span>, <span class="kw">newdata</span> = <span class="kw">NULL</span>, <span class="kw">probability</span> = <span class="kw">NULL</span>) {
-  <span class="kw">pred</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span>(<span class="kw">object</span>, newdata = <span class="kw">newdata</span>, probability = <span class="fl">TRUE</span>)
-  <span class="kw">pred</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/attr.html">attr</a></span>(<span class="kw">pred</span>, <span class="st">"probabilities"</span>)[, <span class="fl">2</span>]
-}
-</pre></div>
+<span class="va">svm_predfun</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">object</span> <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">newdata</span> <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">probability</span> <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="op">{</span>
+  <span class="va">pred</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span><span class="op">(</span><span class="va">object</span>, newdata <span class="op">=</span> <span class="va">newdata</span>, probability <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+  <span class="va">pred</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/attr.html">attr</a></span><span class="op">(</span><span class="va">pred</span>, <span class="st">"probabilities"</span><span class="op">)</span><span class="op">[</span>, <span class="fl">2</span><span class="op">]</span>
+<span class="op">}</span></pre></div>
 </div>
 </div>
 </div>

@@ -140,15 +140,15 @@ boostrap samples</h1>
 <a href='as.resampling.html'>resampling</a> objects.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>as.represampling</span>(<span class='kw'>object</span>, <span class='kw'>...</span>)
+    <pre class="usage"><span class='fu'>as.represampling</span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='co'># S3 method for list</span>
-<span class='fu'>as.represampling</span>(<span class='kw'>object</span>, <span class='kw'>...</span>)
+<span class='fu'>as.represampling</span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='co'># S3 method for represampling</span>
-<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='kw'>x</span>, <span class='kw'>...</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
 
-<span class='fu'>is_represampling</span>(<span class='kw'>object</span>)</pre>
+<span class='fu'>is_represampling</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -191,13 +191,13 @@ performed.</p>
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># Muenchow et al. (2012), see ?ecuador</span>
 <span class='co'># Partitioning by elevation classes in 200 m steps:</span>
-<span class='kw'>fac</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/character.html'>as.character</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/Round.html'>floor</a></span>(<span class='kw'>ecuador</span><span class='op'>$</span><span class='kw'>dem</span> <span class='op'>/</span> <span class='fl'>300</span>)))
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>fac</span>)
+<span class='va'>fac</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/character.html'>as.character</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/Round.html'>floor</a></span><span class='op'>(</span><span class='va'>ecuador</span><span class='op'>$</span><span class='va'>dem</span> <span class='op'>/</span> <span class='fl'>300</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>fac</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;  10   5   6   7   8   9 
-#&gt;   4  21 246 255 147  78 </div><div class='input'><span class='kw'>parti</span> <span class='op'>&lt;-</span> <span class='fu'><a href='as.resampling.html'>as.resampling</a></span>(<span class='kw'>fac</span>)
+#&gt;   4  21 246 255 147  78 </div><div class='input'><span class='va'>parti</span> <span class='op'>&lt;-</span> <span class='fu'><a href='as.resampling.html'>as.resampling</a></span><span class='op'>(</span><span class='va'>fac</span><span class='op'>)</span>
 <span class='co'># a list of lists specifying sets of training and test sets,</span>
 <span class='co'># using each factor at a time as the test set:</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span>(<span class='kw'>parti</span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='va'>parti</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; List of 6
 #&gt;  $ 10:List of 2
 #&gt;   ..$ train: int [1:747] 1 2 3 4 5 6 7 8 9 10 ...
@@ -217,7 +217,7 @@ performed.</p>
 #&gt;  $ 9 :List of 2
 #&gt;   ..$ train: int [1:673] 1 2 3 4 5 6 8 9 10 11 ...
 #&gt;   ..$ test : int [1:78] 7 13 17 35 44 75 78 79 88 97 ...
-#&gt;  - attr(*, "class")= chr "resampling"</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>parti</span>)
+#&gt;  - attr(*, "class")= chr "resampling"</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>parti</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;    n.train n.test
 #&gt; 10     747      4
 #&gt; 5      730     21
