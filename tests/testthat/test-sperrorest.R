@@ -1,5 +1,7 @@
 context("sperrorest.R")
 
+set.seed(42)
+
 test_that("output type (= list) for different logical combinations of
           error_rep and error_fold for par_mode = 'foreach' on LDA example", {
   library("MASS")
