@@ -218,7 +218,7 @@
 ## Target node size:                 1 
 ## Variable importance mode:         none 
 ## Splitrule:                        gini 
-## OOB prediction error:             0.61 %</code></pre>
+## OOB prediction error:             0.54 %</code></pre>
 <p>Let’s take a look at the MER achieved on the training sample:</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">pred</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span><span class="op">(</span><span class="va">fit</span>, data <span class="op">=</span> <span class="va">maipo</span>, type <span class="op">=</span> <span class="st">"response"</span><span class="op">)</span>
@@ -279,11 +279,11 @@
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span><span class="op">(</span><span class="va">res_lda_nsp</span><span class="op">$</span><span class="va">error_rep</span>, <span class="va">summary</span><span class="op">)</span></code></pre></div>
 <pre><code>## $train_error
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##  0.0328  0.0336  0.0339  0.0340  0.0341  0.0355 
+##  0.0327  0.0330  0.0335  0.0335  0.0339  0.0347 
 ## 
 ## $train_accuracy
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##   0.965   0.966   0.966   0.966   0.966   0.967 
+##   0.965   0.966   0.966   0.966   0.967   0.967 
 ## 
 ## $train_events
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
@@ -295,11 +295,11 @@
 ## 
 ## $test_error
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##  0.0366  0.0386  0.0397  0.0395  0.0405  0.0417 
+##  0.0379  0.0392  0.0403  0.0401  0.0407  0.0427 
 ## 
 ## $test_accuracy
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##   0.958   0.959   0.960   0.961   0.961   0.963 
+##   0.957   0.959   0.960   0.960   0.961   0.962 
 ## 
 ## $test_events
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
@@ -326,16 +326,16 @@
   benchmark <span class="op">=</span> <span class="cn">TRUE</span>, progress <span class="op">=</span> <span class="cn">FALSE</span>
 <span class="op">)</span>
 <span class="va">res_lda_sp</span><span class="op">$</span><span class="va">benchmark</span><span class="op">$</span><span class="va">runtime_performance</span></code></pre></div>
-<pre><code>## Time difference of 49.4 secs</code></pre>
+<pre><code>## Time difference of 50.7 secs</code></pre>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span><span class="op">(</span><span class="va">res_lda_sp</span><span class="op">$</span><span class="va">error_rep</span>, <span class="va">summary</span><span class="op">)</span></code></pre></div>
 <pre><code>## $train_error
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##  0.0266  0.0285  0.0296  0.0295  0.0307  0.0314 
+##  0.0255  0.0270  0.0282  0.0284  0.0297  0.0326 
 ## 
 ## $train_accuracy
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##   0.969   0.969   0.970   0.971   0.971   0.973 
+##   0.967   0.970   0.972   0.972   0.973   0.974 
 ## 
 ## $train_events
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
@@ -347,11 +347,11 @@
 ## 
 ## $test_error
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##  0.0545  0.0603  0.0613  0.0616  0.0624  0.0755 
+##  0.0545  0.0608  0.0624  0.0628  0.0644  0.0705 
 ## 
 ## $test_accuracy
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##   0.925   0.938   0.939   0.938   0.940   0.946 
+##   0.929   0.936   0.938   0.937   0.939   0.946 
 ## 
 ## $test_events
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
@@ -417,11 +417,11 @@
 ## 
 ## $test_error
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##  0.0730  0.0806  0.0830  0.0834  0.0858  0.0956 
+##  0.0822  0.0867  0.0911  0.0922  0.0945  0.1103 
 ## 
 ## $test_accuracy
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##   0.904   0.914   0.917   0.917   0.919   0.927 
+##   0.890   0.906   0.909   0.908   0.913   0.918 
 ## 
 ## $test_events
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
@@ -433,7 +433,7 @@
 <div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">res_rf_sp</span><span class="op">$</span><span class="va">error_rep</span><span class="op">$</span><span class="va">test_accuracy</span><span class="op">)</span></code></pre></div>
 <pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##   0.904   0.914   0.917   0.917   0.919   0.927</code></pre>
+##   0.890   0.906   0.909   0.908   0.913   0.918</code></pre>
 <p>What a surprise! {ranger}‘s classification is not that good after all, if we acknowledge that in ’real life’ we wouldn’t be making predictions in situations where the class membership of other grid cells in the same field is known in the training stage. So spatial dependence does matter.</p>
 </div>
 </div>
