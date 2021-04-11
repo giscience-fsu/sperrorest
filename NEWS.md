@@ -1,3 +1,11 @@
+<!-- NEWS.md is maintained by https://cynkra.github.io/fledge, do not edit -->
+
+# sperrorest 3.0.1.9000
+
+- `partition_loo()`: Sequence along observations instead of columns.
+  Before, the train set was only composed of `ncol` observation. (#60)
+
+
 # sperrorest 3.0.1
 
 - Resolve minor NAMESPACE issues for {future} on CRAN
