@@ -683,7 +683,7 @@ partition_kmeans <- function(data, coords = c("x", "y"), nfold = 10,
 
 #' @title Leave-one-disc-out cross-validation and leave-one-out cross-validation
 #'
-#' @description partition_disc` partitions the sample into training and tests
+#' @description `partition_disc` partitions the sample into training and tests
 #'   set by selecting circular test areas (possibly surrounded by an exclusion
 #'   buffer) and using the remaining samples as training samples
 #'   (leave-one-disc-out cross-validation). `partition_loo` creates training and
