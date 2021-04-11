@@ -683,7 +683,7 @@ partition_kmeans <- function(data, coords = c("x", "y"), nfold = 10,
 
 #' @title Leave-one-disc-out cross-validation and leave-one-out cross-validation
 #'
-#' @description partition_disc` partitions the sample into training and tests
+#' @description `partition_disc` partitions the sample into training and tests
 #'   set by selecting circular test areas (possibly surrounded by an exclusion
 #'   buffer) and using the remaining samples as training samples
 #'   (leave-one-disc-out cross-validation). `partition_loo` creates training and
@@ -773,7 +773,7 @@ partition_disc <- function(data,
       set.seed(seed1 + cnt) # nocov
     }
     if (ndisc == nrow(data)) {
-      index <- c(seq_along(data)) # nocov
+      index <- seq_len(nrow(data)) # nocov
     } else {
       index <- sample.int(nrow(data),
         size = ndisc, replace = replace,
@@ -799,7 +799,7 @@ partition_disc <- function(data,
         test_sel <- i
         if (return_train) {
           if (is.null(buffer)) {
-            train_sel <- c(seq_along(data))[-i] # nocov
+            train_sel <- seq_len(nrow(data))[-i] # nocov
           } else {
             train_sel <- which(di > posbuf)
           }
@@ -1271,6 +1271,7 @@ represampling_disc_bootstrap <- function(data,
 #' @export
 plot.represampling <- function(x, data, coords = c("x", "y"), pch = "+",
                                wiggle_sd = 0, ...) {
+
   # nocov start
   if (missing(data)) {
     stop("'data' argument missing")
@@ -1293,6 +1294,7 @@ plot.represampling <- function(x, data, coords = c("x", "y"), pch = "+",
     mfrow = c(nr, nc), mar = c(2, 2, 3, 0.5), mgp = c(2, 0.7, 0), tcl = -0.3,
     cex = 0.5
   )
+
   for (i in seq_along(resample)) {
     for (j in seq_along(resample[[i]])) {
       seltrain <- resample[[i]][[j]]$train

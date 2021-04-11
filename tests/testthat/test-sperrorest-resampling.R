@@ -77,11 +77,8 @@ test_that("partition_disc() output is of correct length", {
 test_that("partition_loo() output is of correct length", {
 
   data(ecuador)
-  parti <- partition_loo(ecuador,
-    buffer = 200,
-    ndisc = 5, repetition = 1:1
-  )
-  expect_equal(length(parti[[1]]), 5)
+  parti <- partition_loo(ecuador)
+  expect_equal(length(parti[[1]]), 751)
 })
 
 # represampling_bootstrap() Mon Feb  6 22:29:03 2017 ---------------------------
