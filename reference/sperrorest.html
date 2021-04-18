@@ -372,69 +372,69 @@ Lecture Notes in Computer Science, 6065 LNCS: 184-195.</p>
   smp_fun <span class='op'>=</span> <span class='va'>partition_cv</span>,
   smp_args <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>repetition <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span>, nfold <span class='op'>=</span> <span class='fl'>3</span><span class='op'>)</span>
 <span class='op'>)</span>
-</div><div class='output co'>#&gt; Sun Apr 18 04:21:51 2021 Repetition 
-#&gt; Sun Apr 18 04:21:51 2021 Repetition - Fold 1 
-#&gt; Sun Apr 18 04:21:52 2021 Repetition - Fold 2 
-#&gt; Sun Apr 18 04:21:52 2021 Repetition - Fold 3 
-#&gt; Sun Apr 18 04:21:52 2021 Repetition 
-#&gt; Sun Apr 18 04:21:52 2021 Repetition - Fold 1 
-#&gt; Sun Apr 18 04:21:52 2021 Repetition - Fold 2 
-#&gt; Sun Apr 18 04:21:52 2021 Repetition - Fold 3 </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>nsp_res</span><span class='op'>$</span><span class='va'>error_rep</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; Sun Apr 18 10:41:38 2021 Repetition 
+#&gt; Sun Apr 18 10:41:38 2021 Repetition - Fold 1 
+#&gt; Sun Apr 18 10:41:38 2021 Repetition - Fold 2 
+#&gt; Sun Apr 18 10:41:38 2021 Repetition - Fold 3 
+#&gt; Sun Apr 18 10:41:38 2021 Repetition 
+#&gt; Sun Apr 18 10:41:38 2021 Repetition - Fold 1 
+#&gt; Sun Apr 18 10:41:38 2021 Repetition - Fold 2 
+#&gt; Sun Apr 18 10:41:38 2021 Repetition - Fold 3 </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>nsp_res</span><span class='op'>$</span><span class='va'>error_rep</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;                           mean           sd       median          IQR
-#&gt; train_auroc          0.8243307 0.0125941070    0.8243307 0.0089053785
-#&gt; train_error          0.1950732 0.0009415536    0.1950732 0.0006657790
-#&gt; train_accuracy       0.8049268 0.0009415536    0.8049268 0.0006657790
-#&gt; train_sensitivity    0.8925000 0.0007071068    0.8925000 0.0005000000
-#&gt; train_specificity    0.6304781 0.0014085792    0.6304781 0.0009960159
-#&gt; train_fpr70          0.2161355 0.0239458472    0.2161355 0.0169322709
-#&gt; train_fpr80          0.2828685 0.0169029509    0.2828685 0.0119521912
-#&gt; train_fpr90          0.3954183 0.0098600547    0.3954183 0.0069721116
-#&gt; train_tpr80          0.6205000 0.1195010460    0.6205000 0.0845000000
-#&gt; train_tpr90          0.3920000 0.0466690476    0.3920000 0.0330000000
-#&gt; train_tpr95          0.2615000 0.0615182900    0.2615000 0.0435000000
+#&gt; train_auroc          0.8413531 0.0002190341    0.8413531 0.0001548805
+#&gt; train_error          0.1917443 0.0018831073    0.1917443 0.0013315579
+#&gt; train_accuracy       0.8082557 0.0018831073    0.8082557 0.0013315579
+#&gt; train_sensitivity    0.8855000 0.0120208153    0.8855000 0.0085000000
+#&gt; train_specificity    0.6543825 0.0295801642    0.6543825 0.0209163347
+#&gt; train_fpr70          0.2051793 0.0140857925    0.2051793 0.0099601594
+#&gt; train_fpr80          0.2559761 0.0042257377    0.2559761 0.0029880478
+#&gt; train_fpr90          0.3954183 0.0042257377    0.3954183 0.0029880478
+#&gt; train_tpr80          0.6990000 0.0268700577    0.6990000 0.0190000000
+#&gt; train_tpr90          0.4380000 0.0212132034    0.4380000 0.0150000000
+#&gt; train_tpr95          0.2870000 0.0141421356    0.2870000 0.0100000000
 #&gt; train_events      1000.0000000 0.0000000000 1000.0000000 0.0000000000
 #&gt; train_count       1502.0000000 0.0000000000 1502.0000000 0.0000000000
-#&gt; test_auroc           0.6028904 0.0139590203    0.6028904 0.0098705179
-#&gt; test_error           0.3608522 0.0207141800    0.3608522 0.0146471372
-#&gt; test_accuracy        0.6391478 0.0207141800    0.6391478 0.0146471372
-#&gt; test_sensitivity     0.7630000 0.0296984848    0.7630000 0.0210000000
-#&gt; test_specificity     0.3924303 0.0028171585    0.3924303 0.0019920319
-#&gt; test_fpr70           0.5159363 0.0478916943    0.5159363 0.0338645418
-#&gt; test_fpr80           0.6573705 0.0281715849    0.6573705 0.0199203187
-#&gt; test_fpr90           0.8107570 0.0309887434    0.8107570 0.0219123506
-#&gt; test_tpr80           0.2640000 0.0028284271    0.2640000 0.0020000000
-#&gt; test_tpr90           0.1480000 0.0141421356    0.1480000 0.0100000000
-#&gt; test_tpr95           0.0840000 0.0339411255    0.0840000 0.0240000000
+#&gt; test_auroc           0.5913347 0.0145196349    0.5913347 0.0102669323
+#&gt; test_error           0.3741678 0.0000000000    0.3741678 0.0000000000
+#&gt; test_accuracy        0.6258322 0.0000000000    0.6258322 0.0000000000
+#&gt; test_sensitivity     0.7420000 0.0169705627    0.7420000 0.0120000000
+#&gt; test_specificity     0.3944223 0.0338059019    0.3944223 0.0239043825
+#&gt; test_fpr70           0.5517928 0.0084514755    0.5517928 0.0059760956
+#&gt; test_fpr80           0.6812749 0.0225372679    0.6812749 0.0159362550
+#&gt; test_fpr90           0.8705179 0.0366230604    0.8705179 0.0258964143
+#&gt; test_tpr80           0.2720000 0.0678822510    0.2720000 0.0480000000
+#&gt; test_tpr90           0.1590000 0.0183847763    0.1590000 0.0130000000
+#&gt; test_tpr95           0.0920000 0.0056568542    0.0920000 0.0040000000
 #&gt; test_events        500.0000000 0.0000000000  500.0000000 0.0000000000
 #&gt; test_count         751.0000000 0.0000000000  751.0000000 0.0000000000</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>nsp_res</span><span class='op'>$</span><span class='va'>error_fold</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;                           mean         sd      median        IQR
-#&gt; train.auroc         0.82011298 0.02776312   0.8263439 0.03078675
-#&gt; train.error         0.19507319 0.02176863   0.1956088 0.03343313
-#&gt; train.accuracy      0.80492681 0.02176863   0.8043912 0.03343313
-#&gt; train.sensitivity   0.89226267 0.02023471   0.8849737 0.01928846
-#&gt; train.specificity   0.63033654 0.04817174   0.6236699 0.03708201
-#&gt; train.fpr70         0.24704750 0.06326727   0.2489265 0.06831165
-#&gt; train.fpr80         0.29439122 0.05123823   0.3001055 0.06303427
-#&gt; train.fpr90         0.42018580 0.06222256   0.4184876 0.09726333
-#&gt; train.tpr80         0.54233791 0.14358433   0.5049551 0.19640841
-#&gt; train.tpr90         0.34197810 0.07278519   0.3453330 0.10373618
-#&gt; train.tpr95         0.21497801 0.09150267   0.2139608 0.12298731
-#&gt; train.events      333.33333333 6.94742158 333.5000000 7.00000000
-#&gt; train.count       500.66666667 0.51639778 501.0000000 0.75000000
-#&gt; test.auroc          0.60420696 0.04575682   0.5879650 0.06205671
-#&gt; test.error          0.36082072 0.05142120   0.3673147 0.06334263
-#&gt; test.accuracy       0.63917928 0.05142120   0.6326853 0.06334263
-#&gt; test.sensitivity    0.76189031 0.05396171   0.7654321 0.08608755
-#&gt; test.specificity    0.39271148 0.05962676   0.3755319 0.08068593
-#&gt; test.fpr70          0.55020923 0.07473376   0.5547167 0.08712012
-#&gt; test.fpr80          0.66880106 0.10545046   0.6583126 0.12346097
-#&gt; test.fpr90          0.83582852 0.09361168   0.8443182 0.10791762
-#&gt; test.tpr80          0.23545398 0.03839331   0.2388245 0.05537170
-#&gt; test.tpr90          0.11221033 0.08595134   0.1050429 0.05965687
-#&gt; test.tpr95          0.07681264 0.04020856   0.0889523 0.02610701
-#&gt; test.events       166.66666667 6.94742158 166.5000000 7.00000000
-#&gt; test.count        250.33333333 0.51639778 250.0000000 0.75000000
-#&gt; distance           -1.00000000 0.00000000  -1.0000000 0.00000000</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>nsp_res</span><span class='op'>$</span><span class='va'>represampling</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;                           mean         sd      median         IQR
+#&gt; train.auroc         0.83743699 0.02048053   0.8333183 0.033646385
+#&gt; train.error         0.19173586 0.01438586   0.1967984 0.014375250
+#&gt; train.accuracy      0.80826414 0.01438586   0.8032016 0.014375250
+#&gt; train.sensitivity   0.88544232 0.03107595   0.8810630 0.039594807
+#&gt; train.specificity   0.65315955 0.07978799   0.6303327 0.123423546
+#&gt; train.fpr70         0.21096473 0.03745328   0.2102482 0.039804792
+#&gt; train.fpr80         0.26678331 0.04197401   0.2696150 0.055188199
+#&gt; train.fpr90         0.41645165 0.05634835   0.4302107 0.027201786
+#&gt; train.tpr80         0.67328390 0.09501731   0.7081574 0.136802093
+#&gt; train.tpr90         0.42606490 0.02625749   0.4288201 0.038100185
+#&gt; train.tpr95         0.24519417 0.10272755   0.2306974 0.135858369
+#&gt; train.events      333.33333333 6.47044563 334.0000000 5.750000000
+#&gt; train.count       500.66666667 0.51639778 501.0000000 0.750000000
+#&gt; test.auroc          0.59363657 0.03339583   0.5821419 0.002435316
+#&gt; test.error          0.37417530 0.02708388   0.3712590 0.010470120
+#&gt; test.accuracy       0.62582470 0.02708388   0.6287410 0.010470120
+#&gt; test.sensitivity    0.74203609 0.03728947   0.7396495 0.067245950
+#&gt; test.specificity    0.39550360 0.06362015   0.4024297 0.088476560
+#&gt; test.fpr70          0.56470600 0.04071028   0.5440798 0.046597213
+#&gt; test.fpr80          0.72560279 0.05383697   0.7249146 0.046820219
+#&gt; test.fpr90          0.85173443 0.03938630   0.8563455 0.020751291
+#&gt; test.tpr80          0.23524330 0.11922537   0.2271224 0.108842594
+#&gt; test.tpr90          0.12384858 0.07164059   0.1309382 0.038435952
+#&gt; test.tpr95          0.06825989 0.07977265   0.0511169 0.059644324
+#&gt; test.events       166.66666667 6.47044563 166.0000000 5.750000000
+#&gt; test.count        250.33333333 0.51639778 250.0000000 0.750000000
+#&gt; distance           -1.00000000 0.00000000  -1.0000000 0.000000000</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>nsp_res</span><span class='op'>$</span><span class='va'>represampling</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; $`1`
 #&gt;   n.train n.test
 #&gt; 1     500    251
@@ -444,8 +444,8 @@ Lecture Notes in Computer Science, 6065 LNCS: 184-195.</p>
 #&gt; $`2`
 #&gt;   n.train n.test
 #&gt; 1     501    250
-#&gt; 2     500    251
-#&gt; 3     501    250
+#&gt; 2     501    250
+#&gt; 3     500    251
 #&gt; </div><div class='input'><span class='co'># plot(nsp_res$represampling, ecuador)</span>
 
 <span class='co'>### Spatial cross-validation:</span>
@@ -458,69 +458,69 @@ Lecture Notes in Computer Science, 6065 LNCS: 184-195.</p>
   smp_fun <span class='op'>=</span> <span class='va'>partition_kmeans</span>,
   smp_args <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>repetition <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span>, nfold <span class='op'>=</span> <span class='fl'>3</span><span class='op'>)</span>
 <span class='op'>)</span>
-</div><div class='output co'>#&gt; Sun Apr 18 04:21:52 2021 Repetition 
-#&gt; Sun Apr 18 04:21:52 2021 Repetition - Fold 1 
-#&gt; Sun Apr 18 04:21:52 2021 Repetition - Fold 2 
-#&gt; Sun Apr 18 04:21:52 2021 Repetition - Fold 3 
-#&gt; Sun Apr 18 04:21:52 2021 Repetition 
-#&gt; Sun Apr 18 04:21:52 2021 Repetition - Fold 1 
-#&gt; Sun Apr 18 04:21:52 2021 Repetition - Fold 2 
-#&gt; Sun Apr 18 04:21:52 2021 Repetition - Fold 3 </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>sp_res</span><span class='op'>$</span><span class='va'>error_rep</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;                           mean sd       median IQR
-#&gt; train_auroc          0.8596096  0    0.8596096   0
-#&gt; train_error          0.1804261  0    0.1804261   0
-#&gt; train_accuracy       0.8195739  0    0.8195739   0
-#&gt; train_sensitivity    0.8970000  0    0.8970000   0
-#&gt; train_specificity    0.6653386  0    0.6653386   0
-#&gt; train_fpr70          0.1633466  0    0.1633466   0
-#&gt; train_fpr80          0.2290837  0    0.2290837   0
-#&gt; train_fpr90          0.3466135  0    0.3466135   0
-#&gt; train_tpr80          0.7740000  0    0.7740000   0
-#&gt; train_tpr90          0.5320000  0    0.5320000   0
-#&gt; train_tpr95          0.2830000  0    0.2830000   0
-#&gt; train_events      1000.0000000  0 1000.0000000   0
-#&gt; train_count       1502.0000000  0 1502.0000000   0
-#&gt; test_auroc           0.4856972  0    0.4856972   0
-#&gt; test_error           0.4926764  0    0.4926764   0
-#&gt; test_accuracy        0.5073236  0    0.5073236   0
-#&gt; test_sensitivity     0.5240000  0    0.5240000   0
-#&gt; test_specificity     0.4741036  0    0.4741036   0
-#&gt; test_fpr70           0.7091633  0    0.7091633   0
-#&gt; test_fpr80           0.9282869  0    0.9282869   0
-#&gt; test_fpr90           0.9282869  0    0.9282869   0
-#&gt; test_tpr80           0.1640000  0    0.1640000   0
-#&gt; test_tpr90           0.1040000  0    0.1040000   0
-#&gt; test_tpr95           0.0520000  0    0.0520000   0
-#&gt; test_events        500.0000000  0  500.0000000   0
-#&gt; test_count         751.0000000  0  751.0000000   0</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>sp_res</span><span class='op'>$</span><span class='va'>error_fold</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;                           mean          sd      median          IQR
-#&gt; train.auroc         0.85746860  0.01344957   0.8616441   0.02189372
-#&gt; train.error         0.18118523  0.01386149   0.1809745   0.02324481
-#&gt; train.accuracy      0.81881477  0.01386149   0.8190255   0.02324481
-#&gt; train.sensitivity   0.89517275  0.02572003   0.8981818   0.04295632
-#&gt; train.specificity   0.66590587  0.02628511   0.6794872   0.04039695
-#&gt; train.fpr70         0.17270680  0.01700203   0.1724138   0.02851073
-#&gt; train.fpr80         0.25899595  0.02213544   0.2628205   0.03678829
-#&gt; train.fpr90         0.37418008  0.04490680   0.3589744   0.07267442
-#&gt; train.tpr80         0.74550182  0.03479968   0.7331288   0.05610390
-#&gt; train.tpr90         0.47415691  0.06572210   0.4846626   0.10937116
-#&gt; train.tpr95         0.27116823  0.08600720   0.2423313   0.13928913
-#&gt; train.events      333.33333333 55.74465595 326.0000000  93.00000000
-#&gt; train.count       500.66666667 63.53791519 498.0000000 106.50000000
-#&gt; test.auroc          0.51254985  0.05070154   0.4893801   0.07952378
-#&gt; test.error          0.47282007  0.09752171   0.4426877   0.15879565
-#&gt; test.accuracy       0.52717993  0.09752171   0.5573123   0.15879565
-#&gt; test.sensitivity    0.58619754  0.24786480   0.6954023   0.39072607
-#&gt; test.specificity    0.45636358  0.21782564   0.3896104   0.35486342
-#&gt; test.fpr70          0.75476378  0.13365230   0.7721519   0.22300068
-#&gt; test.fpr80          0.78029943  0.12573893   0.8227848   0.20352016
-#&gt; test.fpr90          0.94262180  0.02584851   0.9480519   0.04277149
-#&gt; test.tpr80          0.20735607  0.03274369   0.2177778   0.05321782
-#&gt; test.tpr90          0.09922714  0.07202823   0.1022222   0.12073233
-#&gt; test.tpr95          0.05940594  0.09203129   0.0000000   0.13366337
-#&gt; test.events       166.66666667 55.74465595 174.0000000  93.00000000
-#&gt; test.count        250.33333333 63.53791519 253.0000000 106.50000000
-#&gt; distance           -1.00000000  0.00000000  -1.0000000   0.00000000</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>sp_res</span><span class='op'>$</span><span class='va'>represampling</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; Sun Apr 18 10:41:39 2021 Repetition 
+#&gt; Sun Apr 18 10:41:39 2021 Repetition - Fold 1 
+#&gt; Sun Apr 18 10:41:39 2021 Repetition - Fold 2 
+#&gt; Sun Apr 18 10:41:39 2021 Repetition - Fold 3 
+#&gt; Sun Apr 18 10:41:39 2021 Repetition 
+#&gt; Sun Apr 18 10:41:39 2021 Repetition - Fold 1 
+#&gt; Sun Apr 18 10:41:39 2021 Repetition - Fold 2 
+#&gt; Sun Apr 18 10:41:39 2021 Repetition - Fold 3 </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>sp_res</span><span class='op'>$</span><span class='va'>error_rep</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;                           mean          sd       median         IQR
+#&gt; train_auroc          0.8472530 0.017474834    0.8472530 0.012356574
+#&gt; train_error          0.1820905 0.002353884    0.1820905 0.001664447
+#&gt; train_accuracy       0.8179095 0.002353884    0.8179095 0.001664447
+#&gt; train_sensitivity    0.8905000 0.009192388    0.8905000 0.006500000
+#&gt; train_specificity    0.6733068 0.011268634    0.6733068 0.007968127
+#&gt; train_fpr70          0.1842629 0.029580164    0.1842629 0.020916335
+#&gt; train_fpr80          0.2370518 0.011268634    0.2370518 0.007968127
+#&gt; train_fpr90          0.3555777 0.012677213    0.3555777 0.008964143
+#&gt; train_tpr80          0.7360000 0.053740115    0.7360000 0.038000000
+#&gt; train_tpr90          0.4845000 0.067175144    0.4845000 0.047500000
+#&gt; train_tpr95          0.2660000 0.024041631    0.2660000 0.017000000
+#&gt; train_events      1000.0000000 0.000000000 1000.0000000 0.000000000
+#&gt; train_count       1502.0000000 0.000000000 1502.0000000 0.000000000
+#&gt; test_auroc           0.5032968 0.024889595    0.5032968 0.017599602
+#&gt; test_error           0.4727031 0.028246609    0.4727031 0.019973369
+#&gt; test_accuracy        0.5272969 0.028246609    0.5272969 0.019973369
+#&gt; test_sensitivity     0.5470000 0.032526912    0.5470000 0.023000000
+#&gt; test_specificity     0.4880478 0.019720109    0.4880478 0.013944223
+#&gt; test_fpr70           0.7529880 0.061977487    0.7529880 0.043824701
+#&gt; test_fpr80           0.8884462 0.056343170    0.8884462 0.039840637
+#&gt; test_fpr90           0.9282869 0.000000000    0.9282869 0.000000000
+#&gt; test_tpr80           0.1610000 0.004242641    0.1610000 0.003000000
+#&gt; test_tpr90           0.0990000 0.007071068    0.0990000 0.005000000
+#&gt; test_tpr95           0.0650000 0.018384776    0.0650000 0.013000000
+#&gt; test_events        500.0000000 0.000000000  500.0000000 0.000000000
+#&gt; test_count         751.0000000 0.000000000  751.0000000 0.000000000</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>sp_res</span><span class='op'>$</span><span class='va'>error_fold</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;                           mean          sd       median          IQR
+#&gt; train.auroc         0.84515941  0.01905839   0.84534979  0.028026750
+#&gt; train.error         0.18240710  0.01060702   0.18304622  0.009904172
+#&gt; train.accuracy      0.81759290  0.01060702   0.81695378  0.009904172
+#&gt; train.sensitivity   0.88941674  0.01990945   0.88819737  0.018551212
+#&gt; train.specificity   0.67338381  0.03405612   0.67399773  0.033408639
+#&gt; train.fpr70         0.19001989  0.02696925   0.18629168  0.035076259
+#&gt; train.fpr80         0.26077121  0.03429704   0.25571965  0.040338724
+#&gt; train.fpr90         0.38765695  0.03869441   0.38784530  0.057629711
+#&gt; train.tpr80         0.69871754  0.06961726   0.71852900  0.077197624
+#&gt; train.tpr90         0.38222915  0.12415524   0.37383597  0.127049184
+#&gt; train.tpr95         0.24811503  0.08804794   0.21752928  0.118033864
+#&gt; train.events      333.33333333 44.88503834 326.50000000 50.500000000
+#&gt; train.count       500.66666667 52.87217290 490.00000000 65.500000000
+#&gt; test.auroc          0.52865230  0.04745692   0.53136288  0.078210920
+#&gt; test.error          0.46155050  0.07803414   0.43884387  0.080997314
+#&gt; test.accuracy       0.53844950  0.07803414   0.56115613  0.080997314
+#&gt; test.sensitivity    0.58378570  0.19028544   0.64871054  0.191650843
+#&gt; test.specificity    0.47751069  0.16408495   0.45386905  0.161617488
+#&gt; test.fpr70          0.74420320  0.12039194   0.75586762  0.182721973
+#&gt; test.fpr80          0.84903452  0.12630703   0.87089783  0.074518397
+#&gt; test.fpr90          0.96263035  0.03429537   0.95823650  0.044154776
+#&gt; test.tpr80          0.15410646  0.07515119   0.15269750  0.066471765
+#&gt; test.tpr90          0.10004200  0.06560359   0.12034188  0.094070539
+#&gt; test.tpr95          0.04934735  0.07259254   0.01269036  0.075709340
+#&gt; test.events       166.66666667 44.88503834 173.50000000 50.500000000
+#&gt; test.count        250.33333333 52.87217290 261.00000000 65.500000000
+#&gt; distance           -1.00000000  0.00000000  -1.00000000  0.000000000</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>sp_res</span><span class='op'>$</span><span class='va'>represampling</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; $`1`
 #&gt;   n.train n.test
 #&gt; 1     498    253
@@ -529,9 +529,9 @@ Lecture Notes in Computer Science, 6065 LNCS: 184-195.</p>
 #&gt; 
 #&gt; $`2`
 #&gt;   n.train n.test
-#&gt; 1     498    253
-#&gt; 2     573    178
-#&gt; 3     431    320
+#&gt; 1     482    269
+#&gt; 2     469    282
+#&gt; 3     551    200
 #&gt; </div><div class='input'><span class='co'># plot(sp_res$represampling, ecuador)</span>
 
 <span class='va'>smry</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>
