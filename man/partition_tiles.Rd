@@ -111,6 +111,7 @@ therefore recommended for non-zero (including random) offsets.
 }
 \examples{
 data(ecuador)
+set.seed(42)
 parti <- partition_tiles(ecuador, nsplit = c(4, 3), reassign = FALSE)
 # plot(parti,ecuador)
 # tile A4 has only 55 samples
