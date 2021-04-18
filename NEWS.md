@@ -1,5 +1,10 @@
 <!-- NEWS.md is maintained by https://cynkra.github.io/fledge, do not edit -->
 
+# sperrorest 3.0.2
+
+- `partition_disc()`: set default value of arg `buffer` to 0 instead of NULL, fixes #61
+
+
 # sperrorest 3.0.1.9000
 
 - `partition_loo()`: Sequence along observations instead of columns.
