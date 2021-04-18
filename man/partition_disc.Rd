@@ -9,7 +9,7 @@ partition_disc(
   data,
   coords = c("x", "y"),
   radius,
-  buffer = NULL,
+  buffer = 0,
   ndisc = nrow(data),
   seed1 = NULL,
   return_train = TRUE,
