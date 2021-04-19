@@ -1,19 +1,20 @@
-## Test environments
-* local Antergos Installation, R 3.4.4
-* ubuntu 14.04 (on travis-ci), R 3.4.3, R 3.4.4, R-devel
-* OSX 10.12, Xcode 8.3 (on travis-ci), R 3.4.3, R 3.4.4
-* win-builder (devel and release)
+sperrorest 3.0.2
+
+## Cran Repository Policy
+
+- [x] Reviewed CRP last edited 2020-10-29.
 
 ## R CMD check results
 
-0 errors | 0 warnings | 0 notes
+- [x] Checked locally, R 4.0.5
+- [x] Checked on CI system, R 4.0.5
+- [x] Checked on win-builder, R devel
 
-## Reverse dependencies
+Check the boxes above after successful execution and remove this line. Then run `fledge::release()`.
 
-There are no reverse dependencies.
+## Current CRAN check results
 
-## Downstream dependencies
+- [x] Checked on 2021-04-18, problems found: https://cran.r-project.org/web/checks/check_results_sperrorest.html
+- [x] WARN: r-patched-solaris-x86
 
-"There are currently no downstream dependencies for this package”
-
-
+Check results at: https://cran.r-project.org/web/checks/check_results_sperrorest.html
