@@ -876,7 +876,7 @@ represampling_bootstrap <- function(data, coords = c("x", "y"),
     train <- sample(nrow(data), nboot, replace = TRUE)
     if (oob) {
       # test set = out of bag sample:
-      test <- c(seq_along(data))[!(c(seq_along(data)) %in% train)] # nocov
+      test <- c(seq_len(nrow(data)))[!(c(seq_len(nrow(data))) %in% train)] # nocov
     } else {
       # test set = independently drawn bootstrap sample
       test <- sample(nrow(data), nboot, replace = TRUE)
@@ -1186,7 +1186,7 @@ represampling_disc_bootstrap <- function(data,
         replace = TRUE, ndisc = 1, seed1 = NULL,
         return_train = TRUE, ...
       )
-      test <- c(seq_along(data))
+      test <- c(seq_len(nrow(data)))
       for (i in 1:nboot[1]) {
         test <- test[test %in% train[[i]][[1]]$train] # yes, $train!
         train[[i]][[1]]$train <- NULL
