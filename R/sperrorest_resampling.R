@@ -761,7 +761,7 @@ partition_disc <- function(data,
   stopifnot(buffer >= 0)
 
   if (replace == FALSE & ndisc > nrow(data)) {
-    stop("partition_disc: ndisc must be > nrow(data) if replace=FALSE") # nocov
+    stop("partition_disc: ndisc must be <= nrow(data) if replace=FALSE") # nocov
   }
 
   resample <- list()
