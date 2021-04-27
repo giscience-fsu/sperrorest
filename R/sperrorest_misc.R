@@ -117,9 +117,9 @@ add.distance.resampling <- function(object, data, coords = c("x", "y"), ...) { #
 #' @method add.distance represampling
 #' @export
 add.distance.represampling <- function(object, ...) { # nolint
-  object <- lapply(object, add.distance.resampling, ...) # nolint
+  object <- future.apply::future_lapply(object, add.distance.resampling, ...) # nolint
   class(object) <- "represampling"
-  return(object)
+  object
 }
 
 #' @title Alphanumeric tile names
