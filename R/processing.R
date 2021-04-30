@@ -29,7 +29,6 @@ runfolds <- function(j = NULL,
                      pooled_pred_train = NULL,
                      response = NULL,
                      progress = NULL,
-                     is_factor_prediction = NULL,
                      pooled_pred_test = NULL,
                      coords = NULL,
                      test_fun = NULL,
@@ -95,7 +94,8 @@ runfolds <- function(j = NULL,
       pooled_pred_test = NA,
       current_res = NA,
       current_impo = NA,
-      not_converged_folds = not_converged_folds
+      not_converged_folds = not_converged_folds,
+      is_factor_prediction = NA
     ))
   }
 
@@ -139,7 +139,8 @@ runfolds <- function(j = NULL,
       current_res = NA,
       current_impo = NA,
       not_converged_folds = not_converged_folds,
-      resampling = current_sample
+      resampling = current_sample,
+      is_factor_prediction = NA
     ))
   }
 
@@ -202,8 +203,6 @@ runfolds <- function(j = NULL,
       repetition_number
     ))
 
-    is_factor_prediction <<- is.factor(pred_test)
-
     not_converged_folds <- not_converged_folds + 1
 
     return(list(
@@ -220,8 +219,6 @@ runfolds <- function(j = NULL,
 
   pooled_obs_test <- c(pooled_obs_test, nd_test[, response])
   pooled_pred_test <- c(pooled_pred_test, pred_test)
-
-  is_factor_prediction <<- is.factor(pred_test)
 
   ### Permutation-based variable importance assessment:
   if (importance == TRUE) {
@@ -309,7 +306,8 @@ runfolds <- function(j = NULL,
     current_res = current_res,
     current_impo = current_impo,
     not_converged_folds = not_converged_folds,
-    resampling = current_sample
+    resampling = current_sample,
+    is_factor_prediction = is.factor(pred_test)
   ))
 }
 
@@ -342,7 +340,6 @@ runreps <- function(current_sample = NULL,
                     pooled_obs_test = NULL,
                     pooled_pred_train = NULL,
                     response = NULL,
-                    is_factor_prediction = NULL,
                     pooled_pred_test = NULL,
                     test_fun = NULL,
                     test_param = NULL,
@@ -384,7 +381,6 @@ runreps <- function(current_sample = NULL,
       model_fun = model_fun,
       imp_permutations = imp_permutations,
       imp_variables = imp_variables,
-      is_factor_prediction = is_factor_prediction,
       importance = importance,
       current_res = current_res,
       pred_args = pred_args,
@@ -401,6 +397,14 @@ runreps <- function(current_sample = NULL,
       err_fun = err_fun
     )
   }) -> runfolds_list
+
+  is_factor_prediction <- sapply(runfolds_list, function(x) x$is_factor_prediction)
+  is_factor_prediction <- is_factor_prediction[ !is.na(is_factor_prediction) ]
+  if (length(is_factor_prediction) == 0) {
+    is_factor_prediction <- FALSE
+  } else {
+    is_factor_prediction <- any(is_factor_prediction) # or all?
+  }
 
   # merge sublists of each fold into one list
   # http://stackoverflow.com/questions/32557131/adding-a-vector-to-each-sublist-within-a-list-r # nolint
@@ -438,7 +442,7 @@ runreps <- function(current_sample = NULL,
       levels = lev
     )
 
-    if (is_factor_prediction == TRUE) {
+    if (is_factor_prediction) {
       pooled_only$pooled_pred_train <- factor(lev[
         pooled_only$pooled_pred_train
       ], levels = lev)

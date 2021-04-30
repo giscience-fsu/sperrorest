@@ -26,7 +26,6 @@ runreps(
   pooled_obs_test = NULL,
   pooled_pred_train = NULL,
   response = NULL,
-  is_factor_prediction = NULL,
   pooled_pred_test = NULL,
   test_fun = NULL,
   test_param = NULL,

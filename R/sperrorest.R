@@ -288,9 +288,6 @@ sperrorest <- function(formula,
 
   pooled_error <- NULL
 
-  # required to be able to assign levels to predictions if appropriate:
-  is_factor_prediction <- NULL
-
   ### Permutation-based variable importance assessment (optional):
   impo <- NULL
   if (importance) {
@@ -334,7 +331,6 @@ sperrorest <- function(formula,
       model_fun = model_fun,
       imp_permutations = imp_permutations,
       imp_variables = imp_variables,
-      is_factor_prediction = is_factor_prediction,
       importance = importance,
       current_res = current_res,
       pred_args = pred_args,

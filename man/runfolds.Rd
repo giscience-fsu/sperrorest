@@ -28,7 +28,6 @@ runfolds(
   pooled_pred_train = NULL,
   response = NULL,
   progress = NULL,
-  is_factor_prediction = NULL,
   pooled_pred_test = NULL,
   coords = NULL,
   test_fun = NULL,
