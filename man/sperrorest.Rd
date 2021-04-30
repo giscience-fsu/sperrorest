@@ -26,7 +26,8 @@ sperrorest(
   distance = FALSE,
   do_gc = 1,
   progress = "all",
-  benchmark = FALSE
+  benchmark = FALSE,
+  verbose = 0
 )
 }
 \arguments{
@@ -105,6 +106,9 @@ only or \code{FALSE} for no progress information.}
 
 \item{benchmark}{(optional) logical (default: \code{FALSE}): if \code{TRUE}, perform
 benchmarking and return \code{sperrorestbenchmark} object.}
+
+\item{verbose}{Controls the amount of information printed while processing.
+Defaults to 0 (no output).}
 }
 \value{
 A list (object of class {sperrorest}) with (up to) six components:
@@ -216,14 +220,16 @@ the assessment of prediction rules in remote sensing: the R package
 'sperrorest'.
 2012 IEEE International Geoscience and Remote Sensing Symposium (IGARSS),
 23-27 July 2012, p. 5372-5375.
+\url{https://ieeexplore.ieee.org/document/6352393}
 
 Brenning, A. 2005. Spatial prediction models for landslide hazards: review,
 comparison and evaluation. Natural Hazards and Earth System Sciences,
-5(6): 853-862.
+5(6), 853-862. \url{https://doi.org/10.5194/nhess-5-853-2005}
 
-Brenning, A., S. Long & P. Fieguth. Forthcoming. Detecting rock glacier flow
-structures using Gabor filters and IKONOS imagery.
-Submitted to Remote Sensing of Environment.
+Brenning, A., S. Long & P. Fieguth. 2012. Detecting rock glacier
+flow structures using Gabor filters and IKONOS imagery.
+Remote Sensing of Environment, 125, 227-237.
+\url{http://dx.doi.org/10.1016/j.rse.2012.07.005}
 
 Russ, G. & A. Brenning. 2010a. Data mining in precision agriculture:
 Management of spatial information. In 13th International Conference on

@@ -81,6 +81,8 @@
 #'   only or `FALSE` for no progress information.
 #' @param benchmark (optional) logical (default: `FALSE`): if `TRUE`, perform
 #'   benchmarking and return `sperrorestbenchmark` object.
+#' @param verbose Controls the amount of information printed while processing.
+#'   Defaults to 0 (no output).
 #'
 #' @return A list (object of class {sperrorest}) with (up to) six components:
 #' - error_rep: `sperrorestreperror` containing
@@ -101,14 +103,16 @@
 #' 'sperrorest'.
 #' 2012 IEEE International Geoscience and Remote Sensing Symposium (IGARSS),
 #' 23-27 July 2012, p. 5372-5375.
+#' <https://ieeexplore.ieee.org/document/6352393>
 #'
 #' Brenning, A. 2005. Spatial prediction models for landslide hazards: review,
 #' comparison and evaluation. Natural Hazards and Earth System Sciences,
-#' 5(6): 853-862.
+#' 5(6), 853-862. <https://doi.org/10.5194/nhess-5-853-2005>
 #'
-#' Brenning, A., S. Long & P. Fieguth. Forthcoming. Detecting rock glacier flow
-#' structures using Gabor filters and IKONOS imagery.
-#' Submitted to Remote Sensing of Environment.
+#' Brenning, A., S. Long & P. Fieguth. 2012. Detecting rock glacier
+#' flow structures using Gabor filters and IKONOS imagery.
+#' Remote Sensing of Environment, 125, 227-237.
+#' <http://dx.doi.org/10.1016/j.rse.2012.07.005>
 #'
 #' Russ, G. & A. Brenning. 2010a. Data mining in precision agriculture:
 #' Management of spatial information. In 13th International Conference on
@@ -207,7 +211,14 @@ sperrorest <- function(formula,
                        distance = FALSE,
                        do_gc = 1,
                        progress = "all",
-                       benchmark = FALSE) {
+                       benchmark = FALSE,
+                       verbose = 0) {
+
+  if (verbose >= 1) {
+    cat("sperrorest version", as.character(packageVersion("sperrorest")), "\n")
+    cat("(c) A. Brenning, P. Schratz, and contributors\n")
+    cat("Cite as Brenning (2012), doi: 10.1109/igarss.2012.6352393\n")
+  }
 
   # set global variables for R CMD Check
 
@@ -273,13 +284,17 @@ sperrorest <- function(formula,
   # Name of response variable:
   response <- as.character(attr(terms(formula), "variables"))[2]
 
+  if (verbose >= 1)
+    cat(date(), "Creating resampling object...\n")
+
   smp_args$data <- data
   smp_args$coords <- coords
 
   resamp <- do.call(smp_fun, args = smp_args)
 
   if (distance) {
-    # Parallelize this function???
+    if (verbose >= 1)
+      cat(date(), "Adding distance information to resampling object...\n")
     resamp <- add.distance(resamp, data, coords = coords, fun = mean)
   }
 
@@ -318,6 +333,9 @@ sperrorest <- function(formula,
 
   # mode = "future" Sun May 21 12:04:55 2017 -----------------------------
 
+  if (verbose >= 1)
+    cat(date(), "Running the model assessment...\n")
+
   my_res <- future.apply::future_lapply(resamp, function(x) {
     runreps(
       current_sample = x,
@@ -350,20 +368,30 @@ sperrorest <- function(formula,
 
   ### format parallel outputs ----
 
+  if (verbose >= 1)
+    cat(date(), "Postprocessing...\n")
+
   # overwrite resamp object with possibly altered resample object from
   # runfolds
   # this applies if a custom test_fun or train_fun with a sub-resampling
   # method is used
-  for (i in seq_along(resamp)) {
-    for (j in seq_along(resamp[[i]])) {
-      # ...was [[1]], which assumes that all repetitions have equal
-      # number of folds.
-      resamp[[i]][[j]] <- my_res[[i]][["resampling"]][[j]][[j]]
+  if (!is.null(test_fun) | !is.null(train_fun)) {
+    if (verbose >= 2)
+      cat(date(), " - Copy possibly altered resampling object...")
+    for (i in seq_along(resamp)) {
+      for (j in seq_along(resamp[[i]])) {
+        # ...was [[1]], which assumes that all repetitions have equal
+        # number of folds.
+        resamp[[i]][[j]] <- my_res[[i]][["resampling"]][[j]][[j]]
+      }
     }
   }
 
   # check if any rep is NA in all folds and if, remove entry
   # this happens e.g. in maxent #nolint
+
+  if (verbose >= 2)
+    cat(date(), " - Check NAs...\n")
 
   check_na <- lapply(my_res, function(x) all(is.na(x))) # nolint
   check_na_flat <- unlist(check_na)
@@ -378,6 +406,8 @@ sperrorest <- function(formula,
   }
 
   # assign names to sublists - otherwise `transfer_parallel_output` doesn't work
+  if (verbose >= 2)
+    cat(date(), " - Rename sublists...\n")
   for (i in seq_along(my_res)) {
     names(my_res[[i]]) <- c(
       "error", "pooled_error", "importance",
@@ -386,11 +416,15 @@ sperrorest <- function(formula,
   }
 
   # flatten list & calc sum
+  if (verbose >= 2)
+    cat(date(), " - Flatten lists...\n")
   not_converged_folds <- sum(
     unlist(lapply(my_res,
                   function(x) unlist(x[["non-converged-folds"]]))))
 
   # transfer results of lapply() to respective data objects
+  if (verbose >= 2)
+    cat(date(), " - Transfer outputs...\n")
   my_res_mod <- transfer_parallel_output(my_res, res, impo, pooled_error) # nolint
 
   pooled_error <- as.data.frame(my_res_mod$pooled_error)
@@ -419,6 +453,9 @@ sperrorest <- function(formula,
   package_version <- packageVersion("sperrorest")
   class(package_version) <- "sperrorestpackageversion"
 
+  if (verbose >= 1)
+    cat(date(), "Done.\n")
+
   res <- list(
     error_rep = pooled_error, error_fold = my_res_mod$res,
     represampling = resamp, importance = impo, benchmark = my_bench,
@@ -438,5 +475,5 @@ sperrorest <- function(formula,
     ))
   }
 
-  return(res)
+  res
 }
