@@ -359,7 +359,9 @@ sperrorest <- function(formula,
   # this applies if a custom test_fun or train_fun with a sub-resampling
   # method is used
   for (i in seq_along(resamp)) {
-    for (j in seq_along(resamp[[1]])) {
+    for (j in seq_along(resamp[[i]])) {
+      # ...was [[1]], which assumes that all repetitions have equal
+      # number of folds.
       resamp[[i]][[j]] <- my_res[[i]][["resampling"]][[j]][[j]]
     }
   }
@@ -373,7 +375,7 @@ sperrorest <- function(formula,
   if (any(check_na_flat) == TRUE) {
     check_na <- as.numeric(which(lapply(my_res, function(x) {
       all(is.na(x))
-    }) == "TRUE"))
+    }) ))
 
     my_res <- my_res[-check_na]
 
@@ -388,10 +390,9 @@ sperrorest <- function(formula,
   }
 
   # flatten list & calc sum
-  not_converged_folds <- sum(as.vector(vapply(
-    my_res, function(x) unlist(x[["non-converged-folds"]]),
-    FUN.VALUE = numeric(j)
-  )))
+  not_converged_folds <- sum(
+    unlist(lapply(my_res,
+                  function(x) unlist(x[["non-converged-folds"]]))))
 
   # transfer results of lapply() to respective data objects
   my_res_mod <- transfer_parallel_output(my_res, res, impo, pooled_error) # nolint
@@ -409,7 +410,9 @@ sperrorest <- function(formula,
     end_time <- Sys.time()
     my_bench <- list(
       system.info = Sys.info(), t_start = start_time,
-      t_end = end_time, cpu_cores = parallel::detectCores(),
+      t_end = end_time, cpu_cores = future::nbrOfWorkers(),
+      # was: parallel::detectCores(), which is the number of physically
+      # available cores, but only nbrOfWorkers() can be used by this process.
       runtime_performance = end_time - start_time
     )
     class(my_bench) <- "sperrorestbenchmark"
@@ -433,7 +436,7 @@ sperrorest <- function(formula,
     }
     # print counter
     cat(sprintf(
-      "%s folds of %s total folds (%s rep * %s folds) did not converge.", # nolint
+      "%s folds of %s total folds (%s rep * %s folds) caused errors or returned NA (e.g., did not converge).", # nolint
       not_converged_folds, smp_args$repetition * smp_args$nfold,
       smp_args$repetition, smp_args$nfold
     ))
