@@ -31,11 +31,11 @@ text(fit, use.n = TRUE)
 \references{
 Muenchow, J., Brenning, A., Richter, M., 2012. Geomorphic process
 rates of landslides along a humidity gradient in the tropical Andes.
-Geomorphology, 139-140: 271-284.
+\emph{Geomorphology}, 139-140: 271-284.
 
 Brenning, A., 2005. Spatial prediction models for landslide hazards:
 review, comparison and evaluation.
-Natural Hazards and Earth System Sciences, 5(6): 853-862.
+\emph{Natural Hazards and Earth System Sciences}, 5(6): 853-862.
 }
 \keyword{datasets}
 \keyword{internal}

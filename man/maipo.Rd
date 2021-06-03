@@ -3,9 +3,28 @@
 \docType{data}
 \name{maipo}
 \alias{maipo}
-\title{Maipo dataset from Marco Pena}
+\title{Fruit-tree crop classification: the Maipo dataset}
+\format{
+a \code{data.frame} with point samples (grid cells) of crop type
+and Landsat-derived remote sensing features (spectral bands
+and vegetation indices). In addition, UTM x/y coordinates and
+a factor variable indicating which field a grid cell belongs to.
+Spectral bands are coded as \code{bij} where \code{i} represents the image
+date (early to late season, dates see paper), and \code{j} is the band
+number.
+}
 \description{
-Maipo dataset from Marco Pena
+This dataset is from a case study on fruit-tree crop classification
+using a satellite image time series. The dataset should be
+cited as Pena & Brenning (2015), reference below. There are
+7713 grid cells from 400 fields in this dataset, which makes it
+necessary to apply spatial cross-validation at the field level
+for model assessment (see \code{\link[=partition_factor_cv]{partition_factor_cv()}}).
+}
+\references{
+Pena, M.A., Brenning, A. (2015). Assessing fruit-tree
+crop classification from Landsat-8 time series for the Maipo Valley,
+Chile. \emph{Remote Sensing of Environment}, 171: 234-244.
 }
 \keyword{datasets}
 \keyword{internal}
