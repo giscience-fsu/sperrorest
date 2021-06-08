@@ -141,7 +141,7 @@
 <span class='fu'>add.distance</span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>data</span>, coords <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"x"</span>, <span class='st'>"y"</span><span class='op'>)</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='co'># S3 method for represampling</span>
-<span class='fu'>add.distance</span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>...</span><span class='op'>)</span></pre>
+<span class='fu'>add.distance</span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>data</span>, coords <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"x"</span>, <span class='st'>"y"</span><span class='op'>)</span>, mode <span class='op'>=</span> <span class='st'>"future"</span>, <span class='va'>...</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -163,6 +163,12 @@ add.distance.resampling, respectively.</p></td>
     <tr>
       <th>coords</th>
       <td><p>(ignored by <code>partition_cv</code>)</p></td>
+    </tr>
+    <tr>
+      <th>mode</th>
+      <td><p>Use <code><a href='https://rdrr.io/pkg/future.apply/man/future_lapply.html'>future.apply::future_lapply()</a></code> for parallelized
+execution if <code>mode = "future"</code>, and <code>lapply</code> for sequential
+execution otherwise (<code>mode = "sequential"</code>)</p></td>
     </tr>
     </table>
 
@@ -187,8 +193,8 @@ averaged. Aggregation methods other than <code>mean</code> can be chosen using t
     <pre class="examples"><div class='input'><span class='co'># Muenchow et al. (2012), see ?ecuador</span>
 <span class='va'>nsp.parti</span> <span class='op'>&lt;-</span> <span class='fu'><a href='partition_cv.html'>partition_cv</a></span><span class='op'>(</span><span class='va'>ecuador</span><span class='op'>)</span>
 <span class='va'>sp.parti</span> <span class='op'>&lt;-</span> <span class='fu'><a href='partition_kmeans.html'>partition_kmeans</a></span><span class='op'>(</span><span class='va'>ecuador</span><span class='op'>)</span>
-<span class='va'>nsp.parti</span> <span class='op'>&lt;-</span> <span class='fu'>add.distance</span><span class='op'>(</span><span class='va'>nsp.parti</span>, <span class='va'>ecuador</span><span class='op'>)</span>
-<span class='va'>sp.parti</span> <span class='op'>&lt;-</span> <span class='fu'>add.distance</span><span class='op'>(</span><span class='va'>sp.parti</span>, <span class='va'>ecuador</span><span class='op'>)</span>
+<span class='va'>nsp.parti</span> <span class='op'>&lt;-</span> <span class='fu'>add.distance</span><span class='op'>(</span><span class='va'>nsp.parti</span>, data <span class='op'>=</span> <span class='va'>ecuador</span><span class='op'>)</span>
+<span class='va'>sp.parti</span> <span class='op'>&lt;-</span> <span class='fu'>add.distance</span><span class='op'>(</span><span class='va'>sp.parti</span>, data <span class='op'>=</span> <span class='va'>ecuador</span><span class='op'>)</span>
 <span class='co'># non-spatial partioning: very small test-training distance:</span>
 <span class='va'>nsp.parti</span><span class='op'>[[</span><span class='fl'>1</span><span class='op'>]</span><span class='op'>]</span><span class='op'>[[</span><span class='fl'>1</span><span class='op'>]</span><span class='op'>]</span><span class='op'>$</span><span class='va'>distance</span>
 </div><div class='output co'>#&gt; [1] 48.65723</div><div class='input'><span class='co'># spatial partitioning: more substantial distance, depending on number of</span>
