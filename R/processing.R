@@ -49,8 +49,7 @@ runfolds <- function(j = NULL,
   # Create training sample:
   nd_train <- data[current_sample[[j]]$train, ]
   if (!is.null(train_fun)) {
-    nd_train_sel <- train_fun(data = nd_train, param = train_param)
-    nd_train <- nd_train[nd_train_sel, ]
+    nd_train <- train_fun(data = nd_train, param = train_param)
     current_sample[[j]]$train <- nd_train$fid
   }
 
@@ -149,8 +148,7 @@ runfolds <- function(j = NULL,
   pooled_pred_train <- c(pooled_pred_train, pred_train)
 
   if (!is.null(test_fun)) {
-    nd_test_sel <- test_fun(data = nd_test, param = test_param)
-    nd_test <- nd_test[nd_test_sel, ]
+    nd_test <- test_fun(data = nd_test, param = test_param)
     current_sample[[j]]$test <- nd_test$fid
   }
 
@@ -329,6 +327,7 @@ runfolds <- function(j = NULL,
 #' @description Runs model fitting, error estimation and variable importance
 #' on fold level
 #' @keywords internal
+#' @importFrom future.apply future_lapply
 #' @export
 #'
 

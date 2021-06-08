@@ -10,7 +10,7 @@ add.distance(object, ...)
 
 \method{add.distance}{resampling}(object, data, coords = c("x", "y"), ...)
 
-\method{add.distance}{represampling}(object, ...)
+\method{add.distance}{represampling}(object, data, coords = c("x", "y"), mode = "future", ...)
 }
 \arguments{
 \item{object}{\link{resampling} or \link{represampling} object.}
@@ -22,6 +22,10 @@ add.distance(object, ...)
 \code{coords}}
 
 \item{coords}{(ignored by \code{partition_cv})}
+
+\item{mode}{Use \code{future.apply::future_lapply()} for parallelized
+execution if \code{mode = "future"}, and \code{lapply} for sequential
+execution otherwise (\code{mode = "sequential"})}
 }
 \value{
 A \link{resampling} or \link{represampling} object containing an additional.
@@ -42,8 +46,8 @@ averaged. Aggregation methods other than \code{mean} can be chosen using the
 # Muenchow et al. (2012), see ?ecuador
 nsp.parti <- partition_cv(ecuador)
 sp.parti <- partition_kmeans(ecuador)
-nsp.parti <- add.distance(nsp.parti, ecuador)
-sp.parti <- add.distance(sp.parti, ecuador)
+nsp.parti <- add.distance(nsp.parti, data = ecuador)
+sp.parti <- add.distance(sp.parti, data = ecuador)
 # non-spatial partioning: very small test-training distance:
 nsp.parti[[1]][[1]]$distance
 # spatial partitioning: more substantial distance, depending on number of

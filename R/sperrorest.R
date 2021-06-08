@@ -296,6 +296,7 @@ sperrorest <- function(formula,
     warning("Only parallelization at either the repetition level or the fold level\nis supported. Using mode_fold = 'sequential'.")
     mode_fold <- "sequential"
   }
+  mode_dist <- mode_rep
 
   # Check if user is trying to bypass the normal mechanism for
   # generating training and test data sets and for passing formulas:
@@ -333,7 +334,9 @@ sperrorest <- function(formula,
   if (distance) {
     if (verbose >= 1)
       cat(date(), "Adding distance information to resampling object...\n")
-    resamp <- add.distance(resamp, data, coords = coords, fun = mean)
+    resamp <- add.distance(object = resamp, data = data,
+                           coords = coords, fun = mean,
+                           mode = mode_dist[1])
   }
 
   res <- lapply(resamp, unclass)

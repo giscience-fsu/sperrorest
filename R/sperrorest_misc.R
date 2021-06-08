@@ -66,6 +66,9 @@ dataset_distance <- function(d1,
 #' @inheritParams partition_cv
 #'
 #' @param object [resampling] or [represampling] object.
+#' @param mode Use `future.apply::future_lapply()` for parallelized
+#'   execution if `mode = "future"`, and `lapply` for sequential
+#'   execution otherwise (`mode = "sequential"`)
 #' @param ... Additional arguments to [dataset_distance] and
 #'   [add.distance.resampling], respectively.
 #'
@@ -86,8 +89,8 @@ dataset_distance <- function(d1,
 #' # Muenchow et al. (2012), see ?ecuador
 #' nsp.parti <- partition_cv(ecuador)
 #' sp.parti <- partition_kmeans(ecuador)
-#' nsp.parti <- add.distance(nsp.parti, ecuador)
-#' sp.parti <- add.distance(sp.parti, ecuador)
+#' nsp.parti <- add.distance(nsp.parti, data = ecuador)
+#' sp.parti <- add.distance(sp.parti, data = ecuador)
 #' # non-spatial partioning: very small test-training distance:
 #' nsp.parti[[1]][[1]]$distance
 #' # spatial partitioning: more substantial distance, depending on number of
@@ -116,8 +119,18 @@ add.distance.resampling <- function(object, data, coords = c("x", "y"), ...) { #
 #' @name add.distance.represampling
 #' @method add.distance represampling
 #' @export
-add.distance.represampling <- function(object, ...) { # nolint
-  object <- future.apply::future_lapply(object, add.distance.resampling, ...) # nolint
+add.distance.represampling <- function(object,
+                                       data, coords = c("x", "y"),
+                                       mode = "future", ...) { # nolint
+  if (mode == "future") {
+    object <- future.apply::future_lapply(object,
+                                          add.distance.resampling,
+                                          data = data, coords = coords,
+                                          ...) # nolint
+  } else {
+    object <- lapply(object, add.distance.resampling,
+                     data = data, coords = coords, ...)
+  }
   class(object) <- "represampling"
   object
 }

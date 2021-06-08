@@ -89,14 +89,7 @@ resample_strat_uniform <- function(data,
     sel <- c(sel, wh)
   }
 
-  # this enables that we can adjust the correct indices within sperrorest so
-  # that the resulting resampling object correctly shows the used indices
-  if (sys.call() == "train_fun(data = nd_train, param = train_param)" |
-    sys.call() == "test_fun(data = nd_test, param = test_param)") {
-    return(sel)
-  } else {
-    return(data[sel, ])
-  }
+  return(data[sel, ])
 }
 # To do: allow nstrat to be a named vector
 
