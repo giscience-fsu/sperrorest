@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sperrorest</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.0.2.9001</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.0.3.0000</span>
       </span>
     </div>
 
@@ -198,7 +198,7 @@
 <div id="randomforest" class="section level3">
 <h3 class="hasAnchor">
 <a href="#randomforest" class="anchor"></a>RandomForest</h3>
-<p>Bagging, bundling and random forests build upon the CART technique by fitting many trees on bootstrap resamples of the original data set <span class="citation">(Breiman <a href="#ref-Breiman1996" role="doc-biblioref">1996</a>)</span> <span class="citation">(Breiman <a href="#ref-Breiman2001" role="doc-biblioref">2001</a>)</span> <span class="citation">(Hothorn and Lausen <a href="#ref-Hothorn2005" role="doc-biblioref">2005</a>)</span>. They differ in that random forest also samples from the predictors, and bundling adds an ancillary classifier for improved classification. We will use the nowadays widely used <code>randomForest()</code> here.</p>
+<p>Bagging, bundling and random forests build upon the CART technique by fitting many trees on bootstrap resamples of the original data set <span class="citation">(Breiman <a href="#ref-Breiman1996" role="doc-biblioref">1996</a>)</span> <span class="citation">(Breiman <a href="#ref-Breiman2001" role="doc-biblioref">2001</a>)</span> <span class="citation">(Hothorn and Lausen <a href="#ref-Hothorn2005" role="doc-biblioref">2005</a>)</span>. They differ in that random forest also samples from the predictors, and bundling adds an ancillary classifier for improved classification. We will use the widely used random forest in its implementation in the <code>ranger</code> package.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/imbs-hl/ranger">"ranger"</a></span><span class="op">)</span></code></pre></div>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
@@ -217,7 +217,7 @@
 ## Target node size:                 1 
 ## Variable importance mode:         none 
 ## Splitrule:                        gini 
-## OOB prediction error:             0.53 %</code></pre>
+## OOB prediction error:             0.61 %</code></pre>
 <p>Let’s take a look at the MER achieved on the training sample:</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">pred</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span><span class="op">(</span><span class="va">fit</span>, data <span class="op">=</span> <span class="va">maipo</span>, type <span class="op">=</span> <span class="st">"response"</span><span class="op">)</span>
@@ -231,7 +231,7 @@
 ##   crop2     0  1172     0     0
 ##   crop3     0     0  1972     0
 ##   crop4     0     0     0  3180</code></pre>
-<p>Isn’t this amazing? Only one grid cell is misclassified by the bagging classifier! Even the OOB (out-of-bag) estimate of the error rate is &lt; 1%. Too good to be true? We’ll see…</p>
+<p>Isn’t this amazing? All grid cells were correctly classified! Even the OOB (out-of-bag) estimate of the error rate is &lt; 1%. Too good to be true? We’ll see…</p>
 </div>
 </div>
 <div id="cross-validation-estimation-of-predictive-performance" class="section level2">
@@ -263,7 +263,7 @@
   <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="va">pred</span><span class="op">)</span>
 <span class="op">}</span></code></pre></div>
 <p>To ensure that custom predict-functions will work with <code><a href="../reference/sperrorest.html">sperrorest()</a></code>, we need to wrap all custom functions in one single function. Otherwise, <code><a href="../reference/sperrorest.html">sperrorest()</a></code> might fail during execution.</p>
-<p>Finally, we can run <code><a href="../reference/sperrorest.html">sperrorest()</a></code> with a non-spatial sampling setting (<code><a href="../reference/partition_cv.html">partition_cv()</a></code>). In this example we use a ‘10 repetitions - 5 folds’ setup. In reality, we recommend to use 100 repetitions to reduce the influence of random partitioning.</p>
+<p>Finally, we can run <code><a href="../reference/sperrorest.html">sperrorest()</a></code> with a non-spatial sampling setting (<code><a href="../reference/partition_cv.html">partition_cv()</a></code>). In this example we use a ‘3 repetitions - 5 folds’ setup. In reality, we recommend to use 100 repetitions to reduce the influence of random partitioning.</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">res_lda_nsp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sperrorest.html">sperrorest</a></span><span class="op">(</span><span class="va">fo</span>,
   data <span class="op">=</span> <span class="va">maipo</span>, coords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"utmx"</span>, <span class="st">"utmy"</span><span class="op">)</span>,
@@ -271,42 +271,23 @@
   pred_fun <span class="op">=</span> <span class="va">lda_predfun</span>,
   pred_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>fac <span class="op">=</span> <span class="st">"field"</span><span class="op">)</span>,
   smp_fun <span class="op">=</span> <span class="va">partition_cv</span>,
-  smp_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>repetition <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, nfold <span class="op">=</span> <span class="fl">5</span><span class="op">)</span>,
+  smp_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>repetition <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, nfold <span class="op">=</span> <span class="fl">5</span><span class="op">)</span>,
+  mode_rep <span class="op">=</span> <span class="st">"sequential"</span>,
   progress <span class="op">=</span> <span class="cn">FALSE</span>
 <span class="op">)</span></code></pre></div>
+<p>Note that we’re running this in sequential mode since it’s not worth the trouble parallelizing the execution of three repetitions with a short runtime.</p>
+<p>So what have we got:</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span><span class="op">(</span><span class="va">res_lda_nsp</span><span class="op">$</span><span class="va">error_rep</span>, <span class="va">summary</span><span class="op">)</span></code></pre></div>
-<pre><code>## $train_error
-##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##  0.0323  0.0332  0.0335  0.0340  0.0351  0.0360 
-## 
-## $train_accuracy
-##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##   0.964   0.965   0.966   0.966   0.967   0.968 
-## 
-## $train_events
-##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##    4688    4688    4688    4688    4688    4688 
-## 
-## $train_count
-##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##   30852   30852   30852   30852   30852   30852 
-## 
-## $test_error
-##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##  0.0381  0.0388  0.0395  0.0398  0.0404  0.0427 
-## 
-## $test_accuracy
-##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##   0.957   0.960   0.961   0.960   0.961   0.962 
-## 
-## $test_events
-##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##    1172    1172    1172    1172    1172    1172 
-## 
-## $test_count
-##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##    7713    7713    7713    7713    7713    7713</code></pre>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">res_lda_nsp</span><span class="op">$</span><span class="va">error_rep</span><span class="op">)</span></code></pre></div>
+<pre><code>##                    mean       sd   median      IQR
+## train_error    3.41e-02 0.000598 3.43e-02 0.000583
+## train_accuracy 9.66e-01 0.000598 9.66e-01 0.000583
+## train_events   4.69e+03 0.000000 4.69e+03 0.000000
+## train_count    3.09e+04 0.000000 3.09e+04 0.000000
+## test_error     3.95e-02 0.000982 3.99e-02 0.000908
+## test_accuracy  9.60e-01 0.000982 9.60e-01 0.000908
+## test_events    1.17e+03 0.000000 1.17e+03 0.000000
+## test_count     7.71e+03 0.000000 7.71e+03 0.000000</code></pre>
 <p>To run a spatial cross-validation at the field level, we can use <code><a href="../reference/partition_factor_cv.html">partition_factor_cv()</a></code> as the sampling function. Since we are using 5 folds, we get a coarse 80/20 split of our data. 80% will be used for training, 20% for testing our trained model.</p>
 <p>To take a look where our training and tests sets will be partitioned on each fold, we can plot them. The red colored points represent the test set in each fold, the black colored points the training set. Note that because we plotted over 7000 points, overplotting occurs and since the red crosses are plotted after the black ones, it seems visually that way more than ~20% of red points exist than it is really the case.</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
@@ -321,44 +302,23 @@
   pred_fun <span class="op">=</span> <span class="va">lda_predfun</span>,
   pred_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>fac <span class="op">=</span> <span class="st">"field"</span><span class="op">)</span>,
   smp_fun <span class="op">=</span> <span class="va">partition_factor_cv</span>,
-  smp_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>fac <span class="op">=</span> <span class="st">"field"</span>, repetition <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, nfold <span class="op">=</span> <span class="fl">5</span><span class="op">)</span>,
+  smp_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>fac <span class="op">=</span> <span class="st">"field"</span>, repetition <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, nfold <span class="op">=</span> <span class="fl">5</span><span class="op">)</span>,
+  mode_rep <span class="op">=</span> <span class="st">"sequential"</span>,
   benchmark <span class="op">=</span> <span class="cn">TRUE</span>, progress <span class="op">=</span> <span class="cn">FALSE</span>
 <span class="op">)</span>
 <span class="va">res_lda_sp</span><span class="op">$</span><span class="va">benchmark</span><span class="op">$</span><span class="va">runtime_performance</span></code></pre></div>
-<pre><code>## Time difference of 54.3 secs</code></pre>
+<pre><code>## Time difference of 18.2 secs</code></pre>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span><span class="op">(</span><span class="va">res_lda_sp</span><span class="op">$</span><span class="va">error_rep</span>, <span class="va">summary</span><span class="op">)</span></code></pre></div>
-<pre><code>## $train_error
-##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##  0.0274  0.0280  0.0284  0.0289  0.0295  0.0312 
-## 
-## $train_accuracy
-##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##   0.969   0.970   0.972   0.971   0.972   0.973 
-## 
-## $train_events
-##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##    4688    4688    4688    4688    4688    4688 
-## 
-## $train_count
-##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##   30852   30852   30852   30852   30852   30852 
-## 
-## $test_error
-##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##  0.0551  0.0593  0.0639  0.0635  0.0664  0.0713 
-## 
-## $test_accuracy
-##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##   0.929   0.934   0.936   0.936   0.941   0.945 
-## 
-## $test_events
-##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##    1172    1172    1172    1172    1172    1172 
-## 
-## $test_count
-##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##    7713    7713    7713    7713    7713    7713</code></pre>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">res_lda_sp</span><span class="op">$</span><span class="va">error_rep</span><span class="op">)</span></code></pre></div>
+<pre><code>##                    mean      sd   median     IQR
+## train_error    2.77e-02 0.00125 2.74e-02 0.00123
+## train_accuracy 9.72e-01 0.00125 9.73e-01 0.00123
+## train_events   4.69e+03 0.00000 4.69e+03 0.00000
+## train_count    3.09e+04 0.00000 3.09e+04 0.00000
+## test_error     6.60e-02 0.00772 6.92e-02 0.00720
+## test_accuracy  9.34e-01 0.00772 9.31e-01 0.00720
+## test_events    1.17e+03 0.00000 1.17e+03 0.00000
+## test_count     7.71e+03 0.00000 7.71e+03 0.00000</code></pre>
 </div>
 <div id="randomforest-1" class="section level3">
 <h3 class="hasAnchor">
@@ -392,47 +352,26 @@
   smp_fun <span class="op">=</span> <span class="va">partition_factor_cv</span>,
   smp_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>
     fac <span class="op">=</span> <span class="st">"field"</span>,
-    repetition <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, nfold <span class="op">=</span> <span class="fl">5</span>
+    repetition <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, nfold <span class="op">=</span> <span class="fl">5</span>
   <span class="op">)</span>,
+  mode_rep <span class="op">=</span> <span class="st">"sequential"</span>,
   benchmark <span class="op">=</span> <span class="cn">TRUE</span>, progress <span class="op">=</span> <span class="fl">2</span>
 <span class="op">)</span></code></pre></div>
 <div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span><span class="op">(</span><span class="va">res_rf_sp</span><span class="op">$</span><span class="va">error_rep</span>, <span class="va">summary</span><span class="op">)</span></code></pre></div>
-<pre><code>## $train_error
-##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##       0       0       0       0       0       0 
-## 
-## $train_accuracy
-##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##       1       1       1       1       1       1 
-## 
-## $train_events
-##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##    4688    4688    4688    4688    4688    4688 
-## 
-## $train_count
-##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##   30852   30852   30852   30852   30852   30852 
-## 
-## $test_error
-##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##  0.0775  0.0839  0.0879  0.0888  0.0948  0.1006 
-## 
-## $test_accuracy
-##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##   0.899   0.905   0.912   0.911   0.916   0.922 
-## 
-## $test_events
-##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##    1172    1172    1172    1172    1172    1172 
-## 
-## $test_count
-##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##    7713    7713    7713    7713    7713    7713</code></pre>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">res_rf_sp</span><span class="op">$</span><span class="va">error_rep</span><span class="op">)</span></code></pre></div>
+<pre><code>##                    mean      sd   median     IQR
+## train_error    0.00e+00 0.00000 0.00e+00 0.00000
+## train_accuracy 1.00e+00 0.00000 1.00e+00 0.00000
+## train_events   4.69e+03 0.00000 4.69e+03 0.00000
+## train_count    3.09e+04 0.00000 3.09e+04 0.00000
+## test_error     7.93e-02 0.00494 8.03e-02 0.00486
+## test_accuracy  9.21e-01 0.00494 9.20e-01 0.00486
+## test_events    1.17e+03 0.00000 1.17e+03 0.00000
+## test_count     7.71e+03 0.00000 7.71e+03 0.00000</code></pre>
 <div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">res_rf_sp</span><span class="op">$</span><span class="va">error_rep</span><span class="op">$</span><span class="va">test_accuracy</span><span class="op">)</span></code></pre></div>
-<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##   0.899   0.905   0.912   0.911   0.916   0.922</code></pre>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">res_rf_sp</span><span class="op">$</span><span class="va">error_rep</span><span class="op">)</span><span class="op">[</span><span class="st">"test_accuracy"</span>,<span class="op">]</span></code></pre></div>
+<pre><code>##                mean      sd median     IQR
+## test_accuracy 0.921 0.00494   0.92 0.00486</code></pre>
 <p>What a surprise! {ranger}‘s classification is not that good after all, if we acknowledge that in ’real life’ we wouldn’t be making predictions in situations where the class membership of other grid cells in the same field is known in the training stage. So spatial dependence does matter.</p>
 </div>
 </div>
