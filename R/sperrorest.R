@@ -1,5 +1,4 @@
-#' @title Perform spatial error estimation and variable importance assessment in
-#'   parallel
+#' @title Perform spatial error estimation and variable importance assessment
 #'
 #' @description {sperrorest} is a flexible interface for multiple types of
 #' parallelized spatial and non-spatial cross-validation and bootstrap error
@@ -13,13 +12,24 @@
 #'
 #' Running in parallel is supported via package \CRANpkg{future}.
 #' Have a look at `vignette("future-1-overview", package = "future")`.
-#' In short: Choose a backend and specify the amount of workers, then call
+#' In short: Choose a backend and specify the number of workers, then call
 #' `sperrorest()` as usual. Example:
 #'
 #' ```r
 #' future::plan(future.callr::callr, workers = 2)
 #' sperrorest()
 #' ```
+#' Parallelization at the repetition is recommended when using
+#' repeated cross-validation. If the 'granularity' of parallelized
+#' function calls is too fine, the overall runtime will be very
+#' poor since the overhead for passing arguments and handling
+#' environments becomes too large. Use fold-level parallelization
+#' only when the processing time of individual folds is very
+#' large and the number of repetitions is small or equals 1.
+#'
+#' Note that nested calls to `future` are not possible.
+#' Therefore a sequential `sperrorest` call should be used for
+#' hyperparameter tuning in a nested cross-validation.
 #'
 #' @importFrom future.apply future_lapply
 #' @importFrom utils packageVersion tail
@@ -65,6 +75,14 @@
 #'   which permutation-based variable importance assessment is performed. If
 #'   `importance = TRUE` and `imp_variables` == `NULL`, all variables in
 #'   `formula` will be used.
+#' @param imp_sample_from (default: `"test"`): specified if the permuted feature
+#'   values should be taken from the test set, the training set (a rather unlikely
+#'   choice), or the entire sample (`"all"`). The latter is useful in
+#'   leave-one-out resampling situations where the test set is simply too small
+#'   to perform any kind of resampling. In any case importances are
+#'   always estimates on the test set. (Note that resampling with replacement is
+#'   used if the test set is larger than the set from which the permuted values
+#'   are to be taken.)
 #' @param imp_permutations (optional; used if `importance = TRUE`). Number of
 #'   permutations used for variable importance assessment.
 #' @param importance logical (default: `FALSE`): perform permutation-based
@@ -79,6 +97,14 @@
 #'   information (if possible). Default shows repetition, fold and (if enabled)
 #'   variable importance progress. Set to `"rep"` for repetition information
 #'   only or `FALSE` for no progress information.
+#' @param mode_rep,mode_fold character (default: `"future"` and `"sequential"`,
+#'   respectively): specifies whether to parallelize the execution at the repetition
+#'   level, at the fold level, or not at all.
+#'   Parallel execution uses `future.apply::future_lapply()` (see details below).
+#'   It is only possible to parallelize at the repetition level or at
+#'   the fold level.
+#'   The `"loop"` option uses a `for` loop instead of an `lappy`
+#'   function; this option is for debugging purposes.
 #' @param benchmark (optional) logical (default: `FALSE`): if `TRUE`, perform
 #'   benchmarking and return `sperrorestbenchmark` object.
 #' @param verbose Controls the amount of information printed while processing.
@@ -207,11 +233,14 @@ sperrorest <- function(formula,
                        err_fun = err_default,
                        imp_variables = NULL,
                        imp_permutations = 1000,
+                       imp_sample_from = c("test", "train", "all"),
                        importance = !is.null(imp_variables),
                        distance = FALSE,
                        do_gc = 1,
                        progress = "all",
                        benchmark = FALSE,
+                       mode_rep = c("future", "sequential", "loop"),
+                       mode_fold = c("sequential", "future", "loop"),
                        verbose = 0) {
 
   if (verbose >= 1) {
@@ -255,9 +284,18 @@ sperrorest <- function(formula,
     if (!is.null(imp_variables)) {
       stopifnot(is.character(imp_variables)) # nocov
     }
+
+    imp_sample_from <- match.arg(imp_sample_from)
   }
   stopifnot(is.character(coords))
   stopifnot(length(coords) == 2)
+
+  mode_rep <- match.arg(mode_rep)
+  mode_fold <- match.arg(mode_fold)
+  if ((mode_rep == "future") & (mode_fold == "future")) {
+    warning("Only parallelization at either the repetition level or the fold level\nis supported. Using mode_fold = 'sequential'.")
+    mode_fold <- "sequential"
+  }
 
   # Check if user is trying to bypass the normal mechanism for
   # generating training and test data sets and for passing formulas:
@@ -336,35 +374,108 @@ sperrorest <- function(formula,
   if (verbose >= 1)
     cat(date(), "Running the model assessment...\n")
 
-  my_res <- future.apply::future_lapply(resamp, function(x) {
-    runreps(
-      current_sample = x,
-      data = data,
-      formula = formula,
-      response = response,
-      do_gc = do_gc,
-      imp_one_rep = imp_one_rep,
-      pred_fun = pred_fun,
-      model_args = model_args,
-      model_fun = model_fun,
-      imp_permutations = imp_permutations,
-      imp_variables = imp_variables,
-      importance = importance,
-      current_res = current_res,
-      pred_args = pred_args,
-      coords = coords,
-      progress = progress,
-      pooled_obs_train = pooled_obs_train,
-      train_fun = train_fun,
-      train_param = train_param,
-      test_fun = test_fun,
-      test_param = test_param,
-      pooled_obs_test = pooled_obs_test,
-      err_fun = err_fun
+  if (mode_rep == "sequential") {
+    my_res <- lapply(resamp, function(x) {
+      runreps(
+        current_sample = x,
+        data = data,
+        formula = formula,
+        response = response,
+        do_gc = do_gc,
+        imp_one_rep = imp_one_rep,
+        pred_fun = pred_fun,
+        model_args = model_args,
+        model_fun = model_fun,
+        imp_permutations = imp_permutations,
+        imp_variables = imp_variables,
+        imp_sample_from = imp_sample_from,
+        importance = importance,
+        current_res = current_res,
+        pred_args = pred_args,
+        coords = coords,
+        progress = progress,
+        mode_fold = mode_fold,
+        pooled_obs_train = pooled_obs_train,
+        train_fun = train_fun,
+        train_param = train_param,
+        test_fun = test_fun,
+        test_param = test_param,
+        pooled_obs_test = pooled_obs_test,
+        err_fun = err_fun
+      )
+    }
     )
-  },
-  future.seed = TRUE
-  )
+
+  } else if (mode_rep == "future") {
+
+    my_res <- future.apply::future_lapply(resamp, function(x) {
+      runreps(
+        current_sample = x,
+        data = data,
+        formula = formula,
+        response = response,
+        do_gc = do_gc,
+        imp_one_rep = imp_one_rep,
+        pred_fun = pred_fun,
+        model_args = model_args,
+        model_fun = model_fun,
+        imp_permutations = imp_permutations,
+        imp_variables = imp_variables,
+        imp_sample_from = imp_sample_from,
+        importance = importance,
+        current_res = current_res,
+        pred_args = pred_args,
+        coords = coords,
+        progress = progress,
+        mode_fold = mode_fold,
+        pooled_obs_train = pooled_obs_train,
+        train_fun = train_fun,
+        train_param = train_param,
+        test_fun = test_fun,
+        test_param = test_param,
+        pooled_obs_test = pooled_obs_test,
+        err_fun = err_fun
+      )
+    },
+    future.seed = TRUE
+    )
+
+  } else if (mode_rep == "loop") {
+
+    # for loop as a safety net for debugging purposes:
+
+    my_res <- list()
+    for (i_rep in 1:length(resamp)) {
+      my_res[[i_rep]] <-
+        runreps(
+          current_sample = resamp[[i_rep]],
+          data = data,
+          formula = formula,
+          response = response,
+          do_gc = do_gc,
+          imp_one_rep = imp_one_rep,
+          pred_fun = pred_fun,
+          model_args = model_args,
+          model_fun = model_fun,
+          imp_permutations = imp_permutations,
+          imp_variables = imp_variables,
+          imp_sample_from = imp_sample_from,
+          importance = importance,
+          current_res = current_res,
+          pred_args = pred_args,
+          coords = coords,
+          progress = progress,
+          mode_fold = mode_fold,
+          pooled_obs_train = pooled_obs_train,
+          train_fun = train_fun,
+          train_param = train_param,
+          test_fun = test_fun,
+          test_param = test_param,
+          pooled_obs_test = pooled_obs_test,
+          err_fun = err_fun
+        )
+    }
+  } else stop("invalid mode_rep")
 
   ### format parallel outputs ----
 

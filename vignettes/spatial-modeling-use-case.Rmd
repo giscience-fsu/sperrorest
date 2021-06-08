@@ -143,7 +143,7 @@ table(pred = pred, obs = maipo$croptype)
 
 Bagging, bundling and random forests build upon the CART technique by fitting many trees on bootstrap resamples of the original data set [@Breiman1996] [@Breiman2001] [@Hothorn2005].
 They differ in that random forest also samples from the predictors, and bundling adds an ancillary classifier for improved classification.
-We will use the nowadays widely used `randomForest()` here.
+We will use the widely used random forest in its implementation in the `ranger` package.
 
 ```{r, message=FALSE}
 library("ranger")
@@ -166,7 +166,7 @@ table(pred = pred$predictions, obs = maipo$croptype)
 ```
 
 Isn't this amazing? 
-Only one grid cell is misclassified by the bagging classifier! 
+All grid cells were correctly classified! 
 Even the OOB (out-of-bag) estimate of the error rate is < 1%.
 Too good to be true? We'll see...
 
@@ -210,7 +210,7 @@ To ensure that custom predict-functions will work with `sperrorest()`, we need t
 Otherwise, `sperrorest()` might fail during execution.
 
 Finally, we can run `sperrorest()` with a non-spatial sampling setting (`partition_cv()`).
-In this example we use a '10 repetitions - 5 folds' setup.
+In this example we use a '3 repetitions - 5 folds' setup.
 In reality, we recommend to use 100 repetitions to reduce the influence of random partitioning.
 
 ```{r}
@@ -220,13 +220,18 @@ res_lda_nsp <- sperrorest(fo,
   pred_fun = lda_predfun,
   pred_args = list(fac = "field"),
   smp_fun = partition_cv,
-  smp_args = list(repetition = 1:10, nfold = 5),
+  smp_args = list(repetition = 1:3, nfold = 5),
+  mode_rep = "sequential",
   progress = FALSE
 )
 ```
 
+Note that we're running this in sequential mode since it's not worth the trouble parallelizing the execution of three repetitions with a short runtime.
+
+So what have we got:
+
 ```{r}
-lapply(res_lda_nsp$error_rep, summary)
+summary(res_lda_nsp$error_rep)
 ```
 
 To run a spatial cross-validation at the field level, we can use `partition_factor_cv()` as the sampling function.
@@ -251,14 +256,15 @@ res_lda_sp <- sperrorest(fo,
   pred_fun = lda_predfun,
   pred_args = list(fac = "field"),
   smp_fun = partition_factor_cv,
-  smp_args = list(fac = "field", repetition = 1:10, nfold = 5),
+  smp_args = list(fac = "field", repetition = 1:3, nfold = 5),
+  mode_rep = "sequential",
   benchmark = TRUE, progress = FALSE
 )
 res_lda_sp$benchmark$runtime_performance
 ```
 
 ```{r}
-lapply(res_lda_sp$error_rep, summary)
+summary(res_lda_sp$error_rep)
 ```
 
 ### RandomForest
@@ -295,18 +301,19 @@ res_rf_sp <- sperrorest(fo,
   smp_fun = partition_factor_cv,
   smp_args = list(
     fac = "field",
-    repetition = 1:10, nfold = 5
+    repetition = 1:3, nfold = 5
   ),
+  mode_rep = "sequential",
   benchmark = TRUE, progress = 2
 )
 ```
 
 ```{r}
-lapply(res_rf_sp$error_rep, summary)
+summary(res_rf_sp$error_rep)
 ```
 
 ```{r}
-summary(res_rf_sp$error_rep$test_accuracy)
+summary(res_rf_sp$error_rep)["test_accuracy",]
 ```
 
 What a surprise! {ranger}'s classification is not that good after all, if we acknowledge that in 'real life' we wouldn't be making predictions in situations where the class membership of other grid cells in the same field is known in the training stage.

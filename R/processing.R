@@ -12,12 +12,11 @@ runfolds <- function(j = NULL,
                      i = NULL,
                      formula = NULL,
                      model_args = NULL,
-                     par_cl = NULL,
-                     par_mode = NULL,
                      model_fun = NULL,
                      pred_fun = NULL,
                      imp_variables = NULL,
                      imp_permutations = NULL,
+                     imp_sample_from = "test",
                      err_fun = NULL,
                      train_fun = NULL,
                      importance = NULL,
@@ -108,6 +107,8 @@ runfolds <- function(j = NULL,
   }
   rm(pargs)
 
+  is_factor_prediction <- is.factor(pred_train)
+
   # Calculate error measures on training sample:
 
   if (any(class(nd_train) == "tbl")) {
@@ -140,7 +141,7 @@ runfolds <- function(j = NULL,
       current_impo = NA,
       not_converged_folds = not_converged_folds,
       resampling = current_sample,
-      is_factor_prediction = NA
+      is_factor_prediction = is_factor_prediction
     ))
   }
 
@@ -213,7 +214,8 @@ runfolds <- function(j = NULL,
       current_res = NA,
       current_impo = NA,
       not_converged_folds = not_converged_folds,
-      resampling = current_sample
+      resampling = current_sample,
+      is_factor_prediction = is_factor_prediction
     ))
   }
 
@@ -236,7 +238,7 @@ runfolds <- function(j = NULL,
 
     # does this ever happen??
     # nocov start
-    if (is.null(current_res[[j]]$test)) {
+    if (is.null(current_res[[j]]$test) & (imp_sample_from == "test")) {
       current_impo[[j]] <- c()
       if (!progress == FALSE) {
         cat(date(), "-- skipping variable importance\n")
@@ -254,12 +256,24 @@ runfolds <- function(j = NULL,
           if (log10(cnt) == floor(log10(cnt))) {
             cat(
               date(), "Repetition", i, "- Fold", j,
-              "- permutation-count:", cnt, "\n"
+              "- permutation count:", cnt, "\n"
             )
           }
         }
+
+        # Permutation data:
+        if (imp_sample_from == "test") {
+          nd_permute <- nd_bak
+        } else if (imp_sample_from == "train") {
+          nd_permute <- nd_train
+        } else if (imp_sample_from == "all") {
+          nd_permute <- data
+        }
         # Permutation indices:
-        permut <- sample(seq_len(nrow(nd_test)), replace = FALSE)
+        replace <- (nrow(nd_permute) < nrow(nd_test))
+        permut <- sample(seq_len(nrow(nd_permute)), replace = replace, size = nrow(nd_test))
+        # Permutation data:
+        nd_permute <- nd_permute[permut,]
 
         # For each variable:
         for (vnm in imp_variables) {
@@ -267,8 +281,8 @@ runfolds <- function(j = NULL,
           # Get undisturbed backup copy of test sample:
           nd_test <- nd_bak
 
-          # Permute variable vnm:
-          nd_test[, vnm] <- nd_test[, vnm][permut]
+          # Get permuted variable vnm:
+          nd_test[, vnm] <- nd_permute[, vnm]
           # Apply model to perturbed test sample:
           pargs <- c(list(object = fit, newdata = nd_test), pred_args)
           if (is.null(pred_fun)) {
@@ -307,7 +321,7 @@ runfolds <- function(j = NULL,
     current_impo = current_impo,
     not_converged_folds = not_converged_folds,
     resampling = current_sample,
-    is_factor_prediction = is.factor(pred_test)
+    is_factor_prediction = is_factor_prediction
   ))
 }
 
@@ -323,19 +337,20 @@ runreps <- function(current_sample = NULL,
                     data = NULL,
                     formula = NULL,
                     model_args = NULL,
-                    par_cl = NULL,
                     do_gc = NULL,
                     imp_one_rep = NULL,
                     model_fun = NULL,
                     pred_fun = NULL,
                     imp_variables = NULL,
                     imp_permutations = NULL,
+                    imp_sample_from = "test",
                     err_fun = NULL,
                     importance = NULL,
                     current_res = NULL,
                     current_impo = NULL,
                     pred_args = NULL,
                     progress = NULL,
+                    mode_fold = "sequential",
                     pooled_obs_train = NULL,
                     pooled_obs_test = NULL,
                     pooled_pred_train = NULL,
@@ -346,7 +361,6 @@ runreps <- function(current_sample = NULL,
                     train_fun = NULL,
                     train_param = NULL,
                     coords = NULL,
-                    par_mode = NULL,
                     i = NULL) {
 
   # output data structures
@@ -369,34 +383,95 @@ runreps <- function(current_sample = NULL,
     cat(date(), "Repetition", i, "\n") # nocov
   }
 
-  lapply(seq_along(current_sample), function(rep) {
-    runfolds(
-      j = rep,
-      data = data,
-      current_sample = current_sample,
-      formula = formula,
-      par_mode = par_mode,
-      pred_fun = pred_fun,
-      model_args = model_args,
-      model_fun = model_fun,
-      imp_permutations = imp_permutations,
-      imp_variables = imp_variables,
-      importance = importance,
-      current_res = current_res,
-      pred_args = pred_args,
-      response = response,
-      par_cl = par_cl,
-      coords = coords,
-      progress = progress,
-      pooled_obs_train = pooled_obs_train,
-      pooled_obs_test = pooled_obs_test,
-      test_fun = test_fun,
-      test_param = test_param,
-      train_fun = train_fun,
-      train_param = train_param,
-      err_fun = err_fun
-    )
-  }) -> runfolds_list
+  if (mode_fold == "sequential") {
+    lapply(seq_along(current_sample), function(rep) {
+      runfolds(
+        j = rep,
+        data = data,
+        current_sample = current_sample,
+        formula = formula,
+        pred_fun = pred_fun,
+        model_args = model_args,
+        model_fun = model_fun,
+        imp_permutations = imp_permutations,
+        imp_variables = imp_variables,
+        imp_sample_from = imp_sample_from,
+        importance = importance,
+        current_res = current_res,
+        pred_args = pred_args,
+        response = response,
+        coords = coords,
+        progress = progress,
+        pooled_obs_train = pooled_obs_train,
+        pooled_obs_test = pooled_obs_test,
+        test_fun = test_fun,
+        test_param = test_param,
+        train_fun = train_fun,
+        train_param = train_param,
+        err_fun = err_fun
+      )
+    }) -> runfolds_list
+  } else if (mode_fold == "future") {
+    future.apply::future_lapply(seq_along(current_sample), function(rep) {
+      runfolds(
+        j = rep,
+        data = data,
+        current_sample = current_sample,
+        formula = formula,
+        pred_fun = pred_fun,
+        model_args = model_args,
+        model_fun = model_fun,
+        imp_permutations = imp_permutations,
+        imp_variables = imp_variables,
+        imp_sample_from = imp_sample_from,
+        importance = importance,
+        current_res = current_res,
+        pred_args = pred_args,
+        response = response,
+        coords = coords,
+        progress = progress,
+        pooled_obs_train = pooled_obs_train,
+        pooled_obs_test = pooled_obs_test,
+        test_fun = test_fun,
+        test_param = test_param,
+        train_fun = train_fun,
+        train_param = train_param,
+        err_fun = err_fun
+      )
+    },
+    future.seed = TRUE
+    ) -> runfolds_list
+  } else if (mode_fold == "loop") {
+    runfolds_list <- list()
+    for (i_fold in 1:length(current_sample)) {
+      runfolds_list[[i_fold]] <-
+        runfolds(
+          j = i_fold,
+          data = data,
+          current_sample = current_sample,
+          formula = formula,
+          pred_fun = pred_fun,
+          model_args = model_args,
+          model_fun = model_fun,
+          imp_permutations = imp_permutations,
+          imp_variables = imp_variables,
+          imp_sample_from = imp_sample_from,
+          importance = importance,
+          current_res = current_res,
+          pred_args = pred_args,
+          response = response,
+          coords = coords,
+          progress = progress,
+          pooled_obs_train = pooled_obs_train,
+          pooled_obs_test = pooled_obs_test,
+          test_fun = test_fun,
+          test_param = test_param,
+          train_fun = train_fun,
+          train_param = train_param,
+          err_fun = err_fun
+        )
+    }
+  }
 
   is_factor_prediction <- sapply(runfolds_list, function(x) x$is_factor_prediction)
   is_factor_prediction <- is_factor_prediction[ !is.na(is_factor_prediction) ]
