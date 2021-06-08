@@ -1,5 +1,18 @@
 <!-- NEWS.md is maintained by https://cynkra.github.io/fledge, do not edit -->
 
+# sperrorest 3.0.3.0001
+
+- "fixed train_fun / test_fun issue
+- more flexible parallelization of `add.distance`
+
+
+# sperrorest 3.0.3
+
+- added parallelization modes (arguments `mode_rep` and `mode_fold`)
+- more flexible permutation (argument `imp_sample_from`)
+- updated vignette
+
+
 # sperrorest 3.0.2.9000
 
 - `partition_disc()`: set default value of arg `buffer` to 0 instead of NULL, fixes #61
