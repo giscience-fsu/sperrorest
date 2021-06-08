@@ -1,8 +1,5 @@
-context("processing.R")
-
 library("rpart")
 library("MASS")
-
 # runfolds Sun May 21 22:58:39 2017 ------------------------------
 
 test_that("runfolds works on missing factor levels in

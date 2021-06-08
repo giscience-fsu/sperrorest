@@ -1,5 +1,3 @@
-context("resample.R")
-
 library(sperrorest)
 
 # resample_strat.uniform() Tue Feb 14 22:04:12 2017 ----------------------------

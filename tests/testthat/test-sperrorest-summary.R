@@ -1,5 +1,3 @@
-context("sperrorest-summary.R")
-
 library("MASS")
 library("rpart")
 

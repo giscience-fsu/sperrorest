@@ -13,7 +13,7 @@ test_that("dataset_distance works correctly", {
 test_that("add.distance works correctly", {
   data(ecuador) # Muenchow et al. (2012), see ?ecuador
   nsp_parti <- partition_cv(ecuador)
-  nsp_parti <- add.distance(nsp_parti, ecuador)
+  nsp_parti <- add.distance(nsp_parti, data = ecuador)
 
   expect_length(nsp_parti[[1]], 10)
 })

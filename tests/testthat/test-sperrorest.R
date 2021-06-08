@@ -1,5 +1,3 @@
-context("sperrorest.R")
-
 set.seed(42)
 
 test_that("output type (= list) for different logical combinations of

@@ -1,5 +1,3 @@
-context("sperrorest-resampling.R")
-
 # partition_cv() Mon Feb  6 21:57:08 2017 ------------------------------
 
 test_that("partition_cv() output is of correct length", {
