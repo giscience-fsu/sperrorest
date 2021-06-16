@@ -193,3 +193,289 @@ test_that("sperrorest correctly updates resampling object when using a
 
   expect_lt(length(out[["represampling"]][["1"]][["1"]][["test"]]), 150)
 })
+
+
+
+test_that("sperrorest gets consistent results when changing some of the settings", {
+
+  library("MASS")
+  data(ecuador)
+
+  mypredfun <- function(object, newdata, ...) {
+    prd <- predict(object = object, newdata = newdata, ...)
+    # prd$posterior[, "TRUE"]
+    prd$class
+  }
+
+  set.seed(123)
+  sli <- ecuador$slides == "FALSE"
+  sel <- c(which(sli),
+           sample(which(!sli), size = sum(sli)))
+  d <- ecuador[sel, ]
+
+  fo <- slides ~ dem + slope + hcurv + vcurv + log.carea + cslope
+
+  # # If you want to check that it works:
+  # fit <- lda(fo, d)
+  # mypredfun(fit, d)
+
+  myerr <- function(obs, pred) {
+    list(
+      error = mean(obs != pred),
+      accuracy = mean(obs == pred)
+    )
+  }
+
+  out1 <- suppressWarnings(
+    sperrorest(
+      data = d, formula = fo,
+      model_fun = MASS::lda,
+      pred_fun = mypredfun,
+      smp_fun = partition_cv,
+      smp_args = list(repetition = 1:2, nfold = 4, seed1 = 321),
+      importance = FALSE
+    )
+  )
+  smry1r <- summary(out1$error_rep)
+  smry1f <- summary(out1$error_fold)
+  out2 <- suppressWarnings(
+    sperrorest(
+      data = d, formula = fo,
+      model_fun = MASS::lda,
+      pred_fun = mypredfun,
+      smp_fun = partition_cv,
+      smp_args = list(repetition = 1:2, nfold = 4, seed1 = 321),
+      importance = FALSE,
+      err_fun = myerr
+    )
+  )
+  smry2r <- summary(out2$error_rep)
+  smry2f <- summary(out2$error_fold)
+
+  out3 <- suppressWarnings(
+    sperrorest(
+      data = d, formula = fo,
+      model_fun = MASS::lda,
+      pred_fun = mypredfun,
+      smp_fun = partition_cv,
+      smp_args = list(repetition = 1:2, nfold = 4, seed1 = 321),
+      importance = TRUE, imp_permutations = 10,
+      progress = 0
+    )
+  )
+  smry3r <- summary(out3$error_rep)
+  smry3f <- summary(out3$error_fold)
+
+  expect_equal(smry1r["test_error", "mean"], 0.4332669,
+               tol = 0.000001)
+  expect_equal(smry1r["test_error", "sd"], 0.0014085792,
+               tol = 0.000001)
+
+  expect_equal(smry1r["test_error", "mean"],
+               smry2r["test_error", "mean"])
+  expect_equal(smry1r["test_error", "mean"],
+               smry3r["test_error", "mean"])
+  expect_equal(smry1r["test_error", "mean"],
+               1 - smry2r["test_accuracy", "mean"])
+  expect_equal(smry1r["test_error", "mean"],
+               1 - smry3r["test_accuracy", "mean"])
+  expect_equal(smry1r["train_error", "mean"],
+               smry2r["train_error", "mean"])
+  expect_equal(smry1r["test_count", "mean"],
+               smry3r["test_count", "mean"])
+
+  expect_equal(smry1f["test_error", "mean"],
+               smry2f["test_error", "mean"])
+  expect_equal(smry1f["test_error", "mean"],
+               smry3f["test_error", "mean"])
+  expect_equal(smry1f["test_error", "mean"],
+               1 - smry2f["test_accuracy", "mean"])
+  expect_equal(smry1f["test_error", "mean"],
+               1 - smry3f["test_accuracy", "mean"])
+  expect_equal(smry1f["train_error", "mean"],
+               smry2f["train_error", "mean"])
+  expect_equal(smry1f["test_count", "mean"],
+               smry3f["test_count", "mean"])
+})
+
+
+
+test_that("sperrorest gets consistent results when changing some of the settings: regression problem", {
+
+  requireNamespace("sp", quietly = TRUE)
+  data("meuse", package = "sp")
+
+  set.seed(123)
+
+  d <- meuse
+  d$logZn <- log10(d$zinc)
+  d$sqrt.dist <- sqrt(d$dist)
+  fo <- logZn ~ sqrt.dist + elev
+
+  # # If you want to check that it works:
+  # fit <- lm(fo, d)
+  # predict(fit, d)
+
+  myerr <- function(obs, pred) {
+    list(
+      bias = mean(obs - pred),
+      rmse = sqrt(mean((obs - pred)^2))
+    )
+  }
+
+  out1 <- suppressWarnings(
+    sperrorest(
+      data = d, formula = fo,
+      model_fun = lm,
+      smp_fun = partition_cv,
+      smp_args = list(repetition = 1:2, nfold = 4, seed1 = 321),
+      importance = FALSE
+    )
+  )
+  smry1r <- summary(out1$error_rep)
+  smry1f <- summary(out1$error_fold)
+  out2 <- suppressWarnings(
+    sperrorest(
+      data = d, formula = fo,
+      model_fun = lm,
+      smp_fun = partition_cv,
+      smp_args = list(repetition = 1:2, nfold = 4, seed1 = 321),
+      importance = FALSE,
+      err_fun = myerr
+    )
+  )
+  smry2r <- summary(out2$error_rep)
+  smry2f <- summary(out2$error_fold)
+
+  out3 <- suppressWarnings(
+    sperrorest(
+      data = d, formula = fo,
+      model_fun = lm,
+      smp_fun = partition_cv,
+      smp_args = list(repetition = 1:2, nfold = 4, seed1 = 321),
+      importance = TRUE, imp_permutations = 10,
+      progress = 0
+    )
+  )
+  smry3r <- summary(out3$error_rep)
+  smry3f <- summary(out3$error_fold)
+
+  expect_equal(smry1r["test_rmse", "mean"], 0.1695412,
+               tol = 0.000001)
+  expect_equal(smry1r["test_rmse", "sd"], 0.0006948571,
+               tol = 0.000001)
+
+  expect_equal(smry1r["test_rmse", "mean"],
+               smry2r["test_rmse", "mean"])
+  expect_equal(smry1r["test_rmse", "mean"],
+               smry3r["test_rmse", "mean"])
+  expect_equal(smry1r["test_bias", "mean"],
+               smry2r["test_bias", "mean"])
+  expect_equal(smry1r["test_bias", "mean"],
+               smry3r["test_bias", "mean"])
+  expect_equal(smry1r["train_rmse", "mean"],
+               smry2r["train_rmse", "mean"])
+  expect_equal(smry1r["test_count", "mean"],
+               smry3r["test_count", "mean"])
+
+  expect_equal(smry1f["test_rmse", "mean"],
+               smry2f["test_rmse", "mean"])
+  expect_equal(smry1f["test_rmse", "mean"],
+               smry3f["test_rmse", "mean"])
+  expect_equal(smry1f["test_bias", "mean"],
+               smry2f["test_bias", "mean"])
+  expect_equal(smry1f["test_bias", "mean"],
+               smry3f["test_bias", "mean"])
+  expect_equal(smry1f["train_rmse", "mean"],
+               smry2f["train_rmse", "mean"])
+  expect_equal(smry1f["test_count", "mean"],
+               smry3f["test_count", "mean"])
+})
+
+
+test_that("sperrorest gets consistent results regardless of parallelization settings: regression problem", {
+
+  requireNamespace("future", quietly = TRUE)
+  requireNamespace("future.apply", quietly = TRUE)
+
+  requireNamespace("sp", quietly = TRUE)
+  data("meuse", package = "sp")
+
+  set.seed(123)
+
+  d <- meuse
+  d$logZn <- log10(d$zinc)
+  d$sqrt.dist <- sqrt(d$dist)
+  fo <- logZn ~ sqrt.dist + elev
+
+  out1 <- suppressWarnings(
+    sperrorest(
+      data = d, formula = fo,
+      model_fun = lm,
+      smp_fun = partition_cv,
+      smp_args = list(repetition = 1:2, nfold = 4, seed1 = 321),
+      mode_rep = "loop",
+      mode_fold = "loop",
+      importance = FALSE
+    )
+  )
+  smry1r <- summary(out1$error_rep)
+  smry1f <- summary(out1$error_fold)
+
+  out2 <- suppressWarnings(
+    sperrorest(
+      data = d, formula = fo,
+      model_fun = lm,
+      smp_fun = partition_cv,
+      smp_args = list(repetition = 1:2, nfold = 4, seed1 = 321),
+      mode_rep = "sequential",
+      mode_fold = "future",
+      importance = FALSE
+    )
+  )
+  smry2r <- summary(out2$error_rep)
+  smry2f <- summary(out2$error_fold)
+
+  out3 <- suppressWarnings(
+    sperrorest(
+      data = d, formula = fo,
+      model_fun = lm,
+      smp_fun = partition_cv,
+      smp_args = list(repetition = 1:2, nfold = 4, seed1 = 321),
+      mode_rep = "future",
+      mode_fold = "sequential",
+      importance = FALSE
+    )
+  )
+  smry3r <- summary(out3$error_rep)
+  smry3f <- summary(out3$error_fold)
+
+  out4 <- suppressWarnings(
+    sperrorest(
+      data = d, formula = fo,
+      model_fun = lm,
+      smp_fun = partition_cv,
+      smp_args = list(repetition = 1:2, nfold = 4, seed1 = 321),
+      mode_rep = "sequential",
+      mode_fold = "sequential",
+      importance = FALSE
+    )
+  )
+  smry4r <- summary(out4$error_rep)
+  smry4f <- summary(out4$error_fold)
+
+  expect_equal(smry1r["test_rmse", "mean"],
+               smry2r["test_rmse", "mean"])
+  expect_equal(smry1r["test_rmse", "mean"],
+               smry3r["test_rmse", "mean"])
+  expect_equal(smry1r["test_rmse", "mean"],
+               smry4r["test_rmse", "mean"])
+
+  expect_equal(smry1f["test_rmse", "mean"],
+               smry2f["test_rmse", "mean"])
+  expect_equal(smry1f["test_rmse", "mean"],
+               smry3f["test_rmse", "mean"])
+  expect_equal(smry1f["test_rmse", "mean"],
+               smry4f["test_rmse", "mean"])
+})
+
