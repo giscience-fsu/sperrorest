@@ -234,6 +234,9 @@ runfolds <- function(j = NULL,
     # remove NAs in data.frame if levels are missing
     nd_test <- na.omit(nd_test)
 
+    # Backup copy for permutation:
+    nd_test_bak <- nd_test
+
     # does this ever happen??
     # nocov start
     if (is.null(current_res[[j]]$test) & (imp_sample_from == "test")) {
@@ -247,7 +250,6 @@ runfolds <- function(j = NULL,
       }
       imp_temp <- imp_one_rep
 
-      # Parallelize this: ???
       for (cnt in 1:imp_permutations) {
         # Some output on screen:
         if (progress == "all" | progress == TRUE & (cnt > 1)) {
@@ -261,7 +263,7 @@ runfolds <- function(j = NULL,
 
         # Permutation data:
         if (imp_sample_from == "test") {
-          nd_permute <- nd_bak
+          nd_permute <- nd_test_bak
         } else if (imp_sample_from == "train") {
           nd_permute <- nd_train
         } else if (imp_sample_from == "all") {
@@ -277,7 +279,7 @@ runfolds <- function(j = NULL,
         for (vnm in imp_variables) {
 
           # Get undisturbed backup copy of test sample:
-          nd_test <- nd_bak
+          nd_test <- nd_test_bak
 
           # Get permuted variable vnm:
           nd_test[, vnm] <- nd_permute[, vnm]
