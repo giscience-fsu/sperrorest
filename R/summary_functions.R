@@ -44,36 +44,68 @@
 #' @seealso [sperrorest]
 #'
 #' @export
+#' @importFrom dplyr bind_rows
 summary.sperroresterror <- function(object, # nolint start
-                                    level = 0,
-                                    pooled = TRUE,
-                                    na.rm = TRUE,
-                                    ...) {
+                                                 level = 0,
+                                                 pooled = TRUE,
+                                                 na.rm = TRUE,
+                                                 ...) {
   err <- unclass(object)
+
+  # Check if object really contains error estimates:
+  is_err_object <- function(x) {
+    res <- FALSE
+    if (is.list(x)) {
+      if (all(c("train", "test") %in% names(x))) {
+        if (is.list(x$train)) {
+          res <- TRUE
+        }
+      }
+    }
+    res
+  }
+
+  get_dist <- function(y) {
+    ifelse(any(names(y) == "distance"), y$distance, -1)
+  }
+
+  get_err <- function(y) {
+    if (!is_err_object(y)) return(NULL)
+    data.frame(
+      train = y$train,
+      test = y$test,
+      distance = get_dist(y)
+    )
+  }
+
+  if (level <= 2) {
+    for (i in seq_along(err)) {
+      err_rep <- list()
+      cnt <- 0
+      for (j in seq_along(err[[i]])) {
+        tmp <- get_err(err[[i]][[j]])
+        if (!is.null(tmp)) {
+          cnt <- cnt + 1
+          err_rep[[cnt]] <- tmp
+        }
+      }
+      err[[i]] <- as.data.frame(dplyr::bind_rows(err_rep))
+    }
+  }
+
   # nolint end
   if (pooled) {
-    if (level <= 2) {
-      err <- lapply(err, function(x) {
-        t(sapply(x, function(y) {
-          data.frame(
-            train = y$train,
-            test = y$test,
-            distance = ifelse(any(names(y) == "distance"), y$distance,
-              -1
-            )
-          )
-        }))
-      })
-    }
     if (level <= 1) {
       errdf <- err[[1]]
       if (length(err) > 1) {
         for (i in 2:length(err)) {
-          errdf <- rbind(errdf, err[[i]])
+          if (nrow(err[[i]] > 0))
+            errdf <- rbind(errdf, err[[i]])
         }
       }
       rownames(errdf) <- NULL
       err <- as.data.frame(errdf)
+      rm(errdf)
     }
     if (level <= 0) {
       err <- data.frame(
@@ -90,43 +122,27 @@ summary.sperroresterror <- function(object, # nolint start
       )
     }
   } else {
-    if (level <= 2) {
-      err <- lapply(err, function(x) {
-        t(sapply(x, function(y) {
-          data.frame(
-            train = y$train,
-            test = y$test,
-            distance = ifelse(any(names(y) == "distance"), y$distance,
-              -1
-            )
-          )
-        }))
-      })
-    }
     if (level <= 1) {
       ### w = summary.partition(resampling) ?????
       err <- lapply(err, function(x) {
         apply(x, 2, function(y) {
-          weighted.mean(unlist(y),
-            na.rm = na.rm
-          )
+          weighted.mean(unlist(y), na.rm = na.rm)
         })
       })
-      nms <- names(err)
-      err <- as.data.frame(t(as.data.frame(err)))
-      rownames(err) <- nms
+      sel <- sapply(err, length) > 0
+      err <- err[sel]
+      err <- as.data.frame(dplyr::bind_rows(err))
     }
     if (level <= 0) {
       err <- data.frame(
-        mean = sapply(err, mean), sd = sapply(err, sd),
-        median = sapply(
-          err,
-          median
-        ), IQR = sapply(err, IQR)
+        mean = sapply(err, mean),
+        sd = sapply(err, sd),
+        median = sapply(err, median),
+        IQR = sapply(err, IQR)
       )
     }
   }
-  return(err)
+  err
 }
 
 #' @rdname summary.sperrorest
@@ -142,12 +158,13 @@ summary.sperrorestreperror <- function(object, # nolint
   object <- as.data.frame(object)
   if (level <= 0) {
     object <- data.frame(
-      mean = sapply(object, mean), sd = sapply(object, sd),
+      mean = sapply(object, mean),
+      sd = sapply(object, sd),
       median = sapply(object, median),
       IQR = sapply(object, IQR)
     )
   }
-  return(object)
+  object
 }
 
 #' @title Summarize variable importance statistics obtained by {sperrorest}

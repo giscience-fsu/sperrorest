@@ -10,8 +10,8 @@
 \item{object}{\code{sperroresterror} resp. \code{sperrorestcombinederror} error object
 calculated by \link{sperrorest}}
 
-\item{level}{Level at which errors are summarized: 0: overall; 1: repetition;
-2: fold}
+\item{level}{Level at which errors are summarized: 0: overall (i.e. across
+all repetitions); 1: repetition; 2: fold}
 
 \item{pooled}{If \code{TRUE} (default), mean and standard deviation etc are
 calculated between fold-level error estimates. If \code{FALSE}, apply first a

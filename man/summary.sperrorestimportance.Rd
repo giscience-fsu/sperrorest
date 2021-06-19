@@ -10,13 +10,13 @@
 \item{object}{\code{sperrorestimportance} object calculated by \link{sperrorest} called
 with argument \code{importance = TRUE}}
 
-\item{level}{Level at which errors are summarized: 0: overall; 1: repetition;
-2: fold}
+\item{level}{Level at which errors are summarized: 0: overall (i.e. across
+all repetitions); 1: repetition; 2: fold}
 
 \item{na.rm}{Remove \code{NA} values? See \link{mean} etc.}
 
 \item{which}{optional character vector specifying selected variables for
-which the importances should be summarized (to do: check implementation)}
+which the importances should be summarized}
 
 \item{...}{additional arguments (currently ignored)}
 }
