@@ -163,7 +163,7 @@ multiple child functions, must be defined in one function.
 Running in parallel is supported via package \CRANpkg{future}.
 Have a look at \code{vignette("future-1-overview", package = "future")}.
 In short: Choose a backend and specify the number of workers, then call
-\code{sperrorest()} as usual. Example:\if{html}{\out{<div class="r">}}\preformatted{future::plan(future.callr::callr, workers = 2)
+\code{sperrorest()} as usual. Example:\if{html}{\out{<div class="sourceCode r">}}\preformatted{future::plan(future.callr::callr, workers = 2)
 sperrorest()
 }\if{html}{\out{</div>}}
 
