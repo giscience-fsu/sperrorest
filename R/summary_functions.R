@@ -13,8 +13,8 @@
 #'
 #' @param object `sperroresterror` resp. `sperrorestcombinederror` error object
 #'   calculated by [sperrorest]
-#' @param level Level at which errors are summarized: 0: overall; 1: repetition;
-#'   2: fold
+#' @param level Level at which errors are summarized: 0: overall (i.e. across
+#'   all repetitions); 1: repetition; 2: fold
 #' @param pooled If `TRUE` (default), mean and standard deviation etc are
 #'   calculated between fold-level error estimates. If `FALSE`, apply first a
 #'   [weighted.mean] among folds before calculating mean, standard deviation etc
@@ -162,7 +162,7 @@ summary.sperrorestreperror <- function(object, # nolint
 #'   with argument `importance = TRUE`
 #' @inheritParams summary.sperroresterror
 #' @param which optional character vector specifying selected variables for
-#'   which the importances should be summarized (to do: check implementation)
+#'   which the importances should be summarized
 #'
 #' @return a list or data.frame, depending on the `level` of aggregation
 #'
@@ -173,34 +173,49 @@ summary.sperrorestimportance <- function(object, # nolint start
                                          which = NULL,
                                          ...) {
   # nolint end
-  arrdim <- c(length(object), length(object[[1]]), dim(object[[1]][[1]]))
+  # Create array that will hold the variable importance results:
+  nfolds <- sapply(object, length)
+  if (any(nfolds != nfolds[1]) & !na.rm) {
+    warning("Repetitions have a varying number of folds, therefore NAs will be produced; chaging 'na.rm' to TRUE.")
+    na.rm <- TRUE
+  }
+  arrdim <- c(length(object), max(nfolds), dim(object[[1]][[1]]))
   arrdimnames <- list(
-    names(object), names(object[[1]]),
-    rownames(object[[1]][[1]]), colnames(object[[1]][[1]])
+    names(object), # names of repetitions
+    names(object[[which.max(nfolds)]]), # names of folds
+    rownames(object[[1]][[1]]), # names of
+    colnames(object[[1]][[1]])
   )
   arr <- array(NA, dim = arrdim, dimnames = arrdimnames)
+  # Fill the array with the results:
   for (i in seq_along(object)) {
-    for (j in seq_along(object[[i]])) {
-      arr[i, j, , ] <- as.matrix(object[[i]][[j]])
+    if (nfolds[i] >= 1) {
+      for (j in seq_along(object[[i]])) {
+        if (is.data.frame(object[[i]][[j]])) {
+          arr[i, j, , ] <- as.matrix(object[[i]][[j]])
+        } else {
+          warning("ignoring unexpected object in repetition ", i, ", fold ", j)
+        }
+      }
     }
   }
+  # Summarize at the repetition level:
   if (level <= 1) {
     arr <- apply(arr, c(1, 3, 4), mean, na.rm = na.rm)
   }
+  # Summarize at the overall level, i.e. across all repetitions:
   if (level <= 0) {
     if (is.null(which)) {
       arr <- data.frame(
         mean = apply(arr, c(2, 3), mean, na.rm = na.rm),
         sd = apply(arr, c(2, 3), sd, na.rm = na.rm),
-        median = apply(arr, c(2, 3), median,
-          na.rm = na.rm
-        ),
+        median = apply(arr, c(2, 3), median, na.rm = na.rm),
         IQR = apply(arr, c(2, 3), IQR, na.rm = na.rm)
       )
     }
-    # when does this happen?
     else {
-      arr <- arr[, , which] # nocov start
+      # summarize importance of selected features:
+      arr <- arr[, which, ] # nocov start
       arr <- data.frame(
         mean = apply(arr, 2, mean, na.rm = na.rm),
         sd = apply(arr, 2, sd, na.rm = na.rm),
@@ -209,7 +224,7 @@ summary.sperrorestimportance <- function(object, # nolint start
       ) # nocov end
     }
   }
-  return(arr)
+  arr
 }
 
 
