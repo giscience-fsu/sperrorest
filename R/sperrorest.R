@@ -337,6 +337,12 @@ sperrorest <- function(formula,
     resamp <- add.distance(object = resamp, data = data,
                            coords = coords, fun = mean,
                            mode = mode_dist[1])
+    if (verbose >= 3) {
+      cat("\n-----------------------------\nResampling object:",
+          "\n-----------------------------\n")
+      print(resamp)
+      cat("\n-----------------------------\n")
+    }
   }
 
   res <- lapply(resamp, unclass)
@@ -349,9 +355,9 @@ sperrorest <- function(formula,
   if (importance) {
     # Importance of which variables:
     if (is.null(imp_variables)) {
-      imp_variables <- strsplit(as.character(formula)[3], " + ",
-        fixed = TRUE
-      )[[1]]
+      imp_variables <- all.vars(formula)[-1]
+      # imp_variables <- strsplit(as.character(formula)[3], " + ",
+      #                           fixed = TRUE)[[1]]
     }
     # Dummy data structure that will later be populated with the results:
     impo <- resamp
@@ -363,7 +369,7 @@ sperrorest <- function(formula,
 
     tmp <- as.list(rep(NA, imp_permutations))
 
-    names(tmp) <- as.character(1:imp_permutations)
+    names(tmp) <- as.character(seq_len(imp_permutations))
     for (vnm in imp_variables) {
       imp_one_rep[[vnm]] <- tmp
     }
@@ -378,9 +384,9 @@ sperrorest <- function(formula,
     cat(date(), "Running the model assessment...\n")
 
   if (mode_rep == "sequential") {
-    my_res <- lapply(resamp, function(x) {
+    my_res <- lapply(seq_along(resamp), function(x) {
       runreps(
-        current_sample = x,
+        current_sample = resamp[[x]],
         data = data,
         formula = formula,
         response = response,
@@ -404,16 +410,17 @@ sperrorest <- function(formula,
         test_fun = test_fun,
         test_param = test_param,
         pooled_obs_test = pooled_obs_test,
-        err_fun = err_fun
+        err_fun = err_fun,
+        i = x
       )
     }
     )
 
   } else if (mode_rep == "future") {
 
-    my_res <- future.apply::future_lapply(resamp, function(x) {
+    my_res <- future.apply::future_lapply(seq_along(resamp), function(x) {
       runreps(
-        current_sample = x,
+        current_sample = resamp[[x]],
         data = data,
         formula = formula,
         response = response,
@@ -437,7 +444,8 @@ sperrorest <- function(formula,
         test_fun = test_fun,
         test_param = test_param,
         pooled_obs_test = pooled_obs_test,
-        err_fun = err_fun
+        err_fun = err_fun,
+        i = x
       )
     },
     future.seed = TRUE
@@ -448,7 +456,7 @@ sperrorest <- function(formula,
     # for loop as a safety net for debugging purposes:
 
     my_res <- list()
-    for (i_rep in 1:length(resamp)) {
+    for (i_rep in seq_along(resamp)) {
       my_res[[i_rep]] <-
         runreps(
           current_sample = resamp[[i_rep]],
@@ -475,8 +483,15 @@ sperrorest <- function(formula,
           test_fun = test_fun,
           test_param = test_param,
           pooled_obs_test = pooled_obs_test,
-          err_fun = err_fun
+          err_fun = err_fun,
+          i = i_rep
         )
+      if (verbose >= 3) {
+        cat("\n-----------------------------\nResults:",
+            "\n-----------------------------\n")
+        print(my_res[[i_rep]])
+        cat("-----------------------------\n\n")
+      }
     }
   } else stop("invalid mode_rep")
 
@@ -501,23 +516,27 @@ sperrorest <- function(formula,
     }
   }
 
+  ## 2021-06-21:
+  ## removed NA check; NAs should be handled by
+  ## summary methods...
+
   # check if any rep is NA in all folds and if, remove entry
   # this happens e.g. in maxent #nolint
 
-  if (verbose >= 2)
-    cat(date(), " - Check NAs...\n")
-
-  check_na <- lapply(my_res, function(x) all(is.na(x))) # nolint
-  check_na_flat <- unlist(check_na)
-
-  if (any(check_na_flat) == TRUE) {
-    check_na <- as.numeric(which(lapply(my_res, function(x) {
-      all(is.na(x))
-    }) ))
-
-    my_res <- my_res[-check_na]
-
-  }
+  # if (verbose >= 2)
+  #   cat(date(), " - Check NAs...\n")
+  #
+  # check_na <- lapply(my_res, function(x) all(is.na(x))) # nolint
+  # check_na_flat <- unlist(check_na)
+  #
+  # if (any(check_na_flat) == TRUE) {
+  #   check_na <- as.numeric(which(lapply(my_res, function(x) {
+  #     all(is.na(x))
+  #   }) ))
+  #
+  #   my_res <- my_res[-check_na]
+  #
+  # }
 
   # assign names to sublists - otherwise `transfer_parallel_output` doesn't work
   if (verbose >= 2)

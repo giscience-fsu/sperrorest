@@ -43,8 +43,11 @@ runfolds <- function(j = NULL,
   fold_number <- NULL
   repetition_number <- NULL
 
+  # predictor variables:
+  predvars <- all.vars(formula)[-1]
+
   # append fid to data to enable tracking of observations
-  data$fid <- seq(1:nrow(data)) # nolint
+  data$fid <- seq_len(nrow(data)) # nolint
 
   # Create training sample:
   nd_train <- data[current_sample[[j]]$train, ]
@@ -162,8 +165,10 @@ runfolds <- function(j = NULL,
     nd_test <- remove_missing_levels(fit, nd_test) # nolint
   }
 
-  # remove NAs in data.frame if levels are missing
-  nd_test <- na.omit(nd_test)
+  # remove NAs in test data.frame
+  omit_na <- apply(nd_test[, predvars], 1, function(x) !any(is.na(x)))
+  nd_test <- nd_test[omit_na, ]
+  ##nd_test <- na.omit(nd_test)
 
   # Apply model to test sample:
   pargs <- c(list(object = fit, newdata = nd_test), pred_args)
@@ -231,8 +236,10 @@ runfolds <- function(j = NULL,
       nd_test <- remove_missing_levels(fit, nd_test) # nolint
     }
 
-    # remove NAs in data.frame if levels are missing
-    nd_test <- na.omit(nd_test)
+    # remove NAs in test data.frame
+    omit_na <- apply(nd_test[, predvars], 1, function(x) !any(is.na(x)))
+    nd_test <- nd_test[omit_na, ]
+    ##nd_test <- na.omit(nd_test)
 
     # Backup copy for permutation:
     nd_test_bak <- nd_test
@@ -250,7 +257,7 @@ runfolds <- function(j = NULL,
       }
       imp_temp <- imp_one_rep
 
-      for (cnt in 1:imp_permutations) {
+      for (cnt in seq_len(imp_permutations)) {
         # Some output on screen:
         if (progress == "all" | progress == TRUE & (cnt > 1)) {
           if (log10(cnt) == floor(log10(cnt))) {
@@ -444,7 +451,7 @@ runreps <- function(current_sample = NULL,
     ) -> runfolds_list
   } else if (mode_fold == "loop") {
     runfolds_list <- list()
-    for (i_fold in 1:length(current_sample)) {
+    for (i_fold in seq_along(current_sample)) {
       runfolds_list[[i_fold]] <-
         runfolds(
           j = i_fold,
@@ -490,7 +497,9 @@ runreps <- function(current_sample = NULL,
   if (all(is.na(runfolds_merged$pooled_obs_train))) {
     return(list(
       error = NA,
-      pooled_error = NA, importance = NA
+      pooled_error = NA, importance = NA,
+      not_converged_folds = runfolds_merged$not_converged_folds,
+      resampling = runfolds_merged$resampling
     ))
   }
 
