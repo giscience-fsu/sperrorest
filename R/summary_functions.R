@@ -71,11 +71,19 @@ summary.sperroresterror <- function(object, # nolint start
 
   get_err <- function(y) {
     if (!is_err_object(y)) return(NULL)
-    data.frame(
+    res <- data.frame(
       train = y$train,
       test = y$test,
       distance = get_dist(y)
     )
+    if (length(y$train) == 1) {
+      colnames(res) <- c(
+        paste0("train.", names(y$train)),
+        paste0("test.", names(y$test)),
+        "distance"
+      )
+    }
+    res
   }
 
   if (level <= 2) {
