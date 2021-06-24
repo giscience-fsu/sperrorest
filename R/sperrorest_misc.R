@@ -55,7 +55,7 @@ dataset_distance <- function(d1,
   if (!is.null(fun)) {
     di <- fun(di, ...)
   }
-  return(di)
+  di
 }
 
 
@@ -112,7 +112,7 @@ add.distance.resampling <- function(object, data, coords = c("x", "y"), ...) { #
     )
     object[[j]]$distance <- test_dist
   }
-  return(object)
+  object
 }
 
 #' @rdname add.distance
@@ -176,7 +176,7 @@ as.tilename.numeric <- function(x,
   stopifnot(x == round(x))
   x <- paste("X", x[1], ":Y", x[2], sep = "")
   class(x) <- "tilename"
-  return(x)
+  x
 }
 
 #' @rdname as.tilename
@@ -186,7 +186,7 @@ as.tilename.numeric <- function(x,
 as.character.tilename <- function(x,
                                   ...) {
   class(x) <- "character"
-  return(x)
+  x
 }
 
 #' @rdname as.tilename
@@ -202,7 +202,7 @@ as.numeric.tilename <- function(x, # nolint # nocov start
   x <- c(as.numeric(substring(x[1], 2)), as.numeric(substring(x[2], 2)))
   stopifnot(all(!is.na(x)))
   stopifnot(all(x >= 0))
-  return(x)
+  x
 }
 
 #' @rdname as.tilename
@@ -295,8 +295,7 @@ get_small_tiles <- function(tile, min_n = NULL, min_frac = 0, ignore = c()) {
   if (length(small_tile) > 0) {
     small_tile <- small_tile[order(n_tile[small_tile], decreasing = FALSE)] # nocov # nolint
   }
-  small_tile <- factor(small_tile, levels = levels(tile))
-  return(small_tile)
+  factor(small_tile, levels = levels(tile))
 }
 
 #' @title Determine the names of neighbouring tiles in a rectangular pattern
@@ -374,7 +373,7 @@ tile_neighbors <- function(nm, # nocov start # nolint
     nbr <- factor(nbr, levels = tileset)
   }
 
-  return(nbr)
+  nbr
 } # nocov end
 
 
@@ -479,7 +478,7 @@ as.resampling.factor <- function(object,
   # result is a list with nlevels (object) levels
   names(resampling) <- levels(object)
   class(resampling) <- "resampling"
-  return(resampling)
+  resampling
 }
 
 #' @rdname as.resampling
@@ -490,7 +489,7 @@ as.resampling.list <- function(object,
                                ...) {
   stopifnot(validate.resampling(object)) # nolint
   class(object) <- "resampling"
-  return(object)
+  object
 }
 
 #' @rdname as.resampling
@@ -514,7 +513,7 @@ validate.resampling <- function(object) { # nolint
       return(FALSE) # nocov
     }
   }
-  return(TRUE)
+  TRUE
 }
 
 #' @rdname as.resampling
@@ -610,7 +609,7 @@ as.represampling.list <- function(object,
   }
   object <- lapply(object, as.resampling) # nolint
   class(object) <- "represampling"
-  return(object)
+  object
 }
 
 #' @rdname as.represampling
