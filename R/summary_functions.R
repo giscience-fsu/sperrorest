@@ -166,10 +166,10 @@ summary.sperrorestreperror <- function(object, # nolint
   object <- as.data.frame(object)
   if (level <= 0) {
     object <- data.frame(
-      mean = sapply(object, mean),
-      sd = sapply(object, sd),
-      median = sapply(object, median),
-      IQR = sapply(object, IQR)
+      mean = sapply(object, mean, na.rm = na.rm),
+      sd = sapply(object, sd, na.rm = na.rm),
+      median = sapply(object, median, na.rm = na.rm),
+      IQR = sapply(object, IQR, na.rm = na.rm)
     )
   }
   object
