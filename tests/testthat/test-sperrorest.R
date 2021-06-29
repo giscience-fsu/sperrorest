@@ -483,3 +483,102 @@ test_that("sperrorest gets consistent results regardless of parallelization sett
                smry4f["test_rmse", "mean"])
 })
 
+
+
+test_that("sperrorest is able to handle formulas without predictors", {
+
+  requireNamespace("sp", quietly = TRUE)
+  data("meuse", package = "sp")
+
+  set.seed(123)
+
+  d <- meuse
+  d$logZn <- log10(d$zinc)
+  d$sqrt.dist <- sqrt(d$dist)
+  fo <- logZn ~ 1
+  fo0 <- logZn ~ sqrt.dist + elev
+
+  # model uses none of the predictors:
+  lm0 <- function(formula, data, ...) {
+    formula <- as.formula(paste(all.vars(formula)[1], "~ 1"))
+    lm(formula = formula, data = data, ...)
+  }
+
+  # LM with intercept only:
+  out1 <- suppressWarnings(
+    sperrorest(
+      data = d, formula = fo,
+      model_fun = lm,
+      smp_fun = partition_cv,
+      smp_args = list(repetition = 1:2, nfold = 4, seed1 = 321),
+      importance = FALSE
+    )
+  )
+  smry1r <- summary(out1$error_rep)
+
+  # 'fake' LM that ignores predictors, uses only intercept:
+  out2 <- suppressWarnings(
+    sperrorest(
+      data = d, formula = fo0,
+      model_fun = lm0,
+      smp_fun = partition_cv,
+      smp_args = list(repetition = 1:2, nfold = 4, seed1 = 321),
+      importance = FALSE
+    )
+  )
+  smry2r <- summary(out2$error_rep)
+
+  expect_equal(smry1r["test_rmse", "mean"],
+               smry2r["test_rmse", "mean"])
+})
+
+
+
+test_that("sperrorest is able to handle formulas with only one predictor", {
+  requireNamespace("sp", quietly = TRUE)
+  data("meuse", package = "sp")
+
+  set.seed(123)
+
+  d <- meuse
+  d$logZn <- log10(d$zinc)
+  d$sqrt.dist <- sqrt(d$dist)
+  fo <- logZn ~ sqrt.dist
+  fo1 <- logZn ~ sqrt.dist + elev
+
+  # model uses only first predictor:
+  lm1 <- function(formula, data, ...) {
+    formula <- as.formula(paste(all.vars(formula)[1], "~",
+                                all.vars(formula)[2]))
+    lm(formula = formula, data = data, ...)
+  }
+
+  out1 <- suppressWarnings(
+    sperrorest(
+      data = d, formula = fo,
+      model_fun = lm,
+      smp_fun = partition_cv,
+      smp_args = list(repetition = 1:2, nfold = 4, seed1 = 321),
+      importance = TRUE, imp_permutations = 10
+    )
+  )
+  smry1r <- summary(out1$error_rep)
+  smry1i <- summary(out1$importance)
+
+  out2 <- suppressWarnings(
+    sperrorest(
+      data = d, formula = fo1,
+      model_fun = lm1,
+      smp_fun = partition_cv,
+      smp_args = list(repetition = 1:2, nfold = 4, seed1 = 321),
+      importance = TRUE, imp_permutations = 10
+    )
+  )
+  smry2r <- summary(out2$error_rep)
+  smry2i <- summary(out2$importance)
+
+  expect_equal(smry1r["test_rmse", "mean"],
+               smry2r["test_rmse", "mean"])
+  expect_equal(smry1i["sqrt.dist", "mean.rmse"],
+               smry2i["sqrt.dist", "mean.rmse"])
+})

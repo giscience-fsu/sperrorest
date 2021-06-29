@@ -37,7 +37,8 @@ sperrorest(
 simple formulas without interactions or nonlinear terms should be used,
 e.g. \code{y~x1+x2+x3} but not \code{y~x1*x2+log(x3)}. Formulas involving interaction
 and nonlinear terms may possibly work for error estimation but not for
-variable importance assessment, but should be used with caution.}
+variable importance assessment, but should be used with caution.
+The formula \code{y~...} is not supported, but \code{y~1} (i.e. no predictors) is.}
 
 \item{data}{a \code{data.frame} with predictor and response variables. Training
 and test samples will be drawn from this data set by \code{train_fun} and

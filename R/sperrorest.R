@@ -44,6 +44,7 @@
 #'   e.g. `y~x1+x2+x3` but not `y~x1*x2+log(x3)`. Formulas involving interaction
 #'   and nonlinear terms may possibly work for error estimation but not for
 #'   variable importance assessment, but should be used with caution.
+#'   The formula `y~...` is not supported, but `y~1` (i.e. no predictors) is.
 #' @param coords vector of length 2 defining the variables in `data` that
 #'   contain the x and y coordinates of sample locations.
 #' @param model_fun Function that fits a predictive model, such as `glm` or
@@ -264,7 +265,7 @@ sperrorest <- function(formula,
   if (missing(model_fun)) {
     stop("'model_fun' is a required argument")
   }
-  if (as.character(attr(terms(formula), "variables"))[3] == "...") {
+  if (any(all.vars(formula) == "...")) {
     stop("formula of the form lhs ~ ... not accepted by 'sperrorest'\n
          specify all predictor variables explicitly")
   }
@@ -321,7 +322,7 @@ sperrorest <- function(formula,
   }
 
   # Name of response variable:
-  response <- as.character(attr(terms(formula), "variables"))[2]
+  response <- all.vars(formula)[1]
 
   if (verbose >= 1)
     cat(date(), "Creating resampling object...\n")
@@ -359,6 +360,13 @@ sperrorest <- function(formula,
       # imp_variables <- strsplit(as.character(formula)[3], " + ",
       #                           fixed = TRUE)[[1]]
     }
+    if (length(imp_variables) == 0) {
+      importance <- FALSE
+      warning("importance is TRUE, but there are no predictors,\n",
+              "or no predictors have been selected; using importance = FALSE.")
+    }
+  }
+  if (importance) {
     # Dummy data structure that will later be populated with the results:
     impo <- resamp
     # Create a template that will contain results of variable importance

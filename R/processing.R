@@ -166,9 +166,15 @@ runfolds <- function(j = NULL,
   }
 
   # remove NAs in test data.frame
-  omit_na <- apply(nd_test[, predvars], 1, function(x) !any(is.na(x)))
-  nd_test <- nd_test[omit_na, ]
-  ##nd_test <- na.omit(nd_test)
+  if (length(predvars) > 0) {
+    if (length(predvars) == 1) {
+      omit_na <- !is.na(nd_test[, predvars])
+    } else {
+      omit_na <- apply(nd_test[, predvars], 1, function(x) !any(is.na(x)))
+    }
+    nd_test <- nd_test[omit_na, ]
+    ##nd_test <- na.omit(nd_test)
+  }
 
   # Apply model to test sample:
   pargs <- c(list(object = fit, newdata = nd_test), pred_args)
@@ -237,9 +243,15 @@ runfolds <- function(j = NULL,
     }
 
     # remove NAs in test data.frame
-    omit_na <- apply(nd_test[, predvars], 1, function(x) !any(is.na(x)))
-    nd_test <- nd_test[omit_na, ]
-    ##nd_test <- na.omit(nd_test)
+    if (length(predvars) > 0) {
+      if (length(predvars) == 1) {
+        omit_na <- !is.na(nd_test[, predvars])
+      } else {
+        omit_na <- apply(nd_test[, predvars], 1, function(x) !any(is.na(x)))
+      }
+      nd_test <- nd_test[omit_na, ]
+      ##nd_test <- na.omit(nd_test)
+    }
 
     # Backup copy for permutation:
     nd_test_bak <- nd_test
