@@ -217,7 +217,7 @@
 ## Target node size:                 1 
 ## Variable importance mode:         none 
 ## Splitrule:                        gini 
-## OOB prediction error:             0.60 %</code></pre>
+## OOB prediction error:             0.61 %</code></pre>
 <p>Let’s take a look at the MER achieved on the training sample:</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">pred</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span><span class="op">(</span><span class="va">fit</span>, data <span class="op">=</span> <span class="va">maipo</span>, type <span class="op">=</span> <span class="st">"response"</span><span class="op">)</span>
@@ -280,12 +280,12 @@
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">res_lda_nsp</span><span class="op">$</span><span class="va">error_rep</span><span class="op">)</span></code></pre></div>
 <pre><code>##                    mean       sd   median      IQR
-## train_error    3.37e-02 0.000765 3.37e-02 0.000762
-## train_accuracy 9.66e-01 0.000765 9.66e-01 0.000762
+## train_error    3.38e-02 0.000548 3.39e-02 0.000535
+## train_accuracy 9.66e-01 0.000548 9.66e-01 0.000535
 ## train_events   4.69e+03 0.000000 4.69e+03 0.000000
 ## train_count    3.09e+04 0.000000 3.09e+04 0.000000
-## test_error     3.89e-02 0.001593 3.82e-02 0.001491
-## test_accuracy  9.61e-01 0.001593 9.62e-01 0.001491
+## test_error     3.96e-02 0.001993 3.86e-02 0.001815
+## test_accuracy  9.60e-01 0.001993 9.61e-01 0.001815
 ## test_events    1.17e+03 0.000000 1.17e+03 0.000000
 ## test_count     7.71e+03 0.000000 7.71e+03 0.000000</code></pre>
 <p>To run a spatial cross-validation at the field level, we can use <code><a href="../reference/partition_factor_cv.html">partition_factor_cv()</a></code> as the sampling function. Since we are using 5 folds, we get a coarse 80/20 split of our data. 80% will be used for training, 20% for testing our trained model.</p>
@@ -307,16 +307,16 @@
   benchmark <span class="op">=</span> <span class="cn">TRUE</span>, progress <span class="op">=</span> <span class="cn">FALSE</span>
 <span class="op">)</span>
 <span class="va">res_lda_sp</span><span class="op">$</span><span class="va">benchmark</span><span class="op">$</span><span class="va">runtime_performance</span></code></pre></div>
-<pre><code>## Time difference of 15.5 secs</code></pre>
+<pre><code>## Time difference of 14.9 secs</code></pre>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">res_lda_sp</span><span class="op">$</span><span class="va">error_rep</span><span class="op">)</span></code></pre></div>
 <pre><code>##                    mean      sd   median     IQR
-## train_error    2.83e-02 0.00200 2.80e-02 0.00198
-## train_accuracy 9.72e-01 0.00200 9.72e-01 0.00198
+## train_error    2.95e-02 0.00247 3.08e-02 0.00220
+## train_accuracy 9.70e-01 0.00247 9.69e-01 0.00220
 ## train_events   4.69e+03 0.00000 4.69e+03 0.00000
 ## train_count    3.09e+04 0.00000 3.09e+04 0.00000
-## test_error     6.13e-02 0.00448 6.11e-02 0.00447
-## test_accuracy  9.39e-01 0.00448 9.39e-01 0.00447
+## test_error     6.25e-02 0.00710 6.17e-02 0.00707
+## test_accuracy  9.37e-01 0.00710 9.38e-01 0.00707
 ## test_events    1.17e+03 0.00000 1.17e+03 0.00000
 ## test_count     7.71e+03 0.00000 7.71e+03 0.00000</code></pre>
 </div>
@@ -364,14 +364,14 @@
 ## train_accuracy 1.00e+00 0.00000 1.00e+00 0.00000
 ## train_events   4.69e+03 0.00000 4.69e+03 0.00000
 ## train_count    3.09e+04 0.00000 3.09e+04 0.00000
-## test_error     8.24e-02 0.00794 8.32e-02 0.00791
-## test_accuracy  9.18e-01 0.00794 9.17e-01 0.00791
+## test_error     8.47e-02 0.00505 8.56e-02 0.00499
+## test_accuracy  9.15e-01 0.00505 9.14e-01 0.00499
 ## test_events    1.17e+03 0.00000 1.17e+03 0.00000
 ## test_count     7.71e+03 0.00000 7.71e+03 0.00000</code></pre>
 <div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">res_rf_sp</span><span class="op">$</span><span class="va">error_rep</span><span class="op">)</span><span class="op">[</span><span class="st">"test_accuracy"</span>,<span class="op">]</span></code></pre></div>
 <pre><code>##                mean      sd median     IQR
-## test_accuracy 0.918 0.00794  0.917 0.00791</code></pre>
+## test_accuracy 0.915 0.00505  0.914 0.00499</code></pre>
 <p>What a surprise! {ranger}‘s classification is not that good after all, if we acknowledge that in ’real life’ we wouldn’t be making predictions in situations where the class membership of other grid cells in the same field is known in the training stage. So spatial dependence does matter.</p>
 </div>
 </div>
