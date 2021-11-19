@@ -2,7 +2,10 @@
 
 # sperrorest 3.0.4
 
-- Same as previous version.
+- implemented parallelization modes at fold and repetition levels
+- more flexible permutation options (especially for LOO CV)
+- handle formulas with 0 or 1 predictor(s), e.g. y~1
+- updated vignette
 
 
 # sperrorest 3.0.3.0001
@@ -40,7 +43,7 @@
 ## Breaking
 
 - All parallel modes got removed in favor of using parallelism via package {future}.
-  This simplifies usage a lot and helps simplyifing future maintenance.
+  This simplifies usage a lot and helps simplifying future maintenance.
   Also it gives users the freedom to choose the parallel backend on their own.
 - `sperrorest()` run sequentially by default again rather than in parallel.
 
@@ -114,7 +117,7 @@
 
 ## Bugfixes
   * partial matching of arguments
-  * account for factor levels only present in test data but missing in training data. Previously, {sperrorest} errored during the predict step when this case occured. Now, this is accounted for and an informative message is given. 
+  * account for factor levels only present in test data but missing in training data. Previously, {sperrorest} errored during the predict step when this occurred. Now, this is accounted for and an informative message is given. 
 
 # sperrorest 1.0.0 (08-Mar-2017)
 
