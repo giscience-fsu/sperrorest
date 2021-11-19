@@ -122,7 +122,7 @@
 # sperrorest 1.0.0 (08-Mar-2017)
 
 ## New features
-  * add `parsperrorest()`: This function lets you exexute `sperrorest()` in parallel. It includes two modes (`par.mode = 1` and `par.mode = 2`) which use different   parallelization approaches in the background. See `?parsperrorest()` for more details.
+  * add `parsperrorest()`: This function lets you execute `sperrorest()` in parallel. It includes two modes (`par.mode = 1` and `par.mode = 2`) which use different   parallelization approaches in the background. See `?parsperrorest()` for more details.
   
   * add `partition.factor.cv()`: This resampling method enables partitioning based 
   on a given factor variable. This can be used, for example, to resample 

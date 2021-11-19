@@ -1,20 +1,10 @@
-sperrorest 3.0.2
-
-## Cran Repository Policy
-
-- [x] Reviewed CRP last edited 2020-10-29.
+## Test environments
+* local R installation, R 4.1.0
+* ubuntu 16.04 (on travis-ci), R 4.1.0
+* win-builder (devel)
 
 ## R CMD check results
 
-- [x] Checked locally, R 4.0.5
-- [x] Checked on CI system, R 4.0.5
-- [x] Checked on win-builder, R devel
+0 errors | 0 warnings | 1 note
 
-Check the boxes above after successful execution and remove this line. Then run `fledge::release()`.
-
-## Current CRAN check results
-
-- [x] Checked on 2021-04-18, problems found: https://cran.r-project.org/web/checks/check_results_sperrorest.html
-- [x] WARN: r-patched-solaris-x86
-
-Check results at: https://cran.r-project.org/web/checks/check_results_sperrorest.html
+* This is a new release.
