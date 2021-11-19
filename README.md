@@ -3,7 +3,7 @@
 <!-- badges: start -->
 [![R CMD Check via {tic}](https://github.com/giscience-fsu/sperrorest/workflows/R%20CMD%20Check%20via%20{tic}/badge.svg?branch=master)](https://github.com/giscience-fsu/sperrorest/actions)
 [![CRAN](https://www.r-pkg.org/badges/version/sperrorest)](https://cran.r-project.org/package=sperrorest)
-[![codecov](https://codecov.io/gh/giscience-fsu/sperrorest/branch/master/graph/badge.svg)](https://codecov.io/gh/giscience-fsu/sperrorest)
+[![codecov](https://codecov.io/gh/giscience-fsu/sperrorest/branch/master/graph/badge.svg)](https://app.codecov.io/gh/giscience-fsu/sperrorest)
 [![Lifecycle: stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 <!-- badges: end -->
 

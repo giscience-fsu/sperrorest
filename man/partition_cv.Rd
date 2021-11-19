@@ -66,6 +66,7 @@ idx <- resamp[["1"]][[2]]$test
 # test sample used in this particular repetition and fold:
 ecuador[idx, ]
 
+require(sp)
 data(meuse, package = "sp")
 resamp <- partition_cv(meuse, nfold = 5, repetition = 2)
 plot(resamp, meuse)
