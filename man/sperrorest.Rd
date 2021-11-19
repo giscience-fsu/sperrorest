@@ -257,12 +257,12 @@ the assessment of prediction rules in remote sensing: the R package
 
 Brenning, A. 2005. Spatial prediction models for landslide hazards: review,
 comparison and evaluation. Natural Hazards and Earth System Sciences,
-5(6), 853-862. \url{https://doi.org/10.5194/nhess-5-853-2005}
+5(6), 853-862. \doi{10.5194/nhess-5-853-2005}
 
 Brenning, A., S. Long & P. Fieguth. 2012. Detecting rock glacier
 flow structures using Gabor filters and IKONOS imagery.
 Remote Sensing of Environment, 125, 227-237.
-\url{http://dx.doi.org/10.1016/j.rse.2012.07.005}
+\doi{10.1016/j.rse.2012.07.005}
 
 Russ, G. & A. Brenning. 2010a. Data mining in precision agriculture:
 Management of spatial information. In 13th International Conference on
