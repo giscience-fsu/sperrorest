@@ -183,7 +183,7 @@ This filter ensures that the final predicted class type of every field is the mo
 ### Linear Discriminant Analysis (LDA)
 
 First, we need to create a wrapper predict method for LDA for `sperrorest()`.
-This is necessary in order to accomodate the majority filter, and also because class predictions from `lda`'s predict method are hidden in the `$class` component of the returned object.
+This is necessary in order to accommodate the majority filter, and also because class predictions from `lda`'s predict method are hidden in the `$class` component of the returned object.
 
 ```{r}
 lda_predfun <- function(object, newdata, fac = NULL) {
@@ -319,7 +319,7 @@ summary(res_rf_sp$error_rep)["test_accuracy",]
 What a surprise! {ranger}'s classification is not that good after all, if we acknowledge that in 'real life' we wouldn't be making predictions in situations where the class membership of other grid cells in the same field is known in the training stage.
 So spatial dependence does matter.
 
-## Usage Advices
+## Usage Advice
 
 Given all the different sampling functions and the required custom predict functions (e.g. `rf_predfun()`) in this example, you might be a little confused which function to use for your use case.
 If you want to do a "normal", i.e. **non-spatial cross-validation** we recommend to use `partition_cv()` as `smp_fun` in `sperrorest()`.

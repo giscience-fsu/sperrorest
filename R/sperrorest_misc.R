@@ -380,7 +380,7 @@ tile_neighbors <- function(nm, # nocov start # nolint
 #' @title Resampling objects such as partitionings or bootstrap samples
 #'
 #' @description Create/coerce and print resampling objects, e.g., partitionings
-#'   or boostrap samples derived from a data set.
+#'   or bootstrap samples derived from a data set.
 #'
 #' @param object depending on the function/method, a list or a vector of type
 #'   factor defining a partitioning of the dataset.
@@ -539,7 +539,7 @@ print.resampling <- function(x,
 
 
 #' @title Resampling objects with repetition, i.e. sets of partitionings or
-#'   boostrap samples
+#'   bootstrap samples
 #'
 #' @description Functions for handling `represampling` objects, i.e. `list`s of
 #'   [resampling] objects.
