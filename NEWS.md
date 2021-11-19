@@ -1,5 +1,10 @@
 <!-- NEWS.md is maintained by https://cynkra.github.io/fledge, do not edit -->
 
+# sperrorest 3.0.4
+
+- Same as previous version.
+
+
 # sperrorest 3.0.3.0001
 
 - "fixed train_fun / test_fun issue
