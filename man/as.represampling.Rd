@@ -8,7 +8,7 @@
 \alias{print.represampling}
 \alias{is_represampling}
 \title{Resampling objects with repetition, i.e. sets of partitionings or
-boostrap samples}
+bootstrap samples}
 \usage{
 as.represampling(object, ...)
 

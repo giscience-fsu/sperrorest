@@ -40,7 +40,7 @@ factor defining a partitioning of the dataset.}
 }
 \description{
 Create/coerce and print resampling objects, e.g., partitionings
-or boostrap samples derived from a data set.
+or bootstrap samples derived from a data set.
 }
 \details{
 A \code{resampling} object is a list of lists defining a set of training
