@@ -198,8 +198,10 @@
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/imbs-hl/ranger" class="external-link">"ranger"</a></span><span class="op">)</span></code></pre></div>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ranger/man/ranger.html" class="external-link">ranger</a></span><span class="op">(</span><span class="va">fo</span>, data <span class="op">=</span> <span class="va">maipo</span><span class="op">)</span>
-<span class="va">fit</span></code></pre></div>
+<code class="sourceCode R"><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ranger/man/ranger.html" class="external-link">ranger</a></span><span class="op">(</span><span class="va">fo</span>, data <span class="op">=</span> <span class="va">maipo</span><span class="op">)</span></code></pre></div>
+<pre><code><span class="co">## Growing trees.. Progress: 95%. Estimated remaining time: 1 seconds.</span></code></pre>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">fit</span></code></pre></div>
 <pre><code><span class="co">## Ranger result</span>
 <span class="co">## </span>
 <span class="co">## Call:</span>
@@ -213,13 +215,13 @@
 <span class="co">## Target node size:                 1 </span>
 <span class="co">## Variable importance mode:         none </span>
 <span class="co">## Splitrule:                        gini </span>
-<span class="co">## OOB prediction error:             0.65 %</span></code></pre>
+<span class="co">## OOB prediction error:             0.56 %</span></code></pre>
 <p>Let’s take a look at the MER achieved on the training sample:</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">pred</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">fit</span>, data <span class="op">=</span> <span class="va">maipo</span>, type <span class="op">=</span> <span class="st">"response"</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">pred</span><span class="op">$</span><span class="va">predictions</span> <span class="op">!=</span> <span class="va">maipo</span><span class="op">$</span><span class="va">croptype</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## [1] 0</span></code></pre>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span>pred <span class="op">=</span> <span class="va">pred</span><span class="op">$</span><span class="va">predictions</span>, obs <span class="op">=</span> <span class="va">maipo</span><span class="op">$</span><span class="va">croptype</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">##        obs</span>
 <span class="co">## pred    crop1 crop2 crop3 crop4</span>
@@ -239,7 +241,7 @@
 <h3 id="linear-discriminant-analysis-lda-1">Linear Discriminant Analysis (LDA)<a class="anchor" aria-label="anchor" href="#linear-discriminant-analysis-lda-1"></a>
 </h3>
 <p>First, we need to create a wrapper predict method for LDA for <code><a href="../reference/sperrorest.html">sperrorest()</a></code>. This is necessary in order to accommodate the majority filter, and also because class predictions from <code>lda</code>’s predict method are hidden in the <code>$class</code> component of the returned object.</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">lda_predfun</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">object</span>, <span class="va">newdata</span>, <span class="va">fac</span> <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="op">{</span>
 
   <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://www.stats.ox.ac.uk/pub/MASS4/" class="external-link">nnet</a></span><span class="op">)</span>
@@ -260,7 +262,7 @@
 <span class="op">}</span></code></pre></div>
 <p>To ensure that custom predict-functions will work with <code><a href="../reference/sperrorest.html">sperrorest()</a></code>, we need to wrap all custom functions in one single function. Otherwise, <code><a href="../reference/sperrorest.html">sperrorest()</a></code> might fail during execution.</p>
 <p>Finally, we can run <code><a href="../reference/sperrorest.html">sperrorest()</a></code> with a non-spatial sampling setting (<code><a href="../reference/partition_cv.html">partition_cv()</a></code>). In this example we use a ‘3 repetitions - 5 folds’ setup. In reality, we recommend to use 100 repetitions to reduce the influence of random partitioning.</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">res_lda_nsp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sperrorest.html">sperrorest</a></span><span class="op">(</span><span class="va">fo</span>,
   data <span class="op">=</span> <span class="va">maipo</span>, coords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"utmx"</span>, <span class="st">"utmy"</span><span class="op">)</span>,
   model_fun <span class="op">=</span> <span class="va">lda</span>,
@@ -273,25 +275,25 @@
 <span class="op">)</span></code></pre></div>
 <p>Note that we’re running this in sequential mode since it’s not worth the trouble parallelizing the execution of three repetitions with a short runtime.</p>
 <p>So what have we got:</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">res_lda_nsp</span><span class="op">$</span><span class="va">error_rep</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">##                    mean      sd   median      IQR</span>
-<span class="co">## train_error    3.40e-02 0.00041 3.39e-02 0.000405</span>
-<span class="co">## train_accuracy 9.66e-01 0.00041 9.66e-01 0.000405</span>
-<span class="co">## train_events   4.69e+03 0.00000 4.69e+03 0.000000</span>
-<span class="co">## train_count    3.09e+04 0.00000 3.09e+04 0.000000</span>
-<span class="co">## test_error     3.96e-02 0.00176 3.98e-02 0.001750</span>
-<span class="co">## test_accuracy  9.60e-01 0.00176 9.60e-01 0.001750</span>
-<span class="co">## test_events    1.17e+03 0.00000 1.17e+03 0.000000</span>
-<span class="co">## test_count     7.71e+03 0.00000 7.71e+03 0.000000</span></code></pre>
+<pre><code><span class="co">##                    mean       sd   median      IQR</span>
+<span class="co">## train_error    3.35e-02 0.000535 3.35e-02 0.000535</span>
+<span class="co">## train_accuracy 9.67e-01 0.000535 9.67e-01 0.000535</span>
+<span class="co">## train_events   4.69e+03 0.000000 4.69e+03 0.000000</span>
+<span class="co">## train_count    3.09e+04 0.000000 3.09e+04 0.000000</span>
+<span class="co">## test_error     4.24e-02 0.001225 4.28e-02 0.001167</span>
+<span class="co">## test_accuracy  9.58e-01 0.001225 9.57e-01 0.001167</span>
+<span class="co">## test_events    1.17e+03 0.000000 1.17e+03 0.000000</span>
+<span class="co">## test_count     7.71e+03 0.000000 7.71e+03 0.000000</span></code></pre>
 <p>To run a spatial cross-validation at the field level, we can use <code><a href="../reference/partition_factor_cv.html">partition_factor_cv()</a></code> as the sampling function. Since we are using 5 folds, we get a coarse 80/20 split of our data. 80% will be used for training, 20% for testing our trained model.</p>
 <p>To take a look where our training and tests sets will be partitioned on each fold, we can plot them. The red colored points represent the test set in each fold, the black colored points the training set. Note that because we plotted over 7000 points, overplotting occurs and since the red crosses are plotted after the black ones, it seems visually that way more than ~20% of red points exist than it is really the case.</p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">resamp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/partition_factor_cv.html">partition_factor_cv</a></span><span class="op">(</span><span class="va">maipo</span>, nfold <span class="op">=</span> <span class="fl">5</span>, repetition <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">1</span>, fac <span class="op">=</span> <span class="st">"field"</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">resamp</span>, <span class="va">maipo</span>, coords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"utmx"</span>, <span class="st">"utmy"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p><img src="spatial-modeling-use-case_files/figure-html/unnamed-chunk-19-1.png" width="672" style="display: block; margin: auto;"></p>
 <p>Subsequently, we have to specify the location of the fields (<code>fac = "field"</code>) in the prediction arguments (<code>pred_args</code>) and sampling arguments (<code>smp_args</code>) in <code><a href="../reference/sperrorest.html">sperrorest()</a></code>.</p>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">res_lda_sp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sperrorest.html">sperrorest</a></span><span class="op">(</span><span class="va">fo</span>,
   data <span class="op">=</span> <span class="va">maipo</span>, coords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"utmx"</span>, <span class="st">"utmy"</span><span class="op">)</span>,
   model_fun <span class="op">=</span> <span class="va">lda</span>,
@@ -303,24 +305,24 @@
   benchmark <span class="op">=</span> <span class="cn">TRUE</span>, progress <span class="op">=</span> <span class="cn">FALSE</span>
 <span class="op">)</span>
 <span class="va">res_lda_sp</span><span class="op">$</span><span class="va">benchmark</span><span class="op">$</span><span class="va">runtime_performance</span></code></pre></div>
-<pre><code><span class="co">## Time difference of 14.7 secs</span></code></pre>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<pre><code><span class="co">## Time difference of 2.58 mins</span></code></pre>
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">res_lda_sp</span><span class="op">$</span><span class="va">error_rep</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">##                    mean      sd   median     IQR</span>
-<span class="co">## train_error    2.91e-02 0.00431 3.10e-02 0.00399</span>
-<span class="co">## train_accuracy 9.71e-01 0.00431 9.69e-01 0.00399</span>
-<span class="co">## train_events   4.69e+03 0.00000 4.69e+03 0.00000</span>
-<span class="co">## train_count    3.09e+04 0.00000 3.09e+04 0.00000</span>
-<span class="co">## test_error     6.66e-02 0.00307 6.74e-02 0.00298</span>
-<span class="co">## test_accuracy  9.33e-01 0.00307 9.33e-01 0.00298</span>
-<span class="co">## test_events    1.17e+03 0.00000 1.17e+03 0.00000</span>
-<span class="co">## test_count     7.71e+03 0.00000 7.71e+03 0.00000</span></code></pre>
+<pre><code><span class="co">##                    mean       sd   median      IQR</span>
+<span class="co">## train_error    3.00e-02 0.000994 3.05e-02 0.000891</span>
+<span class="co">## train_accuracy 9.70e-01 0.000994 9.69e-01 0.000891</span>
+<span class="co">## train_events   4.69e+03 0.000000 4.69e+03 0.000000</span>
+<span class="co">## train_count    3.09e+04 0.000000 3.09e+04 0.000000</span>
+<span class="co">## test_error     6.47e-02 0.004827 6.66e-02 0.004538</span>
+<span class="co">## test_accuracy  9.35e-01 0.004827 9.33e-01 0.004538</span>
+<span class="co">## test_events    1.17e+03 0.000000 1.17e+03 0.000000</span>
+<span class="co">## test_count     7.71e+03 0.000000 7.71e+03 0.000000</span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="randomforest-1">RandomForest<a class="anchor" aria-label="anchor" href="#randomforest-1"></a>
 </h3>
 <p>In the case of Random Forest, the customized <code>pred_fun</code> looks as follows; it is only required because of the majority filter, without it, we could just omit the <code>pred_fun</code> and <code>pred_args</code> arguments below.</p>
-<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">rf_predfun</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">object</span>, <span class="va">newdata</span>, <span class="va">fac</span> <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="op">{</span>
 
   <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://www.stats.ox.ac.uk/pub/MASS4/" class="external-link">nnet</a></span><span class="op">)</span>
@@ -339,7 +341,7 @@
   <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">fac</span><span class="op">)</span><span class="op">)</span> <span class="va">pred</span> <span class="op">&lt;-</span> <span class="fu">majority_filter</span><span class="op">(</span><span class="va">pred</span><span class="op">$</span><span class="va">predictions</span>, <span class="va">newdata</span><span class="op">[</span>, <span class="va">fac</span><span class="op">]</span><span class="op">)</span>
   <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">pred</span><span class="op">)</span>
 <span class="op">}</span></code></pre></div>
-<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">res_rf_sp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sperrorest.html">sperrorest</a></span><span class="op">(</span><span class="va">fo</span>,
   data <span class="op">=</span> <span class="va">maipo</span>, coords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"utmx"</span>, <span class="st">"utmy"</span><span class="op">)</span>,
   model_fun <span class="op">=</span> <span class="va">ranger</span>,
@@ -353,21 +355,21 @@
   mode_rep <span class="op">=</span> <span class="st">"sequential"</span>,
   benchmark <span class="op">=</span> <span class="cn">TRUE</span>, progress <span class="op">=</span> <span class="fl">2</span>
 <span class="op">)</span></code></pre></div>
-<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">res_rf_sp</span><span class="op">$</span><span class="va">error_rep</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">##                    mean      sd   median   IQR</span>
-<span class="co">## train_error    0.00e+00 0.00000 0.00e+00 0.000</span>
-<span class="co">## train_accuracy 1.00e+00 0.00000 1.00e+00 0.000</span>
-<span class="co">## train_events   4.69e+03 0.00000 4.69e+03 0.000</span>
-<span class="co">## train_count    3.09e+04 0.00000 3.09e+04 0.000</span>
-<span class="co">## test_error     9.05e-02 0.00729 8.82e-02 0.007</span>
-<span class="co">## test_accuracy  9.10e-01 0.00729 9.12e-01 0.007</span>
-<span class="co">## test_events    1.17e+03 0.00000 1.17e+03 0.000</span>
-<span class="co">## test_count     7.71e+03 0.00000 7.71e+03 0.000</span></code></pre>
 <div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">res_rf_sp</span><span class="op">$</span><span class="va">error_rep</span><span class="op">)</span></code></pre></div>
+<pre><code><span class="co">##                    mean     sd   median    IQR</span>
+<span class="co">## train_error    0.00e+00 0.0000 0.00e+00 0.0000</span>
+<span class="co">## train_accuracy 1.00e+00 0.0000 1.00e+00 0.0000</span>
+<span class="co">## train_events   4.69e+03 0.0000 4.69e+03 0.0000</span>
+<span class="co">## train_count    3.09e+04 0.0000 3.09e+04 0.0000</span>
+<span class="co">## test_error     8.69e-02 0.0148 8.56e-02 0.0148</span>
+<span class="co">## test_accuracy  9.13e-01 0.0148 9.14e-01 0.0148</span>
+<span class="co">## test_events    1.17e+03 0.0000 1.17e+03 0.0000</span>
+<span class="co">## test_count     7.71e+03 0.0000 7.71e+03 0.0000</span></code></pre>
+<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">res_rf_sp</span><span class="op">$</span><span class="va">error_rep</span><span class="op">)</span><span class="op">[</span><span class="st">"test_accuracy"</span>,<span class="op">]</span></code></pre></div>
-<pre><code><span class="co">##               mean      sd median   IQR</span>
-<span class="co">## test_accuracy 0.91 0.00729  0.912 0.007</span></code></pre>
+<pre><code><span class="co">##                mean     sd median    IQR</span>
+<span class="co">## test_accuracy 0.913 0.0148  0.914 0.0148</span></code></pre>
 <p>What a surprise! {ranger}‘s classification is not that good after all, if we acknowledge that in ’real life’ we wouldn’t be making predictions in situations where the class membership of other grid cells in the same field is known in the training stage. So spatial dependence does matter.</p>
 </div>
 </div>
