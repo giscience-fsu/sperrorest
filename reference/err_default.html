@@ -110,80 +110,80 @@ i.e. they will result in an error.</p>
 <span class="r-in"><span class="co"># Two mock (soft) classification examples:</span></span>
 <span class="r-in"><span class="fu">err_default</span><span class="op">(</span><span class="va">obs</span> <span class="op">&gt;</span> <span class="fl">0</span>, <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">1000</span><span class="op">)</span><span class="op">)</span> <span class="co"># just noise</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $auroc</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.50975</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.471951</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $error</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.506</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.521</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $accuracy</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.494</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.479</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $sensitivity</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.2975207</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.2895277</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $specificity</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.6782946</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.6588694</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $fpr70</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.6647287</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.7290448</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $fpr80</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.7693798</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.8167641</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $fpr90</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.877907</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.9025341</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $tpr80</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.1528926</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.1765914</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $tpr90</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.09297521</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.09650924</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $tpr95</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.04338843</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.0513347</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $events</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 484</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 487</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $count</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span class="fu">err_default</span><span class="op">(</span><span class="va">obs</span> <span class="op">&gt;</span> <span class="fl">0</span>, <span class="va">obs</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">1000</span><span class="op">)</span><span class="op">)</span> <span class="co"># some discrimination</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $auroc</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.8516401</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.8423614</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $error</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.259</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.253</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $accuracy</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.741</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.747</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $sensitivity</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.6198347</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.6119097</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $specificity</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.8546512</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.8752437</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $fpr70</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.1802326</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.2163743</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $fpr80</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.2403101</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.3040936</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $fpr90</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.3934109</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.4561404</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $tpr80</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.7231405</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.6817248</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $tpr90</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.5082645</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.5523614</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $tpr95</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.392562</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.4681725</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $events</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 484</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 487</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $count</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1000</span>
@@ -191,44 +191,44 @@ i.e. they will result in an error.</p>
 <span class="r-in"><span class="co"># Three mock regression examples:</span></span>
 <span class="r-in"><span class="fu">err_default</span><span class="op">(</span><span class="va">obs</span>, <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">1000</span><span class="op">)</span><span class="op">)</span> <span class="co"># just noise, but no bias</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $bias</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.01292868</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] -0.01004633</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $stddev</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1.482714</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1.351718</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $rmse</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1.482029</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1.351079</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $mad</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1.520397</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1.295988</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $median</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] -0.007796398</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] -0.05215267</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $iqr</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2.064123</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1.761027</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $count</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span class="fu">err_default</span><span class="op">(</span><span class="va">obs</span>, <span class="va">obs</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">1000</span><span class="op">)</span><span class="op">)</span> <span class="co"># some association, no bias</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $bias</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.03793802</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] -0.006478715</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $stddev</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1.000387</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1.011497</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $rmse</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1.000606</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1.011012</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $mad</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1.012064</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1.023354</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $median</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.05604423</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] -0.00171856</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $iqr</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1.349983</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1.365266</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $count</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1000</span>
@@ -238,7 +238,7 @@ i.e. they will result in an error.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] -1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $stddev</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 6.12441e-17</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 6.19452e-17</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $rmse</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1</span>
