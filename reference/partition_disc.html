@@ -95,41 +95,69 @@ test sets for leave-one-out cross-validation with (optional) buffer.</p>
     <dl><dt>data</dt>
 <dd><p><code>data.frame</code> containing at least the columns specified by
 <code>coords</code></p></dd>
+
+
 <dt>coords</dt>
 <dd><p>vector of length 2 defining the variables in <code>data</code> that
 contain the x and y coordinates of sample locations.</p></dd>
+
+
 <dt>radius</dt>
 <dd><p>radius of test area discs; performs leave-one-out resampling if
 radius &lt;0.</p></dd>
+
+
 <dt>buffer</dt>
 <dd><p>radius of additional 'neutral area' around test area discs that
 is excluded from training and test sets; defaults to 0, i.e. all samples
 are either in the test area or in the training area.</p></dd>
+
+
 <dt>ndisc</dt>
 <dd><p>Number of discs to be randomly selected; each disc constitutes a
 separate test set. Defaults to <code>nrow(data)</code>, i.e. one disc around each
 sample.</p></dd>
+
+
 <dt>seed1</dt>
 <dd><p><code>seed1+i</code> is the random seed that will be used by <a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a> in
 repetition <code>i</code> (<code>i</code> in <code>repetition</code>) to initialize the random number
 generator before sampling from the data set.</p></dd>
+
+
 <dt>return_train</dt>
 <dd><p>If <code>FALSE</code>, returns only test sample; if <code>TRUE</code>, also the
 training area.</p></dd>
+
+
 <dt>prob</dt>
 <dd><p>optional argument to <a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a>.</p></dd>
+
+
 <dt>replace</dt>
 <dd><p>optional argument to <a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a>: sampling with or without
 replacement?</p></dd>
+
+
 <dt>repetition</dt>
 <dd><p>see <code>partition_cv</code>; however, see Note below: <code>repetition</code>
 should normally be <code>= 1</code> in this function.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>arguments to be passed to <code>partition_disc</code></p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A <a href="as.represampling.html">represampling</a> object. Contains <code>length(repetition)</code><code>resampling</code>objects. Each of these contains <code>ndisc</code> lists with indices of test and (if
+    
+
+<p>A <a href="as.represampling.html">represampling</a> object. Contains <code>length(repetition)</code></p>
+<p></p>
+<p><code>resampling</code></p>
+
+
+<p>objects. Each of these contains <code>ndisc</code> lists with indices of test and (if
 <code>return_train = TRUE</code>) training sets.</p>
     </div>
     <div id="note">
@@ -164,19 +192,19 @@ Sciences, 5(6): 853-862.</p>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">parti</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $`1`</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     n.train n.test</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 99      713     12</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 324     699     25</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 505     728     14</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 564     717      4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 70      712      6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 68      723     24</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 364     735      5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 395     731      7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 142     688     31</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 156     729      8</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $`2`</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     n.train n.test</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 432     693     21</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 360     707     10</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 259     713     17</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 545     729      8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 135     708     22</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 114     701     18</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 673     717     11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 540     717     10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 500     708      9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 42      735      7</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># leave-one-out with buffer:</span></span>
@@ -184,19 +212,19 @@ Sciences, 5(6): 853-862.</p>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">parti</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $`1`</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     n.train n.test</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 99      713     12</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 324     699     25</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 505     728     14</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 564     717      4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 70      712      6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 68      723     24</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 364     735      5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 395     731      7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 142     688     31</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 156     729      8</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $`2`</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     n.train n.test</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 432     693     21</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 360     707     10</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 259     713     17</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 545     729      8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 135     708     22</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 114     701     18</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 673     717     11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 540     717     10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 500     708      9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 42      735      7</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 </code></pre></div>
     </div>
@@ -212,7 +240,7 @@ Sciences, 5(6): 853-862.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
 </div>
 
       </footer></div>

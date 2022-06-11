@@ -110,57 +110,89 @@ e.g. <code>y~x1+x2+x3</code> but not <code>y~x1*x2+log(x3)</code>. Formulas invo
 and nonlinear terms may possibly work for error estimation but not for
 variable importance assessment, but should be used with caution.
 The formula <code>y~...</code> is not supported, but <code>y~1</code> (i.e. no predictors) is.</p></dd>
+
+
 <dt>data</dt>
 <dd><p>a <code>data.frame</code> with predictor and response variables. Training
 and test samples will be drawn from this data set by <code>train_fun</code> and
 <code>test_fun</code>, respectively.</p></dd>
+
+
 <dt>coords</dt>
 <dd><p>vector of length 2 defining the variables in <code>data</code> that
 contain the x and y coordinates of sample locations.</p></dd>
+
+
 <dt>model_fun</dt>
 <dd><p>Function that fits a predictive model, such as <code>glm</code> or
 <code>rpart</code>. The function must accept at least two arguments, the first one
 being a formula and the second a data.frame with the learning sample.</p></dd>
+
+
 <dt>model_args</dt>
 <dd><p>Arguments to be passed to <code>model_fun</code> (in addition to the
 <code>formula</code> and <code>data</code> argument, which are provided by sperrorest)</p></dd>
+
+
 <dt>pred_fun</dt>
 <dd><p>Prediction function for a fitted model object created by
 <code>model</code>. Must accept at least two arguments: the fitted <code>object</code> and a
 <code>data.frame</code> <code>newdata</code> with data on which to predict the outcome.</p></dd>
+
+
 <dt>pred_args</dt>
 <dd><p>(optional) Arguments to <code>pred_fun</code> (in addition to the
 fitted model object and the <code>newdata</code> argument, which are provided by
 sperrorest).</p></dd>
+
+
 <dt>smp_fun</dt>
 <dd><p>A function for sampling training and test sets from <code>data</code>.
 E.g. <a href="partition_kmeans.html">partition_kmeans</a> for spatial cross-validation using spatial
 <em>k</em>-means clustering.</p></dd>
+
+
 <dt>smp_args</dt>
 <dd><p>(optional) Arguments to be passed to <code>smp_fun</code>.</p></dd>
+
+
 <dt>train_fun</dt>
 <dd><p>(optional) A function for resampling or subsampling the
 training sample in order to achieve, e.g., uniform sample sizes on all
 training sets, or maintaining a certain ratio of positives and negatives in
 training sets. E.g. <a href="resample_uniform.html">resample_uniform</a> or <a href="resample_strat_uniform.html">resample_strat_uniform</a>.</p></dd>
+
+
 <dt>train_param</dt>
 <dd><p>(optional) Arguments to be passed to <code>resample_fun</code>.</p></dd>
+
+
 <dt>test_fun</dt>
 <dd><p>(optional) Like <code>train_fun</code> but for the test set.</p></dd>
+
+
 <dt>test_param</dt>
 <dd><p>(optional) Arguments to be passed to <code>test_fun</code>.</p></dd>
+
+
 <dt>err_fun</dt>
 <dd><p>A function that calculates selected error measures from the
 known responses in <code>data</code> and the model predictions delivered by
 <code>pred_fun</code>. E.g. <a href="err_default.html">err_default</a> (the default).</p></dd>
+
+
 <dt>imp_variables</dt>
 <dd><p>(optional; used if <code>importance = TRUE</code>). Variables for
 which permutation-based variable importance assessment is performed. If
 <code>importance = TRUE</code> and <code>imp_variables</code> == <code>NULL</code>, all variables in
 <code>formula</code> will be used.</p></dd>
+
+
 <dt>imp_permutations</dt>
 <dd><p>(optional; used if <code>importance = TRUE</code>). Number of
 permutations used for variable importance assessment.</p></dd>
+
+
 <dt>imp_sample_from</dt>
 <dd><p>(default: <code>"test"</code>): specified if the permuted feature
 values should be taken from the test set, the training set (a rather unlikely
@@ -170,25 +202,37 @@ to perform any kind of resampling. In any case importances are
 always estimates on the test set. (Note that resampling with replacement is
 used if the test set is larger than the set from which the permuted values
 are to be taken.)</p></dd>
+
+
 <dt>importance</dt>
 <dd><p>logical (default: <code>FALSE</code>): perform permutation-based
 variable importance assessment?</p></dd>
+
+
 <dt>distance</dt>
 <dd><p>logical (default: <code>FALSE</code>): if <code>TRUE</code>, calculate mean
 nearest-neighbour distances from test samples to training samples using
 <a href="add.distance.html">add.distance.represampling</a>.</p></dd>
+
+
 <dt>do_gc</dt>
 <dd><p>numeric (default: 1): defines frequency of memory garbage
 collection by calling <a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a>; if <code>&lt; 1</code>, no garbage collection; if <code>&gt;= 1</code>, run
 a <a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a> after each repetition; if <code>&gt;= 2</code>, after each fold.</p></dd>
+
+
 <dt>progress</dt>
 <dd><p>character (default: <code>all</code>): Whether to show progress
 information (if possible). Default shows repetition, fold and (if enabled)
 variable importance progress. Set to <code>"rep"</code> for repetition information
 only or <code>FALSE</code> for no progress information.</p></dd>
+
+
 <dt>benchmark</dt>
 <dd><p>(optional) logical (default: <code>FALSE</code>): if <code>TRUE</code>, perform
 benchmarking and return <code>sperrorestbenchmark</code> object.</p></dd>
+
+
 <dt>mode_rep, mode_fold</dt>
 <dd><p>character (default: <code>"future"</code> and <code>"sequential"</code>,
 respectively): specifies whether to parallelize the execution at the repetition
@@ -198,13 +242,18 @@ It is only possible to parallelize at the repetition level or at
 the fold level.
 The <code>"loop"</code> option uses a <code>for</code> loop instead of an <code>lappy</code>
 function; this option is for debugging purposes.</p></dd>
+
+
 <dt>verbose</dt>
 <dd><p>Controls the amount of information printed while processing.
 Defaults to 0 (no output).</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A list (object of class sperrorest) with (up to) six components:</p><ul><li><p>error_rep: <code>sperrorestreperror</code> containing
+    
+
+<p>A list (object of class sperrorest) with (up to) six components:</p><ul><li><p>error_rep: <code>sperrorestreperror</code> containing
 predictive performances at the repetition level</p></li>
 <li><p>error_fold: <code>sperroresterror</code> object containing predictive
 performances at the fold level</p></li>
@@ -296,14 +345,14 @@ Lecture Notes in Computer Science, 6065 LNCS: 184-195.</p>
 <span class="r-in">  smp_fun <span class="op">=</span> <span class="va">partition_cv</span>,</span>
 <span class="r-in">  smp_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>repetition <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">2</span>, nfold <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
 <span class="r-in"><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Fri Jun 10 04:22:45 2022 Repetition 1 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Fri Jun 10 04:22:45 2022 Repetition - Fold 1 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Fri Jun 10 04:22:45 2022 Repetition - Fold 2 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Fri Jun 10 04:22:45 2022 Repetition - Fold 3 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Fri Jun 10 04:22:45 2022 Repetition 2 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Fri Jun 10 04:22:45 2022 Repetition - Fold 1 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Fri Jun 10 04:22:45 2022 Repetition - Fold 2 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Fri Jun 10 04:22:45 2022 Repetition - Fold 3 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Sat Jun 11 04:20:40 2022 Repetition 1 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Sat Jun 11 04:20:40 2022 Repetition - Fold 1 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Sat Jun 11 04:20:40 2022 Repetition - Fold 2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Sat Jun 11 04:20:40 2022 Repetition - Fold 3 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Sat Jun 11 04:20:40 2022 Repetition 2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Sat Jun 11 04:20:40 2022 Repetition - Fold 1 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Sat Jun 11 04:20:40 2022 Repetition - Fold 2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Sat Jun 11 04:20:40 2022 Repetition - Fold 3 </span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">nsp_res</span><span class="op">$</span><span class="va">error_rep</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                           mean           sd       median          IQR</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> train_auroc          0.8413531 0.0002190341    0.8413531 0.0001548805</span>
@@ -386,14 +435,14 @@ Lecture Notes in Computer Science, 6065 LNCS: 184-195.</p>
 <span class="r-in">  smp_fun <span class="op">=</span> <span class="va">partition_kmeans</span>,</span>
 <span class="r-in">  smp_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>repetition <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">2</span>, nfold <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
 <span class="r-in"><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Fri Jun 10 04:22:46 2022 Repetition 1 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Fri Jun 10 04:22:46 2022 Repetition - Fold 1 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Fri Jun 10 04:22:46 2022 Repetition - Fold 2 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Fri Jun 10 04:22:46 2022 Repetition - Fold 3 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Fri Jun 10 04:22:46 2022 Repetition 2 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Fri Jun 10 04:22:46 2022 Repetition - Fold 1 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Fri Jun 10 04:22:46 2022 Repetition - Fold 2 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Fri Jun 10 04:22:46 2022 Repetition - Fold 3 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Sat Jun 11 04:20:41 2022 Repetition 1 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Sat Jun 11 04:20:41 2022 Repetition - Fold 1 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Sat Jun 11 04:20:41 2022 Repetition - Fold 2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Sat Jun 11 04:20:41 2022 Repetition - Fold 3 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Sat Jun 11 04:20:41 2022 Repetition 2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Sat Jun 11 04:20:41 2022 Repetition - Fold 1 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Sat Jun 11 04:20:41 2022 Repetition - Fold 2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Sat Jun 11 04:20:41 2022 Repetition - Fold 3 </span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">sp_res</span><span class="op">$</span><span class="va">error_rep</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                           mean          sd       median         IQR</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> train_auroc          0.8472530 0.017474834    0.8472530 0.012356574</span>
@@ -500,7 +549,7 @@ Lecture Notes in Computer Science, 6065 LNCS: 184-195.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
 </div>
 
       </footer></div>

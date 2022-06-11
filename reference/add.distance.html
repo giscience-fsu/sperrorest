@@ -79,22 +79,33 @@
     <h2>Arguments</h2>
     <dl><dt>object</dt>
 <dd><p><a href="as.resampling.html">resampling</a> or <a href="as.represampling.html">represampling</a> object.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Additional arguments to <a href="dataset_distance.html">dataset_distance</a> and
 add.distance.resampling, respectively.</p></dd>
+
+
 <dt>data</dt>
 <dd><p><code>data.frame</code> containing at least the columns specified by
 <code>coords</code></p></dd>
+
+
 <dt>coords</dt>
 <dd><p>(ignored by <code>partition_cv</code>)</p></dd>
+
+
 <dt>mode</dt>
 <dd><p>Use <code><a href="https://future.apply.futureverse.org/reference/future_lapply.html" class="external-link">future.apply::future_lapply()</a></code> for parallelized
 execution if <code>mode = "future"</code>, and <code>lapply</code> for sequential
 execution otherwise (<code>mode = "sequential"</code>)</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A <a href="as.resampling.html">resampling</a> or <a href="as.represampling.html">represampling</a> object containing an additional.
+    
+
+<p>A <a href="as.resampling.html">resampling</a> or <a href="as.represampling.html">represampling</a> object containing an additional.
 <code>$distance</code> component in each <a href="as.resampling.html">resampling</a> object. The <code>distance</code> component
 is a single numeric value indicating, for each <code>train</code> / <code>test</code> pair, the
 (by default, mean) nearest-neighbour distance between the two sets.</p>
@@ -121,11 +132,11 @@ averaged. Aggregation methods other than <code>mean</code> can be chosen using t
 <span class="r-in"><span class="va">sp.parti</span> <span class="op">&lt;-</span> <span class="fu">add.distance</span><span class="op">(</span><span class="va">sp.parti</span>, data <span class="op">=</span> <span class="va">ecuador</span><span class="op">)</span></span>
 <span class="r-in"><span class="co"># non-spatial partioning: very small test-training distance:</span></span>
 <span class="r-in"><span class="va">nsp.parti</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">distance</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 44.56299</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 44.77125</span>
 <span class="r-in"><span class="co"># spatial partitioning: more substantial distance, depending on number of</span></span>
 <span class="r-in"><span class="co"># folds etc.</span></span>
 <span class="r-in"><span class="va">sp.parti</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">distance</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 458.6762</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 415.0488</span>
 </code></pre></div>
     </div>
   </div>
@@ -140,7 +151,7 @@ averaged. Aggregation methods other than <code>mean</code> can be chosen using t
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
 </div>
 
       </footer></div>
