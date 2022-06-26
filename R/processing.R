@@ -121,7 +121,7 @@ runfolds <- function(j = NULL,
       return(NA)
     }
   )
-  if (class(current_res[[j]]$train) == "logical") {
+  if (inherits(current_res[[j]]$train, "logical")) {
     message(sprintf(
       paste0(
         "\n'sperrorest()': Non-convergence during",
