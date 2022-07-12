@@ -70,7 +70,7 @@ samples in tile and/or minimum fraction of entire dataset).</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">get_small_tiles</span><span class="op">(</span><span class="va">tile</span>, min_n <span class="op">=</span> <span class="cn">NULL</span>, min_frac <span class="op">=</span> <span class="fl">0</span>, ignore <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">get_small_tiles</span><span class="op">(</span><span class="va">tile</span>, min_n <span class="op">=</span> <span class="cn">NULL</span>, min_frac <span class="op">=</span> <span class="fl">0</span>, ignore <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -108,10 +108,10 @@ according to these criteria</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># Muenchow et al. (2012), see ?ecuador</span></span>
-<span class="r-in"><span class="co"># Rectangular partitioning without removal of small tiles:</span></span>
-<span class="r-in"><span class="va">parti</span> <span class="op">&lt;-</span> <span class="fu"><a href="partition_tiles.html">partition_tiles</a></span><span class="op">(</span><span class="va">ecuador</span>, nsplit <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">10</span><span class="op">)</span>, reassign <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">parti</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Muenchow et al. (2012), see ?ecuador</span></span></span>
+<span class="r-in"><span><span class="co"># Rectangular partitioning without removal of small tiles:</span></span></span>
+<span class="r-in"><span><span class="va">parti</span> <span class="op">&lt;-</span> <span class="fu"><a href="partition_tiles.html">partition_tiles</a></span><span class="op">(</span><span class="va">ecuador</span>, nsplit <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">10</span><span class="op">)</span>, reassign <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">parti</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $`1`</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>        n.train n.test</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> X10:Y2     685     11</span>
@@ -179,14 +179,14 @@ according to these criteria</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> X9:Y8      686     10</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> X9:Y9      689      7</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">parti</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">parti</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 64</span>
-<span class="r-in"><span class="co"># Same in factor format for the application of get_small_tiles:</span></span>
-<span class="r-in"><span class="va">parti_fac</span> <span class="op">&lt;-</span> <span class="fu"><a href="partition_tiles.html">partition_tiles</a></span><span class="op">(</span><span class="va">ecuador</span>,</span>
-<span class="r-in">  nsplit <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">10</span><span class="op">)</span>, reassign <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span class="r-in">  return_factor <span class="op">=</span> <span class="cn">TRUE</span></span>
-<span class="r-in"><span class="op">)</span></span>
-<span class="r-in"><span class="fu">get_small_tiles</span><span class="op">(</span><span class="va">parti_fac</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, min_n <span class="op">=</span> <span class="fl">20</span><span class="op">)</span> <span class="co"># tiles with less than 20 samples</span></span>
+<span class="r-in"><span><span class="co"># Same in factor format for the application of get_small_tiles:</span></span></span>
+<span class="r-in"><span><span class="va">parti_fac</span> <span class="op">&lt;-</span> <span class="fu"><a href="partition_tiles.html">partition_tiles</a></span><span class="op">(</span><span class="va">ecuador</span>,</span></span>
+<span class="r-in"><span>  nsplit <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">10</span><span class="op">)</span>, reassign <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
+<span class="r-in"><span>  return_factor <span class="op">=</span> <span class="cn">TRUE</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">get_small_tiles</span><span class="op">(</span><span class="va">parti_fac</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, min_n <span class="op">=</span> <span class="fl">20</span><span class="op">)</span> <span class="co"># tiles with less than 20 samples</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1] X2:Y9  X3:Y8  X5:Y5  X6:Y1  X6:Y4  X6:Y9  X9:Y7  X2:Y5  X4:Y10 X4:Y8 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [11] X5:Y7  X9:Y2  X2:Y6  X3:Y10 X5:Y2  X5:Y9  X6:Y2  X6:Y7  X8:Y4  X9:Y9 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [21] X10:Y3 X1:Y7  X7:Y3  X7:Y5  X3:Y6  X4:Y6  X5:Y10 X7:Y1  X7:Y6  X7:Y9 </span>
@@ -194,11 +194,11 @@ according to these criteria</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [41] X6:Y8  X7:Y7  X7:Y8  X8:Y6  X9:Y6  X4:Y7  X5:Y3  X8:Y3  X8:Y7  X2:Y4 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [51] X4:Y9  X8:Y2  X7:Y4  X6:Y5  X1:Y8  X9:Y4 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 64 Levels: X10:Y2 X10:Y3 X10:Y4 X1:Y7 X1:Y8 X2:Y4 X2:Y5 X2:Y6 X2:Y7 ... X9:Y9</span>
-<span class="r-in"><span class="va">parti2</span> <span class="op">&lt;-</span> <span class="fu"><a href="partition_tiles.html">partition_tiles</a></span><span class="op">(</span><span class="va">ecuador</span>,</span>
-<span class="r-in">  nsplit <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">10</span><span class="op">)</span>, reassign <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span class="r-in">  min_n <span class="op">=</span> <span class="fl">20</span>, min_frac <span class="op">=</span> <span class="fl">0</span></span>
-<span class="r-in"><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">parti2</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span> <span class="co"># &lt; length(parti[[1]])</span></span>
+<span class="r-in"><span><span class="va">parti2</span> <span class="op">&lt;-</span> <span class="fu"><a href="partition_tiles.html">partition_tiles</a></span><span class="op">(</span><span class="va">ecuador</span>,</span></span>
+<span class="r-in"><span>  nsplit <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">10</span><span class="op">)</span>, reassign <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>  min_n <span class="op">=</span> <span class="fl">20</span>, min_frac <span class="op">=</span> <span class="fl">0</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">parti2</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span> <span class="co"># &lt; length(parti[[1]])</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 31</span>
 </code></pre></div>
     </div>
@@ -214,7 +214,7 @@ according to these criteria</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

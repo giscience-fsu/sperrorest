@@ -71,13 +71,13 @@ of sample indices defining cross-validation test and training sets.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">partition_factor</span><span class="op">(</span>
-  <span class="va">data</span>,
-  coords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x"</span>, <span class="st">"y"</span><span class="op">)</span>,
-  <span class="va">fac</span>,
-  return_factor <span class="op">=</span> <span class="cn">FALSE</span>,
-  repetition <span class="op">=</span> <span class="fl">1</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">partition_factor</span><span class="op">(</span></span>
+<span>  <span class="va">data</span>,</span>
+<span>  coords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x"</span>, <span class="st">"y"</span><span class="op">)</span>,</span>
+<span>  <span class="va">fac</span>,</span>
+<span>  return_factor <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  repetition <span class="op">=</span> <span class="fl">1</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -130,19 +130,19 @@ therefore pseudo-replications.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">ecuador</span><span class="op">)</span></span>
-<span class="r-in"><span class="co"># I don't recommend using this partitioning for cross-validation,</span></span>
-<span class="r-in"><span class="co"># this is only for demonstration purposes:</span></span>
-<span class="r-in"><span class="va">breaks</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/quantile.html" class="external-link">quantile</a></span><span class="op">(</span><span class="va">ecuador</span><span class="op">$</span><span class="va">dem</span>, <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span>, length <span class="op">=</span> <span class="fl">6</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">ecuador</span><span class="op">$</span><span class="va">zclass</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cut.html" class="external-link">cut</a></span><span class="op">(</span><span class="va">ecuador</span><span class="op">$</span><span class="va">dem</span>, <span class="va">breaks</span>, include.lowest <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">ecuador</span><span class="op">$</span><span class="va">zclass</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">ecuador</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># I don't recommend using this partitioning for cross-validation,</span></span></span>
+<span class="r-in"><span><span class="co"># this is only for demonstration purposes:</span></span></span>
+<span class="r-in"><span><span class="va">breaks</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/quantile.html" class="external-link">quantile</a></span><span class="op">(</span><span class="va">ecuador</span><span class="op">$</span><span class="va">dem</span>, <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span>, length <span class="op">=</span> <span class="fl">6</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">ecuador</span><span class="op">$</span><span class="va">zclass</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cut.html" class="external-link">cut</a></span><span class="op">(</span><span class="va">ecuador</span><span class="op">$</span><span class="va">dem</span>, <span class="va">breaks</span>, include.lowest <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">ecuador</span><span class="op">$</span><span class="va">zclass</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1.72e+03,1.92e+03] (1.92e+03,2.14e+03] (2.14e+03,2.31e+03] (2.31e+03,2.57e+03] </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                 151                 150                 150                 150 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> (2.57e+03,3.11e+03] </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                 150 </span>
-<span class="r-in"><span class="va">parti</span> <span class="op">&lt;-</span> <span class="fu">partition_factor</span><span class="op">(</span><span class="va">ecuador</span>, fac <span class="op">=</span> <span class="st">"zclass"</span><span class="op">)</span></span>
-<span class="r-in"><span class="co"># plot(parti,ecuador)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">parti</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="va">parti</span> <span class="op">&lt;-</span> <span class="fu">partition_factor</span><span class="op">(</span><span class="va">ecuador</span>, fac <span class="op">=</span> <span class="st">"zclass"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># plot(parti,ecuador)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">parti</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $`1`</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                     n.train n.test</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1.72e+03,1.92e+03]     600    151</span>
@@ -165,7 +165,7 @@ therefore pseudo-replications.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

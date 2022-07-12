@@ -68,15 +68,15 @@ corresponding to cross-validation test and training sets.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">partition_cv_strat</span><span class="op">(</span>
-  <span class="va">data</span>,
-  coords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x"</span>, <span class="st">"y"</span><span class="op">)</span>,
-  nfold <span class="op">=</span> <span class="fl">10</span>,
-  return_factor <span class="op">=</span> <span class="cn">FALSE</span>,
-  repetition <span class="op">=</span> <span class="fl">1</span>,
-  seed1 <span class="op">=</span> <span class="cn">NULL</span>,
-  <span class="va">strat</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">partition_cv_strat</span><span class="op">(</span></span>
+<span>  <span class="va">data</span>,</span>
+<span>  coords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x"</span>, <span class="st">"y"</span><span class="op">)</span>,</span>
+<span>  nfold <span class="op">=</span> <span class="fl">10</span>,</span>
+<span>  return_factor <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  repetition <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  seed1 <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">strat</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -139,21 +139,21 @@ folds of all levels are combined into one cross-validation fold.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">ecuador</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">parti</span> <span class="op">&lt;-</span> <span class="fu">partition_cv_strat</span><span class="op">(</span><span class="va">ecuador</span>,</span>
-<span class="r-in">  strat <span class="op">=</span> <span class="st">"slides"</span>, nfold <span class="op">=</span> <span class="fl">5</span>,</span>
-<span class="r-in">  repetition <span class="op">=</span> <span class="fl">1</span></span>
-<span class="r-in"><span class="op">)</span></span>
-<span class="r-in"><span class="va">idx</span> <span class="op">&lt;-</span> <span class="va">parti</span><span class="op">[[</span><span class="st">"1"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">train</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">ecuador</span><span class="op">$</span><span class="va">slides</span><span class="op">[</span><span class="va">idx</span><span class="op">]</span> <span class="op">==</span> <span class="st">"TRUE"</span><span class="op">)</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">ecuador</span><span class="op">$</span><span class="va">slides</span> <span class="op">==</span> <span class="st">"TRUE"</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">ecuador</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">parti</span> <span class="op">&lt;-</span> <span class="fu">partition_cv_strat</span><span class="op">(</span><span class="va">ecuador</span>,</span></span>
+<span class="r-in"><span>  strat <span class="op">=</span> <span class="st">"slides"</span>, nfold <span class="op">=</span> <span class="fl">5</span>,</span></span>
+<span class="r-in"><span>  repetition <span class="op">=</span> <span class="fl">1</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">idx</span> <span class="op">&lt;-</span> <span class="va">parti</span><span class="op">[[</span><span class="st">"1"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">train</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">ecuador</span><span class="op">$</span><span class="va">slides</span><span class="op">[</span><span class="va">idx</span><span class="op">]</span> <span class="op">==</span> <span class="st">"TRUE"</span><span class="op">)</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">ecuador</span><span class="op">$</span><span class="va">slides</span> <span class="op">==</span> <span class="st">"TRUE"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.9996672</span>
-<span class="r-in"><span class="co"># always == 1</span></span>
-<span class="r-in"><span class="co"># Non-stratified cross-validation:</span></span>
-<span class="r-in"><span class="va">parti</span> <span class="op">&lt;-</span> <span class="fu"><a href="partition_cv.html">partition_cv</a></span><span class="op">(</span><span class="va">ecuador</span>, nfold <span class="op">=</span> <span class="fl">5</span>, repetition <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">idx</span> <span class="op">&lt;-</span> <span class="va">parti</span><span class="op">[[</span><span class="st">"1"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">train</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">ecuador</span><span class="op">$</span><span class="va">slides</span><span class="op">[</span><span class="va">idx</span><span class="op">]</span> <span class="op">==</span> <span class="st">"TRUE"</span><span class="op">)</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">ecuador</span><span class="op">$</span><span class="va">slides</span> <span class="op">==</span> <span class="st">"TRUE"</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.9696772</span>
-<span class="r-in"><span class="co"># close to 1 because of large sample size, but with some random variation</span></span>
+<span class="r-in"><span><span class="co"># always == 1</span></span></span>
+<span class="r-in"><span><span class="co"># Non-stratified cross-validation:</span></span></span>
+<span class="r-in"><span><span class="va">parti</span> <span class="op">&lt;-</span> <span class="fu"><a href="partition_cv.html">partition_cv</a></span><span class="op">(</span><span class="va">ecuador</span>, nfold <span class="op">=</span> <span class="fl">5</span>, repetition <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">idx</span> <span class="op">&lt;-</span> <span class="va">parti</span><span class="op">[[</span><span class="st">"1"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">train</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">ecuador</span><span class="op">$</span><span class="va">slides</span><span class="op">[</span><span class="va">idx</span><span class="op">]</span> <span class="op">==</span> <span class="st">"TRUE"</span><span class="op">)</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">ecuador</span><span class="op">$</span><span class="va">slides</span> <span class="op">==</span> <span class="st">"TRUE"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.9971681</span>
+<span class="r-in"><span><span class="co"># close to 1 because of large sample size, but with some random variation</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -168,7 +168,7 @@ folds of all levels are combined into one cross-validation fold.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

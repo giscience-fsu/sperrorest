@@ -71,15 +71,15 @@ bootstrap samples</h1>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">as.represampling</span><span class="op">(</span><span class="va">object</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="co"># S3 method for list</span>
-<span class="fu">as.represampling</span><span class="op">(</span><span class="va">object</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="co"># S3 method for represampling</span>
-<span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="fu">is_represampling</span><span class="op">(</span><span class="va">object</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">as.represampling</span><span class="op">(</span><span class="va">object</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for list</span></span>
+<span><span class="fu">as.represampling</span><span class="op">(</span><span class="va">object</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for represampling</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">is_represampling</span><span class="op">(</span><span class="va">object</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -126,16 +126,16 @@ performed.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># Muenchow et al. (2012), see ?ecuador</span></span>
-<span class="r-in"><span class="co"># Partitioning by elevation classes in 200 m steps:</span></span>
-<span class="r-in"><span class="va">fac</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">floor</a></span><span class="op">(</span><span class="va">ecuador</span><span class="op">$</span><span class="va">dem</span> <span class="op">/</span> <span class="fl">300</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">fac</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Muenchow et al. (2012), see ?ecuador</span></span></span>
+<span class="r-in"><span><span class="co"># Partitioning by elevation classes in 200 m steps:</span></span></span>
+<span class="r-in"><span><span class="va">fac</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">floor</a></span><span class="op">(</span><span class="va">ecuador</span><span class="op">$</span><span class="va">dem</span> <span class="op">/</span> <span class="fl">300</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">fac</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  10   5   6   7   8   9 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   4  21 246 255 147  78 </span>
-<span class="r-in"><span class="va">parti</span> <span class="op">&lt;-</span> <span class="fu"><a href="as.resampling.html">as.resampling</a></span><span class="op">(</span><span class="va">fac</span><span class="op">)</span></span>
-<span class="r-in"><span class="co"># a list of lists specifying sets of training and test sets,</span></span>
-<span class="r-in"><span class="co"># using each factor at a time as the test set:</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">parti</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="va">parti</span> <span class="op">&lt;-</span> <span class="fu"><a href="as.resampling.html">as.resampling</a></span><span class="op">(</span><span class="va">fac</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># a list of lists specifying sets of training and test sets,</span></span></span>
+<span class="r-in"><span><span class="co"># using each factor at a time as the test set:</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">parti</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> List of 6</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ 10:List of 2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ train: int [1:747] 1 2 3 4 5 6 7 8 9 10 ...</span>
@@ -156,7 +156,7 @@ performed.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ train: int [1:673] 1 2 3 4 5 6 8 9 10 11 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ test : int [1:78] 7 13 17 35 44 75 78 79 88 97 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - attr(*, "class")= chr "resampling"</span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">parti</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">parti</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    n.train n.test</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 10     747      4</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5      730     21</span>
@@ -178,7 +178,7 @@ performed.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

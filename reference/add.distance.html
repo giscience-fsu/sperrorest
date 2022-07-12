@@ -66,13 +66,13 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">add.distance</span><span class="op">(</span><span class="va">object</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="co"># S3 method for resampling</span>
-<span class="fu">add.distance</span><span class="op">(</span><span class="va">object</span>, <span class="va">data</span>, coords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x"</span>, <span class="st">"y"</span><span class="op">)</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="co"># S3 method for represampling</span>
-<span class="fu">add.distance</span><span class="op">(</span><span class="va">object</span>, <span class="va">data</span>, coords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x"</span>, <span class="st">"y"</span><span class="op">)</span>, mode <span class="op">=</span> <span class="st">"future"</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">add.distance</span><span class="op">(</span><span class="va">object</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for resampling</span></span>
+<span><span class="fu">add.distance</span><span class="op">(</span><span class="va">object</span>, <span class="va">data</span>, coords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x"</span>, <span class="st">"y"</span><span class="op">)</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for represampling</span></span>
+<span><span class="fu">add.distance</span><span class="op">(</span><span class="va">object</span>, <span class="va">data</span>, coords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x"</span>, <span class="st">"y"</span><span class="op">)</span>, mode <span class="op">=</span> <span class="st">"future"</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -125,18 +125,18 @@ averaged. Aggregation methods other than <code>mean</code> can be chosen using t
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># Muenchow et al. (2012), see ?ecuador</span></span>
-<span class="r-in"><span class="va">nsp.parti</span> <span class="op">&lt;-</span> <span class="fu"><a href="partition_cv.html">partition_cv</a></span><span class="op">(</span><span class="va">ecuador</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">sp.parti</span> <span class="op">&lt;-</span> <span class="fu"><a href="partition_kmeans.html">partition_kmeans</a></span><span class="op">(</span><span class="va">ecuador</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">nsp.parti</span> <span class="op">&lt;-</span> <span class="fu">add.distance</span><span class="op">(</span><span class="va">nsp.parti</span>, data <span class="op">=</span> <span class="va">ecuador</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">sp.parti</span> <span class="op">&lt;-</span> <span class="fu">add.distance</span><span class="op">(</span><span class="va">sp.parti</span>, data <span class="op">=</span> <span class="va">ecuador</span><span class="op">)</span></span>
-<span class="r-in"><span class="co"># non-spatial partioning: very small test-training distance:</span></span>
-<span class="r-in"><span class="va">nsp.parti</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">distance</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 40.52117</span>
-<span class="r-in"><span class="co"># spatial partitioning: more substantial distance, depending on number of</span></span>
-<span class="r-in"><span class="co"># folds etc.</span></span>
-<span class="r-in"><span class="va">sp.parti</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">distance</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 458.6762</span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Muenchow et al. (2012), see ?ecuador</span></span></span>
+<span class="r-in"><span><span class="va">nsp.parti</span> <span class="op">&lt;-</span> <span class="fu"><a href="partition_cv.html">partition_cv</a></span><span class="op">(</span><span class="va">ecuador</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">sp.parti</span> <span class="op">&lt;-</span> <span class="fu"><a href="partition_kmeans.html">partition_kmeans</a></span><span class="op">(</span><span class="va">ecuador</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">nsp.parti</span> <span class="op">&lt;-</span> <span class="fu">add.distance</span><span class="op">(</span><span class="va">nsp.parti</span>, data <span class="op">=</span> <span class="va">ecuador</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">sp.parti</span> <span class="op">&lt;-</span> <span class="fu">add.distance</span><span class="op">(</span><span class="va">sp.parti</span>, data <span class="op">=</span> <span class="va">ecuador</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># non-spatial partioning: very small test-training distance:</span></span></span>
+<span class="r-in"><span><span class="va">nsp.parti</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">distance</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 50.77951</span>
+<span class="r-in"><span><span class="co"># spatial partitioning: more substantial distance, depending on number of</span></span></span>
+<span class="r-in"><span><span class="co"># folds etc.</span></span></span>
+<span class="r-in"><span><span class="va">sp.parti</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">distance</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 400.8701</span>
 </code></pre></div>
     </div>
   </div>
@@ -151,7 +151,7 @@ averaged. Aggregation methods other than <code>mean</code> can be chosen using t
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

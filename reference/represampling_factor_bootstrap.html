@@ -70,14 +70,14 @@ and similar.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">represampling_factor_bootstrap</span><span class="op">(</span>
-  <span class="va">data</span>,
-  <span class="va">fac</span>,
-  repetition <span class="op">=</span> <span class="fl">1</span>,
-  nboot <span class="op">=</span> <span class="op">-</span><span class="fl">1</span>,
-  seed1 <span class="op">=</span> <span class="cn">NULL</span>,
-  oob <span class="op">=</span> <span class="cn">FALSE</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">represampling_factor_bootstrap</span><span class="op">(</span></span>
+<span>  <span class="va">data</span>,</span>
+<span>  <span class="va">fac</span>,</span>
+<span>  repetition <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  nboot <span class="op">=</span> <span class="op">-</span><span class="fl">1</span>,</span>
+<span>  seed1 <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  oob <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -142,26 +142,26 @@ factor variable, <code>nboot</code> would normally not be greater than <code>nle
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">ecuador</span><span class="op">)</span></span>
-<span class="r-in"><span class="co"># a dummy example for demonstration, performing bootstrap</span></span>
-<span class="r-in"><span class="co"># at the level of an arbitrary factor variable:</span></span>
-<span class="r-in"><span class="va">parti</span> <span class="op">&lt;-</span> <span class="fu">represampling_factor_bootstrap</span><span class="op">(</span><span class="va">ecuador</span>,</span>
-<span class="r-in">  <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">floor</a></span><span class="op">(</span><span class="va">ecuador</span><span class="op">$</span><span class="va">dem</span> <span class="op">/</span> <span class="fl">100</span><span class="op">)</span><span class="op">)</span>,</span>
-<span class="r-in">  oob <span class="op">=</span> <span class="cn">TRUE</span></span>
-<span class="r-in"><span class="op">)</span></span>
-<span class="r-in"><span class="co"># plot(parti,ecuador)</span></span>
-<span class="r-in"><span class="co"># using the factor bootstrap for a non-overlapping block bootstrap</span></span>
-<span class="r-in"><span class="co"># (see also represampling_tile_bootstrap):</span></span>
-<span class="r-in"><span class="va">fac</span> <span class="op">&lt;-</span> <span class="fu"><a href="partition_tiles.html">partition_tiles</a></span><span class="op">(</span><span class="va">ecuador</span>,</span>
-<span class="r-in">  return_factor <span class="op">=</span> <span class="cn">TRUE</span>, repetition <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span>,</span>
-<span class="r-in">  dsplit <span class="op">=</span> <span class="fl">500</span>, min_n <span class="op">=</span> <span class="fl">200</span>, rotation <span class="op">=</span> <span class="st">"random"</span>,</span>
-<span class="r-in">  offset <span class="op">=</span> <span class="st">"random"</span></span>
-<span class="r-in"><span class="op">)</span></span>
-<span class="r-in"><span class="va">parti</span> <span class="op">&lt;-</span> <span class="fu">represampling_factor_bootstrap</span><span class="op">(</span><span class="va">ecuador</span>, <span class="va">fac</span>,</span>
-<span class="r-in">  oob <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span class="r-in">  repetition <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">)</span></span>
-<span class="r-in"><span class="co"># plot(parti, ecuador)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">ecuador</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># a dummy example for demonstration, performing bootstrap</span></span></span>
+<span class="r-in"><span><span class="co"># at the level of an arbitrary factor variable:</span></span></span>
+<span class="r-in"><span><span class="va">parti</span> <span class="op">&lt;-</span> <span class="fu">represampling_factor_bootstrap</span><span class="op">(</span><span class="va">ecuador</span>,</span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">floor</a></span><span class="op">(</span><span class="va">ecuador</span><span class="op">$</span><span class="va">dem</span> <span class="op">/</span> <span class="fl">100</span><span class="op">)</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  oob <span class="op">=</span> <span class="cn">TRUE</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># plot(parti,ecuador)</span></span></span>
+<span class="r-in"><span><span class="co"># using the factor bootstrap for a non-overlapping block bootstrap</span></span></span>
+<span class="r-in"><span><span class="co"># (see also represampling_tile_bootstrap):</span></span></span>
+<span class="r-in"><span><span class="va">fac</span> <span class="op">&lt;-</span> <span class="fu"><a href="partition_tiles.html">partition_tiles</a></span><span class="op">(</span><span class="va">ecuador</span>,</span></span>
+<span class="r-in"><span>  return_factor <span class="op">=</span> <span class="cn">TRUE</span>, repetition <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  dsplit <span class="op">=</span> <span class="fl">500</span>, min_n <span class="op">=</span> <span class="fl">200</span>, rotation <span class="op">=</span> <span class="st">"random"</span>,</span></span>
+<span class="r-in"><span>  offset <span class="op">=</span> <span class="st">"random"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">parti</span> <span class="op">&lt;-</span> <span class="fu">represampling_factor_bootstrap</span><span class="op">(</span><span class="va">ecuador</span>, <span class="va">fac</span>,</span></span>
+<span class="r-in"><span>  oob <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>  repetition <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># plot(parti, ecuador)</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -176,7 +176,7 @@ factor variable, <code>nboot</code> would normally not be greater than <code>nle
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>
