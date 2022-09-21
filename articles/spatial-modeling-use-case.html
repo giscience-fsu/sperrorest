@@ -213,7 +213,7 @@
 <span><span class="co">## Target node size:                 1 </span></span>
 <span><span class="co">## Variable importance mode:         none </span></span>
 <span><span class="co">## Splitrule:                        gini </span></span>
-<span><span class="co">## OOB prediction error:             0.60 %</span></span></code></pre>
+<span><span class="co">## OOB prediction error:             0.54 %</span></span></code></pre>
 <p>Let’s take a look at the MER achieved on the training sample:</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">pred</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">fit</span>, data <span class="op">=</span> <span class="va">maipo</span>, type <span class="op">=</span> <span class="st">"response"</span><span class="op">)</span></span>
@@ -275,15 +275,15 @@
 <p>So what have we got:</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">res_lda_nsp</span><span class="op">$</span><span class="va">error_rep</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">##                    mean       sd   median     IQR</span></span>
-<span><span class="co">## train_error    3.39e-02 0.000608 3.40e-02 0.00060</span></span>
-<span><span class="co">## train_accuracy 9.66e-01 0.000608 9.66e-01 0.00060</span></span>
-<span><span class="co">## train_events   4.69e+03 0.000000 4.69e+03 0.00000</span></span>
-<span><span class="co">## train_count    3.09e+04 0.000000 3.09e+04 0.00000</span></span>
-<span><span class="co">## test_error     4.06e-02 0.001277 4.02e-02 0.00123</span></span>
-<span><span class="co">## test_accuracy  9.59e-01 0.001277 9.60e-01 0.00123</span></span>
-<span><span class="co">## test_events    1.17e+03 0.000000 1.17e+03 0.00000</span></span>
-<span><span class="co">## test_count     7.71e+03 0.000000 7.71e+03 0.00000</span></span></code></pre>
+<pre><code><span><span class="co">##                    mean       sd   median      IQR</span></span>
+<span><span class="co">## train_error    3.41e-02 0.000294 3.39e-02 0.000276</span></span>
+<span><span class="co">## train_accuracy 9.66e-01 0.000294 9.66e-01 0.000276</span></span>
+<span><span class="co">## train_events   4.69e+03 0.000000 4.69e+03 0.000000</span></span>
+<span><span class="co">## train_count    3.09e+04 0.000000 3.09e+04 0.000000</span></span>
+<span><span class="co">## test_error     4.01e-02 0.001130 3.95e-02 0.001037</span></span>
+<span><span class="co">## test_accuracy  9.60e-01 0.001130 9.60e-01 0.001037</span></span>
+<span><span class="co">## test_events    1.17e+03 0.000000 1.17e+03 0.000000</span></span>
+<span><span class="co">## test_count     7.71e+03 0.000000 7.71e+03 0.000000</span></span></code></pre>
 <p>To run a spatial cross-validation at the field level, we can use <code><a href="../reference/partition_factor_cv.html">partition_factor_cv()</a></code> as the sampling function. Since we are using 5 folds, we get a coarse 80/20 split of our data. 80% will be used for training, 20% for testing our trained model.</p>
 <p>To take a look where our training and tests sets will be partitioned on each fold, we can plot them. The red colored points represent the test set in each fold, the black colored points the training set. Note that because we plotted over 7000 points, overplotting occurs and since the red crosses are plotted after the black ones, it seems visually that way more than ~20% of red points exist than it is really the case.</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
@@ -303,16 +303,16 @@
 <span>  benchmark <span class="op">=</span> <span class="cn">TRUE</span>, progress <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
 <span><span class="va">res_lda_sp</span><span class="op">$</span><span class="va">benchmark</span><span class="op">$</span><span class="va">runtime_performance</span></span></code></pre></div>
-<pre><code><span><span class="co">## Time difference of 15.7 secs</span></span></code></pre>
+<pre><code><span><span class="co">## Time difference of 14.7 secs</span></span></code></pre>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">res_lda_sp</span><span class="op">$</span><span class="va">error_rep</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##                    mean      sd   median     IQR</span></span>
-<span><span class="co">## train_error    2.90e-02 0.00136 2.82e-02 0.00120</span></span>
-<span><span class="co">## train_accuracy 9.71e-01 0.00136 9.72e-01 0.00120</span></span>
+<span><span class="co">## train_error    2.83e-02 0.00242 2.74e-02 0.00229</span></span>
+<span><span class="co">## train_accuracy 9.72e-01 0.00242 9.73e-01 0.00229</span></span>
 <span><span class="co">## train_events   4.69e+03 0.00000 4.69e+03 0.00000</span></span>
 <span><span class="co">## train_count    3.09e+04 0.00000 3.09e+04 0.00000</span></span>
-<span><span class="co">## test_error     6.73e-02 0.00869 6.56e-02 0.00856</span></span>
-<span><span class="co">## test_accuracy  9.33e-01 0.00869 9.34e-01 0.00856</span></span>
+<span><span class="co">## test_error     5.94e-02 0.01176 6.16e-02 0.01160</span></span>
+<span><span class="co">## test_accuracy  9.41e-01 0.01176 9.38e-01 0.01160</span></span>
 <span><span class="co">## test_events    1.17e+03 0.00000 1.17e+03 0.00000</span></span>
 <span><span class="co">## test_count     7.71e+03 0.00000 7.71e+03 0.00000</span></span></code></pre>
 </div>
@@ -355,19 +355,19 @@
 <span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">res_rf_sp</span><span class="op">$</span><span class="va">error_rep</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">##                    mean     sd   median    IQR</span></span>
-<span><span class="co">## train_error    0.00e+00 0.0000 0.00e+00 0.0000</span></span>
-<span><span class="co">## train_accuracy 1.00e+00 0.0000 1.00e+00 0.0000</span></span>
-<span><span class="co">## train_events   4.69e+03 0.0000 4.69e+03 0.0000</span></span>
-<span><span class="co">## train_count    3.09e+04 0.0000 3.09e+04 0.0000</span></span>
-<span><span class="co">## test_error     8.81e-02 0.0242 7.49e-02 0.0214</span></span>
-<span><span class="co">## test_accuracy  9.12e-01 0.0242 9.25e-01 0.0214</span></span>
-<span><span class="co">## test_events    1.17e+03 0.0000 1.17e+03 0.0000</span></span>
-<span><span class="co">## test_count     7.71e+03 0.0000 7.71e+03 0.0000</span></span></code></pre>
+<pre><code><span><span class="co">##                    mean      sd   median     IQR</span></span>
+<span><span class="co">## train_error    0.00e+00 0.00000 0.00e+00 0.00000</span></span>
+<span><span class="co">## train_accuracy 1.00e+00 0.00000 1.00e+00 0.00000</span></span>
+<span><span class="co">## train_events   4.69e+03 0.00000 4.69e+03 0.00000</span></span>
+<span><span class="co">## train_count    3.09e+04 0.00000 3.09e+04 0.00000</span></span>
+<span><span class="co">## test_error     7.94e-02 0.00895 8.06e-02 0.00888</span></span>
+<span><span class="co">## test_accuracy  9.21e-01 0.00895 9.19e-01 0.00888</span></span>
+<span><span class="co">## test_events    1.17e+03 0.00000 1.17e+03 0.00000</span></span>
+<span><span class="co">## test_count     7.71e+03 0.00000 7.71e+03 0.00000</span></span></code></pre>
 <div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">res_rf_sp</span><span class="op">$</span><span class="va">error_rep</span><span class="op">)</span><span class="op">[</span><span class="st">"test_accuracy"</span>,<span class="op">]</span></span></code></pre></div>
-<pre><code><span><span class="co">##                mean     sd median    IQR</span></span>
-<span><span class="co">## test_accuracy 0.912 0.0242  0.925 0.0214</span></span></code></pre>
+<pre><code><span><span class="co">##                mean      sd median     IQR</span></span>
+<span><span class="co">## test_accuracy 0.921 0.00895  0.919 0.00888</span></span></code></pre>
 <p>What a surprise! {ranger}‘s classification is not that good after all, if we acknowledge that in ’real life’ we wouldn’t be making predictions in situations where the class membership of other grid cells in the same field is known in the training stage. So spatial dependence does matter.</p>
 </div>
 </div>
