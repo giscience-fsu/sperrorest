@@ -1,5 +1,10 @@
 <!-- NEWS.md is maintained by https://cynkra.github.io/fledge, do not edit -->
 
+# sperrorest 3.0.4.9000
+
+- adjust handling of class name in response to R check 'Note'
+
+
 # sperrorest 3.0.4
 
 - implemented parallelization modes at fold and repetition levels
