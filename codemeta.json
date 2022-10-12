@@ -1,33 +1,20 @@
 {
-  "@context": [
-    "https://doi.org/10.5063/schema/codemeta-2.0",
-    "http://schema.org"
-  ],
+  "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
   "@type": "SoftwareSourceCode",
   "identifier": "sperrorest",
   "description": "Implements spatial error estimation and permutation-based variable importance measures for predictive models using spatial cross-validation and spatial block bootstrap.",
   "name": "sperrorest: Perform Spatial Error Estimation and Variable Importance Assessment",
+  "relatedLink": "https://giscience-fsu.github.io/sperrorest/",
   "codeRepository": "https://github.com/giscience-fsu/sperrorest",
-  "relatedLink": [
-    "https://giscience-fsu.github.io/sperrorest",
-    "https://CRAN.R-project.org/package=sperrorest",
-    "https://giscience-fsu.github.io/sperrorest/"
-  ],
   "issueTracker": "https://github.com/giscience-fsu/sperrorest/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "3.0.4",
+  "version": "3.0.5",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
     "url": "https://r-project.org"
   },
-  "runtimePlatform": "R version 4.1.0 (2021-05-18)",
-  "provider": {
-    "@id": "https://cran.r-project.org",
-    "@type": "Organization",
-    "name": "Comprehensive R Archive Network (CRAN)",
-    "url": "https://cran.r-project.org"
-  },
+  "runtimePlatform": "R version 4.2.1 (2022-06-23 ucrt)",
   "author": [
     {
       "@type": "Person",
@@ -42,7 +29,9 @@
       "familyName": "Schratz",
       "email": "patrick.schratz@gmail.com",
       "@id": "https://orcid.org/0000-0003-0748-6624"
-    },
+    }
+  ],
+  "contributor": [
     {
       "@type": "Person",
       "givenName": "Tobias",
@@ -51,9 +40,6 @@
       "@id": "https://orcid.org/0000-0001-9768-0708"
     }
   ],
-  "contributor": {},
-  "copyrightHolder": {},
-  "funder": {},
   "maintainer": [
     {
       "@type": "Person",
@@ -166,14 +152,14 @@
       "sameAs": "https://CRAN.R-project.org/package=testthat"
     }
   ],
-  "softwareRequirements": [
-    {
+  "softwareRequirements": {
+    "1": {
       "@type": "SoftwareApplication",
       "identifier": "R",
       "name": "R",
       "version": ">= 2.10"
     },
-    {
+    "2": {
       "@type": "SoftwareApplication",
       "identifier": "dplyr",
       "name": "dplyr",
@@ -185,7 +171,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=dplyr"
     },
-    {
+    "3": {
       "@type": "SoftwareApplication",
       "identifier": "future",
       "name": "future",
@@ -197,7 +183,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=future"
     },
-    {
+    "4": {
       "@type": "SoftwareApplication",
       "identifier": "future.apply",
       "name": "future.apply",
@@ -209,12 +195,12 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=future.apply"
     },
-    {
+    "5": {
       "@type": "SoftwareApplication",
       "identifier": "graphics",
       "name": "graphics"
     },
-    {
+    "6": {
       "@type": "SoftwareApplication",
       "identifier": "ROCR",
       "name": "ROCR",
@@ -226,12 +212,12 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=ROCR"
     },
-    {
+    "7": {
       "@type": "SoftwareApplication",
       "identifier": "stats",
       "name": "stats"
     },
-    {
+    "8": {
       "@type": "SoftwareApplication",
       "identifier": "stringr",
       "name": "stringr",
@@ -242,22 +228,10 @@
         "url": "https://cran.r-project.org"
       },
       "sameAs": "https://CRAN.R-project.org/package=stringr"
-    }
-  ],
-  "releaseNotes": "https://github.com/giscience-fsu/sperrorest/blob/master/NEWS.md",
-  "readme": "https://github.com/giscience-fsu/sperrorest/blob/main/README.md",
-  "fileSize": "69049.444KB",
-  "contIntegration": ["https://github.com/giscience-fsu/sperrorest/actions", "https://app.codecov.io/gh/giscience-fsu/sperrorest"],
-  "developmentStatus": "https://lifecycle.r-lib.org/articles/stages.html#stable",
-  "keywords": [
-    "r-package",
-    "cross-validation",
-    "machine-learning",
-    "statistical-learning",
-    "spatial-statistics",
-    "rstats",
-    "spatio-temporal-modeling"
-  ],
+    },
+    "SystemRequirements": null
+  },
+  "fileSize": "1219.988KB",
   "citation": [
     {
       "datePublished": "2012",
@@ -273,5 +247,10 @@
       "@id": "https://doi.org/10.1109/igarss.2012.6352393",
       "sameAs": "https://doi.org/10.1109/igarss.2012.6352393"
     }
-  ]
+  ],
+  "releaseNotes": "https://github.com/giscience-fsu/sperrorest/blob/master/NEWS.md",
+  "readme": "https://github.com/giscience-fsu/sperrorest/blob/main/README.md",
+  "contIntegration": ["https://github.com/giscience-fsu/sperrorest/actions", "https://app.codecov.io/gh/giscience-fsu/sperrorest"],
+  "developmentStatus": "https://lifecycle.r-lib.org/articles/stages.html#stable",
+  "keywords": ["r-package", "cross-validation", "machine-learning", "statistical-learning", "spatial-statistics", "rstats", "spatio-temporal-modeling"]
 }
