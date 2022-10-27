@@ -81,8 +81,10 @@
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1 data-toc-skip>Spatial Modeling Using Statistical Learning Techniques</h1>
-                        <h4 data-toc-skip class="author">Alexander Brenning, Patrick Schratz</h4>
+      <h1 data-toc-skip>Spatial Modeling Using Statistical Learning
+Techniques</h1>
+                        <h4 data-toc-skip class="author">Alexander
+Brenning, Patrick Schratz</h4>
             
       
       <small class="dont-index">Source: <a href="https://github.com/giscience-fsu/sperrorest/blob/HEAD/vignettes/spatial-modeling-use-case.Rmd" class="external-link"><code>vignettes/spatial-modeling-use-case.Rmd</code></a></small>
@@ -95,42 +97,81 @@
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
-<p>Geospatial data scientists often make use of a variety of statistical and machine learning techniques for spatial prediction in applications such as landslide susceptibility modeling <span class="citation">(<a href="#ref-Goetz2015" role="doc-biblioref">Goetz et al. 2015</a>)</span> or habitat modeling <span class="citation">(<a href="#ref-Knudby2010" role="doc-biblioref">Knudby, Brenning, and LeDrew 2010</a>)</span>. Novel and often more flexible techniques promise improved predictive performances as they are better able to represent nonlinear relationships or higher-order interactions between predictors than less flexible linear models.</p>
-<p>Nevertheless, this increased flexibility comes with the risk of possible over-fitting to the training data. Since nearby spatial observations often tend to be more similar than distant ones, traditional random cross-validation is unable to detect this over-fitting whenever spatial observations are close to each other (e.g. <span class="citation">Brenning (<a href="#ref-Brenning2005" role="doc-biblioref">2005</a>)</span>). Spatial cross-validation addresses this by resampling the data not completely randomly, but using larger spatial regions. In some cases, spatial data is grouped, e.g. in remotely-sensed land use mapping grid cells belonging to the same field share the same management procedures and cultivation history, making them more similar to each other than to pixels from other fields with the same crop type.</p>
-<p>This package provides a customizable toolkit for cross-validation (and bootstrap) estimation using a variety of spatial resampling schemes. More so, this toolkit can even be extended to spatio-temporal data or other complex data structures. This vignette will walk you through a simple case study, crop classification in central Chile <span class="citation">(<a href="#ref-Pena2015" role="doc-biblioref">Peña and Brenning 2015</a>)</span>.</p>
-<p>This vignette is based on code that Alex Brenning developed for his course on ‘Environmental Statistics and GeoComputation’ that he teaches at Friedrich Schiller University Jena, Germany. Please take a look at our program and spread the word!</p>
+<p>Geospatial data scientists often make use of a variety of statistical
+and machine learning techniques for spatial prediction in applications
+such as landslide susceptibility modeling <span class="citation">(<a href="#ref-Goetz2015" role="doc-biblioref">Goetz et al. 2015</a>)</span>
+or habitat modeling <span class="citation">(<a href="#ref-Knudby2010" role="doc-biblioref">Knudby, Brenning, and LeDrew 2010</a>)</span>.
+Novel and often more flexible techniques promise improved predictive
+performances as they are better able to represent nonlinear
+relationships or higher-order interactions between predictors than less
+flexible linear models.</p>
+<p>Nevertheless, this increased flexibility comes with the risk of
+possible over-fitting to the training data. Since nearby spatial
+observations often tend to be more similar than distant ones,
+traditional random cross-validation is unable to detect this
+over-fitting whenever spatial observations are close to each other (e.g.
+<span class="citation">Brenning (<a href="#ref-Brenning2005" role="doc-biblioref">2005</a>)</span>). Spatial cross-validation
+addresses this by resampling the data not completely randomly, but using
+larger spatial regions. In some cases, spatial data is grouped, e.g. in
+remotely-sensed land use mapping grid cells belonging to the same field
+share the same management procedures and cultivation history, making
+them more similar to each other than to pixels from other fields with
+the same crop type.</p>
+<p>This package provides a customizable toolkit for cross-validation
+(and bootstrap) estimation using a variety of spatial resampling
+schemes. More so, this toolkit can even be extended to spatio-temporal
+data or other complex data structures. This vignette will walk you
+through a simple case study, crop classification in central Chile <span class="citation">(<a href="#ref-Pena2015" role="doc-biblioref">Peña and
+Brenning 2015</a>)</span>.</p>
+<p>This vignette is based on code that Alex Brenning developed for his
+course on ‘Environmental Statistics and GeoComputation’ that he teaches
+at Friedrich Schiller University Jena, Germany. Please take a look at
+our program and spread the word!</p>
 </div>
 <div class="section level2">
 <h2 id="data-and-packages">Data and Packages<a class="anchor" aria-label="anchor" href="#data-and-packages"></a>
 </h2>
-<p>As a case study we will carry out a supervised classification analysis using remotely-sensed data to predict fruit-tree crop types in central Chile. This data set is a subsample of data from <span class="citation">(<a href="#ref-Pena2015" role="doc-biblioref">Peña and Brenning 2015</a>)</span>.</p>
+<p>As a case study we will carry out a supervised classification
+analysis using remotely-sensed data to predict fruit-tree crop types in
+central Chile. This data set is a subsample of data from <span class="citation">(<a href="#ref-Pena2015" role="doc-biblioref">Peña and
+Brenning 2015</a>)</span>.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://giscience-fsu.github.io/sperrorest/">"sperrorest"</a></span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"maipo"</span>, package <span class="op">=</span> <span class="st">"sperrorest"</span><span class="op">)</span></span></code></pre></div>
-<p>The remote-sensing predictor variables were derived from an image times series consisting of eight Landsat images acquired throughout the (southern hemisphere) growing season. The data set includes the following variables:</p>
+<p>The remote-sensing predictor variables were derived from an image
+times series consisting of eight Landsat images acquired throughout the
+(southern hemisphere) growing season. The data set includes the
+following variables:</p>
 <p><strong>Response</strong></p>
 <ul>
 <li>
-<code>croptype</code>: response variable (factor) with 4 levels: ground truth information</li>
+<code>croptype</code>: response variable (factor) with 4 levels:
+ground truth information</li>
 </ul>
 <p><strong>Predictors</strong></p>
 <ul>
 <li>
-<code>b</code>[12-87]: spectral data, e.g. b82 = image date #8, spectral band #2</li>
+<code>b</code>[12-87]: spectral data, e.g. b82 = image date #8,
+spectral band #2</li>
 <li>
-<code>ndvi</code>[01-08]: Normalized Difference Vegetation Index, e.g. #8 = image date #8</li>
+<code>ndvi</code>[01-08]: Normalized Difference Vegetation Index,
+e.g. #8 = image date #8</li>
 <li>
-<code>ndwi</code>[01-08]: Normalized Difference Water Index, e.g. #8 = image date #8</li>
+<code>ndwi</code>[01-08]: Normalized Difference Water Index, e.g. #8
+= image date #8</li>
 </ul>
 <p><strong>Others</strong></p>
 <ul>
 <li>
-<code>field</code>: field identifier (grouping variable - not to be used as predictor)</li>
+<code>field</code>: field identifier (grouping variable - not to be
+used as predictor)</li>
 <li>
-<code>utmx</code>, <code>utmy</code>: x/y location; not to be used as predictors</li>
+<code>utmx</code>, <code>utmy</code>: x/y location; not to be used
+as predictors</li>
 </ul>
-<p>All but the first four variables of the data set are predictors; their names are used to construct a formula object:</p>
+<p>All but the first four variables of the data set are predictors;
+their names are used to construct a formula object:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">predictors</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">maipo</span><span class="op">)</span><span class="op">[</span><span class="fl">5</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">maipo</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="co"># Construct a formula:</span></span>
@@ -139,21 +180,32 @@
 <div class="section level2">
 <h2 id="modeling">Modeling<a class="anchor" aria-label="anchor" href="#modeling"></a>
 </h2>
-<p>Here we will take a look at a few classification methods with varying degrees of computational complexity and flexibility. This should give you an idea of how different models are handled by {sperrorest}, depending on the characteristics of their fitting and prediction methods. Please refer to <span class="citation">(<a href="#ref-James2013" role="doc-biblioref">James et al. 2013</a>)</span> for background information on the models used here.</p>
+<p>Here we will take a look at a few classification methods with varying
+degrees of computational complexity and flexibility. This should give
+you an idea of how different models are handled by {sperrorest},
+depending on the characteristics of their fitting and prediction
+methods. Please refer to <span class="citation">(<a href="#ref-James2013" role="doc-biblioref">James et al. 2013</a>)</span>
+for background information on the models used here.</p>
 <div class="section level3">
 <h3 id="linear-discriminant-analysis-lda">Linear Discriminant Analysis (LDA)<a class="anchor" aria-label="anchor" href="#linear-discriminant-analysis-lda"></a>
 </h3>
-<p>LDA is simple and fast, and often performs surprisingly well if the problem at hand is ‘linear enough’. As a start, let’s fit a model with all predictors and using all available data:</p>
+<p>LDA is simple and fast, and often performs surprisingly well if the
+problem at hand is ‘linear enough’. As a start, let’s fit a model with
+all predictors and using all available data:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://www.stats.ox.ac.uk/pub/MASS4/" class="external-link">MASS</a></span><span class="op">)</span></span>
 <span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/MASS/man/lda.html" class="external-link">lda</a></span><span class="op">(</span><span class="va">fo</span>, data <span class="op">=</span> <span class="va">maipo</span><span class="op">)</span></span></code></pre></div>
-<p>Predict the croptype with the fitted model and calculate the misclassification error rate (MER) on the training sample:</p>
+<p>Predict the croptype with the fitted model and calculate the
+misclassification error rate (MER) on the training sample:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">pred</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">fit</span>, newdata <span class="op">=</span> <span class="va">maipo</span><span class="op">)</span><span class="op">$</span><span class="va">class</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">pred</span> <span class="op">!=</span> <span class="va">maipo</span><span class="op">$</span><span class="va">croptype</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] 0.0437</span></span></code></pre>
-<p>But remember that this result is over-optimistic because we are re-using the training sample for model evaluation. We will soon show you how to do better with cross-validation.</p>
-<p>We can also take a look at the confusion matrix but again, this result is overly optimistic:</p>
+<p>But remember that this result is over-optimistic because we are
+re-using the training sample for model evaluation. We will soon show you
+how to do better with cross-validation.</p>
+<p>We can also take a look at the confusion matrix but again, this
+result is overly optimistic:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span>pred <span class="op">=</span> <span class="va">pred</span>, obs <span class="op">=</span> <span class="va">maipo</span><span class="op">$</span><span class="va">croptype</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##        obs</span></span>
@@ -167,7 +219,10 @@
 <div class="section level2">
 <h2 id="classification-tree">Classification Tree<a class="anchor" aria-label="anchor" href="#classification-tree"></a>
 </h2>
-<p>Classification and regression trees (CART) take a completely different approach—they are based on yes/no questions in the predictor variables and can be referred to as a binary partitioning technique. Fit a model with all predictors and default settings:</p>
+<p>Classification and regression trees (CART) take a completely
+different approach—they are based on yes/no questions in the predictor
+variables and can be referred to as a binary partitioning technique. Fit
+a model with all predictors and default settings:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/bethatkinson/rpart" class="external-link">"rpart"</a></span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
@@ -177,12 +232,14 @@
 <span><span class="co"># par(xpd = TRUE)</span></span>
 <span><span class="co"># plot(fit)</span></span>
 <span><span class="co"># text(fit, use.n = TRUE)</span></span></code></pre></div>
-<p>Again, predict the croptype with the fitted model and calculate the average MER:</p>
+<p>Again, predict the croptype with the fitted model and calculate the
+average MER:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">pred</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">fit</span>, newdata <span class="op">=</span> <span class="va">maipo</span>, type <span class="op">=</span> <span class="st">"class"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">pred</span> <span class="op">!=</span> <span class="va">maipo</span><span class="op">$</span><span class="va">croptype</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] 0.113</span></span></code></pre>
-<p>Here the <code>predict</code> call is slightly different. Again, we could calculate a confusion matrix.</p>
+<p>Here the <code>predict</code> call is slightly different. Again, we
+could calculate a confusion matrix.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span>pred <span class="op">=</span> <span class="va">pred</span>, obs <span class="op">=</span> <span class="va">maipo</span><span class="op">$</span><span class="va">croptype</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##        obs</span></span>
@@ -194,7 +251,13 @@
 <div class="section level3">
 <h3 id="randomforest">RandomForest<a class="anchor" aria-label="anchor" href="#randomforest"></a>
 </h3>
-<p>Bagging, bundling and random forests build upon the CART technique by fitting many trees on bootstrap resamples of the original data set <span class="citation">(<a href="#ref-Breiman1996" role="doc-biblioref">Breiman 1996</a>)</span> <span class="citation">(<a href="#ref-Breiman2001" role="doc-biblioref">Breiman 2001</a>)</span> <span class="citation">(<a href="#ref-Hothorn2005" role="doc-biblioref">Hothorn and Lausen 2005</a>)</span>. They differ in that random forest also samples from the predictors, and bundling adds an ancillary classifier for improved classification. We will use the widely used random forest in its implementation in the <code>ranger</code> package.</p>
+<p>Bagging, bundling and random forests build upon the CART technique by
+fitting many trees on bootstrap resamples of the original data set <span class="citation">(<a href="#ref-Breiman1996" role="doc-biblioref">Breiman 1996</a>)</span> <span class="citation">(<a href="#ref-Breiman2001" role="doc-biblioref">Breiman 2001</a>)</span>
+<span class="citation">(<a href="#ref-Hothorn2005" role="doc-biblioref">Hothorn and Lausen 2005</a>)</span>. They differ in
+that random forest also samples from the predictors, and bundling adds
+an ancillary classifier for improved classification. We will use the
+widely used random forest in its implementation in the
+<code>ranger</code> package.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/imbs-hl/ranger" class="external-link">"ranger"</a></span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
@@ -213,7 +276,7 @@
 <span><span class="co">## Target node size:                 1 </span></span>
 <span><span class="co">## Variable importance mode:         none </span></span>
 <span><span class="co">## Splitrule:                        gini </span></span>
-<span><span class="co">## OOB prediction error:             0.56 %</span></span></code></pre>
+<span><span class="co">## OOB prediction error:             0.58 %</span></span></code></pre>
 <p>Let’s take a look at the MER achieved on the training sample:</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">pred</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">fit</span>, data <span class="op">=</span> <span class="va">maipo</span>, type <span class="op">=</span> <span class="st">"response"</span><span class="op">)</span></span>
@@ -227,18 +290,33 @@
 <span><span class="co">##   crop2     0  1172     0     0</span></span>
 <span><span class="co">##   crop3     0     0  1972     0</span></span>
 <span><span class="co">##   crop4     0     0     0  3180</span></span></code></pre>
-<p>Isn’t this amazing? All grid cells were correctly classified! Even the OOB (out-of-bag) estimate of the error rate is &lt; 1%. Too good to be true? We’ll see…</p>
+<p>Isn’t this amazing? All grid cells were correctly classified! Even
+the OOB (out-of-bag) estimate of the error rate is &lt; 1%. Too good to
+be true? We’ll see…</p>
 </div>
 </div>
 <div class="section level2">
 <h2 id="cross-validation-estimation-of-predictive-performance">Cross-Validation Estimation of Predictive Performance<a class="anchor" aria-label="anchor" href="#cross-validation-estimation-of-predictive-performance"></a>
 </h2>
-<p>Of course we can’t take the MER on the training set too seriously—it is biased. But we’ve heard of cross-validation, in which disjoint subsets are used for model training and testing. Let’s use {sperrorest} for cross-validation.</p>
-<p>Also, at this point we should highlight that the observations in this data set are pixels, and multiple grid cells belong to the same field. In a predictive situation, and when field boundaries are known (as is the case here), we would want to predict the same class for all grid cells that belong to the same field. Here we will use a majority filter. This filter ensures that the final predicted class type of every field is the most often predicted croptype within one field.</p>
+<p>Of course we can’t take the MER on the training set too seriously—it
+is biased. But we’ve heard of cross-validation, in which disjoint
+subsets are used for model training and testing. Let’s use {sperrorest}
+for cross-validation.</p>
+<p>Also, at this point we should highlight that the observations in this
+data set are pixels, and multiple grid cells belong to the same field.
+In a predictive situation, and when field boundaries are known (as is
+the case here), we would want to predict the same class for all grid
+cells that belong to the same field. Here we will use a majority filter.
+This filter ensures that the final predicted class type of every field
+is the most often predicted croptype within one field.</p>
 <div class="section level3">
 <h3 id="linear-discriminant-analysis-lda-1">Linear Discriminant Analysis (LDA)<a class="anchor" aria-label="anchor" href="#linear-discriminant-analysis-lda-1"></a>
 </h3>
-<p>First, we need to create a wrapper predict method for LDA for <code><a href="../reference/sperrorest.html">sperrorest()</a></code>. This is necessary in order to accommodate the majority filter, and also because class predictions from <code>lda</code>’s predict method are hidden in the <code>$class</code> component of the returned object.</p>
+<p>First, we need to create a wrapper predict method for LDA for
+<code><a href="../reference/sperrorest.html">sperrorest()</a></code>. This is necessary in order to accommodate the
+majority filter, and also because class predictions from
+<code>lda</code>’s predict method are hidden in the <code>$class</code>
+component of the returned object.</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">lda_predfun</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">object</span>, <span class="va">newdata</span>, <span class="va">fac</span> <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="op">{</span></span>
 <span></span>
@@ -258,8 +336,14 @@
 <span>  <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">fac</span><span class="op">)</span><span class="op">)</span> <span class="va">pred</span> <span class="op">&lt;-</span> <span class="fu">majority_filter</span><span class="op">(</span><span class="va">pred</span>, <span class="va">newdata</span><span class="op">[</span>, <span class="va">fac</span><span class="op">]</span><span class="op">)</span></span>
 <span>  <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">pred</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
-<p>To ensure that custom predict-functions will work with <code><a href="../reference/sperrorest.html">sperrorest()</a></code>, we need to wrap all custom functions in one single function. Otherwise, <code><a href="../reference/sperrorest.html">sperrorest()</a></code> might fail during execution.</p>
-<p>Finally, we can run <code><a href="../reference/sperrorest.html">sperrorest()</a></code> with a non-spatial sampling setting (<code><a href="../reference/partition_cv.html">partition_cv()</a></code>). In this example we use a ‘3 repetitions - 5 folds’ setup. In reality, we recommend to use 100 repetitions to reduce the influence of random partitioning.</p>
+<p>To ensure that custom predict-functions will work with
+<code><a href="../reference/sperrorest.html">sperrorest()</a></code>, we need to wrap all custom functions in one
+single function. Otherwise, <code><a href="../reference/sperrorest.html">sperrorest()</a></code> might fail during
+execution.</p>
+<p>Finally, we can run <code><a href="../reference/sperrorest.html">sperrorest()</a></code> with a non-spatial
+sampling setting (<code><a href="../reference/partition_cv.html">partition_cv()</a></code>). In this example we use a
+‘3 repetitions - 5 folds’ setup. In reality, we recommend to use 100
+repetitions to reduce the influence of random partitioning.</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">res_lda_nsp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sperrorest.html">sperrorest</a></span><span class="op">(</span><span class="va">fo</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">maipo</span>, coords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"utmx"</span>, <span class="st">"utmy"</span><span class="op">)</span>,</span>
@@ -271,26 +355,39 @@
 <span>  mode_rep <span class="op">=</span> <span class="st">"sequential"</span>,</span>
 <span>  progress <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p>Note that we’re running this in sequential mode since it’s not worth the trouble parallelizing the execution of three repetitions with a short runtime.</p>
+<p>Note that we’re running this in sequential mode since it’s not worth
+the trouble parallelizing the execution of three repetitions with a
+short runtime.</p>
 <p>So what have we got:</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">res_lda_nsp</span><span class="op">$</span><span class="va">error_rep</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">##                    mean       sd   median      IQR</span></span>
-<span><span class="co">## train_error    3.40e-02 0.000279 3.40e-02 0.000276</span></span>
-<span><span class="co">## train_accuracy 9.66e-01 0.000279 9.66e-01 0.000276</span></span>
-<span><span class="co">## train_events   4.69e+03 0.000000 4.69e+03 0.000000</span></span>
-<span><span class="co">## train_count    3.09e+04 0.000000 3.09e+04 0.000000</span></span>
-<span><span class="co">## test_error     4.11e-02 0.002010 4.19e-02 0.001880</span></span>
-<span><span class="co">## test_accuracy  9.59e-01 0.002010 9.58e-01 0.001880</span></span>
-<span><span class="co">## test_events    1.17e+03 0.000000 1.17e+03 0.000000</span></span>
-<span><span class="co">## test_count     7.71e+03 0.000000 7.71e+03 0.000000</span></span></code></pre>
-<p>To run a spatial cross-validation at the field level, we can use <code><a href="../reference/partition_factor_cv.html">partition_factor_cv()</a></code> as the sampling function. Since we are using 5 folds, we get a coarse 80/20 split of our data. 80% will be used for training, 20% for testing our trained model.</p>
-<p>To take a look where our training and tests sets will be partitioned on each fold, we can plot them. The red colored points represent the test set in each fold, the black colored points the training set. Note that because we plotted over 7000 points, overplotting occurs and since the red crosses are plotted after the black ones, it seems visually that way more than ~20% of red points exist than it is really the case.</p>
+<pre><code><span><span class="co">##                    mean      sd   median     IQR</span></span>
+<span><span class="co">## train_error    3.35e-02 0.00112 3.37e-02 0.00110</span></span>
+<span><span class="co">## train_accuracy 9.67e-01 0.00112 9.66e-01 0.00110</span></span>
+<span><span class="co">## train_events   4.69e+03 0.00000 4.69e+03 0.00000</span></span>
+<span><span class="co">## train_count    3.09e+04 0.00000 3.09e+04 0.00000</span></span>
+<span><span class="co">## test_error     3.92e-02 0.00184 3.95e-02 0.00182</span></span>
+<span><span class="co">## test_accuracy  9.61e-01 0.00184 9.60e-01 0.00182</span></span>
+<span><span class="co">## test_events    1.17e+03 0.00000 1.17e+03 0.00000</span></span>
+<span><span class="co">## test_count     7.71e+03 0.00000 7.71e+03 0.00000</span></span></code></pre>
+<p>To run a spatial cross-validation at the field level, we can use
+<code><a href="../reference/partition_factor_cv.html">partition_factor_cv()</a></code> as the sampling function. Since we
+are using 5 folds, we get a coarse 80/20 split of our data. 80% will be
+used for training, 20% for testing our trained model.</p>
+<p>To take a look where our training and tests sets will be partitioned
+on each fold, we can plot them. The red colored points represent the
+test set in each fold, the black colored points the training set. Note
+that because we plotted over 7000 points, overplotting occurs and since
+the red crosses are plotted after the black ones, it seems visually that
+way more than ~20% of red points exist than it is really the case.</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">resamp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/partition_factor_cv.html">partition_factor_cv</a></span><span class="op">(</span><span class="va">maipo</span>, nfold <span class="op">=</span> <span class="fl">5</span>, repetition <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">1</span>, fac <span class="op">=</span> <span class="st">"field"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">resamp</span>, <span class="va">maipo</span>, coords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"utmx"</span>, <span class="st">"utmy"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><img src="spatial-modeling-use-case_files/figure-html/unnamed-chunk-19-1.png" width="672" style="display: block; margin: auto;"></p>
-<p>Subsequently, we have to specify the location of the fields (<code>fac = "field"</code>) in the prediction arguments (<code>pred_args</code>) and sampling arguments (<code>smp_args</code>) in <code><a href="../reference/sperrorest.html">sperrorest()</a></code>.</p>
+<p>Subsequently, we have to specify the location of the fields
+(<code>fac = "field"</code>) in the prediction arguments
+(<code>pred_args</code>) and sampling arguments (<code>smp_args</code>)
+in <code><a href="../reference/sperrorest.html">sperrorest()</a></code>.</p>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">res_lda_sp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sperrorest.html">sperrorest</a></span><span class="op">(</span><span class="va">fo</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">maipo</span>, coords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"utmx"</span>, <span class="st">"utmy"</span><span class="op">)</span>,</span>
@@ -303,23 +400,26 @@
 <span>  benchmark <span class="op">=</span> <span class="cn">TRUE</span>, progress <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
 <span><span class="va">res_lda_sp</span><span class="op">$</span><span class="va">benchmark</span><span class="op">$</span><span class="va">runtime_performance</span></span></code></pre></div>
-<pre><code><span><span class="co">## Time difference of 15.3 secs</span></span></code></pre>
+<pre><code><span><span class="co">## Time difference of 16.2 secs</span></span></code></pre>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">res_lda_sp</span><span class="op">$</span><span class="va">error_rep</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">##                    mean       sd   median      IQR</span></span>
-<span><span class="co">## train_error    2.86e-02 0.000882 2.90e-02 0.000827</span></span>
-<span><span class="co">## train_accuracy 9.71e-01 0.000882 9.71e-01 0.000827</span></span>
-<span><span class="co">## train_events   4.69e+03 0.000000 4.69e+03 0.000000</span></span>
-<span><span class="co">## train_count    3.09e+04 0.000000 3.09e+04 0.000000</span></span>
-<span><span class="co">## test_error     6.39e-02 0.005203 6.09e-02 0.004538</span></span>
-<span><span class="co">## test_accuracy  9.36e-01 0.005203 9.39e-01 0.004538</span></span>
-<span><span class="co">## test_events    1.17e+03 0.000000 1.17e+03 0.000000</span></span>
-<span><span class="co">## test_count     7.71e+03 0.000000 7.71e+03 0.000000</span></span></code></pre>
+<pre><code><span><span class="co">##                    mean      sd   median     IQR</span></span>
+<span><span class="co">## train_error    3.10e-02 0.00106 3.09e-02 0.00105</span></span>
+<span><span class="co">## train_accuracy 9.69e-01 0.00106 9.69e-01 0.00105</span></span>
+<span><span class="co">## train_events   4.69e+03 0.00000 4.69e+03 0.00000</span></span>
+<span><span class="co">## train_count    3.09e+04 0.00000 3.09e+04 0.00000</span></span>
+<span><span class="co">## test_error     7.15e-02 0.00339 7.10e-02 0.00337</span></span>
+<span><span class="co">## test_accuracy  9.29e-01 0.00339 9.29e-01 0.00337</span></span>
+<span><span class="co">## test_events    1.17e+03 0.00000 1.17e+03 0.00000</span></span>
+<span><span class="co">## test_count     7.71e+03 0.00000 7.71e+03 0.00000</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="randomforest-1">RandomForest<a class="anchor" aria-label="anchor" href="#randomforest-1"></a>
 </h3>
-<p>In the case of Random Forest, the customized <code>pred_fun</code> looks as follows; it is only required because of the majority filter, without it, we could just omit the <code>pred_fun</code> and <code>pred_args</code> arguments below.</p>
+<p>In the case of Random Forest, the customized <code>pred_fun</code>
+looks as follows; it is only required because of the majority filter,
+without it, we could just omit the <code>pred_fun</code> and
+<code>pred_args</code> arguments below.</p>
 <div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">rf_predfun</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">object</span>, <span class="va">newdata</span>, <span class="va">fac</span> <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="op">{</span></span>
 <span></span>
@@ -355,26 +455,43 @@
 <span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">res_rf_sp</span><span class="op">$</span><span class="va">error_rep</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">##                    mean       sd   median      IQR</span></span>
-<span><span class="co">## train_error    0.00e+00 0.000000 0.00e+00 0.000000</span></span>
-<span><span class="co">## train_accuracy 1.00e+00 0.000000 1.00e+00 0.000000</span></span>
-<span><span class="co">## train_events   4.69e+03 0.000000 4.69e+03 0.000000</span></span>
-<span><span class="co">## train_count    3.09e+04 0.000000 3.09e+04 0.000000</span></span>
-<span><span class="co">## test_error     9.86e-02 0.000938 9.91e-02 0.000843</span></span>
-<span><span class="co">## test_accuracy  9.01e-01 0.000938 9.01e-01 0.000843</span></span>
-<span><span class="co">## test_events    1.17e+03 0.000000 1.17e+03 0.000000</span></span>
-<span><span class="co">## test_count     7.71e+03 0.000000 7.71e+03 0.000000</span></span></code></pre>
+<pre><code><span><span class="co">##                    mean      sd   median     IQR</span></span>
+<span><span class="co">## train_error    0.00e+00 0.00000 0.00e+00 0.00000</span></span>
+<span><span class="co">## train_accuracy 1.00e+00 0.00000 1.00e+00 0.00000</span></span>
+<span><span class="co">## train_events   4.69e+03 0.00000 4.69e+03 0.00000</span></span>
+<span><span class="co">## train_count    3.09e+04 0.00000 3.09e+04 0.00000</span></span>
+<span><span class="co">## test_error     9.36e-02 0.00636 9.71e-02 0.00558</span></span>
+<span><span class="co">## test_accuracy  9.06e-01 0.00636 9.03e-01 0.00558</span></span>
+<span><span class="co">## test_events    1.17e+03 0.00000 1.17e+03 0.00000</span></span>
+<span><span class="co">## test_count     7.71e+03 0.00000 7.71e+03 0.00000</span></span></code></pre>
 <div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">res_rf_sp</span><span class="op">$</span><span class="va">error_rep</span><span class="op">)</span><span class="op">[</span><span class="st">"test_accuracy"</span>,<span class="op">]</span></span></code></pre></div>
-<pre><code><span><span class="co">##                mean       sd median      IQR</span></span>
-<span><span class="co">## test_accuracy 0.901 0.000938  0.901 0.000843</span></span></code></pre>
-<p>What a surprise! {ranger}‘s classification is not that good after all, if we acknowledge that in ’real life’ we wouldn’t be making predictions in situations where the class membership of other grid cells in the same field is known in the training stage. So spatial dependence does matter.</p>
+<pre><code><span><span class="co">##                mean      sd median     IQR</span></span>
+<span><span class="co">## test_accuracy 0.906 0.00636  0.903 0.00558</span></span></code></pre>
+<p>What a surprise! {ranger}‘s classification is not that good after
+all, if we acknowledge that in ’real life’ we wouldn’t be making
+predictions in situations where the class membership of other grid cells
+in the same field is known in the training stage. So spatial dependence
+does matter.</p>
 </div>
 </div>
 <div class="section level2">
 <h2 id="usage-advice">Usage Advice<a class="anchor" aria-label="anchor" href="#usage-advice"></a>
 </h2>
-<p>Given all the different sampling functions and the required custom predict functions (e.g. <code>rf_predfun()</code>) in this example, you might be a little confused which function to use for your use case. If you want to do a “normal”, i.e. <strong>non-spatial cross-validation</strong> we recommend to use <code><a href="../reference/partition_cv.html">partition_cv()</a></code> as <code>smp_fun</code> in <code><a href="../reference/sperrorest.html">sperrorest()</a></code>. If you want to perform a <strong>spatial cross-validation</strong> (and you do not have a grouping structure like fields in this example), <code><a href="../reference/partition_kmeans.html">partition_kmeans()</a></code> takes care of spatial partitioning. In most cases you can simply use the generic <code><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict()</a></code> method for your model (= skip this argument in <code><a href="../reference/sperrorest.html">sperrorest()</a></code>). Check our “custom model and predict functions” vignette for more information on cases where adjustments are needed.</p>
+<p>Given all the different sampling functions and the required custom
+predict functions (e.g. <code>rf_predfun()</code>) in this example, you
+might be a little confused which function to use for your use case. If
+you want to do a “normal”, i.e. <strong>non-spatial
+cross-validation</strong> we recommend to use
+<code><a href="../reference/partition_cv.html">partition_cv()</a></code> as <code>smp_fun</code> in
+<code><a href="../reference/sperrorest.html">sperrorest()</a></code>. If you want to perform a <strong>spatial
+cross-validation</strong> (and you do not have a grouping structure like
+fields in this example), <code><a href="../reference/partition_kmeans.html">partition_kmeans()</a></code> takes care of
+spatial partitioning. In most cases you can simply use the generic
+<code><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict()</a></code> method for your model (= skip this argument in
+<code><a href="../reference/sperrorest.html">sperrorest()</a></code>). Check our “custom model and predict
+functions” vignette for more information on cases where adjustments are
+needed.</p>
 <p>For further questions/issues, please open an issue in the <a href="https://github.com/giscience-fsu/sperrorest" class="external-link">Github repo</a>.</p>
 </div>
 <div class="section level2 unnumbered">
@@ -382,28 +499,44 @@
 </h2>
 <div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-Breiman1996" class="csl-entry">
-Breiman, Leo. 1996. <span>“Bagging Predictors.”</span> <em>Machine Learning</em> 24 (2): 123–40. <a href="https://doi.org/10.1007/bf00058655" class="external-link">https://doi.org/10.1007/bf00058655</a>.
+Breiman, Leo. 1996. <span>“Bagging Predictors.”</span> <em>Machine
+Learning</em> 24 (2): 123–40. <a href="https://doi.org/10.1007/bf00058655" class="external-link">https://doi.org/10.1007/bf00058655</a>.
 </div>
 <div id="ref-Breiman2001" class="csl-entry">
-———. 2001. <span>“Random Forests.”</span> <em>Machine Learning</em> 45 (1): 5–32. <a href="https://doi.org/10.1023/a:1010933404324" class="external-link">https://doi.org/10.1023/a:1010933404324</a>.
+———. 2001. <span>“Random Forests.”</span> <em>Machine Learning</em> 45
+(1): 5–32. <a href="https://doi.org/10.1023/a:1010933404324" class="external-link">https://doi.org/10.1023/a:1010933404324</a>.
 </div>
 <div id="ref-Brenning2005" class="csl-entry">
-Brenning, A. 2005. <span>“Spatial Prediction Models for Landslide Hazards: Review, Comparison and Evaluation.”</span> <em>Natural Hazards and Earth System Science</em> 5 (6): 853–62. <a href="https://doi.org/10.5194/nhess-5-853-2005" class="external-link">https://doi.org/10.5194/nhess-5-853-2005</a>.
+Brenning, A. 2005. <span>“Spatial Prediction Models for Landslide
+Hazards: Review, Comparison and Evaluation.”</span> <em>Natural Hazards
+and Earth System Science</em> 5 (6): 853–62. <a href="https://doi.org/10.5194/nhess-5-853-2005" class="external-link">https://doi.org/10.5194/nhess-5-853-2005</a>.
 </div>
 <div id="ref-Goetz2015" class="csl-entry">
-Goetz, J. N., A. Brenning, H. Petschko, and P. Leopold. 2015. <span>“Evaluating Machine Learning and Statistical Prediction Techniques for Landslide Susceptibility Modeling.”</span> <em>Computers <span>&amp;</span> Geosciences</em> 81 (August): 1–11. <a href="https://doi.org/10.1016/j.cageo.2015.04.007" class="external-link">https://doi.org/10.1016/j.cageo.2015.04.007</a>.
+Goetz, J. N., A. Brenning, H. Petschko, and P. Leopold. 2015.
+<span>“Evaluating Machine Learning and Statistical Prediction Techniques
+for Landslide Susceptibility Modeling.”</span> <em>Computers
+<span>&amp;</span> Geosciences</em> 81 (August): 1–11. <a href="https://doi.org/10.1016/j.cageo.2015.04.007" class="external-link">https://doi.org/10.1016/j.cageo.2015.04.007</a>.
 </div>
 <div id="ref-Hothorn2005" class="csl-entry">
-Hothorn, Torsten, and Berthold Lausen. 2005. <span>“Bundling Classifiers by Bagging Trees.”</span> <em>Computational Statistics <span>&amp;</span> Data Analysis</em> 49 (4): 1068–78. <a href="https://doi.org/10.1016/j.csda.2004.06.019" class="external-link">https://doi.org/10.1016/j.csda.2004.06.019</a>.
+Hothorn, Torsten, and Berthold Lausen. 2005. <span>“Bundling Classifiers
+by Bagging Trees.”</span> <em>Computational Statistics
+<span>&amp;</span> Data Analysis</em> 49 (4): 1068–78. <a href="https://doi.org/10.1016/j.csda.2004.06.019" class="external-link">https://doi.org/10.1016/j.csda.2004.06.019</a>.
 </div>
 <div id="ref-James2013" class="csl-entry">
-James, Gareth, Daniela Witten, Trevor Hastie, and Robert Tibshirani. 2013. <em>An Introduction to Statistical Learning</em>. Springer New York. <a href="https://doi.org/10.1007/978-1-4614-7138-7" class="external-link">https://doi.org/10.1007/978-1-4614-7138-7</a>.
+James, Gareth, Daniela Witten, Trevor Hastie, and Robert Tibshirani.
+2013. <em>An Introduction to Statistical Learning</em>. Springer New
+York. <a href="https://doi.org/10.1007/978-1-4614-7138-7" class="external-link">https://doi.org/10.1007/978-1-4614-7138-7</a>.
 </div>
 <div id="ref-Knudby2010" class="csl-entry">
-Knudby, Anders, Alexander Brenning, and Ellsworth LeDrew. 2010. <span>“New Approaches to Modelling Fish<span></span>habitat Relationships.”</span> <em>Ecological Modelling</em> 221 (3): 503–11. <a href="https://doi.org/10.1016/j.ecolmodel.2009.11.008" class="external-link">https://doi.org/10.1016/j.ecolmodel.2009.11.008</a>.
+Knudby, Anders, Alexander Brenning, and Ellsworth LeDrew. 2010.
+<span>“New Approaches to Modelling Fish<span></span>habitat
+Relationships.”</span> <em>Ecological Modelling</em> 221 (3): 503–11. <a href="https://doi.org/10.1016/j.ecolmodel.2009.11.008" class="external-link">https://doi.org/10.1016/j.ecolmodel.2009.11.008</a>.
 </div>
 <div id="ref-Pena2015" class="csl-entry">
-Peña, M. A., and A. Brenning. 2015. <span>“Assessing Fruit-Tree Crop Classification from Landsat-8 Time Series for the Maipo Valley, Chile.”</span> <em>Remote Sensing of Environment</em> 171 (December): 234–44. <a href="https://doi.org/10.1016/j.rse.2015.10.029" class="external-link">https://doi.org/10.1016/j.rse.2015.10.029</a>.
+Peña, M. A., and A. Brenning. 2015. <span>“Assessing Fruit-Tree Crop
+Classification from Landsat-8 Time Series for the Maipo Valley,
+Chile.”</span> <em>Remote Sensing of Environment</em> 171 (December):
+234–44. <a href="https://doi.org/10.1016/j.rse.2015.10.029" class="external-link">https://doi.org/10.1016/j.rse.2015.10.029</a>.
 </div>
 </div>
 </div>

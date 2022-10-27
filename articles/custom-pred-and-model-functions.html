@@ -82,7 +82,8 @@
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Custom Predict and Model Functions</h1>
-                        <h4 data-toc-skip class="author">Patrick Schratz</h4>
+                        <h4 data-toc-skip class="author">Patrick
+Schratz</h4>
             
       
       <small class="dont-index">Source: <a href="https://github.com/giscience-fsu/sperrorest/blob/HEAD/vignettes/custom-pred-and-model-functions.Rmd" class="external-link"><code>vignettes/custom-pred-and-model-functions.Rmd</code></a></small>
@@ -95,9 +96,23 @@
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
-<p>{sperrorest} is a generic framework which aims to work with all R models/packages. In statistical learning, model setups, their formulas and error measures all depend on the family of the response variable. Various families exist (numeric, binary, multiclass) which again include sub-families (e.g. gaussian or poisson distribution of a numeric response).</p>
-<p>This detail needs to be specified via the respective function, e.g. when using <code><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm()</a></code> with a binary response, one needs to set <code>family = "binomial"</code> to make sure that the model does something meaningful. Most of the time, the same applies to the generic <code><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict()</a></code> function. For the <code><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm()</a></code> case, one would need to set <code>type = "response"</code> if the predicted values should reflect probabilities instead of log-odds.</p>
-<p>These settings can be specified using <code>model_args</code> and <code>pred_args</code> in <code><a href="../reference/sperrorest.html">sperrorest()</a></code>. So fine, “why do we need to write all these wrappers and custom model/predict functions then?!”</p>
+<p>{sperrorest} is a generic framework which aims to work with all R
+models/packages. In statistical learning, model setups, their formulas
+and error measures all depend on the family of the response variable.
+Various families exist (numeric, binary, multiclass) which again include
+sub-families (e.g. gaussian or poisson distribution of a numeric
+response).</p>
+<p>This detail needs to be specified via the respective function,
+e.g. when using <code><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm()</a></code> with a binary response, one needs to
+set <code>family = "binomial"</code> to make sure that the model does
+something meaningful. Most of the time, the same applies to the generic
+<code><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict()</a></code> function. For the <code><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm()</a></code> case, one
+would need to set <code>type = "response"</code> if the predicted values
+should reflect probabilities instead of log-odds.</p>
+<p>These settings can be specified using <code>model_args</code> and
+<code>pred_args</code> in <code><a href="../reference/sperrorest.html">sperrorest()</a></code>. So fine, “why do we
+need to write all these wrappers and custom model/predict functions
+then?!”</p>
 </div>
 <div class="section level2">
 <h2 id="user-defined-model-functions">User-defined Model Functions<a class="anchor" aria-label="anchor" href="#user-defined-model-functions"></a>
@@ -105,12 +120,30 @@
 <div class="section level3">
 <h3 id="problem">Problem<a class="anchor" aria-label="anchor" href="#problem"></a>
 </h3>
-<p><code>model_fun</code> expects at least formula argument and a data.frame with the learning sample. All arguments, including the additional ones provided via <code>model_args</code>, are getting passed to <code>model_fun</code> via a <code><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call()</a></code> call. However, if <code>model_fun</code> does not have an argument named <code>formula</code> but e.g. <code>fixed</code> (like it is the case for <code>glmmPQL()</code>) the <code><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call()</a></code> call will fail because <code><a href="../reference/sperrorest.html">sperrorest()</a></code> tries to pass an argument named <code>formula</code> but <code>glmmPQL</code> expects an argument named <code>fixed</code>.</p>
+<p><code>model_fun</code> expects at least formula argument and a
+data.frame with the learning sample. All arguments, including the
+additional ones provided via <code>model_args</code>, are getting passed
+to <code>model_fun</code> via a <code><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call()</a></code> call. However, if
+<code>model_fun</code> does not have an argument named
+<code>formula</code> but e.g. <code>fixed</code> (like it is the case
+for <code>glmmPQL()</code>) the <code><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call()</a></code> call will fail
+because <code><a href="../reference/sperrorest.html">sperrorest()</a></code> tries to pass an argument named
+<code>formula</code> but <code>glmmPQL</code> expects an argument named
+<code>fixed</code>.</p>
 </div>
 <div class="section level3">
 <h3 id="solution">Solution<a class="anchor" aria-label="anchor" href="#solution"></a>
 </h3>
-<p>In this case, we need to write a wrapper function for <code>glmmPQL</code> (named <code>glmmPQL_modelfun</code> here) which accounts for this naming problem. Here, we are passing the <code>formula</code> argument to our custom model function which then does the actual call to <code>glmmPQL()</code> using the supplied <code>formula</code> object as the <code>fixed</code> argument of <code>glmmPQL</code>. By default, <code>glmmPQL()</code> has further arguments like <code>family</code> or <code>random</code>. If we want to use these, we pass them to <code>model_args</code> which then appends these to the arguments of <code>glmmPQL_modelfun</code>.</p>
+<p>In this case, we need to write a wrapper function for
+<code>glmmPQL</code> (named <code>glmmPQL_modelfun</code> here) which
+accounts for this naming problem. Here, we are passing the
+<code>formula</code> argument to our custom model function which then
+does the actual call to <code>glmmPQL()</code> using the supplied
+<code>formula</code> object as the <code>fixed</code> argument of
+<code>glmmPQL</code>. By default, <code>glmmPQL()</code> has further
+arguments like <code>family</code> or <code>random</code>. If we want to
+use these, we pass them to <code>model_args</code> which then appends
+these to the arguments of <code>glmmPQL_modelfun</code>.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">glmmPQL_modelfun</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">formula</span> <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">data</span> <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">random</span> <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>                             <span class="va">family</span> <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="op">{</span></span>
@@ -125,18 +158,50 @@
 <div class="section level3">
 <h3 id="problem-1">Problem<a class="anchor" aria-label="anchor" href="#problem-1"></a>
 </h3>
-<p>Unless specified explicitly, <code><a href="../reference/sperrorest.html">sperrorest()</a></code> tries to use the generic <code><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict()</a></code> function. This function works differently depending on the class of the provided fitted model, i.e. many models slightly differ in the naming (and availability) of their arguments. For example, when fitting a Support Vector Machine (SVM) with a binary response variable, package <code>kernlab</code> expects an argument <code>type = "probabilities"</code> in its <code><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict()</a></code> call to receive predicted probabilities while in package <code>e1071</code> it is <code>"probability  = TRUE"</code>. Similar to <code>model_args</code>, this can be accounted for in the <code>pred_args</code> of <code><a href="../reference/sperrorest.html">sperrorest()</a></code>.</p>
-<p>However, <code><a href="../reference/sperrorest.html">sperrorest()</a></code> expects that the predicted values (of any response type) are stored directly in the returned object of the <code><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict()</a></code> function. While this is the case for many models, mainly with a numeric response, classification cases often behave differently. Here, the predicted values (classes in this case) are often stored in a sub-object named <code>class</code> or <code>predicted</code>.</p>
+<p>Unless specified explicitly, <code><a href="../reference/sperrorest.html">sperrorest()</a></code> tries to use
+the generic <code><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict()</a></code> function. This function works
+differently depending on the class of the provided fitted model,
+i.e. many models slightly differ in the naming (and availability) of
+their arguments. For example, when fitting a Support Vector Machine
+(SVM) with a binary response variable, package <code>kernlab</code>
+expects an argument <code>type = "probabilities"</code> in its
+<code><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict()</a></code> call to receive predicted probabilities while in
+package <code>e1071</code> it is <code>"probability  = TRUE"</code>.
+Similar to <code>model_args</code>, this can be accounted for in the
+<code>pred_args</code> of <code><a href="../reference/sperrorest.html">sperrorest()</a></code>.</p>
+<p>However, <code><a href="../reference/sperrorest.html">sperrorest()</a></code> expects that the predicted values
+(of any response type) are stored directly in the returned object of the
+<code><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict()</a></code> function. While this is the case for many models,
+mainly with a numeric response, classification cases often behave
+differently. Here, the predicted values (classes in this case) are often
+stored in a sub-object named <code>class</code> or
+<code>predicted</code>.</p>
 </div>
 <div class="section level3">
 <h3 id="solution-1">Solution<a class="anchor" aria-label="anchor" href="#solution-1"></a>
 </h3>
-<p>Since there is no way to account for this in a general way (when every package may return the predicted values in a different format/column), we need to account for it by providing a custom predict function which returns only the predicted values so that <code><a href="../reference/sperrorest.html">sperrorest()</a></code> can continue properly. This time we are showing two examples. The first takes again a binary classification using <code>randomForest</code>.</p>
+<p>Since there is no way to account for this in a general way (when
+every package may return the predicted values in a different
+format/column), we need to account for it by providing a custom predict
+function which returns only the predicted values so that
+<code><a href="../reference/sperrorest.html">sperrorest()</a></code> can continue properly. This time we are
+showing two examples. The first takes again a binary classification
+using <code>randomForest</code>.</p>
 <div class="section level4">
 <h4 id="randomforest">randomForest<a class="anchor" aria-label="anchor" href="#randomforest"></a>
 </h4>
-<p>When calling predict on a fitted <code>randomForest</code> model with a binary response variable, the predicted values are actually stored in the resulting object returned by <code><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict()</a></code> (here called <code>pred</code>). So why do we have trouble here then?</p>
-<p>Simply because <code>pred</code> is a matrix containing both probabilities for the <code>FALSE</code> (= 0) and <code>TRUE</code> (= 1) case. <code><a href="../reference/sperrorest.html">sperrorest()</a></code> needs a vector containing only the predicted values of the <code>TRUE</code> case to pass these further onto <code>err_fun()</code> which then takes care of calculating all the error measures. So the important part is to subset the resulting matrix in the <code>pred</code> object to <code>TRUE</code> cases only and return the result.</p>
+<p>When calling predict on a fitted <code>randomForest</code> model with
+a binary response variable, the predicted values are actually stored in
+the resulting object returned by <code><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict()</a></code> (here called
+<code>pred</code>). So why do we have trouble here then?</p>
+<p>Simply because <code>pred</code> is a matrix containing both
+probabilities for the <code>FALSE</code> (= 0) and <code>TRUE</code> (=
+1) case. <code><a href="../reference/sperrorest.html">sperrorest()</a></code> needs a vector containing only the
+predicted values of the <code>TRUE</code> case to pass these further
+onto <code>err_fun()</code> which then takes care of calculating all the
+error measures. So the important part is to subset the resulting matrix
+in the <code>pred</code> object to <code>TRUE</code> cases only and
+return the result.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">rf_predfun</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">object</span> <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">newdata</span> <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">type</span> <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">pred</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span>object <span class="op">=</span> <span class="va">object</span>, newdata <span class="op">=</span> <span class="va">newdata</span>, type <span class="op">=</span> <span class="va">type</span><span class="op">)</span></span>
@@ -146,7 +211,11 @@
 <div class="section level4">
 <h4 id="svm">svm<a class="anchor" aria-label="anchor" href="#svm"></a>
 </h4>
-<p>The same case (binary response) using <code>svm</code> from the <code>e1071</code> package. Here, the predicted probabilities are stored in a sub-object of <code>pred</code>. We can address it using the <code><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr()</a></code> function. Then again, we only need the <code>TRUE</code> cases for <code><a href="../reference/sperrorest.html">sperrorest()</a></code>.</p>
+<p>The same case (binary response) using <code>svm</code> from the
+<code>e1071</code> package. Here, the predicted probabilities are stored
+in a sub-object of <code>pred</code>. We can address it using the
+<code><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr()</a></code> function. Then again, we only need the
+<code>TRUE</code> cases for <code><a href="../reference/sperrorest.html">sperrorest()</a></code>.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">svm_predfun</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">object</span> <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">newdata</span> <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">probability</span> <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">pred</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">object</span>, newdata <span class="op">=</span> <span class="va">newdata</span>, probability <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
