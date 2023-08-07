@@ -164,19 +164,19 @@ class attribute <code>'resampling'</code> if successful.</p>
 <span class="r-in"><span><span class="co"># data corresponding to the test sample of the first fold:</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">ecuador</span><span class="op">[</span><span class="va">parti</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">test</span>, <span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 'data.frame':	75 obs. of  13 variables:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ x             : num  712992 714892 713762 713412 715632 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ y             : num  9560672 9559312 9558812 9560472 9559102 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dem           : num  1926 2380 2251 1869 2411 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ slope         : num  27.2 32.8 33.3 16.9 39.7 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ hcurv         : num  -0.00199 -0.00266 0.00118 -0.00156 0.0073 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ vcurv         : num  0.00659 0.02896 0.00761 0.00406 0.0177 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ carea         : num  3554 276 929 2421 475 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ cslope        : num  27.8 20.9 28.9 31 33 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ distroad      : num  30 300 300 300 300 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ x             : num  712742 715112 713162 714602 715062 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ y             : num  9560482 9559062 9559632 9560542 9559392 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dem           : num  1928 2400 2042 2038 2279 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ slope         : num  34.7 36.1 46.8 25.6 41.4 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ hcurv         : num  -0.00292 -0.00041 -0.00857 0.00065 0.0031 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ vcurv         : num  0.00712 0.01741 0.03677 0.00005 0.0144 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ carea         : num  3637 746 1675 769 1089 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ cslope        : num  29 31.3 34.6 24.1 29.1 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ distroad      : num  60.5 300 300 300 300 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ slides        : Factor w/ 2 levels "FALSE","TRUE": 2 2 2 2 2 2 2 2 2 2 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ distdeforest  : num  183.4 300 300 52.5 300 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ distslidespast: num  20 31 4 39 100 8 100 34 46 37 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ log.carea     : num  3.55 2.44 2.97 3.38 2.68 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ distdeforest  : num  152 300 195 300 300 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ distslidespast: num  35 100 2 89 100 100 100 100 1 6 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ log.carea     : num  3.56 2.87 3.22 2.89 3.04 ...</span>
 <span class="r-in"><span><span class="co"># the corresponding training sample - larger:</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">ecuador</span><span class="op">[</span><span class="va">parti</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">train</span>, <span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 'data.frame':	676 obs. of  13 variables:</span>
@@ -199,36 +199,36 @@ class attribute <code>'resampling'</code> if successful.</p>
 <span class="r-in"><span><span class="va">parti</span> <span class="op">&lt;-</span> <span class="va">parti</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="co"># the first (and only) resampling object in parti</span></span></span>
 <span class="r-in"><span><span class="co"># out-of-bag test sample: approx. one-third of nrow(ecuador):</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">ecuador</span><span class="op">[</span><span class="va">parti</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">test</span>, <span class="op">]</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 'data.frame':	279 obs. of  13 variables:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ x             : num  715232 715272 714752 715302 712742 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ y             : num  9559582 9557702 9561022 9557472 9560482 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dem           : num  2199 2813 1848 2857 1928 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ slope         : num  23.2 31 33.4 39.5 34.7 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ hcurv         : num  -0.00501 -0.00123 -0.00347 -0.01021 -0.00292 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ vcurv         : num  -0.00649 0.00393 0.02357 -0.01579 0.00712 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ carea         : num  1399 2081 1752 1319 3637 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ cslope        : num  30.7 37.6 23.8 36.3 29 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ distroad      : num  300 300 158.9 300 60.5 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 'data.frame':	278 obs. of  13 variables:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ x             : num  712882 715232 715392 715382 715272 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ y             : num  9560002 9559582 9560172 9560142 9557702 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dem           : num  1912 2199 1989 2021 2813 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ slope         : num  25.6 23.2 40.5 42 31 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ hcurv         : num  -0.00681 -0.00501 -0.01919 0.00958 -0.00123 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ vcurv         : num  -0.00029 -0.00649 -0.04051 0.02642 0.00393 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ carea         : num  5577 1399 351155 671 2081 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ cslope        : num  34.4 30.7 32.8 41.6 37.6 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ distroad      : num  300 300 300 300 300 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ slides        : Factor w/ 2 levels "FALSE","TRUE": 2 2 2 2 2 2 2 2 2 2 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ distdeforest  : num  300 300 0 300 152 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ distslidespast: num  21 100 5 100 35 100 26 10 41 100 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ log.carea     : num  3.15 3.32 3.24 3.12 3.56 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ distdeforest  : num  15 300 300 300 300 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ distslidespast: num  9 21 40 21 100 41 5 100 35 100 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ log.carea     : num  3.75 3.15 5.55 2.83 3.32 ...</span>
 <span class="r-in"><span><span class="co"># bootstrap training sample: same size as nrow(ecuador):</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">ecuador</span><span class="op">[</span><span class="va">parti</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">train</span>, <span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 'data.frame':	751 obs. of  13 variables:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ x             : num  714682 715202 714142 713652 715092 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ y             : num  9560852 9558872 9559902 9560702 9559912 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dem           : num  1943 2464 2244 1896 2217 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ slope         : num  20.3 34.7 57.9 41.3 41.7 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ hcurv         : num  0.0048 -0.01267 -0.06986 0.00382 -0.00077 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ vcurv         : num  0.0074 -0.05063 -0.05013 0.00088 -0.00284 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ carea         : num  909 18734 616 2322 2010 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ cslope        : num  19 34.7 42.4 33.6 34.6 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ distroad      : num  300 300 300 300 300 300 300 300 300 300 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ slides        : Factor w/ 2 levels "FALSE","TRUE": 1 2 1 2 2 2 2 2 2 2 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ distdeforest  : num  144 300 300 0 300 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ distslidespast: num  100 71 70 100 100 28 57 2 100 8 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ log.carea     : num  2.96 4.27 2.79 3.37 3.3 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ x             : num  714262 715262 714752 715362 715202 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ y             : num  9561262 9558352 9558322 9560102 9559572 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dem           : num  1792 2654 2649 2059 2196 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ slope         : num  12.2 33.6 47.7 49.1 13.8 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ hcurv         : num  0.00161 -0.04492 -0.00068 0.02059 -0.04376 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ vcurv         : num  0.00709 0.00072 -0.00312 -0.00628 -0.01644 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ carea         : num  1181 54832 594 556 1057766 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ cslope        : num  0.142 39.36 36.391 43.532 32.673 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ distroad      : num  18 300 300 300 300 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ slides        : Factor w/ 2 levels "FALSE","TRUE": 1 2 1 2 2 2 2 2 2 1 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ distdeforest  : num  140 300 300 300 300 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ distslidespast: num  100 100 87 26 6 10 1 100 25 100 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ log.carea     : num  3.07 4.74 2.77 2.75 6.02 ...</span>
 </code></pre></div>
     </div>
   </div>
