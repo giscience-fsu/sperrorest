@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Spatial Modeling Using Statistical Learning Techniques • sperrorest</title>
-<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
+<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
 <script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
@@ -277,7 +277,7 @@ the widely used random forest in its implementation in the
 <span><span class="co">## Target node size:                 1 </span></span>
 <span><span class="co">## Variable importance mode:         none </span></span>
 <span><span class="co">## Splitrule:                        gini </span></span>
-<span><span class="co">## OOB prediction error:             0.58 %</span></span></code></pre>
+<span><span class="co">## OOB prediction error:             0.53 %</span></span></code></pre>
 <p>Let’s take a look at the MER achieved on the training sample:</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">pred</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">fit</span>, data <span class="op">=</span> <span class="va">maipo</span>, type <span class="op">=</span> <span class="st">"response"</span><span class="op">)</span></span>
@@ -363,12 +363,12 @@ short runtime.</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">res_lda_nsp</span><span class="op">$</span><span class="va">error_rep</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##                    mean       sd   median      IQR</span></span>
-<span><span class="co">## train_error    3.42e-02 0.000792 3.39e-02 0.000729</span></span>
-<span><span class="co">## train_accuracy 9.66e-01 0.000792 9.66e-01 0.000729</span></span>
+<span><span class="co">## train_error    3.35e-02 0.000357 3.33e-02 0.000324</span></span>
+<span><span class="co">## train_accuracy 9.67e-01 0.000357 9.67e-01 0.000324</span></span>
 <span><span class="co">## train_events   4.69e+03 0.000000 4.69e+03 0.000000</span></span>
 <span><span class="co">## train_count    3.09e+04 0.000000 3.09e+04 0.000000</span></span>
-<span><span class="co">## test_error     3.93e-02 0.001473 3.99e-02 0.001361</span></span>
-<span><span class="co">## test_accuracy  9.61e-01 0.001473 9.60e-01 0.001361</span></span>
+<span><span class="co">## test_error     3.93e-02 0.003323 3.97e-02 0.003306</span></span>
+<span><span class="co">## test_accuracy  9.61e-01 0.003323 9.60e-01 0.003306</span></span>
 <span><span class="co">## test_events    1.17e+03 0.000000 1.17e+03 0.000000</span></span>
 <span><span class="co">## test_count     7.71e+03 0.000000 7.71e+03 0.000000</span></span></code></pre>
 <p>To run a spatial cross-validation at the field level, we can use
@@ -401,16 +401,16 @@ in <code><a href="../reference/sperrorest.html">sperrorest()</a></code>.</p>
 <span>  benchmark <span class="op">=</span> <span class="cn">TRUE</span>, progress <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
 <span><span class="va">res_lda_sp</span><span class="op">$</span><span class="va">benchmark</span><span class="op">$</span><span class="va">runtime_performance</span></span></code></pre></div>
-<pre><code><span><span class="co">## Time difference of 12.4 secs</span></span></code></pre>
+<pre><code><span><span class="co">## Time difference of 10.2 secs</span></span></code></pre>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">res_lda_sp</span><span class="op">$</span><span class="va">error_rep</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##                    mean      sd   median     IQR</span></span>
-<span><span class="co">## train_error    3.01e-02 0.00130 3.01e-02 0.00130</span></span>
-<span><span class="co">## train_accuracy 9.70e-01 0.00130 9.70e-01 0.00130</span></span>
+<span><span class="co">## train_error    3.10e-02 0.00185 3.16e-02 0.00177</span></span>
+<span><span class="co">## train_accuracy 9.69e-01 0.00185 9.68e-01 0.00177</span></span>
 <span><span class="co">## train_events   4.69e+03 0.00000 4.69e+03 0.00000</span></span>
 <span><span class="co">## train_count    3.09e+04 0.00000 3.09e+04 0.00000</span></span>
-<span><span class="co">## test_error     6.56e-02 0.00364 6.37e-02 0.00324</span></span>
-<span><span class="co">## test_accuracy  9.34e-01 0.00364 9.36e-01 0.00324</span></span>
+<span><span class="co">## test_error     6.23e-02 0.00724 6.47e-02 0.00694</span></span>
+<span><span class="co">## test_accuracy  9.38e-01 0.00724 9.35e-01 0.00694</span></span>
 <span><span class="co">## test_events    1.17e+03 0.00000 1.17e+03 0.00000</span></span>
 <span><span class="co">## test_count     7.71e+03 0.00000 7.71e+03 0.00000</span></span></code></pre>
 </div>
@@ -456,19 +456,19 @@ without it, we could just omit the <code>pred_fun</code> and
 <span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">res_rf_sp</span><span class="op">$</span><span class="va">error_rep</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">##                    mean      sd   median     IQR</span></span>
-<span><span class="co">## train_error    0.00e+00 0.00000 0.00e+00 0.00000</span></span>
-<span><span class="co">## train_accuracy 1.00e+00 0.00000 1.00e+00 0.00000</span></span>
-<span><span class="co">## train_events   4.69e+03 0.00000 4.69e+03 0.00000</span></span>
-<span><span class="co">## train_count    3.09e+04 0.00000 3.09e+04 0.00000</span></span>
-<span><span class="co">## test_error     8.16e-02 0.00442 8.12e-02 0.00441</span></span>
-<span><span class="co">## test_accuracy  9.18e-01 0.00442 9.19e-01 0.00441</span></span>
-<span><span class="co">## test_events    1.17e+03 0.00000 1.17e+03 0.00000</span></span>
-<span><span class="co">## test_count     7.71e+03 0.00000 7.71e+03 0.00000</span></span></code></pre>
+<pre><code><span><span class="co">##                    mean      sd   median    IQR</span></span>
+<span><span class="co">## train_error    0.00e+00 0.00000 0.00e+00 0.0000</span></span>
+<span><span class="co">## train_accuracy 1.00e+00 0.00000 1.00e+00 0.0000</span></span>
+<span><span class="co">## train_events   4.69e+03 0.00000 4.69e+03 0.0000</span></span>
+<span><span class="co">## train_count    3.09e+04 0.00000 3.09e+04 0.0000</span></span>
+<span><span class="co">## test_error     9.01e-02 0.00943 9.09e-02 0.0094</span></span>
+<span><span class="co">## test_accuracy  9.10e-01 0.00943 9.09e-01 0.0094</span></span>
+<span><span class="co">## test_events    1.17e+03 0.00000 1.17e+03 0.0000</span></span>
+<span><span class="co">## test_count     7.71e+03 0.00000 7.71e+03 0.0000</span></span></code></pre>
 <div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">res_rf_sp</span><span class="op">$</span><span class="va">error_rep</span><span class="op">)</span><span class="op">[</span><span class="st">"test_accuracy"</span>,<span class="op">]</span></span></code></pre></div>
-<pre><code><span><span class="co">##                mean      sd median     IQR</span></span>
-<span><span class="co">## test_accuracy 0.918 0.00442  0.919 0.00441</span></span></code></pre>
+<pre><code><span><span class="co">##               mean      sd median    IQR</span></span>
+<span><span class="co">## test_accuracy 0.91 0.00943  0.909 0.0094</span></span></code></pre>
 <p>What a surprise! {ranger}‘s classification is not that good after
 all, if we acknowledge that in ’real life’ we wouldn’t be making
 predictions in situations where the class membership of other grid cells
@@ -560,7 +560,7 @@ Chile.”</span> <em>Remote Sensing of Environment</em> 171 (December):
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.8.</p>
 </div>
 
       </footer>
