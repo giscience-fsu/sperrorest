@@ -17,7 +17,7 @@
 #'   repetition `i` (`i` in `repetition`) to initialize the random number
 #'   generator before sampling from the data set.
 #' @param return_factor if `FALSE` (default), return a [represampling] object;
-#'   if `TRUE` (used internally by other {sperrorest} functions), return a
+#'   if `TRUE` (used internally by other \{sperrorest\} functions), return a
 #'   `list` containing factor vectors (see Value)
 #'
 #' @details This function does not actually perform a cross-validation or

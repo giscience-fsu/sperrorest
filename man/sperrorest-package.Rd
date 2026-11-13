@@ -32,3 +32,27 @@ Data Analysis IX, Proceedings, 9th International Symposium, IDA 2010,
 Tucson, AZ, USA, 19-21 May 2010.
 Lecture Notes in Computer Science, 6065 LNCS: 184-195.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://giscience-fsu.github.io/sperrorest/}
+  \item \url{https://github.com/giscience-fsu/sperrorest}
+  \item Report bugs at \url{https://github.com/giscience-fsu/sperrorest/issues}
+}
+
+}
+\author{
+\strong{Maintainer}: Alexander Brenning \email{alexander.brenning@uni-jena.de} (\href{https://orcid.org/0000-0001-6640-679X}{ORCID})
+
+Authors:
+\itemize{
+  \item Alexander Brenning \email{alexander.brenning@uni-jena.de} (\href{https://orcid.org/0000-0001-6640-679X}{ORCID})
+  \item Patrick Schratz \email{patrick.schratz@gmail.com} (\href{https://orcid.org/0000-0003-0748-6624}{ORCID})
+}
+
+Other contributors:
+\itemize{
+  \item Tobias Herrmann \email{herrmann.tobias89@gmail.com} (\href{https://orcid.org/0000-0001-9768-0708}{ORCID}) [contributor]
+}
+
+}
