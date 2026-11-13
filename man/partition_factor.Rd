@@ -25,7 +25,7 @@ type factor and length \code{nrow(data)} that contains the partitions to be used
 for defining training and test samples.}
 
 \item{return_factor}{if \code{FALSE} (default), return a \link{represampling} object;
-if \code{TRUE} (used internally by other {sperrorest} functions), return a
+if \code{TRUE} (used internally by other \{sperrorest\} functions), return a
 \code{list} containing factor vectors (see Value)}
 
 \item{repetition}{numeric vector: cross-validation repetitions to be

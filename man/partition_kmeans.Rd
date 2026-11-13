@@ -38,7 +38,7 @@ repetition \code{i} (\code{i} in \code{repetition}) to initialize the random num
 generator before sampling from the data set.}
 
 \item{return_factor}{if \code{FALSE} (default), return a \link{represampling} object;
-if \code{TRUE} (used internally by other {sperrorest} functions), return a
+if \code{TRUE} (used internally by other \{sperrorest\} functions), return a
 \code{list} containing factor vectors (see Value)}
 
 \item{balancing_steps}{if \verb{> 1}, perform \code{nfold}-means clustering

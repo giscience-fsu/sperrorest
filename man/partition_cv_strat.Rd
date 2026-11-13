@@ -25,7 +25,7 @@ contain the x and y coordinates of sample locations}
 partitioning}
 
 \item{return_factor}{if \code{FALSE} (default), return a \link{represampling} object;
-if \code{TRUE} (used internally by other {sperrorest} functions), return a
+if \code{TRUE} (used internally by other \{sperrorest\} functions), return a
 \code{list} containing factor vectors (see Value)}
 
 \item{repetition}{numeric vector: cross-validation repetitions to be

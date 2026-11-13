@@ -1,6 +1,6 @@
 #' @title Perform spatial error estimation and variable importance assessment
 #'
-#' @description {sperrorest} is a flexible interface for multiple types of
+#' @description \{sperrorest\} is a flexible interface for multiple types of
 #' parallelized spatial and non-spatial cross-validation and bootstrap error
 #' estimation and parallelized permutation-based assessment of spatial variable
 #' importance.
@@ -51,13 +51,13 @@
 #'   `rpart`. The function must accept at least two arguments, the first one
 #'   being a formula and the second a data.frame with the learning sample.
 #' @param model_args Arguments to be passed to `model_fun` (in addition to the
-#'   `formula` and `data` argument, which are provided by {sperrorest})
+#'   `formula` and `data` argument, which are provided by \{sperrorest\})
 #' @param pred_fun Prediction function for a fitted model object created by
 #'   `model`. Must accept at least two arguments: the fitted `object` and a
 #'   `data.frame` `newdata` with data on which to predict the outcome.
 #' @param pred_args (optional) Arguments to `pred_fun` (in addition to the
 #'   fitted model object and the `newdata` argument, which are provided by
-#'   {sperrorest}).
+#'   \{sperrorest\}).
 #' @param smp_fun A function for sampling training and test sets from `data`.
 #'   E.g. [partition_kmeans] for spatial cross-validation using spatial
 #'   *k*-means clustering.
@@ -111,7 +111,7 @@
 #' @param verbose Controls the amount of information printed while processing.
 #'   Defaults to 0 (no output).
 #'
-#' @return A list (object of class {sperrorest}) with (up to) six components:
+#' @return A list (object of class "sperrorest" with (up to) six components:
 #' - error_rep: `sperrorestreperror` containing
 #' predictive performances at the repetition level
 #' - error_fold: `sperroresterror` object containing predictive
@@ -123,7 +123,7 @@
 #' information on the system the code is running on, starting and
 #' finishing times, number of available CPU cores and runtime performance
 #' - package_version: `sperrorestpackageversion` object containing
-#' information about the {sperrorest} package version
+#' information about the \{sperrorest\} package version
 #'
 #' @references Brenning, A. 2012. Spatial cross-validation and bootstrap for
 #' the assessment of prediction rules in remote sensing: the R package

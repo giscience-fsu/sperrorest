@@ -75,7 +75,7 @@ passed to \link{get_small_tiles}. Will be ignored if \code{NULL}.}
 \item{iterate}{argument to be passed to \link{tile_neighbors}}
 
 \item{return_factor}{if \code{FALSE} (default), return a \link{represampling} object;
-if \code{TRUE} (used internally by other {sperrorest} functions), return a
+if \code{TRUE} (used internally by other \{sperrorest\} functions), return a
 \code{list} containing factor vectors (see Value)}
 
 \item{repetition}{numeric vector: cross-validation repetitions to be

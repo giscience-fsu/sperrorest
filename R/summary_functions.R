@@ -1,4 +1,4 @@
-#' @title Summarize error statistics obtained by {sperrorest}
+#' @title Summarize error statistics obtained by \{sperrorest\}
 #'
 #' @description `summary.sperroresterror` calculates mean, standard deviation,
 #'  median etc. of the calculated error measures at the specified level
@@ -175,7 +175,7 @@ summary.sperrorestreperror <- function(object, # nolint
   object
 }
 
-#' @title Summarize variable importance statistics obtained by {sperrorest}
+#' @title Summarize variable importance statistics obtained by \{sperrorest\}
 #'
 #' @description `summary.sperrorestimportance` calculated mean, standard
 #'   deviation, median etc. of the calculated error measures at the specified

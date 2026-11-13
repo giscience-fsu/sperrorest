@@ -52,7 +52,7 @@ contain the x and y coordinates of sample locations.}
 being a formula and the second a data.frame with the learning sample.}
 
 \item{model_args}{Arguments to be passed to \code{model_fun} (in addition to the
-\code{formula} and \code{data} argument, which are provided by {sperrorest})}
+\code{formula} and \code{data} argument, which are provided by \{sperrorest\})}
 
 \item{pred_fun}{Prediction function for a fitted model object created by
 \code{model}. Must accept at least two arguments: the fitted \code{object} and a
@@ -60,7 +60,7 @@ being a formula and the second a data.frame with the learning sample.}
 
 \item{pred_args}{(optional) Arguments to \code{pred_fun} (in addition to the
 fitted model object and the \code{newdata} argument, which are provided by
-{sperrorest}).}
+\{sperrorest\}).}
 
 \item{smp_fun}{A function for sampling training and test sets from \code{data}.
 E.g. \link{partition_kmeans} for spatial cross-validation using spatial
@@ -132,7 +132,7 @@ function; this option is for debugging purposes.}
 Defaults to 0 (no output).}
 }
 \value{
-A list (object of class {sperrorest}) with (up to) six components:
+A list (object of class "sperrorest" with (up to) six components:
 \itemize{
 \item error_rep: \code{sperrorestreperror} containing
 predictive performances at the repetition level
@@ -145,11 +145,11 @@ permutation-based variable importances at the fold level
 information on the system the code is running on, starting and
 finishing times, number of available CPU cores and runtime performance
 \item package_version: \code{sperrorestpackageversion} object containing
-information about the {sperrorest} package version
+information about the \{sperrorest\} package version
 }
 }
 \description{
-{sperrorest} is a flexible interface for multiple types of
+\{sperrorest\} is a flexible interface for multiple types of
 parallelized spatial and non-spatial cross-validation and bootstrap error
 estimation and parallelized permutation-based assessment of spatial variable
 importance.
